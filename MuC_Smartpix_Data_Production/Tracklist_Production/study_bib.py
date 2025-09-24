@@ -1,0 +1,17 @@
+from utils import getTracks
+import glob
+
+plot = False
+
+# Set up some options, constants
+max_events = -1 # Set to -1 to run over all events
+#Bfield = 3.57 # T for legacy
+
+npart = 0
+nevts = 0
+
+# gather input files 
+directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mm_pruned"
+file_paths = glob.glob(f"{directory_path}/*.slcio")
+
+tracks=getTracks(file_paths, allowedPIDS=[11,13,22], plot=False, max_events=max_events, flp=0, tracklist_folder="Muon_Collider_Smart_Pixels/Data_Files/Track_Lists/BIB", binsize=500, float_precision=5)
