@@ -1,2 +1,2 @@
-mkdir ./bin
-gcc ppixelav2_list_trkpy_n_2f_custom.c -o ./bin/ppixelav2_list_trkpy_n_2f_custom.exe -lm -O2
+mkdir Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV/bin
+gcc ppixelav2_custom.c -o Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV/bin/ppixelav2_custom.exe -lm -O2

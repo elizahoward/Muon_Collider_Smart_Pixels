@@ -141,7 +141,6 @@ def getTracks(file_paths, allowedPIDS=None, plot=False, max_events=-1, flp=0, tr
         reader.open(file_path)
         
         for ievt,event in enumerate(reader):
-            nevts+=1
             if max_events!=-1 and nevts > max_events: break
             print("Processing event %i."%ievt)
 
@@ -229,6 +228,8 @@ def getTracks(file_paths, allowedPIDS=None, plot=False, max_events=-1, flp=0, tr
                 track = [cota, cotb, p, flp, ylocal, zglobal, pt, t, hit_pdg]
                 tracks.append(track)
 
+                nevts+=1
+
                 #print("")
                 #print("NEW PARTICLE")
 
@@ -242,7 +243,10 @@ def getTracks(file_paths, allowedPIDS=None, plot=False, max_events=-1, flp=0, tr
                 #print("  pdg={}".format(hit_pdg))
                 #print("  id={}".format(hit_id))
 
-        writeTracklists(tracks, tracklist_folder, binsize, float_precision)
+    if nevts < max_events:
+        print(f"\n\n************* WARNING ************* \nonly found {nevts} tracks, fewer than max_events = {max_events}\n************* WARNING *************\n\n")
+
+    writeTracklists(tracks, tracklist_folder, binsize, float_precision)
             
 
 def writeTracklists(tracks, tracklist_folder=None, binsize=500, float_precision=5):
