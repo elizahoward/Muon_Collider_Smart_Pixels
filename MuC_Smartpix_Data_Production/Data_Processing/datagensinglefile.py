@@ -4,18 +4,18 @@ import pandas as pd
 import math
 import os
 
-def split(outdir,tag,df1,df2,df3):
+def split(output_file,tag,df1,df2,df3):
 
         df1.columns = df1.columns.astype(str)
         df2.columns = df2.columns.astype(str)
         df3.columns = df3.columns.astype(str)
 
         # unflipped, all charge                                                                         
-        df1.to_parquet(f"{outdir}/labels{tag}.parquet")
-        df2.to_parquet(f"{outdir}/recon2D{tag}.parquet")
-        df3.to_parquet(f"{outdir}/recon3D{tag}.parquet")
+        df1.to_parquet(output_file.replace("*", "labels"))
+        df2.to_parquet(output_file.replace("*", "recon2D"))
+        df3.to_parquet(output_file.replace("*", "recon3D"))
 
-def parseFile(filein,tag,nevents=-1):
+def parseFile(filein):
 
         with open(filein) as f:
                 lines = f.readlines()
@@ -146,11 +146,8 @@ def adjustCluster(cluster, truth):
         truth[len(truth)-1][8]=str(float(truth[len(truth)-1][8])+nCols*25e-3)
 
 
-def makeParquet(filename, tag, inputdir, outdir = None):
-        if outdir == None:
-            outdir = inputdir
-
-        arr_events, arr_truth = parseFile(filein=f"{inputdir}/{filename}",tag=tag)
+def makeParquet(input_file, output_file):
+        arr_events, arr_truth = parseFile(filein=input_file)
 
         #truth quantities - all are dumped to DF                                                                                                                           
         df = pd.DataFrame(arr_truth, columns = ['x-entry', 'y-entry','z-entry', 'n_x', 'n_y', 'n_z', 'number_eh_pairs', 'y-local', 'z-global', 'pt',  'hit_time', 'PID'])
@@ -193,7 +190,6 @@ def makeParquet(filename, tag, inputdir, outdir = None):
         df2 = pd.DataFrame(df2list)
         df3 = pd.DataFrame(df3list)  
 
-        # split into flipped/unflipped, pos/neg charge
-        split(outdir, tag,df,df2,df3)
+        split(output_file, df,df2,df3)
 
-        print(f"\nConverted {filename}")
+        print(f"\nConverted {input_file} to parquet format and saved as {output_file}\n")

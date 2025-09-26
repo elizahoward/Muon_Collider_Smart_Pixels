@@ -46,17 +46,13 @@ commands = []
 # Signal
 for run in range(nTracklists): 
 
+    # Define file names
     signal_particle_gun = f"{output_dir_pgun}/particle_gun{run}.sclio"
-
     signal_detetor_sim = f"{output_dir_detsim}/signal_detsim{run}.slcio"
-
     signal_tracklist = f"{output_dir_tracklists}/signal_tracks{run}.txt"
-
     signal_pixelav_seed = f"{output_dir_pixelav}/signal_seed{run}"
-
     signal_pixelav_out = f"{output_dir_pixelav}/signal_pixelav{run}.out"
-
-    signal_parquet = f"{output_dir_parquet}/signal_parquet{run}.parquet"
+    signal_parquet = f"{output_dir_parquet}/signal_*_{run}.parquet"
 
     # Particle gun
     run_particle_gun = ["python3", f"{ops.benchmark_dir}/generation/pgun/pgun_lcio.py", 
@@ -80,20 +76,18 @@ for run in range(nTracklists):
                       "-o", signal_tracklist, 
                       "-f", str(ops.float_precision), 
                       "-p", "13", 
-                      "-flp", "0"]
+                      "-flp", f"{ops.flp}"]
     
     # Run pixelAV
     run_pixelAV = [pixelAVdir, "Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV/bin/ppixelav2_custom.exe", "1", signal_tracklist, signal_pixelav_out, signal_pixelav_seed]
 
     # Write parquet file
-    # Fix input args to datagen
     make_parquet = ["python3", "Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/Data_Processing/datagen.py", 
                     "-i", signal_pixelav_out, 
                     "-o", signal_parquet]
 
     # commands
-    commands.append([(make_tracklist, run_pixelAV, make_parquet,),]) # weird formatting is because pool expects a tuple at input
+    commands.append([(run_particle_gun, run_detsim, make_tracklist, run_pixelAV, make_parquet,),]) # weird formatting is because pool expects a tuple at input
 
-            
-    
+# Run in parallel
 utils.run_commands(commands, ops.ncpu)
