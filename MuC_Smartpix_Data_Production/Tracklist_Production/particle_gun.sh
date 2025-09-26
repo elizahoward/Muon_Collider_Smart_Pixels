@@ -8,13 +8,15 @@
 # polar angle randomly distributed in the range [10deg, 170deg], and azimuthal angle randomly distributed in the range [0, 2pi]:
 
 # 45000 events should get around 80 tracklist files with 500 tracks per file   ??
-
+number_events = $1 
+file_number=$2
+Echo "Generating $e events"
 
 rm output_gen.slcio
 benchmark_dir=/home/karri/mucLLPs/mucoll-benchmarks
 python $benchmark_dir/generation/pgun/pgun_lcio.py \
     -s 12345 \
-    -e 50000 \
+    -e number_events \
     --pdg 13 -13 \
     --p 1 100 \
     --theta 10 170 \

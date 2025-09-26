@@ -4,95 +4,96 @@ import numpy as np
 import os
 import argparse
 import sys
+import Muon_Collider_Smart_Pixels.subprocess_utils as utils
+from datetime import datetime
 
-def run_executable(executable_path, options):
-    command = [executable_path] + options
-    subprocess.run(command)
+# user options
+parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("-j", "--ncpu", help="Number of cores to use", default=35, type=int)
+parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=500, type=int)
+parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=50000, type=int)
+parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
+parser.add_argument("-bd", "--benchmark_dir", help="Muon collider simulation benchmark directory", default="/home/karri/mucLLPs/mucoll-benchmarks/", type=str)
+ops = parser.parse_args()
 
-def run_commands(commands):
-    for command in commands:
-        print(command)
-        if "pixelav" in command[0]:
-            subprocess.run(command[1:], cwd=command[0])
-        else:
-            subprocess.run(command)
+# from bin size and total tracks, get number of tracklists
+nTracklists = int(np.ceil(ops.track_total / ops.bin_size))
+
+# get absolute path for semiparametric directory
+pixelAVdir = os.path.expanduser(ops.pixelAVdir)
+
+# Use date and time to create unique output directory
+output_dir = f"Muon_Collider_Smart_Pixels/Data_Files/Data_Set_{datetime.now().strftime('%Y%m%d_%H%M%S')}" 
+os.makedirs(output_dir)
+
+# create output directories for each intermediate step
+output_dir_pgun = f"{output_dir}/Particle_Gun"
+output_dir_fluka = f"{output_dir}/FLUKA"
+output_dir_detsim = f"{output_dir}/Detector_Sim"
+output_dir_tracklists = f"{output_dir}/Track_Lists"
+output_dir_pixelav = f"{output_dir}/PixelAV"
+output_dir_parquet = f"{output_dir}/Parquet_Files"
+os.makedirs(output_dir_pgun)
+os.makedirs(output_dir_fluka)
+os.makedirs(output_dir_detsim)
+os.makedirs(output_dir_tracklists)
+os.makedirs(output_dir_pixelav)
+os.makedirs(output_dir_parquet)
+
+
+commands = [] 
+
+# Signal
+for run in range(nTracklists): 
+
+    signal_particle_gun = f"{output_dir_pgun}/particle_gun{run}.sclio"
+
+    signal_detetor_sim = f"{output_dir_detsim}/signal_detsim{run}.slcio"
+
+    signal_tracklist = f"{output_dir_tracklists}/signal_tracks{run}.txt"
+
+    signal_pixelav_seed = f"{output_dir_pixelav}/signal_seed{run}"
+
+    signal_pixelav_out = f"{output_dir_pixelav}/signal_pixelav{run}.out"
+
+    signal_parquet = f"{output_dir_parquet}/signal_parquet{run}.parquet"
+
+    # Particle gun
+    run_particle_gun = ["python3", f"{ops.benchmark_dir}/generation/pgun/pgun_lcio.py", 
+                         "-s", "12345", 
+                         "-e", f"{ops.bin_size}", 
+                         "--pdg", "13", "-13",
+                         "--p", "1", "100", 
+                         "--theta", "10", "170", 
+                         "--dz", "0", "0", "1.5", 
+                         "--d0", "0", "0", "0.0009",
+                         f"--{signal_particle_gun}"]
     
+    # Run Detector Simulation
+    run_detsim = ["ddsim", "--steeringFile", f"{ops.benchmark_dir}/simulation/ilcsoft/steer_baseline.py",
+                  "--inputFile", "output_gen.slcio",
+                  "--outputFile", "output_sim.slcio"]
 
-if __name__ == "__main__":
+    # Make tracklist
+    make_tracklist = ["python3",  "Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/Tracklist_Production/make_tracklists.py", 
+                      "-i", signal_detetor_sim, 
+                      "-o", signal_tracklist, 
+                      "-f", str(ops.float_precision), 
+                      "-p", "13", 
+                      "-flp", "0"]
+    
+    # Run pixelAV
+    run_pixelAV = [pixelAVdir, "Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV/bin/ppixelav2_custom.exe", "1", signal_tracklist, signal_pixelav_out, signal_pixelav_seed]
 
-    # user options
-    parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-o", "--outDir", help="Output directory", default="./Data_Files/Test_Output/")
-    parser.add_argument("-j", "--ncpu", help="Number of cores to use", default=35, type=int)
-    ops = parser.parse_args()
+    # Write parquet file
+    # Fix input args to datagen
+    make_parquet = ["python3", "Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/Data_Processing/datagen.py", 
+                    "-i", signal_pixelav_out, 
+                    "-o", signal_parquet]
 
-    # get absolute path for semiparametric directory
-    pixelAVdir = os.path.expanduser(ops.pixelAVdir)
+    # commands
+    commands.append([(make_tracklist, run_pixelAV, make_parquet,),]) # weird formatting is because pool expects a tuple at input
 
-    # get absolute path and check if outdir exists
-    outDir = os.path.abspath(ops.outDir)
-    if not os.path.isdir(outDir):
-        os.makedirs(outDir)
-    else:
-        response = input("Folder exists\nTo empty folder and create new files, enter \"yes\": ")
-        if response != "yes":
-            print("\n\nExiting program...\n\n")
-            sys.exit()
-        # Empty folder
-        files = os.listdir(outDir)
-        for f in files:
-            if os.path.isfile(f"{outDir}/{f}"):
-                os.remove(f"{outDir}/{f}")
-
-    commands = []
-
-    tracklist_folder=os.path.abspath("./Tracklists")
-
-    for folder in os.listdir(tracklist_folder):
-
-        folder = os.path.abspath(os.path.join(tracklist_folder, folder))
-
-        if "BIB" in folder:
-            tag0 = "bib"
-        else:
-            tag0 = "sig"
-        
-        i = 0
-
-        for tracklist in os.listdir(folder):
-
-            tracklist = os.path.abspath(os.path.join(folder, tracklist))
-
-            if tag0 == 'sig' and i > 76:
-                break
             
-            tag = f"{tag0}{i}"
-
-            outFileName = f"{outDir}/{tag}"
-
-            # Run pixelAV
-            pixelAV = [pixelAVdir, "./bin/ppixelav2_list_trkpy_n_2f_custom.exe", "1", tracklist, f"{outFileName}.out", f"{outFileName}_seed"]
-
-            # Write parquet file
-            parquet = ["python3", "./processing/datagen.py", "-f", f"{tag}.out", "-t", tag, "-d", outDir]
-
-            # commands
-            commands.append([(pixelAV, parquet,),]) # weird formatting is because pool expects a tuple at input
-
-            i += 1       
-             
-        
-    # List of CPU cores to use for parallel execution
-    num_cores = multiprocessing.cpu_count() if ops.ncpu == -1 else ops.ncpu
-
-    # Create a pool of processes to run in parallel
-    pool = multiprocessing.Pool(num_cores)
     
-    # Launch the executable N times in parallel with different options
-    # pool.starmap(run_executable, [(path_to_executable, options) for options in options_list])
-    print(commands) # Anthony you are here need to make the multiprocess work with delphes tied in
-    pool.starmap(run_commands, commands)
-    
-    # Close the pool of processes
-    pool.close()
-    pool.join()
+utils.run_commands(commands, ops.ncpu)
