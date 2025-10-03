@@ -16,15 +16,16 @@ import OptimizedDataGenerator4 as ODG
 class Model1(SmartPixModel):
     def __init__(self,
             tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
-            nBits: list = None, # just for fractional bits, integer bits 
+            nBits: list = None, # just for fractional bits, integer bits
+                                ## number of bits is the number of bits for each quantized model and then
+                                ## run training should make one model for each bit size
             loadModel: bool = False,
             modelPath: str = None, # Only include if you are loading a model
             ): 
-        # Do we want to specify model, modelType, bitSize, etc.
-        # Decide here if we want to load a pre-trained model or create a new one from scratch
         self.tfRecordFolder = tfRecordFolder
-        self.modelName = "Base Model" # for other models, e.g., Model 1, Model 2, etc.
-        self.models = {"Unquantized": None, "Quantized": None} # Maybe have a dictionary to store different versions of the model
+        self.modelName = "Model 1" # for other models, e.g., Model 1, Model 2, etc.
+        self.model = None
+        self.quantized_model = None
         self.hyperparameterModel = None
         return
     
@@ -41,15 +42,41 @@ class Model1(SmartPixModel):
         return 
     
     
-    def makeUnquantizedModel():
-        raise NotImplementedError("Subclasses should implement this method.")
-    
-    @abstractthod
+    def makeUnquantizedModel(self):
+        ## here i will be making a 4-layer neural network 
+        ## Model 1: z-global, x size, y size, y local
+
+
+        ## define the inputs
+        input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+        input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+        input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+        input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+
+        ## concatenate the inputs into one layer
+        inputList = [input1, input2, input3, input4]
+        inputs = tf.keras.layers.Concatenate()(inputList)
+
+
+        ## here i will add the layers 
+
+        stack1 = tf.keras.layers.Dense(17,activation='relu')(inputs)
+        stack2 = tf.keras.layers.Dense(20, activation='relu')(stack1)
+        stack3 = tf.keras.layers.Dense(9, activation='relu')(stack2)
+        stack4 = tf.keras.layers.Dense(16, activation='relu')(stack3)
+        stack5 = tf.keras.layers.Dense(18, activation='relu')(stack4)
+        output = tf.keras.layers.Dense(1,activation='sigmoid')(stack5)
+
+        self.main_model = tf.keras.Model(inputs=inputList, outputs=output)
+
+        return main_model
+
+
+
     def makeUnquatizedModelHyperParameterTuning(self):
         raise NotImplementedError("Subclasses should implement this method.")
     
-    @abstractmethod
-    def makeQuantizedModel():
+    def makeQuantizedModel(self, list: [int]):
         raise NotImplementedError("Subclasses should implement this method.")
 
     @abstractmethod
