@@ -4,26 +4,48 @@ import numpy as np
 import os
 import argparse
 import sys
-import Muon_Collider_Smart_Pixels.subprocess_utils as utils
 from datetime import datetime
+
+def run_executable(executable_path, options):
+    command = [executable_path] + options
+    subprocess.run(command)
+
+def run_commands(commands):
+    for command in commands:
+        print(command)
+        #if "pixelav" in command[0] or "ddsim" in command[0]:
+        #    subprocess.run(command[1:], cwd=command[0])
+        #else:
+        subprocess.run(command)
+
+def pool_commands(commands, num_cores):
+    # Create a pool of processes to run in parallel
+    pool = multiprocessing.Pool(num_cores)
+    
+    # Launch the executable N times in parallel with different options
+    # pool.starmap(run_executable, [(path_to_executable, options) for options in options_list])
+    #print(commands) 
+    pool.starmap(run_commands, commands)
+    
+    # Close the pool of processes
+    pool.close()
+    pool.join()
 
 # user options
 parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("-j", "--ncpu", help="Number of cores to use", default=35, type=int)
-parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=500, type=int)
-parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=50000, type=int)
+parser.add_argument("-c", "--ncpu", help="Number of cores to use", default=35, type=int)
+parser.add_argument("-bs", "--bin_size", help="Number of tracks per tracklist", default=10, type=int)
+parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=10, type=int)
 parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
+parser.add_argument("-flp", "--flp", help="Direction of sensor (1 for FE side out, 0 for FE side down)", default=0, type=int)
 parser.add_argument("-bd", "--benchmark_dir", help="Muon collider simulation benchmark directory", default="/home/karri/mucLLPs/mucoll-benchmarks/", type=str)
 ops = parser.parse_args()
 
 # from bin size and total tracks, get number of tracklists
 nTracklists = int(np.ceil(ops.track_total / ops.bin_size))
 
-# get absolute path for semiparametric directory
-pixelAVdir = os.path.expanduser(ops.pixelAVdir)
-
 # Use date and time to create unique output directory
-output_dir = f"Muon_Collider_Smart_Pixels/Data_Files/Data_Set_{datetime.now().strftime('%Y%m%d_%H%M%S')}" 
+output_dir = f"Data_Files/Data_Set_{datetime.now().strftime('%Y%m%d_%H%M%S')}" 
 os.makedirs(output_dir)
 
 # create output directories for each intermediate step
@@ -40,6 +62,10 @@ os.makedirs(output_dir_tracklists)
 os.makedirs(output_dir_pixelav)
 os.makedirs(output_dir_parquet)
 
+# set up MuColl environment
+#subprocess.run(["source", "/cvmfs/muoncollider.cern.ch/release/2.8-patch2/setup.sh"])
+
+subprocess.run("source /cvmfs/muoncollider.cern.ch/release/2.8-patch2/setup.sh", shell=True, executable="/bin/bash")
 
 commands = [] 
 
@@ -52,7 +78,7 @@ for run in range(nTracklists):
     signal_tracklist = f"{output_dir_tracklists}/signal_tracks{run}.txt"
     signal_pixelav_seed = f"{output_dir_pixelav}/signal_seed{run}"
     signal_pixelav_out = f"{output_dir_pixelav}/signal_pixelav{run}.out"
-    signal_parquet = f"{output_dir_parquet}/signal_*_{run}.parquet"
+    signal_parquet = f"{output_dir_parquet}/signal_*{run}.parquet"
 
     # Particle gun
     run_particle_gun = ["python3", f"{ops.benchmark_dir}/generation/pgun/pgun_lcio.py", 
@@ -71,7 +97,7 @@ for run in range(nTracklists):
                   "--outputFile", "output_sim.slcio"]
 
     # Make tracklist
-    make_tracklist = ["python3",  "Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/Tracklist_Production/make_tracklists.py", 
+    make_tracklist = ["python3",  "MuC_Smartpix_Data_Production/Tracklist_Production/make_tracklists.py", 
                       "-i", signal_detetor_sim, 
                       "-o", signal_tracklist, 
                       "-f", str(ops.float_precision), 
@@ -79,10 +105,14 @@ for run in range(nTracklists):
                       "-flp", f"{ops.flp}"]
     
     # Run pixelAV
-    run_pixelAV = [pixelAVdir, "Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV/bin/ppixelav2_custom.exe", "1", signal_tracklist, signal_pixelav_out, signal_pixelav_seed]
+    run_pixelAV = ["./MuC_Smartpix_Data_Production/PixelAV/bin/ppixelav2_custom.exe", 
+                   "1", 
+                   signal_tracklist, 
+                   signal_pixelav_out, 
+                   signal_pixelav_seed]
 
     # Write parquet file
-    make_parquet = ["python3", "Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/Data_Processing/datagen.py", 
+    make_parquet = ["python3", "/MuC_Smartpix_Data_Production/Data_Processing/datagen.py", 
                     "-i", signal_pixelav_out, 
                     "-o", signal_parquet]
 
@@ -90,4 +120,4 @@ for run in range(nTracklists):
     commands.append([(run_particle_gun, run_detsim, make_tracklist, run_pixelAV, make_parquet,),]) # weird formatting is because pool expects a tuple at input
 
 # Run in parallel
-utils.run_commands(commands, ops.ncpu)
+pool_commands(commands, ops.ncpu)

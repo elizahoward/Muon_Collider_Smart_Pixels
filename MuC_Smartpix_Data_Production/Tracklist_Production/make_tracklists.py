@@ -68,7 +68,7 @@ parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.Argumen
 parser.add_argument("-i", "--input_file", help="Input file", type=str, required=True)
 parser.add_argument("-o", "--output_file", help="Output file", type=str, required=True)
 parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
-parser.add_argument("-p", "--allowedPIDS", help="Allowed PIDs (comma-separated)", type=str, required=True)
+parser.add_argument("-p", "--allowedPIDS", help="Allowed PIDs (comma-separated)", type=int, nargs="+", required=True)
 parser.add_argument("-flp", "--flp", help="Direction of sensor (1 for FE side out, 0 for FE side down)", default=0, type=int)
 ops = parser.parse_args()
     

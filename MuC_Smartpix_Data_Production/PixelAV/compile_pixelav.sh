@@ -1,2 +1,2 @@
-mkdir Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV/bin
-gcc ppixelav2_custom.c -o Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV/bin/ppixelav2_custom.exe -lm -O2
+mkdir -p MuC_Smartpix_Data_Production/PixelAV/bin
+gcc MuC_Smartpix_Data_Production/PixelAV/ppixelav2_custom.c -o MuC_Smartpix_Data_Production/PixelAV/bin/ppixelav2_custom.exe -lm -O2
