@@ -67,17 +67,146 @@ class Model1(SmartPixModel):
         stack5 = tf.keras.layers.Dense(18, activation='relu')(stack4)
         output = tf.keras.layers.Dense(1,activation='sigmoid')(stack5)
 
-        self.main_model = tf.keras.Model(inputs=inputList, outputs=output)
-
-        return main_model
-
+        self.model = tf.keras.Model(inputs=inputList, outputs=output)
 
 
     def makeUnquatizedModelHyperParameterTuning(self):
         raise NotImplementedError("Subclasses should implement this method.")
     
     def makeQuantizedModel(self, list: [int]):
-        raise NotImplementedError("Subclasses should implement this method.")
+        
+        def make_model(total_bits, int_bits):
+            """
+            Build & compile your QKeras model with the given number of integer bits.
+            """
+            tf.keras.backend.clear_session()
+            # inputs
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+            input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            x = tf.keras.layers.Concatenate()([input1, input2, input3, input4])
+
+            ## I want to try this with 1 int bit and 7 fractional
+            ## I want to try this with 0 int bit and 7 fractional
+            
+            # layer 1
+            x = QDense(
+                17,
+                kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+                ## adds sum of the activations squared to the loss function 
+                #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+                activation=quantized_relu(total_bits, int_bits),
+                name="q_relu1"
+            )(x)
+
+            # layer 2 (example—you can tweak per‐layer bits)
+            x = QDense(
+                20,
+                kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+                ## adds sum of the activations squared to the loss function 
+                #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+                activation=quantized_relu(total_bits, int_bits),
+                name="q_relu2"
+            )(x)
+
+            # layer 3
+            x = QDense(
+                9,
+                kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+                ## adds sum of the activations squared to the loss function 
+                #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+                activation=quantized_relu(total_bits, int_bits),
+                name="q_relu3"
+            )(x)
+
+            # layer 4
+            x = QDense(
+                16,
+                kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+                ## adds sum of the activations squared to the loss function 
+                #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+                activation=quantized_relu(total_bits, int_bits),
+                name="q_relu4"
+            )(x)
+
+            # layer 5
+            x = QDense(
+                8,
+                kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+                ## adds sum of the activations squared to the loss function 
+                #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+                activation=quantized_relu(total_bits, int_bits),
+                name="q_relu5"
+            )(x)
+
+            # output
+            x = QDense(
+                1,
+                kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+                #kernel_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            out = QActivation("smooth_sigmoid")(x)
+            
+            m = tf.keras.Model(inputs=[input1, input2, input3, input4], outputs=out)
+            m.compile(
+                optimizer="adam",
+                loss="binary_crossentropy",
+                metrics=["binary_accuracy"],
+                run_eagerly=True
+            )
+            return m
+
+        models = {}
+        Quantized_model = None
+
+        # 1) define your sweep
+        total_bits = [8]
+        int_bits =   [0]
+
+        # 2) containers for final metrics
+        train_losses, val_losses = {}, {}
+        train_accs,   val_accs   = {}, {}
+
+        for i, val in enumerate(total_bits):
+            print(f"\n→ training model with {val} total bits and {int_bits[i]} integer bits")
+            model = make_model(val, int_bits[i])
+            
+
+            name = f"total: {val}, int: {int_bits[i]}"
+            models[name] = model
+            Quantized_Model = model
+
+        self.quantized_model = Quantized_model
+
+
+        
+
+
+
+
+
 
     @abstractmethod
     def runHyperparameterTuning(self):
