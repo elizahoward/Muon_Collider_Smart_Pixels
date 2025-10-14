@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-# import all the necessary libraries
 import tensorflow as tf
 from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
 from tensorflow.keras.models import Model
@@ -11,7 +10,10 @@ from pathlib import Path
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+sys.path.append('/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/MuC_Smartpix_ML/')
 import OptimizedDataGenerator4 as ODG
+from Model_Classes import SmartPixModel
 
 class Model1(SmartPixModel):
     def __init__(self,
@@ -72,6 +74,8 @@ class Model1(SmartPixModel):
 
     def makeUnquatizedModelHyperParameterTuning(self):
         raise NotImplementedError("Subclasses should implement this method.")
+
+
     
     def makeQuantizedModel(self, list: [int]):
         
@@ -199,12 +203,6 @@ class Model1(SmartPixModel):
             Quantized_Model = model
 
         self.quantized_model = Quantized_model
-
-
-        
-
-
-
 
 
 

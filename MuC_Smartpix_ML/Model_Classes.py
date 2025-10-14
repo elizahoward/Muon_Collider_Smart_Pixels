@@ -45,15 +45,22 @@ class SmartPixModel(ABC):
         raise NotImplementedError("Subclasses should implement this method.")
     
     @abstractmethod
-    def makeUnquatizedModelHyperParameterTuning(self):
+    def makeUnquatizedModelHyperParameterTuning(hp):
         raise NotImplementedError("Subclasses should implement this method.")
     
     @abstractmethod
     def makeQuantizedModel():
         raise NotImplementedError("Subclasses should implement this method.")
 
-    @abstractmethod
+    
     def runHyperparameterTuning(self):
+        tuner = kt.RandomSearch(
+            self.makeUnquatizedModelHyperParameterTuning(),
+            objective           = "val_binary_accuracy",
+            max_trials          = 120,
+            executions_per_trial = 2,
+            project_name        = "new_hyperparam_search"
+        )
         raise NotImplementedError("Subclasses should implement this method.")
     
     @abstractmethod
@@ -80,3 +87,4 @@ class SmartPixModel(ABC):
     # Evaluate the model
     def evaluate(self):
         raise NotImplementedError("We need to write this code")
+
