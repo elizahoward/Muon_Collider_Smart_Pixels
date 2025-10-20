@@ -1,13 +1,15 @@
 """
-Model2 Implementation using the SmartPixModel Abstract Base Class
+Model3 Implementation using the SmartPixModel Abstract Base Class
 
-This module implements Model2 as a concrete class inheriting from SmartPixModel.
-Model2 is a CNN-based architecture that processes x_profile, y_profile, z_global, and y_local features.
+This module implements Model3 as a concrete class inheriting from SmartPixModel.
+Model3 is a CNN-based architecture that processes cluster data through Conv2D/MaxPooling,
+then concatenates with z_global and y_local features.
 
 Architecture:
-- x_profile + z_global branch (32 units)
-- y_profile + y_local branch (32 units) 
-- Merged dense layers: 128 -> 64 -> 32
+- Conv2D branch: 3x5 kernel, 32 filters -> MaxPooling -> Flatten
+- z_global branch: 16 units
+- y_local branch: 32 units
+- Merged dense layers: 200 -> 100
 - Output: 1 unit with sigmoid activation
 
 Author: Eric
@@ -15,9 +17,10 @@ Date: 2024
 """
 
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
+from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Conv2D, MaxPooling2D, Flatten, Reshape, Lambda
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers.schedules import PolynomialDecay
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import keras_tuner as kt
 from pathlib import Path
@@ -28,6 +31,7 @@ import sys
 import json
 from datetime import datetime
 from sklearn.metrics import roc_curve, auc
+import pandas as pd
 
 # Add the parent directory to path to import the base class and data generator
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/MuC_Smartpix_ML/')
@@ -38,7 +42,7 @@ import OptimizedDataGenerator4 as ODG
 
 # QKeras imports for quantized models
 try:
-    from qkeras import QDense, QActivation
+    from qkeras import QDense, QActivation, QConv2D
     from qkeras.quantizers import quantized_bits, quantized_relu
     QKERAS_AVAILABLE = True
 except ImportError:
@@ -46,17 +50,16 @@ except ImportError:
     QKERAS_AVAILABLE = False
 
 
-class Model2(SmartPixModel):
+class Model3(SmartPixModel):
     """
-    Model2: CNN-based architecture for smart pixel detector classification.
+    Model3: CNN-based architecture for smart pixel detector classification.
     
-    This model processes profile data (x_profile, y_profile) along with 
-    global/local coordinates (z_global, y_local) for binary classification.
+    This model processes cluster data (13x21 spatial, last timestamp) through Conv2D layers,
+    then concatenates with z_global and y_local coordinates for binary classification.
     
     Features:
-    - x_profile: 21-dimensional profile data
+    - cluster: 13x21x20 (uses last timestamp only)
     - z_global: 1-dimensional global z coordinate
-    - y_profile: 13-dimensional profile data  
     - y_local: 1-dimensional local y coordinate
     """
     
@@ -65,24 +68,59 @@ class Model2(SmartPixModel):
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,
-                 dropout_rate: float = 0.1):
+                 conv_filters: int = 32,
+                 kernel_rows: int = 3,
+                 kernel_cols: int = 5,
+                 z_units: int = 16,
+                 y_units: int = 32,
+                 head_units: int = 200,
+                 head_units_2: int = 100,
+                 dropout_rate: float = 0.0,
+                 initial_lr: float = 0.000871145,
+                 end_lr: float = 5.3e-05,
+                 power: int = 2):
         """
-        Initialize Model2.
+        Initialize Model3.
         
         Args:
             tfRecordFolder: Path to TFRecords directory
             nBits: List of bit configurations for quantization
             loadModel: Whether to load a pre-trained model
             modelPath: Path to saved model (if loadModel=True)
+            conv_filters: Number of filters in Conv2D layer
+            kernel_rows: Kernel height for Conv2D
+            kernel_cols: Kernel width for Conv2D
+            z_units: Units in z_global dense layer
+            y_units: Units in y_local dense layer
+            head_units: Units in first merged dense layer
+            head_units_2: Units in second merged dense layer
             dropout_rate: Dropout rate for regularization
+            initial_lr: Initial learning rate
+            end_lr: End learning rate for polynomial decay
+            power: Power for polynomial decay
         """
         super().__init__(tfRecordFolder, nBits, loadModel, modelPath)
         
-        self.modelName = "Model2"
+        self.modelName = "Model3"
+        
+        # Architecture parameters
+        self.conv_filters = conv_filters
+        self.kernel_rows = kernel_rows
+        self.kernel_cols = kernel_cols
+        self.z_units = z_units
+        self.y_units = y_units
+        self.head_units = head_units
+        self.head_units_2 = head_units_2
         self.dropout_rate = dropout_rate
         
-        # Model2 specific feature configuration
-        self.x_feature_description = ['x_profile', 'z_global', 'y_profile', 'y_local']
+        # Learning rate parameters
+        self.initial_lr = initial_lr
+        self.end_lr = end_lr
+        self.power = power
+        
+        # Model3 specific feature configuration
+        self.x_feature_description = ['cluster', 'y_local', 'z_global']
+        self.time_stamps = [19]  # Use only the last timestamp
         
         # Initialize data generators
         self.training_generator = None
@@ -97,7 +135,7 @@ class Model2(SmartPixModel):
             self.loadModel(modelPath)
     
     def loadTfRecords(self):
-        """Load TFRecords using OptimizedDataGenerator4 for Model2 features."""
+        """Load TFRecords using OptimizedDataGenerator4 for Model3 features."""
         trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
         valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
         
@@ -113,11 +151,12 @@ class Model2(SmartPixModel):
         
         print(f"Using batch_size={batch_size} to match TFRecord format")
         
-        # Model2 uses x_profile, z_global, y_profile, y_local features
+        # Model3 uses cluster, y_local, z_global features with last timestamp only
         self.training_generator = ODG.OptimizedDataGenerator(
             load_records=True, 
             tf_records_dir=trainDir, 
             x_feature_description=self.x_feature_description,
+            time_stamps=self.time_stamps,
             batch_size=batch_size
         )
         
@@ -125,6 +164,7 @@ class Model2(SmartPixModel):
             load_records=True, 
             tf_records_dir=valDir, 
             x_feature_description=self.x_feature_description,
+            time_stamps=self.time_stamps,
             batch_size=batch_size
         )
         
@@ -135,94 +175,117 @@ class Model2(SmartPixModel):
     
     def makeUnquantizedModel(self):
         """
-        Build the unquantized Model2 architecture.
+        Build the unquantized Model3 architecture.
         
         Architecture:
-        - x_profile (21) + z_global (1) -> 32 units
-        - y_profile (13) + y_local (1) -> 32 units  
-        - Concatenate -> 128 -> 64 -> 32 -> 1
+        - Conv2D branch: cluster (13x21, last timestamp) -> 3x5 Conv2D with 32 filters -> MaxPooling -> Flatten
+        - z_global branch: 16 units
+        - y_local branch: 32 units
+        - Concatenate -> 200 -> 100 -> 1
         """
+        print("Building unquantized Model3...")
+        print(f"  - Conv2D: {self.kernel_rows}x{self.kernel_cols} kernel, {self.conv_filters} filters")
+        print(f"  - Head dense layers: {self.head_units} -> {self.head_units_2}")
+        print(f"  - Z units: {self.z_units}, Y units: {self.y_units}")
+        print(f"  - Dropout: {self.dropout_rate}")
+        
         # Input layers
-        x_profile_input = Input(shape=(21,), name="x_profile")
+        # cluster is already (13, 21) after taking last timestamp in data generator
+        cluster_input = Input(shape=(13, 21), name="cluster")
         z_global_input = Input(shape=(1,), name="z_global")
-        y_profile_input = Input(shape=(13,), name="y_profile")
         y_local_input = Input(shape=(1,), name="y_local")
         
-        # x_profile + z_global branch
-        xz_concat = Concatenate(name="xz_concat")([x_profile_input, z_global_input])
-        xz_dense = Dense(32, activation="relu", name="xz_dense1")(xz_concat)
+        # Conv2D branch
+        # Add channel dimension for Conv2D: (13, 21) -> (13, 21, 1)
+        x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
+        x = Conv2D(
+            filters=self.conv_filters,
+            kernel_size=(self.kernel_rows, self.kernel_cols),
+            padding="same",
+            activation="relu",
+            name=f"conv2d_{self.kernel_rows}x{self.kernel_cols}"
+        )(x)
+        x = MaxPooling2D((2, 2), name="pool2d_1")(x)
+        x = Flatten(name="flatten_vol")(x)
         
-        # y_profile + y_local branch
-        yl_concat = Concatenate(name="yl_concat")([y_profile_input, y_local_input])
-        yl_dense = Dense(32, activation="relu", name="yl_dense1")(yl_concat)
+        # Scalar branches
+        z_dense = Dense(self.z_units, activation="relu", name="dense_z")(z_global_input)
+        y_dense = Dense(self.y_units, activation="relu", name="dense_y")(y_local_input)
         
-        # Merge both branches
-        merged = Concatenate(name="merged_features")([xz_dense, yl_dense])
-        merged_dense = Dense(128, activation="relu", name="merged_dense1")(merged)
-        merged_dense = Dropout(self.dropout_rate, name="dropout1")(merged_dense)
-        merged_dense = Dense(64, activation="relu", name="merged_dense2")(merged_dense)
-        merged_dense = Dense(32, activation="relu", name="merged_dense3")(merged_dense)
+        # Merge & head
+        merged = Concatenate(name="concat_all")([x, z_dense, y_dense])
+        h = Dense(self.head_units, activation="relu", name="head_dense1")(merged)
+        h = Dropout(self.dropout_rate, name="head_dropout")(h)
+        h = Dense(self.head_units_2, activation="relu", name="head_dense2")(h)
         
         # Output layer
-        output = Dense(1, activation="sigmoid", name="output")(merged_dense)
+        output = Dense(1, activation="sigmoid", name="output")(h)
         
-        # Create and compile model
+        # Create model
         self.model = Model(
-            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input], 
+            inputs=[cluster_input, z_global_input, y_local_input], 
             outputs=output, 
-            name="model2_unquantized"
+            name="model3_unquantized"
         )
         
         # Store in models dictionary
         self.models["Unquantized"] = self.model
         
-        print("✓ Unquantized Model2 built successfully")
+        print("✓ Unquantized Model3 built successfully")
         return self.model
     
     def makeUnquatizedModelHyperParameterTuning(self, hp):
         """
-        Build Model2 for hyperparameter tuning using Keras Tuner.
+        Build Model3 for hyperparameter tuning using Keras Tuner.
         
         Args:
             hp: Keras Tuner hyperparameter object
         """
         # Input layers
-        x_profile_input = Input(shape=(21,), name="x_profile")
+        cluster_input = Input(shape=(13, 21), name="cluster")
         z_global_input = Input(shape=(1,), name="z_global")
-        y_profile_input = Input(shape=(13,), name="y_profile")
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
-        xz_units = hp.Int('xz_units', min_value=16, max_value=64, step=16)
-        yl_units = hp.Int('yl_units', min_value=16, max_value=64, step=16)
-        merged_units1 = hp.Int('merged_units1', min_value=64, max_value=256, step=32)
-        merged_units2 = hp.Int('merged_units2', min_value=32, max_value=128, step=16)
-        merged_units3 = hp.Int('merged_units3', min_value=16, max_value=64, step=8)
-        dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.5, step=0.1)
+        conv_filters = hp.Int('conv_filters', min_value=16, max_value=64, step=16)
+        kernel_rows = hp.Choice('kernel_rows', values=[3, 5])
+        kernel_cols = hp.Choice('kernel_cols', values=[3, 5])
+        z_units = hp.Int('z_units', min_value=8, max_value=32, step=8)
+        y_units = hp.Int('y_units', min_value=16, max_value=64, step=16)
+        head_units = hp.Int('head_units', min_value=100, max_value=300, step=50)
+        head_units_2 = hp.Int('head_units_2', min_value=50, max_value=150, step=25)
+        dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.1)
         
-        # x_profile + z_global branch
-        xz_concat = Concatenate(name="xz_concat")([x_profile_input, z_global_input])
-        xz_dense = Dense(xz_units, activation="relu", name="xz_dense1")(xz_concat)
+        # Conv2D branch
+        x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
+        x = Conv2D(
+            filters=conv_filters,
+            kernel_size=(kernel_rows, kernel_cols),
+            padding="same",
+            activation="relu",
+            name="conv2d"
+        )(x)
+        x = MaxPooling2D((2, 2), name="pool2d_1")(x)
+        x = Flatten(name="flatten_vol")(x)
         
-        # y_profile + y_local branch
-        yl_concat = Concatenate(name="yl_concat")([y_profile_input, y_local_input])
-        yl_dense = Dense(yl_units, activation="relu", name="yl_dense1")(yl_concat)
+        # Scalar branches
+        z_dense = Dense(z_units, activation="relu", name="dense_z")(z_global_input)
+        y_dense = Dense(y_units, activation="relu", name="dense_y")(y_local_input)
         
-        # Merge both branches
-        merged = Concatenate(name="merged_features")([xz_dense, yl_dense])
-        merged_dense = Dense(merged_units1, activation="relu", name="merged_dense1")(merged)
-        merged_dense = Dropout(dropout_rate, name="dropout1")(merged_dense)
-        merged_dense = Dense(merged_units2, activation="relu", name="merged_dense2")(merged_dense)
-        merged_dense = Dense(merged_units3, activation="relu", name="merged_dense3")(merged_dense)
+        # Merge & head
+        merged = Concatenate(name="concat_all")([x, z_dense, y_dense])
+        h = Dense(head_units, activation="relu", name="head_dense1")(merged)
+        h = Dropout(dropout_rate, name="head_dropout")(h)
+        h = Dense(head_units_2, activation="relu", name="head_dense2")(h)
         
         # Output layer
-        output = Dense(1, activation="sigmoid", name="output")(merged_dense)
+        output = Dense(1, activation="sigmoid", name="output")(h)
         
         # Create model
         model = Model(
-            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input], 
+            inputs=[cluster_input, z_global_input, y_local_input], 
             outputs=output, 
-            name="model2_hyperparameter_tuning"
+            name="model3_hyperparameter_tuning"
         )
         
         # Compile with hyperparameter-tuned learning rate
@@ -237,7 +300,7 @@ class Model2(SmartPixModel):
     
     def makeQuantizedModel(self, bit_configs=None):
         """
-        Build quantized Model2 using QKeras.
+        Build quantized Model3 using QKeras.
         
         Args:
             bit_configs: List of (weight_bits, int_bits) tuples for quantization
@@ -260,70 +323,75 @@ class Model2(SmartPixModel):
             activation_quantizer = quantized_relu(8, 0)  # Always use 8-bit activations
             
             # Input layers
-            x_profile_input = Input(shape=(21,), name="x_profile")
+            cluster_input = Input(shape=(13, 21), name="cluster")
             z_global_input = Input(shape=(1,), name="z_global")
-            y_profile_input = Input(shape=(13,), name="y_profile")
             y_local_input = Input(shape=(1,), name="y_local")
             
-            # x_profile + z_global branch
-            xz_concat = Concatenate(name="xz_concat")([x_profile_input, z_global_input])
-            xz_dense = QDense(
-                32,
+            # Conv2D branch with quantization
+            x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
+            x = QConv2D(
+                filters=self.conv_filters,
+                kernel_size=(self.kernel_rows, self.kernel_cols),
+                padding="same",
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=bias_quantizer,
-                name="xz_dense1"
-            )(xz_concat)
-            xz_dense = QActivation(activation=activation_quantizer, name="xz_relu1")(xz_dense)
+                name=f"conv2d_{self.kernel_rows}x{self.kernel_cols}"
+            )(x)
+            x = QActivation(activation_quantizer, name="conv2d_act")(x)
+            x = MaxPooling2D((2, 2), name="pool2d_1")(x)
+            x = Flatten(name="flatten_vol")(x)
             
-            # y_profile + y_local branch
-            yl_concat = Concatenate(name="yl_concat")([y_profile_input, y_local_input])
-            yl_dense = QDense(
-                32,
-                kernel_quantizer=weight_quantizer,
-                bias_quantizer=bias_quantizer,
-                name="yl_dense1"
-            )(yl_concat)
-            yl_dense = QActivation(activation=activation_quantizer, name="yl_relu1")(yl_dense)
+            # Scalar branches with quantization
+            z_dense = QDense(
+                self.z_units, 
+                kernel_quantizer=weight_quantizer, 
+                bias_quantizer=bias_quantizer, 
+                name="dense_z"
+            )(z_global_input)
+            z_dense = QActivation(activation_quantizer, name="dense_z_act")(z_dense)
             
-            # Merge both branches
-            merged = Concatenate(name="merged_features")([xz_dense, yl_dense])
-            merged_dense = QDense(
-                128,
-                kernel_quantizer=weight_quantizer,
-                bias_quantizer=bias_quantizer,
-                name="merged_dense1"
+            y_dense = QDense(
+                self.y_units, 
+                kernel_quantizer=weight_quantizer, 
+                bias_quantizer=bias_quantizer, 
+                name="dense_y"
+            )(y_local_input)
+            y_dense = QActivation(activation_quantizer, name="dense_y_act")(y_dense)
+            
+            # Merge & head with quantization
+            merged = Concatenate(name="concat_all")([x, z_dense, y_dense])
+            
+            h = QDense(
+                self.head_units, 
+                kernel_quantizer=weight_quantizer, 
+                bias_quantizer=bias_quantizer, 
+                name="head_dense1"
             )(merged)
-            merged_dense = QActivation(activation=activation_quantizer, name="merged_relu1")(merged_dense)
-            merged_dense = Dropout(self.dropout_rate, name="dropout1")(merged_dense)  # Add dropout to match non-quantized
-            merged_dense = QDense(
-                64,
-                kernel_quantizer=weight_quantizer,
-                bias_quantizer=bias_quantizer,
-                name="merged_dense2"
-            )(merged_dense)
-            merged_dense = QActivation(activation=activation_quantizer, name="merged_relu2")(merged_dense)
-            merged_dense = QDense(
-                32,
-                kernel_quantizer=weight_quantizer,
-                bias_quantizer=bias_quantizer,
-                name="merged_dense3"
-            )(merged_dense)
-            merged_dense = QActivation(activation=activation_quantizer, name="merged_relu3")(merged_dense)
+            h = QActivation(activation_quantizer, name="head_dense1_act")(h)
+            h = Dropout(self.dropout_rate, name="head_dropout")(h)
+            
+            h = QDense(
+                self.head_units_2, 
+                kernel_quantizer=weight_quantizer, 
+                bias_quantizer=bias_quantizer, 
+                name="head_dense2"
+            )(h)
+            h = QActivation(activation_quantizer, name="head_dense2_act")(h)
             
             # Output layer
-            output_dense = QDense(
-                1,
-                kernel_quantizer=weight_quantizer,
-                bias_quantizer=bias_quantizer,
-                name="output_dense"
-            )(merged_dense)
-            output = QActivation("smooth_sigmoid", name="output")(output_dense)
+            output = QDense(
+                1, 
+                activation="sigmoid", 
+                kernel_quantizer=weight_quantizer, 
+                bias_quantizer=bias_quantizer, 
+                name="output"
+            )(h)
             
             # Create model
             model = Model(
-                inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input], 
+                inputs=[cluster_input, z_global_input, y_local_input], 
                 outputs=output, 
-                name=f"model2_{config_name}"
+                name=f"model3_{config_name}"
             )
             
             # Compile model
@@ -340,7 +408,7 @@ class Model2(SmartPixModel):
         self.models["Quantized"] = quantized_models
         self.quantized_model = quantized_models  # For backward compatibility
         
-        print(f"✓ Built {len(quantized_models)} quantized Model2 variants")
+        print(f"✓ Built {len(quantized_models)} quantized Model3 variants")
         return quantized_models
     
     def buildModel(self, model_type="unquantized", bit_configs=None):
@@ -360,13 +428,13 @@ class Model2(SmartPixModel):
     
     def runHyperparameterTuning(self, max_trials=50, executions_per_trial=2):
         """
-        Run hyperparameter tuning for Model2.
+        Run hyperparameter tuning for Model3.
         
         Args:
             max_trials: Maximum number of trials for hyperparameter search
             executions_per_trial: Number of executions per trial
         """
-        print("Starting hyperparameter tuning for Model2...")
+        print("Starting hyperparameter tuning for Model3...")
         
         # Load data if not already loaded
         if self.training_generator is None:
@@ -378,7 +446,7 @@ class Model2(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=max_trials,
             executions_per_trial=executions_per_trial,
-            project_name="model2_hyperparameter_search",
+            project_name="model3_hyperparameter_search",
             directory="./hyperparameter_tuning"
         )
         
@@ -411,15 +479,15 @@ class Model2(SmartPixModel):
         
         return best_model, results
     
-    def trainModel(self, epochs=100, batch_size=32, learning_rate=1e-3, 
-                   save_best=True, early_stopping_patience=20):
+    def trainModel(self, epochs=200, batch_size=32, learning_rate=None, 
+                   save_best=True, early_stopping_patience=35):
         """
-        Train the Model2.
+        Train the Model3.
         
         Args:
             epochs: Number of training epochs
-            batch_size: Batch size for training
-            learning_rate: Learning rate for optimizer
+            batch_size: Batch size for training (not used, defined in data generator)
+            learning_rate: Learning rate for optimizer (if None, uses polynomial decay)
             save_best: Whether to save the best model
             early_stopping_patience: Patience for early stopping
         """
@@ -429,13 +497,26 @@ class Model2(SmartPixModel):
         if self.training_generator is None:
             self.loadTfRecords()
         
-        print(f"Training Model2 for {epochs} epochs...")
+        print(f"Training Model3 for {epochs} epochs...")
+        
+        # Setup learning rate schedule
+        if learning_rate is None:
+            decay_steps = 30 * 200
+            lr_schedule = PolynomialDecay(
+                initial_learning_rate=self.initial_lr,
+                decay_steps=decay_steps,
+                end_learning_rate=self.end_lr,
+                power=self.power
+            )
+            optimizer = Adam(learning_rate=lr_schedule)
+        else:
+            optimizer = Adam(learning_rate=learning_rate)
         
         # Compile model
         self.model.compile(
-            optimizer=Adam(learning_rate=learning_rate),
+            optimizer=optimizer,
             loss="binary_crossentropy",
-            metrics=["binary_accuracy"]
+            metrics=["accuracy"]
         )
         
         # Create callbacks
@@ -449,10 +530,10 @@ class Model2(SmartPixModel):
             ))
         
         if save_best:
-            # Use .h5 format instead of .keras to avoid the 'options' error
+            # Use .h5 format to avoid compatibility issues
             callbacks.append(ModelCheckpoint(
                 filepath=f'./{self.modelName}_best.h5',
-                monitor='val_binary_accuracy',
+                monitor='val_accuracy',
                 save_best_only=True,
                 mode='max'
             ))
@@ -466,12 +547,12 @@ class Model2(SmartPixModel):
             verbose=1
         )
         
-        print("✓ Model2 training completed!")
+        print("✓ Model3 training completed!")
         return self.training_history
     
     def evaluate(self, test_generator=None):
         """
-        Evaluate the trained Model2.
+        Evaluate the trained Model3.
         
         Args:
             test_generator: Optional test data generator
@@ -486,7 +567,7 @@ class Model2(SmartPixModel):
             self.loadTfRecords()
             eval_generator = self.validation_generator
         
-        print("Evaluating Model2...")
+        print("Evaluating Model3...")
         
         # Get predictions
         predictions = self.model.predict(eval_generator, verbose=1)
@@ -510,7 +591,7 @@ class Model2(SmartPixModel):
             'tpr': tpr.tolist()
         }
         
-        print(f"✓ Model2 evaluation completed!")
+        print(f"✓ Model3 evaluation completed!")
         print(f"  Test Loss: {test_loss:.4f}")
         print(f"  Test Accuracy: {test_accuracy:.4f}")
         print(f"  ROC AUC: {roc_auc:.4f}")
@@ -537,9 +618,9 @@ class Model2(SmartPixModel):
         fig, axes = plt.subplots(1, 2, figsize=(15, 5))
         
         # Plot accuracy
-        axes[0].plot(self.training_history.history['binary_accuracy'], label='Training')
-        axes[0].plot(self.training_history.history['val_binary_accuracy'], label='Validation')
-        axes[0].set_title('Model2 Accuracy')
+        axes[0].plot(self.training_history.history['accuracy'], label='Training')
+        axes[0].plot(self.training_history.history['val_accuracy'], label='Validation')
+        axes[0].set_title('Model3 Accuracy')
         axes[0].set_xlabel('Epoch')
         axes[0].set_ylabel('Accuracy')
         axes[0].legend()
@@ -548,7 +629,7 @@ class Model2(SmartPixModel):
         # Plot loss
         axes[1].plot(self.training_history.history['loss'], label='Training')
         axes[1].plot(self.training_history.history['val_loss'], label='Validation')
-        axes[1].set_title('Model2 Loss')
+        axes[1].set_title('Model3 Loss')
         axes[1].set_xlabel('Epoch')
         axes[1].set_ylabel('Loss')
         axes[1].legend()
@@ -557,8 +638,8 @@ class Model2(SmartPixModel):
         plt.tight_layout()
         
         if save_plots:
-            plt.savefig(f"{output_dir}/model2_training_history.png", dpi=300, bbox_inches='tight')
-            print(f"Training history plot saved to {output_dir}/model2_training_history.png")
+            plt.savefig(f"{output_dir}/model3_training_history.png", dpi=300, bbox_inches='tight')
+            print(f"Training history plot saved to {output_dir}/model3_training_history.png")
         
         plt.show()
         
@@ -570,21 +651,21 @@ class Model2(SmartPixModel):
             plt.plot([0, 1], [0, 1], 'k--', label='Random')
             plt.xlabel('False Positive Rate')
             plt.ylabel('True Positive Rate')
-            plt.title('Model2 ROC Curve')
+            plt.title('Model3 ROC Curve')
             plt.legend()
             plt.grid(True)
             
             if save_plots:
-                plt.savefig(f"{output_dir}/model2_roc_curve.png", dpi=300, bbox_inches='tight')
-                print(f"ROC curve plot saved to {output_dir}/model2_roc_curve.png")
+                plt.savefig(f"{output_dir}/model3_roc_curve.png", dpi=300, bbox_inches='tight')
+                print(f"ROC curve plot saved to {output_dir}/model3_roc_curve.png")
             
             plt.show()
     
     def runAllStuff(self):
         """
-        Run the complete Model2 pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
+        Run the complete Model3 pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
         """
-        print("=== Running Complete Model2 Pipeline with Quantization Testing ===")
+        print("=== Running Complete Model3 Pipeline with Quantization Testing ===")
         
         # Load data
         print("1. Loading TFRecords...")
@@ -621,7 +702,7 @@ class Model2(SmartPixModel):
         self.plotModel(save_plots=True, output_dir="./plots/non_quantized")
         
         # Test quantized models
-        bit_configs = [(8, 0), (6, 0), (4, 0)]  # Test 8, 6, and 4-bit quantization
+        bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
         
         for weight_bits, int_bits in bit_configs:
             print(f"\n3. Testing {weight_bits}-bit Quantized Model...")
@@ -643,6 +724,7 @@ class Model2(SmartPixModel):
                 load_records=True, 
                 tf_records_dir=trainDir, 
                 x_feature_description=self.x_feature_description,
+                time_stamps=self.time_stamps,
                 batch_size=batch_size
             )
             
@@ -650,6 +732,7 @@ class Model2(SmartPixModel):
                 load_records=True, 
                 tf_records_dir=valDir, 
                 x_feature_description=self.x_feature_description,
+                time_stamps=self.time_stamps,
                 batch_size=batch_size
             )
             
@@ -661,10 +744,19 @@ class Model2(SmartPixModel):
             
             print(f"3c. Training {weight_bits}-bit quantized model...")
             # Compile and train the quantized model
+            decay_steps = 30 * 200
+            lr_schedule = PolynomialDecay(
+                initial_learning_rate=self.initial_lr,
+                decay_steps=decay_steps,
+                end_learning_rate=self.end_lr,
+                power=self.power
+            )
+            optimizer = Adam(learning_rate=lr_schedule)
+            
             quantized_model.compile(
-                optimizer='adam',
+                optimizer=optimizer,
                 loss="binary_crossentropy",
-                metrics=["binary_accuracy"],
+                metrics=["accuracy"],
                 run_eagerly=True
             )
             
@@ -689,6 +781,7 @@ class Model2(SmartPixModel):
                 load_records=True, 
                 tf_records_dir=valDir, 
                 x_feature_description=self.x_feature_description,
+                time_stamps=self.time_stamps,
                 batch_size=batch_size
             )
             
@@ -700,6 +793,7 @@ class Model2(SmartPixModel):
                 load_records=True, 
                 tf_records_dir=valDir, 
                 x_feature_description=self.x_feature_description,
+                time_stamps=self.time_stamps,
                 batch_size=batch_size
             )
             
@@ -724,21 +818,28 @@ class Model2(SmartPixModel):
             
             # Plot quantized results
             print(f"3e. Plotting {weight_bits}-bit quantized results...")
-            # Create a temporary model2 instance for plotting
-            temp_model2 = Model2(
+            # Create a temporary model3 instance for plotting
+            temp_model3 = Model3(
                 tfRecordFolder=self.tfRecordFolder,
+                conv_filters=self.conv_filters,
+                kernel_rows=self.kernel_rows,
+                kernel_cols=self.kernel_cols,
+                z_units=self.z_units,
+                y_units=self.y_units,
+                head_units=self.head_units,
+                head_units_2=self.head_units_2,
                 dropout_rate=self.dropout_rate
             )
-            temp_model2.model = quantized_model
-            temp_model2.training_history = history
-            temp_model2.evaluation_results = {
+            temp_model3.model = quantized_model
+            temp_model3.training_history = history
+            temp_model3.evaluation_results = {
                 'test_loss': float(test_loss),
                 'test_accuracy': float(test_accuracy),
                 'roc_auc': float(roc_auc_score),
                 'fpr': fpr.tolist(),
                 'tpr': tpr.tolist()
             }
-            temp_model2.plotModel(save_plots=True, output_dir=f"./plots/{weight_bits}bit")
+            temp_model3.plotModel(save_plots=True, output_dir=f"./plots/{weight_bits}bit")
         
         # Create results summary
         print("\n4. Results Summary:")
@@ -765,33 +866,37 @@ class Model2(SmartPixModel):
         print(f"ROC AUC: {best_result['roc_auc']:.4f}")
         
         # Save results to CSV
-        import pandas as pd
-        from datetime import datetime
-        
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        results_file = f"model2_quantization_results_{timestamp}.csv"
+        results_file = f"model3_quantization_results_{timestamp}.csv"
         results_df = pd.DataFrame(results)
         results_df.to_csv(results_file, index=False)
         print(f"\nResults saved to: {results_file}")
         
-        print("\n=== Model2 Quantization Pipeline Completed! ===")
+        print("\n=== Model3 Quantization Pipeline Completed! ===")
         return results
 
 
 def main():
-    """Example usage of Model2"""
-    print("=== Model2 Example Usage ===")
+    """Example usage of Model3"""
+    print("=== Model3 Example Usage ===")
     
-    # Initialize Model2
-    model2 = Model2(
+    # Initialize Model3
+    model3 = Model3(
         tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
-        dropout_rate=0.1
+        conv_filters=32,
+        kernel_rows=3,
+        kernel_cols=5,
+        z_units=16,
+        y_units=32,
+        head_units=200,
+        head_units_2=100,
+        dropout_rate=0.0
     )
     
     # Run complete pipeline
-    results = model2.runAllStuff()
+    results = model3.runAllStuff()
     
-    print("Model2 quantization testing completed successfully!")
+    print("Model3 quantization testing completed successfully!")
 
 
 if __name__ == "__main__":
