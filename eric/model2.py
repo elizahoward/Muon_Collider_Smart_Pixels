@@ -28,6 +28,7 @@ import sys
 import json
 from datetime import datetime
 from sklearn.metrics import roc_curve, auc
+import pandas as pd
 
 # Add the parent directory to path to import the base class and data generator
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/MuC_Smartpix_ML/')
@@ -65,7 +66,15 @@ class Model2(SmartPixModel):
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,
-                 dropout_rate: float = 0.1):
+                 xz_units: int = 32,
+                 yl_units: int = 32,
+                 merged_units_1: int = 128,
+                 merged_units_2: int = 64,
+                 merged_units_3: int = 32,
+                 dropout_rate: float = 0.1,
+                 initial_lr: float = 1e-3,
+                 end_lr: float = 1e-4,
+                 power: int = 2):
         """
         Initialize Model2.
         
@@ -74,12 +83,32 @@ class Model2(SmartPixModel):
             nBits: List of bit configurations for quantization
             loadModel: Whether to load a pre-trained model
             modelPath: Path to saved model (if loadModel=True)
+            xz_units: Units in x_profile + z_global branch
+            yl_units: Units in y_profile + y_local branch
+            merged_units_1: Units in first merged dense layer
+            merged_units_2: Units in second merged dense layer
+            merged_units_3: Units in third merged dense layer
             dropout_rate: Dropout rate for regularization
+            initial_lr: Initial learning rate
+            end_lr: End learning rate for polynomial decay
+            power: Power for polynomial decay
         """
         super().__init__(tfRecordFolder, nBits, loadModel, modelPath)
         
         self.modelName = "Model2"
+        
+        # Architecture parameters
+        self.xz_units = xz_units
+        self.yl_units = yl_units
+        self.merged_units_1 = merged_units_1
+        self.merged_units_2 = merged_units_2
+        self.merged_units_3 = merged_units_3
         self.dropout_rate = dropout_rate
+        
+        # Learning rate parameters
+        self.initial_lr = initial_lr
+        self.end_lr = end_lr
+        self.power = power
         
         # Model2 specific feature configuration
         self.x_feature_description = ['x_profile', 'z_global', 'y_profile', 'y_local']
@@ -138,10 +167,16 @@ class Model2(SmartPixModel):
         Build the unquantized Model2 architecture.
         
         Architecture:
-        - x_profile (21) + z_global (1) -> 32 units
-        - y_profile (13) + y_local (1) -> 32 units  
-        - Concatenate -> 128 -> 64 -> 32 -> 1
+        - x_profile (21) + z_global (1) -> xz_units
+        - y_profile (13) + y_local (1) -> yl_units  
+        - Concatenate -> merged_units_1 -> merged_units_2 -> merged_units_3 -> 1
         """
+        print("Building unquantized Model2...")
+        print(f"  - XZ branch: {self.xz_units} units")
+        print(f"  - YL branch: {self.yl_units} units")
+        print(f"  - Merged dense layers: {self.merged_units_1} -> {self.merged_units_2} -> {self.merged_units_3}")
+        print(f"  - Dropout: {self.dropout_rate}")
+        
         # Input layers
         x_profile_input = Input(shape=(21,), name="x_profile")
         z_global_input = Input(shape=(1,), name="z_global")
@@ -150,18 +185,18 @@ class Model2(SmartPixModel):
         
         # x_profile + z_global branch
         xz_concat = Concatenate(name="xz_concat")([x_profile_input, z_global_input])
-        xz_dense = Dense(32, activation="relu", name="xz_dense1")(xz_concat)
+        xz_dense = Dense(self.xz_units, activation="relu", name="xz_dense1")(xz_concat)
         
         # y_profile + y_local branch
         yl_concat = Concatenate(name="yl_concat")([y_profile_input, y_local_input])
-        yl_dense = Dense(32, activation="relu", name="yl_dense1")(yl_concat)
+        yl_dense = Dense(self.yl_units, activation="relu", name="yl_dense1")(yl_concat)
         
         # Merge both branches
         merged = Concatenate(name="merged_features")([xz_dense, yl_dense])
-        merged_dense = Dense(128, activation="relu", name="merged_dense1")(merged)
+        merged_dense = Dense(self.merged_units_1, activation="relu", name="merged_dense1")(merged)
         merged_dense = Dropout(self.dropout_rate, name="dropout1")(merged_dense)
-        merged_dense = Dense(64, activation="relu", name="merged_dense2")(merged_dense)
-        merged_dense = Dense(32, activation="relu", name="merged_dense3")(merged_dense)
+        merged_dense = Dense(self.merged_units_2, activation="relu", name="merged_dense2")(merged_dense)
+        merged_dense = Dense(self.merged_units_3, activation="relu", name="merged_dense3")(merged_dense)
         
         # Output layer
         output = Dense(1, activation="sigmoid", name="output")(merged_dense)
@@ -268,7 +303,7 @@ class Model2(SmartPixModel):
             # x_profile + z_global branch
             xz_concat = Concatenate(name="xz_concat")([x_profile_input, z_global_input])
             xz_dense = QDense(
-                32,
+                self.xz_units,
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=bias_quantizer,
                 name="xz_dense1"
@@ -278,7 +313,7 @@ class Model2(SmartPixModel):
             # y_profile + y_local branch
             yl_concat = Concatenate(name="yl_concat")([y_profile_input, y_local_input])
             yl_dense = QDense(
-                32,
+                self.yl_units,
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=bias_quantizer,
                 name="yl_dense1"
@@ -288,7 +323,7 @@ class Model2(SmartPixModel):
             # Merge both branches
             merged = Concatenate(name="merged_features")([xz_dense, yl_dense])
             merged_dense = QDense(
-                128,
+                self.merged_units_1,
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=bias_quantizer,
                 name="merged_dense1"
@@ -296,14 +331,14 @@ class Model2(SmartPixModel):
             merged_dense = QActivation(activation=activation_quantizer, name="merged_relu1")(merged_dense)
             merged_dense = Dropout(self.dropout_rate, name="dropout1")(merged_dense)  # Add dropout to match non-quantized
             merged_dense = QDense(
-                64,
+                self.merged_units_2,
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=bias_quantizer,
                 name="merged_dense2"
             )(merged_dense)
             merged_dense = QActivation(activation=activation_quantizer, name="merged_relu2")(merged_dense)
             merged_dense = QDense(
-                32,
+                self.merged_units_3,
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=bias_quantizer,
                 name="merged_dense3"
@@ -411,15 +446,15 @@ class Model2(SmartPixModel):
         
         return best_model, results
     
-    def trainModel(self, epochs=100, batch_size=32, learning_rate=1e-3, 
+    def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
                    save_best=True, early_stopping_patience=20):
         """
         Train the Model2.
         
         Args:
             epochs: Number of training epochs
-            batch_size: Batch size for training
-            learning_rate: Learning rate for optimizer
+            batch_size: Batch size for training (not used, defined in data generator)
+            learning_rate: Learning rate for optimizer (if None, uses polynomial decay)
             save_best: Whether to save the best model
             early_stopping_patience: Patience for early stopping
         """
@@ -431,9 +466,23 @@ class Model2(SmartPixModel):
         
         print(f"Training Model2 for {epochs} epochs...")
         
+        # Setup learning rate schedule
+        if learning_rate is None:
+            from tensorflow.keras.optimizers.schedules import PolynomialDecay
+            decay_steps = 30 * 200
+            lr_schedule = PolynomialDecay(
+                initial_learning_rate=self.initial_lr,
+                decay_steps=decay_steps,
+                end_learning_rate=self.end_lr,
+                power=self.power
+            )
+            optimizer = Adam(learning_rate=lr_schedule)
+        else:
+            optimizer = Adam(learning_rate=learning_rate)
+        
         # Compile model
         self.model.compile(
-            optimizer=Adam(learning_rate=learning_rate),
+            optimizer=optimizer,
             loss="binary_crossentropy",
             metrics=["binary_accuracy"]
         )
@@ -586,6 +635,18 @@ class Model2(SmartPixModel):
         """
         print("=== Running Complete Model2 Pipeline with Quantization Testing ===")
         
+        # Create output directory with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_dir = f"model2_results_{timestamp}"
+        os.makedirs(output_dir, exist_ok=True)
+        print(f"All results will be saved to: {output_dir}/")
+        
+        # Create subdirectories
+        models_dir = os.path.join(output_dir, "models")
+        plots_dir = os.path.join(output_dir, "plots")
+        os.makedirs(models_dir, exist_ok=True)
+        os.makedirs(plots_dir, exist_ok=True)
+        
         # Load data
         print("1. Loading TFRecords...")
         self.loadTfRecords()
@@ -604,6 +665,12 @@ class Model2(SmartPixModel):
         print("2c. Evaluating unquantized model...")
         eval_results = self.evaluate()
         
+        # Save non-quantized model
+        print("2d. Saving unquantized model...")
+        model_save_path = os.path.join(models_dir, "model2_unquantized.h5")
+        self.model.save(model_save_path)
+        print(f"Unquantized model saved to: {model_save_path}")
+        
         # Store non-quantized results
         results.append({
             'model_type': 'non_quantized',
@@ -611,17 +678,19 @@ class Model2(SmartPixModel):
             'integer_bits': 'N/A',
             'test_accuracy': eval_results['test_accuracy'],
             'test_loss': eval_results['test_loss'],
-            'roc_auc': eval_results['roc_auc']
+            'roc_auc': eval_results['roc_auc'],
+            'model_path': model_save_path
         })
         
         print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
         
         # Plot non-quantized results
-        print("2d. Plotting non-quantized results...")
-        self.plotModel(save_plots=True, output_dir="./plots/non_quantized")
+        print("2e. Plotting non-quantized results...")
+        plot_dir_unquant = os.path.join(plots_dir, "non_quantized")
+        self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
         
         # Test quantized models
-        bit_configs = [(8, 0), (6, 0), (4, 0)]  # Test 8, 6, and 4-bit quantization
+        bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
         
         for weight_bits, int_bits in bit_configs:
             print(f"\n3. Testing {weight_bits}-bit Quantized Model...")
@@ -661,8 +730,18 @@ class Model2(SmartPixModel):
             
             print(f"3c. Training {weight_bits}-bit quantized model...")
             # Compile and train the quantized model
+            from tensorflow.keras.optimizers.schedules import PolynomialDecay
+            decay_steps = 30 * 200
+            lr_schedule = PolynomialDecay(
+                initial_learning_rate=self.initial_lr,
+                decay_steps=decay_steps,
+                end_learning_rate=self.end_lr,
+                power=self.power
+            )
+            optimizer = Adam(learning_rate=lr_schedule)
+            
             quantized_model.compile(
-                optimizer='adam',
+                optimizer=optimizer,
                 loss="binary_crossentropy",
                 metrics=["binary_accuracy"],
                 run_eagerly=True
@@ -710,6 +789,12 @@ class Model2(SmartPixModel):
             fpr, tpr, thresholds = roc_curve(true_labels, predictions)
             roc_auc_score = auc(fpr, tpr)
             
+            # Save quantized model
+            print(f"3e. Saving {weight_bits}-bit quantized model...")
+            model_save_path = os.path.join(models_dir, f"model2_quantized_{weight_bits}bit.h5")
+            quantized_model.save(model_save_path)
+            print(f"{weight_bits}-bit model saved to: {model_save_path}")
+            
             # Store quantized results
             results.append({
                 'model_type': 'quantized',
@@ -717,16 +802,22 @@ class Model2(SmartPixModel):
                 'integer_bits': int_bits,
                 'test_accuracy': float(test_accuracy),
                 'test_loss': float(test_loss),
-                'roc_auc': float(roc_auc_score)
+                'roc_auc': float(roc_auc_score),
+                'model_path': model_save_path
             })
             
             print(f"{weight_bits}-bit results: Acc={test_accuracy:.4f}, AUC={roc_auc_score:.4f}")
             
             # Plot quantized results
-            print(f"3e. Plotting {weight_bits}-bit quantized results...")
+            print(f"3f. Plotting {weight_bits}-bit quantized results...")
             # Create a temporary model2 instance for plotting
             temp_model2 = Model2(
                 tfRecordFolder=self.tfRecordFolder,
+                xz_units=self.xz_units,
+                yl_units=self.yl_units,
+                merged_units_1=self.merged_units_1,
+                merged_units_2=self.merged_units_2,
+                merged_units_3=self.merged_units_3,
                 dropout_rate=self.dropout_rate
             )
             temp_model2.model = quantized_model
@@ -738,7 +829,8 @@ class Model2(SmartPixModel):
                 'fpr': fpr.tolist(),
                 'tpr': tpr.tolist()
             }
-            temp_model2.plotModel(save_plots=True, output_dir=f"./plots/{weight_bits}bit")
+            plot_dir_quant = os.path.join(plots_dir, f"{weight_bits}bit")
+            temp_model2.plotModel(save_plots=True, output_dir=plot_dir_quant)
         
         # Create results summary
         print("\n4. Results Summary:")
@@ -765,16 +857,17 @@ class Model2(SmartPixModel):
         print(f"ROC AUC: {best_result['roc_auc']:.4f}")
         
         # Save results to CSV
-        import pandas as pd
-        from datetime import datetime
-        
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        results_file = f"model2_quantization_results_{timestamp}.csv"
+        results_file = os.path.join(output_dir, "quantization_results.csv")
         results_df = pd.DataFrame(results)
         results_df.to_csv(results_file, index=False)
         print(f"\nResults saved to: {results_file}")
         
-        print("\n=== Model2 Quantization Pipeline Completed! ===")
+        print(f"\n=== Model2 Quantization Pipeline Completed! ===")
+        print(f"All outputs saved to: {output_dir}/")
+        print(f"  - Models: {models_dir}/")
+        print(f"  - Plots: {plots_dir}/")
+        print(f"  - Results CSV: {results_file}")
+        
         return results
 
 
@@ -785,7 +878,15 @@ def main():
     # Initialize Model2
     model2 = Model2(
         tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
-        dropout_rate=0.1
+        xz_units=32,
+        yl_units=32,
+        merged_units_1=128,
+        merged_units_2=64,
+        merged_units_3=32,
+        dropout_rate=0.1,
+        initial_lr=1e-3,
+        end_lr=1e-4,
+        power=2
     )
     
     # Run complete pipeline

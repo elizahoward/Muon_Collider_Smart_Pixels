@@ -667,6 +667,18 @@ class Model3(SmartPixModel):
         """
         print("=== Running Complete Model3 Pipeline with Quantization Testing ===")
         
+        # Create output directory with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_dir = f"model3_results_{timestamp}"
+        os.makedirs(output_dir, exist_ok=True)
+        print(f"All results will be saved to: {output_dir}/")
+        
+        # Create subdirectories
+        models_dir = os.path.join(output_dir, "models")
+        plots_dir = os.path.join(output_dir, "plots")
+        os.makedirs(models_dir, exist_ok=True)
+        os.makedirs(plots_dir, exist_ok=True)
+        
         # Load data
         print("1. Loading TFRecords...")
         self.loadTfRecords()
@@ -685,6 +697,12 @@ class Model3(SmartPixModel):
         print("2c. Evaluating unquantized model...")
         eval_results = self.evaluate()
         
+        # Save non-quantized model
+        print("2d. Saving unquantized model...")
+        model_save_path = os.path.join(models_dir, "model3_unquantized.h5")
+        self.model.save(model_save_path)
+        print(f"Unquantized model saved to: {model_save_path}")
+        
         # Store non-quantized results
         results.append({
             'model_type': 'non_quantized',
@@ -692,14 +710,16 @@ class Model3(SmartPixModel):
             'integer_bits': 'N/A',
             'test_accuracy': eval_results['test_accuracy'],
             'test_loss': eval_results['test_loss'],
-            'roc_auc': eval_results['roc_auc']
+            'roc_auc': eval_results['roc_auc'],
+            'model_path': model_save_path
         })
         
         print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
         
         # Plot non-quantized results
-        print("2d. Plotting non-quantized results...")
-        self.plotModel(save_plots=True, output_dir="./plots/non_quantized")
+        print("2e. Plotting non-quantized results...")
+        plot_dir_unquant = os.path.join(plots_dir, "non_quantized")
+        self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
         
         # Test quantized models
         bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
@@ -804,6 +824,12 @@ class Model3(SmartPixModel):
             fpr, tpr, thresholds = roc_curve(true_labels, predictions)
             roc_auc_score = auc(fpr, tpr)
             
+            # Save quantized model
+            print(f"3e. Saving {weight_bits}-bit quantized model...")
+            model_save_path = os.path.join(models_dir, f"model3_quantized_{weight_bits}bit.h5")
+            quantized_model.save(model_save_path)
+            print(f"{weight_bits}-bit model saved to: {model_save_path}")
+            
             # Store quantized results
             results.append({
                 'model_type': 'quantized',
@@ -811,13 +837,14 @@ class Model3(SmartPixModel):
                 'integer_bits': int_bits,
                 'test_accuracy': float(test_accuracy),
                 'test_loss': float(test_loss),
-                'roc_auc': float(roc_auc_score)
+                'roc_auc': float(roc_auc_score),
+                'model_path': model_save_path
             })
             
             print(f"{weight_bits}-bit results: Acc={test_accuracy:.4f}, AUC={roc_auc_score:.4f}")
             
             # Plot quantized results
-            print(f"3e. Plotting {weight_bits}-bit quantized results...")
+            print(f"3f. Plotting {weight_bits}-bit quantized results...")
             # Create a temporary model3 instance for plotting
             temp_model3 = Model3(
                 tfRecordFolder=self.tfRecordFolder,
@@ -839,7 +866,8 @@ class Model3(SmartPixModel):
                 'fpr': fpr.tolist(),
                 'tpr': tpr.tolist()
             }
-            temp_model3.plotModel(save_plots=True, output_dir=f"./plots/{weight_bits}bit")
+            plot_dir_quant = os.path.join(plots_dir, f"{weight_bits}bit")
+            temp_model3.plotModel(save_plots=True, output_dir=plot_dir_quant)
         
         # Create results summary
         print("\n4. Results Summary:")
@@ -866,13 +894,17 @@ class Model3(SmartPixModel):
         print(f"ROC AUC: {best_result['roc_auc']:.4f}")
         
         # Save results to CSV
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        results_file = f"model3_quantization_results_{timestamp}.csv"
+        results_file = os.path.join(output_dir, "quantization_results.csv")
         results_df = pd.DataFrame(results)
         results_df.to_csv(results_file, index=False)
         print(f"\nResults saved to: {results_file}")
         
-        print("\n=== Model3 Quantization Pipeline Completed! ===")
+        print(f"\n=== Model3 Quantization Pipeline Completed! ===")
+        print(f"All outputs saved to: {output_dir}/")
+        print(f"  - Models: {models_dir}/")
+        print(f"  - Plots: {plots_dir}/")
+        print(f"  - Results CSV: {results_file}")
+        
         return results
 
 

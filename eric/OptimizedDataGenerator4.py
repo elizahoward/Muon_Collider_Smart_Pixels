@@ -94,6 +94,7 @@ class OptimizedDataGenerator(tf.keras.utils.Sequence):
         seed: Random seed for shuffling.
         quantize: Whether to quantize the data.
         """
+        
         if tf_records_dir is None:
             raise ValueError(f"tf_records_dir is None")
 
