@@ -352,7 +352,7 @@ class Model2(SmartPixModel):
                 bias_quantizer=bias_quantizer,
                 name="output_dense"
             )(merged_dense)
-            output = QActivation("smooth_sigmoid", name="output")(output_dense)
+            output = QActivation("hard_sigmoid", name="output")(output_dense)
             
             # Create model
             model = Model(
@@ -660,7 +660,7 @@ class Model2(SmartPixModel):
         self.buildModel("unquantized")
         
         print("2b. Training unquantized model...")
-        self.trainModel(epochs=20, early_stopping_patience=15, save_best=False)
+        self.trainModel(epochs=1, early_stopping_patience=15, save_best=False)
         
         print("2c. Evaluating unquantized model...")
         eval_results = self.evaluate()
@@ -751,7 +751,7 @@ class Model2(SmartPixModel):
             history = quantized_model.fit(
                 fresh_train_gen,
                 validation_data=fresh_val_gen,
-                epochs=20,
+                epochs=1,
                 callbacks=[
                     tf.keras.callbacks.EarlyStopping(
                         monitor='val_loss',
