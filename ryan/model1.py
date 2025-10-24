@@ -30,10 +30,8 @@ class Model1(SmartPixModel):
         self.tfRecordFolder = tfRecordFolder
         self.modelName = "Model 1" # for other models, e.g., Model 1, Model 2, etc.
         self.model = None
-        self.unquantized_history = None
-
+        self.histories = {}
         self.quantized_model = None
-        self.quantized_history = None
         self.hyperparameterModel = None
         self.trainODG = None
         self.validationODG = None
@@ -266,7 +264,7 @@ class Model1(SmartPixModel):
                             metrics=['binary_accuracy'],
                             run_eagerly=True
                             )
-        self.unquantized_history = self.model.fit(x=self.trainODG,validation_data=self.validationODG, callbacks=callbacks,epochs=100)
+        self.histories["unquantized"] = self.model.fit(x=self.trainODG,validation_data=self.validationODG, callbacks=callbacks,epochs=100)
 
 
     def trainQuantizedModel(self): # in the input, specify the learning rate scheduler, etc.
@@ -277,31 +275,11 @@ class Model1(SmartPixModel):
                             metrics=['binary_accuracy'],
                             run_eagerly=True
                             )
-        self.quantized_history = self.quantized_model.fit(x=self.trainODG,validation_data=self.validationODG, callbacks=callbacks,epochs=100)
+        self.histories["quantized"] = self.quantized_model.fit(x=self.trainODG,validation_data=self.validationODG, callbacks=callbacks,epochs=100)
 
     #plot based on history
-    def plotUnquantizedModel(self):
-        def plotModelHistory(history,modelNum = -999):
-            plt.subplot(211)
-            # Plot training & validation loss values
-            plt.plot(history.history['loss'],label="Train")
-            plt.plot(history.history['val_loss'],label="Validation")
-            plt.title(f'Model {modelNum} loss and accuracy')
-            plt.ylabel('Loss')
-            # plt.xlabel('Epoch')
-            plt.legend()
-            plt.subplot(212)
-            # Plot training & validation accuracy values
-            plt.plot(history.history['binary_accuracy'],label="Train")
-            plt.plot(history.history['val_binary_accuracy'],label="Validation")
-            # plt.title(f'Model {modelNum} accuracy')
-            plt.ylabel('Accuracy')
-            plt.xlabel('Epoch')
-            plt.legend(loc='upper left')
-            plt.show()
-        plotModelHistory(self.unquantized_history, 1)
+    def plotHistories(self):
 
-    def plotQuantizedModel(self):
         def plotModelHistory(history,modelNum = -999):
             plt.subplot(211)
             # Plot training & validation loss values
@@ -320,7 +298,10 @@ class Model1(SmartPixModel):
             plt.xlabel('Epoch')
             plt.legend(loc='upper left')
             plt.show()
-        plotModelHistory(self.quantized_history, 1)
+        if self.model is not None:
+            plotModelHistory(self.histories["unquantized"], 1)
+        if self.quantized_model is not None:
+            plotModelHistory(self.histories["quantized"], 2)
 
 
     # Evaluate the model
