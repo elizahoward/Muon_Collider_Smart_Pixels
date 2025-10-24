@@ -228,12 +228,12 @@ class Model2(SmartPixModel):
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
-        xz_units = hp.Int('xz_units', min_value=16, max_value=64, step=16)
-        yl_units = hp.Int('yl_units', min_value=16, max_value=64, step=16)
-        merged_units1 = hp.Int('merged_units1', min_value=64, max_value=256, step=32)
+        xz_units = hp.Int('xz_units', min_value=8, max_value=64, step=8)
+        yl_units = hp.Int('yl_units', min_value=8, max_value=64, step=8)
+        merged_units1 = hp.Int('merged_units1', min_value=32, max_value=256, step=32)
         merged_units2 = hp.Int('merged_units2', min_value=32, max_value=128, step=16)
         merged_units3 = hp.Int('merged_units3', min_value=16, max_value=64, step=8)
-        dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.5, step=0.1)
+        dropout_rate = hp.Float('dropout_rate', min_value=0.1, max_value=0.1, step=0.1)
         
         # x_profile + z_global branch
         xz_concat = Concatenate(name="xz_concat")([x_profile_input, z_global_input])
@@ -430,7 +430,7 @@ class Model2(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=100,
+            epochs=30,
             callbacks=callbacks,
             verbose=1
         )
