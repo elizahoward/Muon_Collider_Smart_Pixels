@@ -3,14 +3,13 @@ Model3 Implementation using the SmartPixModel Abstract Base Class
 
 This module implements Model3 as a concrete class inheriting from SmartPixModel.
 Model3 is a CNN-based architecture that processes cluster data through Conv2D/MaxPooling,
-then concatenates with z_global and y_local features.
+then concatenates with a dense layer processing z_global and y_local features.
 
 Architecture:
-- Conv2D branch: 3x5 kernel, 32 filters -> MaxPooling -> Flatten
-- z_global branch: 16 units
-- y_local branch: 32 units
-- Merged dense layers: 200 -> 100
-- Output: 1 unit with sigmoid activation
+- Conv2D branch: cluster -> Conv2D (3x5 kernel, 32 filters) -> MaxPooling -> Flatten
+- Scalar branch: z_global + y_local -> Concatenate -> Dense (32 units)
+- Merge: Concatenate conv output with scalar dense output
+- Head: Dense (200 units) -> Dense (100 units) -> Output (sigmoid)
 
 Author: Eric
 Date: 2024
@@ -71,10 +70,9 @@ class Model3(SmartPixModel):
                  conv_filters: int = 32,
                  kernel_rows: int = 3,
                  kernel_cols: int = 5,
-                 z_units: int = 16,
-                 y_units: int = 32,
-                 head_units: int = 200,
-                 head_units_2: int = 100,
+                 scalar_dense_units: int = 32,
+                 merged_dense_1: int = 200,
+                 merged_dense_2: int = 100,
                  dropout_rate: float = 0.0,
                  initial_lr: float = 0.000871145,
                  end_lr: float = 5.3e-05,
@@ -90,10 +88,9 @@ class Model3(SmartPixModel):
             conv_filters: Number of filters in Conv2D layer
             kernel_rows: Kernel height for Conv2D
             kernel_cols: Kernel width for Conv2D
-            z_units: Units in z_global dense layer
-            y_units: Units in y_local dense layer
-            head_units: Units in first merged dense layer
-            head_units_2: Units in second merged dense layer
+            scalar_dense_units: Units in dense layer after concatenating z_global and y_local
+            merged_dense_1: Units in first dense layer after merging conv and scalar branches
+            merged_dense_2: Units in second dense layer before output
             dropout_rate: Dropout rate for regularization
             initial_lr: Initial learning rate
             end_lr: End learning rate for polynomial decay
@@ -107,10 +104,9 @@ class Model3(SmartPixModel):
         self.conv_filters = conv_filters
         self.kernel_rows = kernel_rows
         self.kernel_cols = kernel_cols
-        self.z_units = z_units
-        self.y_units = y_units
-        self.head_units = head_units
-        self.head_units_2 = head_units_2
+        self.scalar_dense_units = scalar_dense_units
+        self.merged_dense_1 = merged_dense_1
+        self.merged_dense_2 = merged_dense_2
         self.dropout_rate = dropout_rate
         
         # Learning rate parameters
@@ -178,15 +174,15 @@ class Model3(SmartPixModel):
         Build the unquantized Model3 architecture.
         
         Architecture:
-        - Conv2D branch: cluster (13x21, last timestamp) -> 3x5 Conv2D with 32 filters -> MaxPooling -> Flatten
-        - z_global branch: 16 units
-        - y_local branch: 32 units
-        - Concatenate -> 200 -> 100 -> 1
+        - Conv2D branch: cluster (13x21, last timestamp) -> Conv2D -> MaxPooling -> Flatten
+        - Scalar branch: z_global + y_local -> Concatenate -> Dense
+        - Merge: Concatenate conv output with scalar dense output
+        - Head: Dense -> Dense -> Output
         """
         print("Building unquantized Model3...")
         print(f"  - Conv2D: {self.kernel_rows}x{self.kernel_cols} kernel, {self.conv_filters} filters")
-        print(f"  - Head dense layers: {self.head_units} -> {self.head_units_2}")
-        print(f"  - Z units: {self.z_units}, Y units: {self.y_units}")
+        print(f"  - Scalar dense units: {self.scalar_dense_units}")
+        print(f"  - Merged dense layers: {self.merged_dense_1} -> {self.merged_dense_2}")
         print(f"  - Dropout: {self.dropout_rate}")
         
         # Input layers
@@ -197,26 +193,28 @@ class Model3(SmartPixModel):
         
         # Conv2D branch
         # Add channel dimension for Conv2D: (13, 21) -> (13, 21, 1)
-        x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
-        x = Conv2D(
+        conv_x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
+        conv_x = Conv2D(
             filters=self.conv_filters,
             kernel_size=(self.kernel_rows, self.kernel_cols),
             padding="same",
             activation="relu",
             name=f"conv2d_{self.kernel_rows}x{self.kernel_cols}"
-        )(x)
-        x = MaxPooling2D((2, 2), name="pool2d_1")(x)
-        x = Flatten(name="flatten_vol")(x)
+        )(conv_x)
+        conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
+        conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branches
-        z_dense = Dense(self.z_units, activation="relu", name="dense_z")(z_global_input)
-        y_dense = Dense(self.y_units, activation="relu", name="dense_y")(y_local_input)
+        # Scalar branch: concatenate z_global and y_local, then dense
+        scalar_concat = Concatenate(name="concat_scalars")([z_global_input, y_local_input])
+        scalar_x = Dense(self.scalar_dense_units, activation="relu", name="dense_scalars")(scalar_concat)
         
-        # Merge & head
-        merged = Concatenate(name="concat_all")([x, z_dense, y_dense])
-        h = Dense(self.head_units, activation="relu", name="head_dense1")(merged)
-        h = Dropout(self.dropout_rate, name="head_dropout")(h)
-        h = Dense(self.head_units_2, activation="relu", name="head_dense2")(h)
+        # Merge conv and scalar branches
+        merged = Concatenate(name="concat_all")([conv_x, scalar_x])
+        
+        # Head layers
+        h = Dense(self.merged_dense_1, activation="relu", name="merged_dense1")(merged)
+        h = Dropout(self.dropout_rate, name="dropout_1")(h)
+        h = Dense(self.merged_dense_2, activation="relu", name="merged_dense2")(h)
         
         # Output layer
         output = Dense(1, activation="sigmoid", name="output")(h)
@@ -248,35 +246,36 @@ class Model3(SmartPixModel):
         
         # Hyperparameter search space
         conv_filters = hp.Int('conv_filters', min_value=16, max_value=64, step=16)
-        kernel_rows = hp.Choice('kernel_rows', values=[3, 5])
-        kernel_cols = hp.Choice('kernel_cols', values=[3, 5])
-        z_units = hp.Int('z_units', min_value=8, max_value=32, step=8)
-        y_units = hp.Int('y_units', min_value=16, max_value=64, step=16)
-        head_units = hp.Int('head_units', min_value=100, max_value=300, step=50)
-        head_units_2 = hp.Int('head_units_2', min_value=50, max_value=150, step=25)
-        dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.1)
+        kernel_rows = hp.Choice('kernel_rows', values=[3, 3])
+        kernel_cols = hp.Choice('kernel_cols', values=[3, 3])
+        scalar_dense_units = hp.Int('scalar_dense_units', min_value=16, max_value=64, step=16)
+        merged_dense_1 = hp.Int('merged_dense_1', min_value=25, max_value=200, step=25)
+        merged_dense_2 = hp.Int('merged_dense_2', min_value=15, max_value=150, step=15)
+        dropout_rate = hp.Float('dropout_rate', min_value=0.1, max_value=0.2, step=0.1)
         
         # Conv2D branch
-        x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
-        x = Conv2D(
+        conv_x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
+        conv_x = Conv2D(
             filters=conv_filters,
             kernel_size=(kernel_rows, kernel_cols),
             padding="same",
             activation="relu",
             name="conv2d"
-        )(x)
-        x = MaxPooling2D((2, 2), name="pool2d_1")(x)
-        x = Flatten(name="flatten_vol")(x)
+        )(conv_x)
+        conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
+        conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branches
-        z_dense = Dense(z_units, activation="relu", name="dense_z")(z_global_input)
-        y_dense = Dense(y_units, activation="relu", name="dense_y")(y_local_input)
+        # Scalar branch: concatenate z_global and y_local, then dense
+        scalar_concat = Concatenate(name="concat_scalars")([z_global_input, y_local_input])
+        scalar_x = Dense(scalar_dense_units, activation="relu", name="dense_scalars")(scalar_concat)
         
-        # Merge & head
-        merged = Concatenate(name="concat_all")([x, z_dense, y_dense])
-        h = Dense(head_units, activation="relu", name="head_dense1")(merged)
-        h = Dropout(dropout_rate, name="head_dropout")(h)
-        h = Dense(head_units_2, activation="relu", name="head_dense2")(h)
+        # Merge conv and scalar branches
+        merged = Concatenate(name="concat_all")([conv_x, scalar_x])
+        
+        # Head layers
+        h = Dense(merged_dense_1, activation="relu", name="merged_dense1")(merged)
+        h = Dropout(dropout_rate, name="dropout_1")(h)
+        h = Dense(merged_dense_2, activation="relu", name="merged_dense2")(h)
         
         # Output layer
         output = Dense(1, activation="sigmoid", name="output")(h)
@@ -328,55 +327,49 @@ class Model3(SmartPixModel):
             y_local_input = Input(shape=(1,), name="y_local")
             
             # Conv2D branch with quantization
-            x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
-            x = QConv2D(
+            conv_x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
+            conv_x = QConv2D(
                 filters=self.conv_filters,
                 kernel_size=(self.kernel_rows, self.kernel_cols),
                 padding="same",
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=bias_quantizer,
                 name=f"conv2d_{self.kernel_rows}x{self.kernel_cols}"
-            )(x)
-            x = QActivation(activation_quantizer, name="conv2d_act")(x)
-            x = MaxPooling2D((2, 2), name="pool2d_1")(x)
-            x = Flatten(name="flatten_vol")(x)
+            )(conv_x)
+            conv_x = QActivation(activation_quantizer, name="conv2d_act")(conv_x)
+            conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
+            conv_x = Flatten(name="flatten_vol")(conv_x)
             
-            # Scalar branches with quantization
-            z_dense = QDense(
-                self.z_units, 
+            # Scalar branch: concatenate z_global and y_local, then dense with quantization
+            scalar_concat = Concatenate(name="concat_scalars")([z_global_input, y_local_input])
+            scalar_x = QDense(
+                self.scalar_dense_units, 
                 kernel_quantizer=weight_quantizer, 
                 bias_quantizer=bias_quantizer, 
-                name="dense_z"
-            )(z_global_input)
-            z_dense = QActivation(activation_quantizer, name="dense_z_act")(z_dense)
+                name="dense_scalars"
+            )(scalar_concat)
+            scalar_x = QActivation(activation_quantizer, name="dense_scalars_act")(scalar_x)
             
-            y_dense = QDense(
-                self.y_units, 
-                kernel_quantizer=weight_quantizer, 
-                bias_quantizer=bias_quantizer, 
-                name="dense_y"
-            )(y_local_input)
-            y_dense = QActivation(activation_quantizer, name="dense_y_act")(y_dense)
+            # Merge conv and scalar branches
+            merged = Concatenate(name="concat_all")([conv_x, scalar_x])
             
-            # Merge & head with quantization
-            merged = Concatenate(name="concat_all")([x, z_dense, y_dense])
-            
+            # Head layers with quantization
             h = QDense(
-                self.head_units, 
+                self.merged_dense_1, 
                 kernel_quantizer=weight_quantizer, 
                 bias_quantizer=bias_quantizer, 
-                name="head_dense1"
+                name="merged_dense1"
             )(merged)
-            h = QActivation(activation_quantizer, name="head_dense1_act")(h)
-            h = Dropout(self.dropout_rate, name="head_dropout")(h)
+            h = QActivation(activation_quantizer, name="merged_dense1_act")(h)
+            h = Dropout(self.dropout_rate, name="dropout_1")(h)
             
             h = QDense(
-                self.head_units_2, 
+                self.merged_dense_2, 
                 kernel_quantizer=weight_quantizer, 
                 bias_quantizer=bias_quantizer, 
-                name="head_dense2"
+                name="merged_dense2"
             )(h)
-            h = QActivation(activation_quantizer, name="head_dense2_act")(h)
+            h = QActivation(activation_quantizer, name="merged_dense2_act")(h)
             
             # Output layer
             output = QDense(
@@ -426,7 +419,7 @@ class Model3(SmartPixModel):
         else:
             raise ValueError("model_type must be 'unquantized' or 'quantized'")
     
-    def runHyperparameterTuning(self, max_trials=50, executions_per_trial=2):
+    def runHyperparameterTuning(self, max_trials=75, executions_per_trial=2):
         """
         Run hyperparameter tuning for Model3.
         
@@ -463,7 +456,7 @@ class Model3(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=100,
+            epochs=30,
             callbacks=callbacks,
             verbose=1
         )
@@ -851,10 +844,9 @@ class Model3(SmartPixModel):
                 conv_filters=self.conv_filters,
                 kernel_rows=self.kernel_rows,
                 kernel_cols=self.kernel_cols,
-                z_units=self.z_units,
-                y_units=self.y_units,
-                head_units=self.head_units,
-                head_units_2=self.head_units_2,
+                scalar_dense_units=self.scalar_dense_units,
+                merged_dense_1=self.merged_dense_1,
+                merged_dense_2=self.merged_dense_2,
                 dropout_rate=self.dropout_rate
             )
             temp_model3.model = quantized_model
@@ -918,10 +910,9 @@ def main():
         conv_filters=32,
         kernel_rows=3,
         kernel_cols=5,
-        z_units=16,
-        y_units=32,
-        head_units=200,
-        head_units_2=100,
+        scalar_dense_units=32,
+        merged_dense_1=200,
+        merged_dense_2=100,
         dropout_rate=0.0
     )
     
