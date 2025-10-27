@@ -165,7 +165,6 @@ class Model2(SmartPixModel):
     def makeUnquantizedModel(self):
         """
         Build the unquantized Model2 architecture.
-        
         Architecture:
         - x_profile (21) + z_global (1) -> xz_units
         - y_profile (13) + y_local (1) -> yl_units  
@@ -352,7 +351,7 @@ class Model2(SmartPixModel):
                 bias_quantizer=bias_quantizer,
                 name="output_dense"
             )(merged_dense)
-            output = QActivation("hard_sigmoid", name="output")(output_dense)
+            output = QActivation("quantized_tanh", name="output")(output_dense)
             
             # Create model
             model = Model(
@@ -897,4 +896,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
