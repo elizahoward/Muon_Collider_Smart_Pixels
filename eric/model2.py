@@ -877,11 +877,11 @@ def main():
     # Initialize Model2
     model2 = Model2(
         tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
-        xz_units=32,
-        yl_units=32,
-        merged_units_1=128,
-        merged_units_2=64,
-        merged_units_3=32,
+        xz_units=8,
+        yl_units=8,
+        merged_units_1=64,
+        merged_units_2=32,
+        merged_units_3=16,
         dropout_rate=0.1,
         initial_lr=1e-3,
         end_lr=1e-4,
