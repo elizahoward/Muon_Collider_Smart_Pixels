@@ -32,6 +32,7 @@ import pandas as pd
 
 # Add the parent directory to path to import the base class and data generator
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/MuC_Smartpix_ML/')
+sys.path.append('../MuC_Smartpix_ML/')
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/ryan/')
 
 from Model_Classes import SmartPixModel
@@ -74,7 +75,9 @@ class Model2(SmartPixModel):
                  dropout_rate: float = 0.1,
                  initial_lr: float = 1e-3,
                  end_lr: float = 1e-4,
-                 power: int = 2):
+                 power: int = 2,
+                 bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+                 ):
         """
         Initialize Model2.
         
@@ -118,49 +121,60 @@ class Model2(SmartPixModel):
         self.validation_generator = None
         
         # Results storage
-        self.training_history = None
-        self.evaluation_results = None
+        # self.training_history = None
+        self.histories = {}
+        # self.evaluation_results = None
+        
+        # quantized_models = {}
+        self.models = {"Unquantized": None}
+        self.bit_configs = bit_configs 
+        for weight_bits, int_bits in self.bit_configs:
+            config_name = f"quantized_{weight_bits}w{int_bits}i"
+            self.models[config_name] = None
+        
         
         # Load model if requested
+        #TODO decide whether to load unquantized or which quantized model
+        config_name = "Unquantized"
         if loadModel and modelPath:
-            self.loadModel(modelPath)
+            self.loadModel(modelPath,config_name)
     
-    def loadTfRecords(self):
-        """Load TFRecords using OptimizedDataGenerator4 for Model2 features."""
-        trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
-        valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
+    # def loadTfRecords(self):
+    #     """Load TFRecords using OptimizedDataGenerator4 for Model2 features."""
+    #     trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
+    #     valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
         
-        print(f"Loading training data from: {trainDir}")
-        print(f"Loading validation data from: {valDir}")
+    #     print(f"Loading training data from: {trainDir}")
+    #     print(f"Loading validation data from: {valDir}")
         
-        # Determine batch size from directory name to match TFRecord format
-        batch_size = 16384
-        if "filtering_records16384" in self.tfRecordFolder:
-            batch_size = 16384
-        elif "filtering_records1024" in self.tfRecordFolder:
-            batch_size = 1024
+    #     # Determine batch size from directory name to match TFRecord format
+    #     batch_size = 16384
+    #     if "filtering_records16384" in self.tfRecordFolder:
+    #         batch_size = 16384
+    #     elif "filtering_records1024" in self.tfRecordFolder:
+    #         batch_size = 1024
         
-        print(f"Using batch_size={batch_size} to match TFRecord format")
+    #     print(f"Using batch_size={batch_size} to match TFRecord format")
         
-        # Model2 uses x_profile, z_global, y_profile, y_local features
-        self.training_generator = ODG.OptimizedDataGenerator(
-            load_records=True, 
-            tf_records_dir=trainDir, 
-            x_feature_description=self.x_feature_description,
-            batch_size=batch_size
-        )
+    #     # Model2 uses x_profile, z_global, y_profile, y_local features
+    #     self.training_generator = ODG.OptimizedDataGenerator(
+    #         load_records=True, 
+    #         tf_records_dir=trainDir, 
+    #         x_feature_description=self.x_feature_description,
+    #         batch_size=batch_size
+    #     )
         
-        self.validation_generator = ODG.OptimizedDataGenerator(
-            load_records=True, 
-            tf_records_dir=valDir, 
-            x_feature_description=self.x_feature_description,
-            batch_size=batch_size
-        )
+    #     self.validation_generator = ODG.OptimizedDataGenerator(
+    #         load_records=True, 
+    #         tf_records_dir=valDir, 
+    #         x_feature_description=self.x_feature_description,
+    #         batch_size=batch_size
+    #     )
         
-        print(f"Training generator length: {len(self.training_generator)}")
-        print(f"Validation generator length: {len(self.validation_generator)}")
+    #     print(f"Training generator length: {len(self.training_generator)}")
+    #     print(f"Validation generator length: {len(self.validation_generator)}")
         
-        return self.training_generator, self.validation_generator
+    #     return self.training_generator, self.validation_generator
     
     def makeUnquantizedModel(self):
         """
@@ -201,17 +215,17 @@ class Model2(SmartPixModel):
         output = Dense(1, activation="sigmoid", name="output")(merged_dense)
         
         # Create and compile model
-        self.model = Model(
+        self.models["Unquantized"] = Model(
             inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input], 
             outputs=output, 
             name="model2_unquantized"
         )
         
-        # Store in models dictionary
-        self.models["Unquantized"] = self.model
+        # # Store in models dictionary
+        # self.models["Unquantized"]
         
         print("✓ Unquantized Model2 built successfully")
-        return self.model
+        # return self.model
     
     def makeUnquatizedModelHyperParameterTuning(self, hp):
         """
@@ -279,13 +293,11 @@ class Model2(SmartPixModel):
         if not QKERAS_AVAILABLE:
             raise ImportError("QKeras is required for quantized models")
         
-        if bit_configs is None:
-            bit_configs = [(8, 0), (6, 0), (4, 0)]  # Default configurations
-        
-        quantized_models = {}
-        
-        for weight_bits, int_bits in bit_configs:
+        # Default configurations
+        for weight_bits, int_bits in self.bit_configs:
             config_name = f"quantized_{weight_bits}w{int_bits}i"
+        
+        
             print(f"Building {config_name} model...")
             
             # Quantizers (use 8-bit activations regardless of weight bits)
@@ -368,14 +380,14 @@ class Model2(SmartPixModel):
                 run_eagerly=True
             )
             
-            quantized_models[config_name] = model
+            self.models[config_name] = model
         
-        # Store quantized models
-        self.models["Quantized"] = quantized_models
-        self.quantized_model = quantized_models  # For backward compatibility
+        # # Store quantized models
+        # self.models["Quantized"] = quantized_models
+        # self.quantized_model = quantized_models  # For backward compatibility
         
-        print(f"✓ Built {len(quantized_models)} quantized Model2 variants")
-        return quantized_models
+        print(f"✓ Built {len(self.bit_configs)} quantized Model2 variants")
+        # return quantized_models
     
     def buildModel(self, model_type="unquantized", bit_configs=None):
         """
@@ -392,7 +404,7 @@ class Model2(SmartPixModel):
         else:
             raise ValueError("model_type must be 'unquantized' or 'quantized'")
     
-    def runHyperparameterTuning(self, max_trials=50, executions_per_trial=2):
+    def runHyperparameterTuning(self, max_trials=50, executions_per_trial=2,numEpochs = 30):
         """
         Run hyperparameter tuning for Model2.
         
@@ -429,7 +441,7 @@ class Model2(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=30,
+            epochs=numEpochs,
             callbacks=callbacks,
             verbose=1
         )
@@ -457,7 +469,7 @@ class Model2(SmartPixModel):
             save_best: Whether to save the best model
             early_stopping_patience: Patience for early stopping
         """
-        if self.model is None:
+        if self.models["Unquantized"] is None:
             raise ValueError("Model not built. Call buildModel() first.")
         
         if self.training_generator is None:
@@ -480,7 +492,7 @@ class Model2(SmartPixModel):
             optimizer = Adam(learning_rate=learning_rate)
         
         # Compile model
-        self.model.compile(
+        self.models["Unquantized"].compile(
             optimizer=optimizer,
             loss="binary_crossentropy",
             metrics=["binary_accuracy"]
@@ -506,7 +518,7 @@ class Model2(SmartPixModel):
             ))
         
         # Train model
-        self.training_history = self.model.fit(
+        self.histories["Unquantized"] = self.models["Unquantized"].fit(
             self.training_generator,
             validation_data=self.validation_generator,
             epochs=epochs,
@@ -515,57 +527,57 @@ class Model2(SmartPixModel):
         )
         
         print("✓ Model2 training completed!")
-        return self.training_history
+        return self.histories["Unquantized"]
     
-    def evaluate(self, test_generator=None):
-        """
-        Evaluate the trained Model2.
+    # def evaluate(self, test_generator=None,config_name = "Unquantized"):
+    #     """
+    #     Evaluate the trained Model2.
         
-        Args:
-            test_generator: Optional test data generator
-        """
-        if self.model is None:
-            raise ValueError("No model to evaluate. Train a model first.")
+    #     Args:
+    #         test_generator: Optional test data generator
+    #     """
+    #     if self.models[config_name] is None:
+    #         raise ValueError("No model to evaluate. Train a model first.")
         
-        # Use validation generator if no test generator provided
-        eval_generator = test_generator if test_generator else self.validation_generator
+    #     # Use validation generator if no test generator provided
+    #     eval_generator = test_generator if test_generator else self.validation_generator
         
-        if eval_generator is None:
-            self.loadTfRecords()
-            eval_generator = self.validation_generator
+    #     if eval_generator is None:
+    #         self.loadTfRecords()
+    #         eval_generator = self.validation_generator
         
-        print("Evaluating Model2...")
+    #     print(f"Evaluating {self.modelName}...")
         
-        # Get predictions
-        predictions = self.model.predict(eval_generator, verbose=1)
+    #     # Get predictions
+    #     predictions = self.models[config_name].predict(eval_generator, verbose=1)
         
-        # Get true labels
-        true_labels = np.concatenate([y for _, y in eval_generator])
+    #     # Get true labels
+    #     true_labels = np.concatenate([y for _, y in eval_generator])
         
-        # Calculate metrics
-        test_loss, test_accuracy = self.model.evaluate(eval_generator, verbose=0)
+    #     # Calculate metrics
+    #     test_loss, test_accuracy = self.models[config_name].evaluate(eval_generator, verbose=0)
         
-        # Calculate ROC AUC
-        fpr, tpr, thresholds = roc_curve(true_labels, predictions.ravel())
-        roc_auc = auc(fpr, tpr)
+    #     # Calculate ROC AUC
+    #     fpr, tpr, thresholds = roc_curve(true_labels, predictions.ravel())
+    #     roc_auc = auc(fpr, tpr)
         
-        # Store results
-        self.evaluation_results = {
-            'test_loss': float(test_loss),
-            'test_accuracy': float(test_accuracy),
-            'roc_auc': float(roc_auc),
-            'fpr': fpr.tolist(),
-            'tpr': tpr.tolist()
-        }
+    #     # Store results
+    #     self.evaluation_results = {
+    #         'test_loss': float(test_loss),
+    #         'test_accuracy': float(test_accuracy),
+    #         'roc_auc': float(roc_auc),
+    #         'fpr': fpr.tolist(),
+    #         'tpr': tpr.tolist()
+    #     }
         
-        print(f"✓ Model2 evaluation completed!")
-        print(f"  Test Loss: {test_loss:.4f}")
-        print(f"  Test Accuracy: {test_accuracy:.4f}")
-        print(f"  ROC AUC: {roc_auc:.4f}")
+    #     print(f"✓ Model2 evaluation completed!")
+    #     print(f"  Test Loss: {test_loss:.4f}")
+    #     print(f"  Test Accuracy: {test_accuracy:.4f}")
+    #     print(f"  ROC AUC: {roc_auc:.4f}")
         
-        return self.evaluation_results
+    #     return self.evaluation_results
     
-    def plotModel(self, save_plots=True, output_dir="./plots"):
+    def plotModel(self, save_plots=True, output_dir="./plots",config_name = "Unquantized"):
         """
         Plot training history and evaluation results.
         
@@ -573,7 +585,7 @@ class Model2(SmartPixModel):
             save_plots: Whether to save plots to disk
             output_dir: Directory to save plots
         """
-        if self.training_history is None:
+        if self.histories[config_name] is None:
             print("No training history available. Train a model first.")
             return
         
@@ -585,18 +597,18 @@ class Model2(SmartPixModel):
         fig, axes = plt.subplots(1, 2, figsize=(15, 5))
         
         # Plot accuracy
-        axes[0].plot(self.training_history.history['binary_accuracy'], label='Training')
-        axes[0].plot(self.training_history.history['val_binary_accuracy'], label='Validation')
-        axes[0].set_title('Model2 Accuracy')
+        axes[0].plot(self.histories[config_name].history['binary_accuracy'], label='Training')
+        axes[0].plot(self.histories[config_name].history['val_binary_accuracy'], label='Validation')
+        axes[0].set_title(f'{self.modelName} Accuracy')
         axes[0].set_xlabel('Epoch')
         axes[0].set_ylabel('Accuracy')
         axes[0].legend()
         axes[0].grid(True)
         
         # Plot loss
-        axes[1].plot(self.training_history.history['loss'], label='Training')
-        axes[1].plot(self.training_history.history['val_loss'], label='Validation')
-        axes[1].set_title('Model2 Loss')
+        axes[1].plot(self.histories[config_name].history['loss'], label='Training')
+        axes[1].plot(self.histories[config_name].history['val_loss'], label='Validation')
+        axes[1].set_title(f'{self.modelName} Loss')
         axes[1].set_xlabel('Epoch')
         axes[1].set_ylabel('Loss')
         axes[1].legend()
@@ -605,8 +617,8 @@ class Model2(SmartPixModel):
         plt.tight_layout()
         
         if save_plots:
-            plt.savefig(f"{output_dir}/model2_training_history.png", dpi=300, bbox_inches='tight')
-            print(f"Training history plot saved to {output_dir}/model2_training_history.png")
+            plt.savefig(f"{output_dir}/{self.modelName}_training_history.png", dpi=300, bbox_inches='tight')
+            print(f"Training history plot saved to {output_dir}/{self.modelName}_training_history.png")
         
         plt.show()
         
@@ -618,17 +630,17 @@ class Model2(SmartPixModel):
             plt.plot([0, 1], [0, 1], 'k--', label='Random')
             plt.xlabel('False Positive Rate')
             plt.ylabel('True Positive Rate')
-            plt.title('Model2 ROC Curve')
+            plt.title(f'{self.modelName} ROC Curve')
             plt.legend()
             plt.grid(True)
             
             if save_plots:
-                plt.savefig(f"{output_dir}/model2_roc_curve.png", dpi=300, bbox_inches='tight')
-                print(f"ROC curve plot saved to {output_dir}/model2_roc_curve.png")
+                plt.savefig(f"{output_dir}/{self.modelName}_roc_curve.png", dpi=300, bbox_inches='tight')
+                print(f"ROC curve plot saved to {output_dir}/{self.modelName}_roc_curve.png")
             
             plt.show()
     
-    def runAllStuff(self):
+    def runAllStuff(self,numEpochs = 1):
         """
         Run the complete Model2 pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
         """
@@ -659,15 +671,16 @@ class Model2(SmartPixModel):
         self.buildModel("unquantized")
         
         print("2b. Training unquantized model...")
-        self.trainModel(epochs=20, early_stopping_patience=15, save_best=False)
+        self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
         
         print("2c. Evaluating unquantized model...")
         eval_results = self.evaluate()
         
         # Save non-quantized model
+        #TODO use self.saveModel
         print("2d. Saving unquantized model...")
         model_save_path = os.path.join(models_dir, "model2_unquantized.h5")
-        self.model.save(model_save_path)
+        self.models["Unquantized"].save(model_save_path)
         print(f"Unquantized model saved to: {model_save_path}")
         
         # Store non-quantized results
@@ -689,9 +702,9 @@ class Model2(SmartPixModel):
         self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
         
         # Test quantized models
-        bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
         
-        for weight_bits, int_bits in bit_configs:
+        
+        for weight_bits, int_bits in self.bit_configs:
             print(f"\n3. Testing {weight_bits}-bit Quantized Model...")
             
             # Create completely fresh data generators for each quantized model to avoid state corruption
@@ -725,7 +738,7 @@ class Model2(SmartPixModel):
             self.buildModel("quantized", bit_configs=[(weight_bits, int_bits)])
             
             # Get the quantized model
-            quantized_model = self.models["Quantized"][f"quantized_{weight_bits}w{int_bits}i"]
+            quantized_model = self.models[f"quantized_{weight_bits}w{int_bits}i"]
             
             print(f"3c. Training {weight_bits}-bit quantized model...")
             # Compile and train the quantized model
@@ -747,10 +760,10 @@ class Model2(SmartPixModel):
             )
             
             # Train with early stopping using fresh generators
-            history = quantized_model.fit(
+            self.histories[f"quantized_{weight_bits}w{int_bits}i"] = quantized_model.fit(
                 fresh_train_gen,
                 validation_data=fresh_val_gen,
-                epochs=20,
+                epochs=numEpochs,
                 callbacks=[
                     tf.keras.callbacks.EarlyStopping(
                         monitor='val_loss',
@@ -819,8 +832,8 @@ class Model2(SmartPixModel):
                 merged_units_3=self.merged_units_3,
                 dropout_rate=self.dropout_rate
             )
-            temp_model2.model = quantized_model
-            temp_model2.training_history = history
+            temp_model2.models[f"quantized_{weight_bits}w{int_bits}i"] = quantized_model
+            temp_model2.histories = self.histories
             temp_model2.evaluation_results = {
                 'test_loss': float(test_loss),
                 'test_accuracy': float(test_accuracy),
@@ -829,7 +842,7 @@ class Model2(SmartPixModel):
                 'tpr': tpr.tolist()
             }
             plot_dir_quant = os.path.join(plots_dir, f"{weight_bits}bit")
-            temp_model2.plotModel(save_plots=True, output_dir=plot_dir_quant)
+            temp_model2.plotModel(save_plots=True, output_dir=plot_dir_quant,config_name=f"quantized_{weight_bits}w{int_bits}i")
         
         # Create results summary
         print("\n4. Results Summary:")
@@ -885,7 +898,8 @@ def main():
         dropout_rate=0.1,
         initial_lr=1e-3,
         end_lr=1e-4,
-        power=2
+        power=2,
+        bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
     )
     
     # Run complete pipeline
