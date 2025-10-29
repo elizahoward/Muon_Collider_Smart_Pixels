@@ -458,7 +458,8 @@ class Model2(SmartPixModel):
         return best_model, results
     
     def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
-                   save_best=True, early_stopping_patience=20):
+                   save_best=True, early_stopping_patience=20,
+                   run_eagerly = False,config_name = "Unquantized"):
         """
         Train the Model2.
         
@@ -469,7 +470,7 @@ class Model2(SmartPixModel):
             save_best: Whether to save the best model
             early_stopping_patience: Patience for early stopping
         """
-        if self.models["Unquantized"] is None:
+        if self.models[config_name] is None:
             raise ValueError("Model not built. Call buildModel() first.")
         
         if self.training_generator is None:
@@ -492,10 +493,11 @@ class Model2(SmartPixModel):
             optimizer = Adam(learning_rate=learning_rate)
         
         # Compile model
-        self.models["Unquantized"].compile(
+        self.models[config_name].compile(
             optimizer=optimizer,
             loss="binary_crossentropy",
-            metrics=["binary_accuracy"]
+            metrics=["binary_accuracy"],
+            run_eagerly=run_eagerly
         )
         
         # Create callbacks
@@ -518,7 +520,7 @@ class Model2(SmartPixModel):
             ))
         
         # Train model
-        self.histories["Unquantized"] = self.models["Unquantized"].fit(
+        self.histories[config_name] = self.models[config_name].fit(
             self.training_generator,
             validation_data=self.validation_generator,
             epochs=epochs,
@@ -526,8 +528,8 @@ class Model2(SmartPixModel):
             verbose=1
         )
         
-        print("✓ Model2 training completed!")
-        return self.histories["Unquantized"]
+        print(f"✓ Model2 {config_name} training completed!")
+        return self.histories[config_name]
     
     # def evaluate(self, test_generator=None,config_name = "Unquantized"):
     #     """
@@ -642,13 +644,13 @@ class Model2(SmartPixModel):
     
     def runAllStuff(self,numEpochs = 1):
         """
-        Run the complete Model2 pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
+        Run the complete {self.modelName} pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
         """
-        print("=== Running Complete Model2 Pipeline with Quantization Testing ===")
+        print(f"=== Running Complete {self.modelName} Pipeline with Quantization Testing ===")
         
         # Create output directory with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = f"model2_results_{timestamp}"
+        output_dir = f"{self.modelName}_results_{timestamp}"
         os.makedirs(output_dir, exist_ok=True)
         print(f"All results will be saved to: {output_dir}/")
         
@@ -679,8 +681,8 @@ class Model2(SmartPixModel):
         # Save non-quantized model
         #TODO use self.saveModel
         print("2d. Saving unquantized model...")
-        model_save_path = os.path.join(models_dir, "model2_unquantized.h5")
-        self.models["Unquantized"].save(model_save_path)
+        model_save_path = os.path.join(models_dir, f"{self.modelName}_unquantized.h5")
+        self.saveModel(file_path = model_save_path, config_name = "Unquantized")
         print(f"Unquantized model saved to: {model_save_path}")
         
         # Store non-quantized results
@@ -709,102 +711,31 @@ class Model2(SmartPixModel):
             
             # Create completely fresh data generators for each quantized model to avoid state corruption
             print(f"3a. Creating fresh data generators...")
-            trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
-            valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
-            
-            # Determine batch size from directory name
-            batch_size = 16384
-            if "filtering_records16384" in self.tfRecordFolder:
-                batch_size = 16384
-            elif "filtering_records1024" in self.tfRecordFolder:
-                batch_size = 1024
-            
-            # Create fresh generators
-            fresh_train_gen = ODG.OptimizedDataGenerator(
-                load_records=True, 
-                tf_records_dir=trainDir, 
-                x_feature_description=self.x_feature_description,
-                batch_size=batch_size
-            )
-            
-            fresh_val_gen = ODG.OptimizedDataGenerator(
-                load_records=True, 
-                tf_records_dir=valDir, 
-                x_feature_description=self.x_feature_description,
-                batch_size=batch_size
-            )
+            self.loadTfRecords()
             
             print(f"3b. Building {weight_bits}-bit quantized model...")
             self.buildModel("quantized", bit_configs=[(weight_bits, int_bits)])
             
             # Get the quantized model
-            quantized_model = self.models[f"quantized_{weight_bits}w{int_bits}i"]
+            # quantized_model = self.models[f"quantized_{weight_bits}w{int_bits}i"]
             
             print(f"3c. Training {weight_bits}-bit quantized model...")
+            self.trainModel(epochs=numEpochs,early_stopping_patience=15,
+                            config_name=f"quantized_{weight_bits}w{int_bits}i",
+                            learning_rate=None,run_eagerly=True,)
             # Compile and train the quantized model
-            from tensorflow.keras.optimizers.schedules import PolynomialDecay
-            decay_steps = 30 * 200
-            lr_schedule = PolynomialDecay(
-                initial_learning_rate=self.initial_lr,
-                decay_steps=decay_steps,
-                end_learning_rate=self.end_lr,
-                power=self.power
-            )
-            optimizer = Adam(learning_rate=lr_schedule)
-            
-            quantized_model.compile(
-                optimizer=optimizer,
-                loss="binary_crossentropy",
-                metrics=["binary_accuracy"],
-                run_eagerly=True
-            )
-            
-            # Train with early stopping using fresh generators
-            self.histories[f"quantized_{weight_bits}w{int_bits}i"] = quantized_model.fit(
-                fresh_train_gen,
-                validation_data=fresh_val_gen,
-                epochs=numEpochs,
-                callbacks=[
-                    tf.keras.callbacks.EarlyStopping(
-                        monitor='val_loss',
-                        patience=15,
-                        restore_best_weights=True
-                    )
-                ],
-                verbose=1
-            )
+            #deleted that code, because you have a function for it
             
             print(f"3d. Evaluating {weight_bits}-bit quantized model...")
-            # Create another fresh validation generator for evaluation
-            eval_val_gen = ODG.OptimizedDataGenerator(
-                load_records=True, 
-                tf_records_dir=valDir, 
-                x_feature_description=self.x_feature_description,
-                batch_size=batch_size
-            )
+            # Create another fresh validation generator for evaluation NO, don't need to
+            evaluation_results = self.evaluate(test_generator = None, config_name = f"quantized_{weight_bits}w{int_bits}i")
             
-            # Evaluate
-            test_loss, test_accuracy = quantized_model.evaluate(eval_val_gen, verbose=0)
-            
-            # Create yet another fresh validation generator for predictions
-            pred_val_gen = ODG.OptimizedDataGenerator(
-                load_records=True, 
-                tf_records_dir=valDir, 
-                x_feature_description=self.x_feature_description,
-                batch_size=batch_size
-            )
-            
-            # Calculate ROC AUC
-            predictions = quantized_model.predict(pred_val_gen, verbose=0).ravel()
-            true_labels = np.concatenate([y for _, y in pred_val_gen])
-            
-            fpr, tpr, thresholds = roc_curve(true_labels, predictions)
-            roc_auc_score = auc(fpr, tpr)
             
             # Save quantized model
             print(f"3e. Saving {weight_bits}-bit quantized model...")
-            model_save_path = os.path.join(models_dir, f"model2_quantized_{weight_bits}bit.h5")
-            quantized_model.save(model_save_path)
+            model_save_path = os.path.join(models_dir, f"{self.modelName}_quantized_{weight_bits}bit.h5")
+            self.saveModel(file_path = model_save_path, config_name = f"quantized_{weight_bits}w{int_bits}i")
+            # quantized_model.save(model_save_path)
             print(f"{weight_bits}-bit model saved to: {model_save_path}")
             
             # Store quantized results
@@ -812,37 +743,19 @@ class Model2(SmartPixModel):
                 'model_type': 'quantized',
                 'weight_bits': weight_bits,
                 'integer_bits': int_bits,
-                'test_accuracy': float(test_accuracy),
-                'test_loss': float(test_loss),
-                'roc_auc': float(roc_auc_score),
+                'test_accuracy': evaluation_results["test_accuracy"],
+                'test_loss': evaluation_results["test_loss"],
+                'roc_auc': evaluation_results["roc_auc"],
                 'model_path': model_save_path
             })
             
-            print(f"{weight_bits}-bit results: Acc={test_accuracy:.4f}, AUC={roc_auc_score:.4f}")
+            print(f'{weight_bits}-bit results: Acc={evaluation_results["test_accuracy"]:.4f}, AUC={evaluation_results["roc_auc"]:.4f}')
             
             # Plot quantized results
             print(f"3f. Plotting {weight_bits}-bit quantized results...")
-            # Create a temporary model2 instance for plotting
-            temp_model2 = Model2(
-                tfRecordFolder=self.tfRecordFolder,
-                xz_units=self.xz_units,
-                yl_units=self.yl_units,
-                merged_units_1=self.merged_units_1,
-                merged_units_2=self.merged_units_2,
-                merged_units_3=self.merged_units_3,
-                dropout_rate=self.dropout_rate
-            )
-            temp_model2.models[f"quantized_{weight_bits}w{int_bits}i"] = quantized_model
-            temp_model2.histories = self.histories
-            temp_model2.evaluation_results = {
-                'test_loss': float(test_loss),
-                'test_accuracy': float(test_accuracy),
-                'roc_auc': float(roc_auc_score),
-                'fpr': fpr.tolist(),
-                'tpr': tpr.tolist()
-            }
             plot_dir_quant = os.path.join(plots_dir, f"{weight_bits}bit")
-            temp_model2.plotModel(save_plots=True, output_dir=plot_dir_quant,config_name=f"quantized_{weight_bits}w{int_bits}i")
+            self.plotModel(save_plots=True,output_dir=plot_dir_quant,config_name = f"quantized_{weight_bits}w{int_bits}i")
+            # # Create a temporary {self.modelName} instance for plotting
         
         # Create results summary
         print("\n4. Results Summary:")
@@ -874,7 +787,7 @@ class Model2(SmartPixModel):
         results_df.to_csv(results_file, index=False)
         print(f"\nResults saved to: {results_file}")
         
-        print(f"\n=== Model2 Quantization Pipeline Completed! ===")
+        print(f"\n=== {self.modelName} Quantization Pipeline Completed! ===")
         print(f"All outputs saved to: {output_dir}/")
         print(f"  - Models: {models_dir}/")
         print(f"  - Plots: {plots_dir}/")
