@@ -12,7 +12,12 @@ from pathlib import Path
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import OptimizedDataGenerator4 as ODG
+import sys
+sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
+import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
+import pandas as pd
+from datetime import datetime
+# import OptimizedDataGenerator4 as ODG
 
 class SmartPixModel(ABC):
     def __init__(self,
@@ -33,7 +38,7 @@ class SmartPixModel(ABC):
         return
     
     def loadTfRecords(self):
-        """Load TFRecords using OptimizedDataGenerator4 for Model2 features."""
+        """Load TFRecords using OptimizedDataGenerator4 for features."""
         trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
         valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
         
@@ -50,14 +55,14 @@ class SmartPixModel(ABC):
         print(f"Using batch_size={batch_size} to match TFRecord format")
         
         # Model2 uses x_profile, z_global, y_profile, y_local features
-        self.training_generator = ODG.OptimizedDataGenerator(
+        self.training_generator = ODG2.OptimizedDataGeneratorDataShuffledBigData(
             load_records=True, 
             tf_records_dir=trainDir, 
             x_feature_description=self.x_feature_description,
             batch_size=batch_size
         )
         
-        self.validation_generator = ODG.OptimizedDataGenerator(
+        self.validation_generator = ODG2.OptimizedDataGeneratorDataShuffledBigData(
             load_records=True, 
             tf_records_dir=valDir, 
             x_feature_description=self.x_feature_description,
@@ -229,3 +234,158 @@ class SmartPixModel(ABC):
         print(f"  ROC AUC: {roc_auc:.4f}")
         
         return self.evaluation_results
+    
+    def runAllStuff(self,numEpochs = 1):
+        """
+        Run the complete {self.modelName} pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
+        """
+        print(f"=== Running Complete {self.modelName} Pipeline with Quantization Testing ===")
+        
+        # Create output directory with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_dir = f"{self.modelName}_results_{timestamp}"
+        os.makedirs(output_dir, exist_ok=True)
+        print(f"All results will be saved to: {output_dir}/")
+        
+        # Create subdirectories
+        models_dir = os.path.join(output_dir, "models")
+        plots_dir = os.path.join(output_dir, "plots")
+        os.makedirs(models_dir, exist_ok=True)
+        os.makedirs(plots_dir, exist_ok=True)
+        
+        # Load data
+        print("1. Loading TFRecords...")
+        self.loadTfRecords()
+        
+        # Results storage
+        results = []
+        
+        # Test non-quantized model first
+        print("\n2. Testing Non-quantized Model...")
+        print("2a. Building unquantized model...")
+        self.buildModel("unquantized")
+        
+        print("2b. Training unquantized model...")
+        self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
+        
+        print("2c. Evaluating unquantized model...")
+        eval_results = self.evaluate()
+        
+        # Save non-quantized model
+        #TODO use self.saveModel
+        print("2d. Saving unquantized model...")
+        model_save_path = os.path.join(models_dir, f"{self.modelName}_unquantized.h5")
+        self.saveModel(file_path = model_save_path, config_name = "Unquantized")
+        print(f"Unquantized model saved to: {model_save_path}")
+        
+        # Store non-quantized results
+        results.append({
+            'model_type': 'non_quantized',
+            'weight_bits': 'N/A',
+            'integer_bits': 'N/A',
+            'test_accuracy': eval_results['test_accuracy'],
+            'test_loss': eval_results['test_loss'],
+            'roc_auc': eval_results['roc_auc'],
+            'model_path': model_save_path
+        })
+        
+        print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
+        
+        # Plot non-quantized results
+        print("2e. Plotting non-quantized results...")
+        plot_dir_unquant = os.path.join(plots_dir, "non_quantized")
+        self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
+        
+        # Test quantized models
+        
+        
+        for weight_bits, int_bits in self.bit_configs:
+            print(f"\n3. Testing {weight_bits}-bit Quantized Model...")
+            
+            # Create completely fresh data generators for each quantized model to avoid state corruption
+            print(f"3a. Creating fresh data generators...")
+            self.loadTfRecords()
+            print("I'm not sure that's actually necessary")
+            #TODO: See what happens without this line
+            
+            print(f"3b. Building {weight_bits}-bit quantized model...")
+            self.buildModel("quantized", bit_configs=[(weight_bits, int_bits)])
+            
+            # Get the quantized model
+            # quantized_model = self.models[f"quantized_{weight_bits}w{int_bits}i"]
+            
+            print(f"3c. Training {weight_bits}-bit quantized model...")
+            self.trainModel(epochs=numEpochs,early_stopping_patience=15,
+                            config_name=f"quantized_{weight_bits}w{int_bits}i",
+                            learning_rate=None,run_eagerly=True,)
+            # Compile and train the quantized model
+            #deleted that code, because you have a function for it
+            
+            print(f"3d. Evaluating {weight_bits}-bit quantized model...")
+            # Create another fresh validation generator for evaluation NO, don't need to
+            evaluation_results = self.evaluate(test_generator = None, config_name = f"quantized_{weight_bits}w{int_bits}i")
+            
+            
+            # Save quantized model
+            print(f"3e. Saving {weight_bits}-bit quantized model...")
+            model_save_path = os.path.join(models_dir, f"{self.modelName}_quantized_{weight_bits}bit.h5")
+            self.saveModel(file_path = model_save_path, config_name = f"quantized_{weight_bits}w{int_bits}i")
+            # quantized_model.save(model_save_path)
+            print(f"{weight_bits}-bit model saved to: {model_save_path}")
+            
+            # Store quantized results
+            results.append({
+                'model_type': 'quantized',
+                'weight_bits': weight_bits,
+                'integer_bits': int_bits,
+                'test_accuracy': evaluation_results["test_accuracy"],
+                'test_loss': evaluation_results["test_loss"],
+                'roc_auc': evaluation_results["roc_auc"],
+                'model_path': model_save_path
+            })
+            
+            print(f'{weight_bits}-bit results: Acc={evaluation_results["test_accuracy"]:.4f}, AUC={evaluation_results["roc_auc"]:.4f}')
+            
+            # Plot quantized results
+            print(f"3f. Plotting {weight_bits}-bit quantized results...")
+            plot_dir_quant = os.path.join(plots_dir, f"{weight_bits}bit")
+            self.plotModel(save_plots=True,output_dir=plot_dir_quant,config_name = f"quantized_{weight_bits}w{int_bits}i")
+            # # Create a temporary {self.modelName} instance for plotting
+        
+        # Create results summary
+        print("\n4. Results Summary:")
+        print("=" * 60)
+        print(f"{'Model Type':<15} {'Bits':<8} {'Accuracy':<10} {'Loss':<12} {'ROC AUC':<10}")
+        print("-" * 60)
+        
+        for result in results:
+            model_type = result['model_type']
+            bits = result.get('weight_bits', 'N/A')
+            acc = result['test_accuracy']
+            loss = result['test_loss']
+            auc_score = result['roc_auc']
+            
+            print(f"{model_type:<15} {bits:<8} {acc:<10.4f} {loss:<12.4f} {auc_score:<10.4f}")
+        
+        # Find best configuration
+        best_result = max(results, key=lambda x: x['test_accuracy'])
+        print(f"\nBEST CONFIGURATION:")
+        print(f"Model: {best_result['model_type']}")
+        if best_result['model_type'] == 'quantized':
+            print(f"Bits: {best_result['weight_bits']}-bit")
+        print(f"Accuracy: {best_result['test_accuracy']:.4f}")
+        print(f"ROC AUC: {best_result['roc_auc']:.4f}")
+        
+        # Save results to CSV
+        results_file = os.path.join(output_dir, "quantization_results.csv")
+        results_df = pd.DataFrame(results)
+        results_df.to_csv(results_file, index=False)
+        print(f"\nResults saved to: {results_file}")
+        
+        print(f"\n=== {self.modelName} Quantization Pipeline Completed! ===")
+        print(f"All outputs saved to: {output_dir}/")
+        print(f"  - Models: {models_dir}/")
+        print(f"  - Plots: {plots_dir}/")
+        print(f"  - Results CSV: {results_file}")
+        
+        return results
