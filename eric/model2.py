@@ -659,7 +659,7 @@ class Model2(SmartPixModel):
         self.buildModel("unquantized")
         
         print("2b. Training unquantized model...")
-        self.trainModel(epochs=1, early_stopping_patience=15, save_best=False)
+        self.trainModel(epochs=20, early_stopping_patience=15, save_best=False)
         
         print("2c. Evaluating unquantized model...")
         eval_results = self.evaluate()
@@ -750,7 +750,7 @@ class Model2(SmartPixModel):
             history = quantized_model.fit(
                 fresh_train_gen,
                 validation_data=fresh_val_gen,
-                epochs=1,
+                epochs=20,
                 callbacks=[
                     tf.keras.callbacks.EarlyStopping(
                         monitor='val_loss',
