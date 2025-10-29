@@ -29,26 +29,22 @@ class Model1(SmartPixModel):
             ): 
         self.tfRecordFolder = tfRecordFolder
         self.modelName = "Model 1" # for other models, e.g., Model 1, Model 2, etc.
-        self.model = None
+        # self.model = None
         self.histories = {}
-        self.quantized_model = None
+        self.models = {"Unquantized": None}
+        self.bit_configs = [(8, 0), (6, 0), (4, 0)] 
+        for weight_bits, int_bits in self.bit_configs:
+            config_name = f"quantized_{weight_bits}w{int_bits}i"
+            self.models[config_name] = None
+        # self.quantized_model = None
         self.hyperparameterModel = None
-        self.trainODG = None
-        self.validationODG = None
+        self.training_generator = None
+        self.validation_generator = None
         return
     
     def runAllStuff(self,):
         return
     
-    def loadTfRecords(self):
-        # Load the TFRecords using the OptimizedDataGenerator4
-        validation_dir = "./tf_records1000Daniel/tfrecords_validation/"
-        train_dir = "./tf_records1000Daniel/tfrecords_train/"
-        x_feature_description: list = ['x_size','z_global','y_profile','x_profile','cluster', 'y_size', 'x_size', 'y_local']
-        self.trainODG = OptimizedDataGenerator(tf_records_dir=train_dir,load_records=True, x_feature_description=x_feature_description)
-        self.validationODG = OptimizedDataGenerator(tf_records_dir=validation_dir,load_records=True, x_feature_description=x_feature_description)
-
-        return
     
     
     def makeUnquantizedModel(self):
@@ -76,7 +72,7 @@ class Model1(SmartPixModel):
         stack5 = tf.keras.layers.Dense(18, activation='relu')(stack4)
         output = tf.keras.layers.Dense(1,activation='sigmoid')(stack5)
 
-        self.model = tf.keras.Model(inputs=inputList, outputs=output)
+        self.models["Unquantized"] = tf.keras.Model(inputs=inputList, outputs=output)
 
 
     def makeUnquatizedModelHyperParameterTuning(self):
@@ -131,8 +127,8 @@ class Model1(SmartPixModel):
         )
 
         tuner.search(
-            trainODG,
-            validation_data = self.validationODG,
+            training_generator,
+            validation_data = self.validation_generator,
             epochs          = 110,
             callbacks       = [
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
@@ -143,6 +139,9 @@ class Model1(SmartPixModel):
 
     
     def makeQuantizedModel(self):
+        #TODO make these perhaps looped or arguments or something
+        total_bits = self.bit_configs[0][0]
+        int_bits = self.bit_configs[0][1]
         """
         Build & compile your QKeras model with the given number of integer bits.
         """
@@ -160,82 +159,83 @@ class Model1(SmartPixModel):
         # layer 1
         x = QDense(
             17,
-            kernel_quantizer=quantized_bits(8, 0, alpha=0.001),
-            bias_quantizer=quantized_bits(8, 0, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
         x = QActivation(
-            activation=quantized_relu(8, 0),
+            activation=quantized_relu(total_bits, int_bits),
             name="q_relu1"
         )(x)
 
         # layer 2 (example—you can tweak per‐layer bits)
         x = QDense(
             20,
-            kernel_quantizer=quantized_bits(8, 0, alpha=0.001),
-            bias_quantizer=quantized_bits(8, 0, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
         x = QActivation(
-            activation=quantized_relu(8, 0),
+            activation=quantized_relu(total_bits, int_bits),
             name="q_relu2"
         )(x)
 
         # layer 3
         x = QDense(
             9,
-            kernel_quantizer=quantized_bits(8, 0, alpha=0.001),
-            bias_quantizer=quantized_bits(8, 0, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
         x = QActivation(
-            activation=quantized_relu(8, 0),
+            activation=quantized_relu(total_bits, int_bits),
             name="q_relu3"
         )(x)
 
         # layer 4
         x = QDense(
             16,
-            kernel_quantizer=quantized_bits(8, 0, alpha=0.001),
-            bias_quantizer=quantized_bits(8, 0, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
         x = QActivation(
-            activation=quantized_relu(8, 0),
+            activation=quantized_relu(total_bits, int_bits),
             name="q_relu4"
         )(x)
 
         # layer 5
         x = QDense(
             8,
-            kernel_quantizer=quantized_bits(8, 0, alpha=0.001),
-            bias_quantizer=quantized_bits(8, 0, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
         x = QActivation(
-            activation=quantized_relu(8, 0),
+            activation=quantized_relu(total_bits, int_bits),
             name="q_relu5"
         )(x)
 
         # output
         x = QDense(
             1,
-            kernel_quantizer=quantized_bits(8, 0, alpha=0.001),
-            bias_quantizer=quantized_bits(8, 0, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
             #kernel_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
         out = QActivation("smooth_sigmoid")(x)
-        self.quantized_model = tf.keras.Model(inputs=[input1, input2, input3, input4], outputs=out)
+        config_name = f"quantized_{total_bits}w{int_bits}i"
+        self.models[config_name] = tf.keras.Model(inputs=[input1, input2, input3, input4], outputs=out)
 
     """
     @abstractmethod
@@ -246,36 +246,44 @@ class Model1(SmartPixModel):
     def buildModel(self):
        self.makeUnquantizedModel()
 
-    def loadModel(self, file_path: str):
-        self.model=tf.keras.models.load_model(file_path, compile=False)
+    # """
+    # config_name = Unquantized or 
+    # config_name = f"quantized_{total_bits}w{int_bits}i"
+    # """
+    # def loadModel(self, file_path: str,config_name = "Unquantized"):
+    #     self.models[config_name]=tf.keras.models.load_model(file_path, compile=False)
 
-    def saveModel(self, overwrite=False):
-        file_path = Path(f'./{self.modelName}.keras').resolve()
-        if not overwrite and os.path.exists(file_path):
-            raise Exception("Model exists. To overwrite existing saved model, set overwrite to True.")
-        self.model.save(file_path)
+    # def saveModel(self, file_path = None,overwrite=False,config_name = "Unquantized"):
+    #     if file_path == None:
+    #         file_path = Path(f'./{self.modelName}.keras').resolve()
+    #     if not overwrite and os.path.exists(file_path):
+    #         raise Exception("Model exists. To overwrite existing saved model, set overwrite to True.")
+    #     self.models[config_name].save(file_path)
     
     #dataset
     def trainUnquantizedModel(self): # in the input, specify the learning rate scheduler, etc.
         self.loadTfRecords()
         callbacks = []
-        self.model.compile(optimizer='adam', 
+        self.models["Unquantized"].compile(optimizer='adam', 
                             loss='binary_crossentropy', 
                             metrics=['binary_accuracy'],
                             run_eagerly=True
                             )
-        self.histories["unquantized"] = self.model.fit(x=self.trainODG,validation_data=self.validationODG, callbacks=callbacks,epochs=100)
+        self.histories["Unquantized"] = self.models["Unquantized"].fit(x=self.training_generator,validation_data=self.validation_generator, callbacks=callbacks,epochs=100)
 
 
     def trainQuantizedModel(self): # in the input, specify the learning rate scheduler, etc.
         self.loadTfRecords()
         callbacks = []
-        self.quantized_model.compile(optimizer='adam', 
+        # config_name = f"quantized_{weight_bits}w{int_bits}i"
+        #TODO make this based off of total bits, int bits, in bit_configs
+        
+        self.models["quantized_8w0i"].compile(optimizer='adam', 
                             loss='binary_crossentropy', 
                             metrics=['binary_accuracy'],
                             run_eagerly=True
                             )
-        self.histories["quantized"] = self.quantized_model.fit(x=self.trainODG,validation_data=self.validationODG, callbacks=callbacks,epochs=100)
+        self.histories["quantized_8w0i"] = self.models["quantized_8w0i"].fit(x=self.training_generator,validation_data=self.validation_generator, callbacks=callbacks,epochs=100)
 
     #plot based on history
     def plotHistories(self):
@@ -298,12 +306,14 @@ class Model1(SmartPixModel):
             plt.xlabel('Epoch')
             plt.legend(loc='upper left')
             plt.show()
-        if self.model is not None:
-            plotModelHistory(self.histories["unquantized"], 1)
-        if self.quantized_model is not None:
-            plotModelHistory(self.histories["quantized"], 2)
+        if self.models["Unquantized"] is not None:
+            plotModelHistory(self.histories["Unquantized"], 1)
+        #TODO loop through bit_configs
+        if self.models["quantized_8w0i"] is not None:
+            plotModelHistory(self.histories["quantized_8w0i"], 2)
 
 
-    # Evaluate the model
-    def evaluate(self):
-        print(self.quantized_model.evaluate(self.validationODG, verbose=0))
+    # # Evaluate the model
+    # def evaluate(self):
+    #     #TODO loop through bit configs
+    #     print(self.models["quantized_8w0i"].evaluate(self.validation_generator, verbose=0))
