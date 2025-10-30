@@ -17,7 +17,8 @@ sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO u
 import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
 import pandas as pd
 from datetime import datetime
-# import OptimizedDataGenerator4 as ODG
+sys.path.append("../ryan")
+import OptimizedDataGenerator4 as ODG
 
 class SmartPixModel(ABC):
     def __init__(self,
@@ -25,6 +26,11 @@ class SmartPixModel(ABC):
             nBits: list = None, # just for fractional bits, integer bits 
             loadModel: bool = False,
             modelPath: str = None, # Only include if you are loading a model
+            # dropout_rate: float = 0.1,
+            initial_lr: float = 1e-3,
+            end_lr: float = 1e-4,
+            power: int = 2,
+            bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],  # Test 16, 8, 6, 4, 3, and 2-bit quantization
             ): 
         # Do we want to specify model, modelType, bitSize, etc.
         # Decide here if we want to load a pre-trained model or create a new one from scratch
@@ -32,10 +38,13 @@ class SmartPixModel(ABC):
         self.modelName = "Base Model" # for other models, e.g., Model 1, Model 2, etc.
         self.models = {"Unquantized": None, "Quantized": None} # Maybe have a dictionary to store different versions of the model
         self.hyperparameterModel = None
+
+        # Learning rate parameters
+        self.initial_lr = initial_lr
+        self.end_lr = end_lr
+        self.power = power
         return
     
-    def runAllStuff(self,):
-        return
     
     def loadTfRecords(self):
         """Load TFRecords using OptimizedDataGenerator4 for features."""
@@ -54,8 +63,8 @@ class SmartPixModel(ABC):
         
         print(f"Using batch_size={batch_size} to match TFRecord format")
         
-        # Model2 uses x_profile, z_global, y_profile, y_local features
         self.training_generator = ODG2.OptimizedDataGeneratorDataShuffledBigData(
+        # self.training_generator = ODG.OptimizedDataGenerator(
             load_records=True, 
             tf_records_dir=trainDir, 
             x_feature_description=self.x_feature_description,
@@ -63,6 +72,7 @@ class SmartPixModel(ABC):
         )
         
         self.validation_generator = ODG2.OptimizedDataGeneratorDataShuffledBigData(
+        # self.validation_generator = ODG.OptimizedDataGenerator(
             load_records=True, 
             tf_records_dir=valDir, 
             x_feature_description=self.x_feature_description,
@@ -96,10 +106,20 @@ class SmartPixModel(ABC):
         )
         raise NotImplementedError("Subclasses should implement this method.")
     
-    @abstractmethod
-    def buildModel(self):
-        raise NotImplementedError("Subclasses should implement this method.")
-
+    def buildModel(self, model_type="unquantized"):
+        """
+        Build the specified model type.
+        
+        Args:
+            model_type: "unquantized" or "quantized"
+            bit_configs: List of bit configurations for quantized models --Actually now a class field/attribute
+        """
+        if model_type == "unquantized":
+            return self.makeUnquantizedModel()
+        elif model_type == "quantized":
+            return self.makeQuantizedModel()
+        else:
+            raise ValueError("model_type must be 'unquantized' or 'quantized'")
     """
     config_name = Unquantized or 
     config_name = f"quantized_{total_bits}w{int_bits}i"
@@ -119,9 +139,83 @@ class SmartPixModel(ABC):
         self.models[config_name].save(file_path)
     
     #dataset
-    def trainModel(self): # in the input, specify the learning rate scheduler, etc.
-        raise NotImplementedError("We need to write this code")
+    def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
+                   save_best=True, early_stopping_patience=20,
+                   run_eagerly = False,config_name = "Unquantized"):
+        """
+        Train the {self.modelName}.
+        
+        Args:
+            epochs: Number of training epochs
+            batch_size: Batch size for training (not used, defined in data generator)
+            learning_rate: Learning rate for optimizer (if None, uses polynomial decay)
+            save_best: Whether to save the best model
+            early_stopping_patience: Patience for early stopping
+        """
+        if self.models[config_name] is None:
+            raise ValueError("Model not built. Call buildModel() first.")
+        
+        print(self.models[config_name].summary())
 
+        
+        if self.training_generator is None:
+            self.loadTfRecords()
+        
+        print(f"Training {self.modelName} for {epochs} epochs...")
+        
+        # Setup learning rate schedule
+        if learning_rate is None:
+            from tensorflow.keras.optimizers.schedules import PolynomialDecay
+            decay_steps = 30 * 200
+            lr_schedule = PolynomialDecay(
+                initial_learning_rate=self.initial_lr,
+                decay_steps=decay_steps,
+                end_learning_rate=self.end_lr,
+                power=self.power
+            )
+            optimizer = Adam(learning_rate=lr_schedule)
+        else:
+            optimizer = Adam(learning_rate=learning_rate)
+        
+        # Compile model
+        self.models[config_name].compile(
+            optimizer=optimizer,
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly=run_eagerly
+        )
+        
+        # Create callbacks
+        callbacks = []
+        
+        if early_stopping_patience > 0:
+            callbacks.append(EarlyStopping(
+                monitor='val_loss',
+                patience=early_stopping_patience,
+                restore_best_weights=True
+            ))
+        
+        if save_best:
+            # Use .h5 format instead of .keras to avoid the 'options' error
+            callbacks.append(ModelCheckpoint(
+                filepath=f'./{self.modelName}_best.h5',
+                monitor='val_binary_accuracy',
+                save_best_only=True,
+                mode='max'
+            ))
+        
+        # Train model
+        self.histories[config_name] = self.models[config_name].fit(
+            self.training_generator,
+            validation_data=self.validation_generator,
+            epochs=epochs,
+            callbacks=callbacks,
+            verbose=1
+        )
+        
+        print(f"✓ {self.modelName} {config_name} training completed!")
+        return self.histories[config_name]
+  
     #plot based on history
     def plotModel(self, save_plots=True, output_dir="./plots",config_name = "Unquantized"):
         """
@@ -189,7 +283,7 @@ class SmartPixModel(ABC):
     # Evaluate the model
     def evaluate(self, test_generator=None,config_name = "Unquantized"):
         """
-        Evaluate the trained Model2.
+        Evaluate the trained {self.modelNam.
         
         Args:
             test_generator: Optional test data generator
@@ -228,7 +322,7 @@ class SmartPixModel(ABC):
             'tpr': tpr.tolist()
         }
         
-        print(f"✓ Model2 evaluation completed!")
+        print(f"✓ {self.modelName} evaluation completed!")
         print(f"  Test Loss: {test_loss:.4f}")
         print(f"  Test Accuracy: {test_accuracy:.4f}")
         print(f"  ROC AUC: {roc_auc:.4f}")
@@ -272,7 +366,6 @@ class SmartPixModel(ABC):
         eval_results = self.evaluate()
         
         # Save non-quantized model
-        #TODO use self.saveModel
         print("2d. Saving unquantized model...")
         model_save_path = os.path.join(models_dir, f"{self.modelName}_unquantized.h5")
         self.saveModel(file_path = model_save_path, config_name = "Unquantized")
@@ -307,29 +400,33 @@ class SmartPixModel(ABC):
             self.loadTfRecords()
             print("I'm not sure that's actually necessary")
             #TODO: See what happens without this line
+            config_name = f"quantized_{weight_bits}w{int_bits}i"
             
             print(f"3b. Building {weight_bits}-bit quantized model...")
-            self.buildModel("quantized", bit_configs=[(weight_bits, int_bits)])
+            # self.buildModel("quantized", bit_configs=[(weight_bits, int_bits)])
+            self.buildModel("quantized")
+
             
             # Get the quantized model
-            # quantized_model = self.models[f"quantized_{weight_bits}w{int_bits}i"]
+            # quantized_model = self.models[config_name]
+
             
             print(f"3c. Training {weight_bits}-bit quantized model...")
             self.trainModel(epochs=numEpochs,early_stopping_patience=15,
-                            config_name=f"quantized_{weight_bits}w{int_bits}i",
+                            config_name=config_name,
                             learning_rate=None,run_eagerly=True,)
             # Compile and train the quantized model
             #deleted that code, because you have a function for it
             
             print(f"3d. Evaluating {weight_bits}-bit quantized model...")
             # Create another fresh validation generator for evaluation NO, don't need to
-            evaluation_results = self.evaluate(test_generator = None, config_name = f"quantized_{weight_bits}w{int_bits}i")
+            evaluation_results = self.evaluate(test_generator = None, config_name = config_name)
             
             
             # Save quantized model
             print(f"3e. Saving {weight_bits}-bit quantized model...")
             model_save_path = os.path.join(models_dir, f"{self.modelName}_quantized_{weight_bits}bit.h5")
-            self.saveModel(file_path = model_save_path, config_name = f"quantized_{weight_bits}w{int_bits}i")
+            self.saveModel(file_path = model_save_path, config_name = config_name)
             # quantized_model.save(model_save_path)
             print(f"{weight_bits}-bit model saved to: {model_save_path}")
             
@@ -349,7 +446,7 @@ class SmartPixModel(ABC):
             # Plot quantized results
             print(f"3f. Plotting {weight_bits}-bit quantized results...")
             plot_dir_quant = os.path.join(plots_dir, f"{weight_bits}bit")
-            self.plotModel(save_plots=True,output_dir=plot_dir_quant,config_name = f"quantized_{weight_bits}w{int_bits}i")
+            self.plotModel(save_plots=True,output_dir=plot_dir_quant,config_name = config_name)
             # # Create a temporary {self.modelName} instance for plotting
         
         # Create results summary
