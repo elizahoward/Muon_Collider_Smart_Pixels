@@ -283,7 +283,7 @@ class Model2(SmartPixModel):
         
         return model
     
-    def makeQuantizedModel(self, bit_configs=None):
+    def makeQuantizedModel(self):
         """
         Build quantized Model2 using QKeras.
         
@@ -389,20 +389,7 @@ class Model2(SmartPixModel):
         print(f"✓ Built {len(self.bit_configs)} quantized Model2 variants")
         # return quantized_models
     
-    def buildModel(self, model_type="unquantized", bit_configs=None):
-        """
-        Build the specified model type.
-        
-        Args:
-            model_type: "unquantized" or "quantized"
-            bit_configs: List of bit configurations for quantized models
-        """
-        if model_type == "unquantized":
-            return self.makeUnquantizedModel()
-        elif model_type == "quantized":
-            return self.makeQuantizedModel(bit_configs)
-        else:
-            raise ValueError("model_type must be 'unquantized' or 'quantized'")
+
     
     def runHyperparameterTuning(self, max_trials=50, executions_per_trial=2,numEpochs = 30):
         """
@@ -457,191 +444,7 @@ class Model2(SmartPixModel):
         
         return best_model, results
     
-    def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
-                   save_best=True, early_stopping_patience=20,
-                   run_eagerly = False,config_name = "Unquantized"):
-        """
-        Train the Model2.
-        
-        Args:
-            epochs: Number of training epochs
-            batch_size: Batch size for training (not used, defined in data generator)
-            learning_rate: Learning rate for optimizer (if None, uses polynomial decay)
-            save_best: Whether to save the best model
-            early_stopping_patience: Patience for early stopping
-        """
-        if self.models[config_name] is None:
-            raise ValueError("Model not built. Call buildModel() first.")
-        
-        if self.training_generator is None:
-            self.loadTfRecords()
-        
-        print(f"Training Model2 for {epochs} epochs...")
-        
-        # Setup learning rate schedule
-        if learning_rate is None:
-            from tensorflow.keras.optimizers.schedules import PolynomialDecay
-            decay_steps = 30 * 200
-            lr_schedule = PolynomialDecay(
-                initial_learning_rate=self.initial_lr,
-                decay_steps=decay_steps,
-                end_learning_rate=self.end_lr,
-                power=self.power
-            )
-            optimizer = Adam(learning_rate=lr_schedule)
-        else:
-            optimizer = Adam(learning_rate=learning_rate)
-        
-        # Compile model
-        self.models[config_name].compile(
-            optimizer=optimizer,
-            loss="binary_crossentropy",
-            metrics=["binary_accuracy"],
-            run_eagerly=run_eagerly
-        )
-        
-        # Create callbacks
-        callbacks = []
-        
-        if early_stopping_patience > 0:
-            callbacks.append(EarlyStopping(
-                monitor='val_loss',
-                patience=early_stopping_patience,
-                restore_best_weights=True
-            ))
-        
-        if save_best:
-            # Use .h5 format instead of .keras to avoid the 'options' error
-            callbacks.append(ModelCheckpoint(
-                filepath=f'./{self.modelName}_best.h5',
-                monitor='val_binary_accuracy',
-                save_best_only=True,
-                mode='max'
-            ))
-        
-        # Train model
-        self.histories[config_name] = self.models[config_name].fit(
-            self.training_generator,
-            validation_data=self.validation_generator,
-            epochs=epochs,
-            callbacks=callbacks,
-            verbose=1
-        )
-        
-        print(f"✓ Model2 {config_name} training completed!")
-        return self.histories[config_name]
-    
-    # def evaluate(self, test_generator=None,config_name = "Unquantized"):
-    #     """
-    #     Evaluate the trained Model2.
-        
-    #     Args:
-    #         test_generator: Optional test data generator
-    #     """
-    #     if self.models[config_name] is None:
-    #         raise ValueError("No model to evaluate. Train a model first.")
-        
-    #     # Use validation generator if no test generator provided
-    #     eval_generator = test_generator if test_generator else self.validation_generator
-        
-    #     if eval_generator is None:
-    #         self.loadTfRecords()
-    #         eval_generator = self.validation_generator
-        
-    #     print(f"Evaluating {self.modelName}...")
-        
-    #     # Get predictions
-    #     predictions = self.models[config_name].predict(eval_generator, verbose=1)
-        
-    #     # Get true labels
-    #     true_labels = np.concatenate([y for _, y in eval_generator])
-        
-    #     # Calculate metrics
-    #     test_loss, test_accuracy = self.models[config_name].evaluate(eval_generator, verbose=0)
-        
-    #     # Calculate ROC AUC
-    #     fpr, tpr, thresholds = roc_curve(true_labels, predictions.ravel())
-    #     roc_auc = auc(fpr, tpr)
-        
-    #     # Store results
-    #     self.evaluation_results = {
-    #         'test_loss': float(test_loss),
-    #         'test_accuracy': float(test_accuracy),
-    #         'roc_auc': float(roc_auc),
-    #         'fpr': fpr.tolist(),
-    #         'tpr': tpr.tolist()
-    #     }
-        
-    #     print(f"✓ Model2 evaluation completed!")
-    #     print(f"  Test Loss: {test_loss:.4f}")
-    #     print(f"  Test Accuracy: {test_accuracy:.4f}")
-    #     print(f"  ROC AUC: {roc_auc:.4f}")
-        
-    #     return self.evaluation_results
-    
-    def plotModel(self, save_plots=True, output_dir="./plots",config_name = "Unquantized"):
-        """
-        Plot training history and evaluation results.
-        
-        Args:
-            save_plots: Whether to save plots to disk
-            output_dir: Directory to save plots
-        """
-        if self.histories[config_name] is None:
-            print("No training history available. Train a model first.")
-            return
-        
-        # Create output directory
-        if save_plots:
-            os.makedirs(output_dir, exist_ok=True)
-        
-        # Plot training history
-        fig, axes = plt.subplots(1, 2, figsize=(15, 5))
-        
-        # Plot accuracy
-        axes[0].plot(self.histories[config_name].history['binary_accuracy'], label='Training')
-        axes[0].plot(self.histories[config_name].history['val_binary_accuracy'], label='Validation')
-        axes[0].set_title(f'{self.modelName} Accuracy')
-        axes[0].set_xlabel('Epoch')
-        axes[0].set_ylabel('Accuracy')
-        axes[0].legend()
-        axes[0].grid(True)
-        
-        # Plot loss
-        axes[1].plot(self.histories[config_name].history['loss'], label='Training')
-        axes[1].plot(self.histories[config_name].history['val_loss'], label='Validation')
-        axes[1].set_title(f'{self.modelName} Loss')
-        axes[1].set_xlabel('Epoch')
-        axes[1].set_ylabel('Loss')
-        axes[1].legend()
-        axes[1].grid(True)
-        
-        plt.tight_layout()
-        
-        if save_plots:
-            plt.savefig(f"{output_dir}/{self.modelName}_training_history.png", dpi=300, bbox_inches='tight')
-            print(f"Training history plot saved to {output_dir}/{self.modelName}_training_history.png")
-        
-        plt.show()
-        
-        # Plot ROC curve if evaluation results available
-        if self.evaluation_results is not None:
-            plt.figure(figsize=(8, 6))
-            plt.plot(self.evaluation_results['fpr'], self.evaluation_results['tpr'], 
-                    label=f"ROC Curve (AUC = {self.evaluation_results['roc_auc']:.4f})")
-            plt.plot([0, 1], [0, 1], 'k--', label='Random')
-            plt.xlabel('False Positive Rate')
-            plt.ylabel('True Positive Rate')
-            plt.title(f'{self.modelName} ROC Curve')
-            plt.legend()
-            plt.grid(True)
-            
-            if save_plots:
-                plt.savefig(f"{output_dir}/{self.modelName}_roc_curve.png", dpi=300, bbox_inches='tight')
-                print(f"ROC curve plot saved to {output_dir}/{self.modelName}_roc_curve.png")
-            
-            plt.show()
-    
+    #plotModel() function moved to abstract class
     #runAllStuff() function moved to abstract class
 
 

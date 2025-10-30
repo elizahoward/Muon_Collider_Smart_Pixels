@@ -26,27 +26,32 @@ class Model1(SmartPixModel):
                                 ## run training should make one model for each bit size
             loadModel: bool = False,
             modelPath: str = None, # Only include if you are loading a model
+                        # dropout_rate: float = 0.1,
+            initial_lr: float = 1e-3,
+            end_lr: float = 1e-4,
+            power: int = 2,
+            bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
             ): 
         self.tfRecordFolder = tfRecordFolder
-        self.modelName = "Model 1" # for other models, e.g., Model 1, Model 2, etc.
+        self.modelName = "Model1" # for other models, e.g., Model 1, Model 2, etc.
         # self.model = None
         self.histories = {}
         self.models = {"Unquantized": None}
-        self.bit_configs = [(8, 0), (6, 0), (4, 0)] 
-        for weight_bits, int_bits in self.bit_configs:
-            config_name = f"quantized_{weight_bits}w{int_bits}i"
+        self.bit_configs = bit_configs
+        for total_bits, int_bits in self.bit_configs:
+            config_name = f"quantized_{total_bits}w{int_bits}i"
             self.models[config_name] = None
         # self.quantized_model = None
         self.hyperparameterModel = None
         self.training_generator = None
         self.validation_generator = None
+        self.x_feature_description: list = ['z_global','x_size', 'y_size', 'y_local']
+        # Learning rate parameters
+        self.initial_lr = initial_lr
+        self.end_lr = end_lr
+        self.power = power
         return
-    
-    def runAllStuff(self,):
-        return
-    
-    
-    
+     
     def makeUnquantizedModel(self):
         ## here i will be making a 4-layer neural network 
         ## Model 1: z-global, x size, y size, y local
@@ -137,11 +142,14 @@ class Model1(SmartPixModel):
      
 
 
-    
     def makeQuantizedModel(self):
-        #TODO make these perhaps looped or arguments or something
-        total_bits = self.bit_configs[0][0]
-        int_bits = self.bit_configs[0][1]
+        for total_bits, int_bits in self.bit_configs:
+            config_name = f"quantized_{total_bits}w{int_bits}i"
+        
+        
+            print(f"Building {config_name} model...")
+            self.makeQuantizedModel_withBits(total_bits=total_bits,int_bits=int_bits)
+    def makeQuantizedModel_withBits(self, total_bits = 8,int_bits =0):
         """
         Build & compile your QKeras model with the given number of integer bits.
         """
@@ -243,8 +251,6 @@ class Model1(SmartPixModel):
         raise NotImplementedError("Subclasses should implement this method.")
     """
     
-    def buildModel(self):
-       self.makeUnquantizedModel()
 
     # """
     # config_name = Unquantized or 
@@ -260,8 +266,29 @@ class Model1(SmartPixModel):
     #         raise Exception("Model exists. To overwrite existing saved model, set overwrite to True.")
     #     self.models[config_name].save(file_path)
     
-    #dataset
+
+
+    #THESE SHOULD BE UNNECESSARY NOW, use the abstract version
+    def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
+                   save_best=True, early_stopping_patience=20,
+                   run_eagerly = False,config_name = "Unquantized"):
+        # raise NotImplementedError("Use the abstract class version, trainModel()")
+        print("\n\n\nWARNING SHOULD BE USING THE ABSTRACT VERSION INSTEAD\n\n\n")
+        print("\n\n\nTHIS IS FOR DEBUGGING WHY YOUR QUANTIZED MODEL IS RANDOMLY GUESSING\n\n\n")
+        print("\n\n\nONCE THAT IS FIGURED OUT, GO BACK TO THE ABSTRACT VERSION\n\n\n")
+        # self.loadTfRecords()
+        callbacks = []
+        print(self.models[config_name].summary())
+        self.models[config_name].compile(optimizer='adam', 
+                            loss='binary_crossentropy', 
+                            metrics=['binary_accuracy'],
+                            run_eagerly=True
+                            )
+        self.histories[config_name] = self.models[config_name].fit(x=self.training_generator,validation_data=self.validation_generator, callbacks=callbacks,epochs=epochs)
+
+
     def trainUnquantizedModel(self): # in the input, specify the learning rate scheduler, etc.
+        raise NotImplementedError("Use the abstract class version, trainModel()")
         self.loadTfRecords()
         callbacks = []
         self.models["Unquantized"].compile(optimizer='adam', 
@@ -273,9 +300,10 @@ class Model1(SmartPixModel):
 
 
     def trainQuantizedModel(self): # in the input, specify the learning rate scheduler, etc.
+        raise NotImplementedError("Use the abstract class version, trainModel()")
         self.loadTfRecords()
         callbacks = []
-        # config_name = f"quantized_{weight_bits}w{int_bits}i"
+        # config_name = f"quantized_{total_bits}w{int_bits}i"
         #TODO make this based off of total bits, int bits, in bit_configs
         
         self.models["quantized_8w0i"].compile(optimizer='adam', 
@@ -311,9 +339,3 @@ class Model1(SmartPixModel):
         #TODO loop through bit_configs
         if self.models["quantized_8w0i"] is not None:
             plotModelHistory(self.histories["quantized_8w0i"], 2)
-
-
-    # # Evaluate the model
-    # def evaluate(self):
-    #     #TODO loop through bit configs
-    #     print(self.models["quantized_8w0i"].evaluate(self.validation_generator, verbose=0))
