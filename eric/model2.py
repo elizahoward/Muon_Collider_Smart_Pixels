@@ -468,11 +468,11 @@ class Model2(SmartPixModel):
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
-        xz_units = hp.Int('xz_units', min_value=8, max_value=64, step=8)
-        yl_units = hp.Int('yl_units', min_value=8, max_value=64, step=8)
-        merged_units1 = hp.Int('merged_units1', min_value=32, max_value=256, step=32)
-        merged_units2 = hp.Int('merged_units2', min_value=32, max_value=128, step=16)
-        merged_units3 = hp.Int('merged_units3', min_value=16, max_value=64, step=8)
+        xz_units = hp.Int('xz_units', min_value=4, max_value=20, step=4)
+        yl_units = hp.Int('yl_units', min_value=4, max_value=20, step=4)
+        merged_units1 = hp.Int('merged_units1', min_value=16, max_value=64, step=8)
+        merged_units2 = hp.Int('merged_units2', min_value=8, max_value=48, step=8)
+        merged_units3 = hp.Int('merged_units3', min_value=4, max_value=32, step=8)
         dropout_rate = hp.Float('dropout_rate', min_value=0.1, max_value=0.1, step=0.1)
         
         # x_profile + z_global branch
@@ -616,9 +616,46 @@ class Model2(SmartPixModel):
             )
             
             # Get all models and hyperparameters (not just the best)
-            num_trials = len(tuner.oracle.trials)
-            all_models = tuner.get_best_models(num_models=num_trials)
-            all_hyperparameters = tuner.get_best_hyperparameters(num_trials=num_trials)
+            # Filter out trials that don't have valid checkpoints
+            # tuner.oracle.trials is a dictionary mapping trial_id to Trial objects
+            all_trials = list(tuner.oracle.trials.values())
+            num_trials = len(all_trials)
+            
+            # Load models one by one, skipping trials with missing checkpoints
+            # Sort trials by objective value (best first)
+            completed_trials = []
+            for trial in all_trials:
+                if trial.status == 'COMPLETED' and trial.score is not None:
+                    completed_trials.append(trial)
+            
+            # Sort by score (best first, since objective is 'val_binary_accuracy' which should be maximized)
+            completed_trials.sort(key=lambda t: t.score, reverse=True)
+            
+            all_models = []
+            all_hyperparameters = []
+            print(f"\nLoading models from {len(completed_trials)} completed trials (out of {num_trials} total)...")
+            
+            for idx, trial in enumerate(completed_trials):
+                try:
+                    # Load model for this specific trial
+                    model = tuner.load_model(trial)
+                    all_models.append(model)
+                    all_hyperparameters.append(trial.hyperparameters)
+                    if idx == 0:
+                        print(f"  ✓ Loaded best model (trial {trial.trial_id}, score={trial.score:.4f})")
+                    elif idx < 5:  # Print first 5 for visibility
+                        print(f"  ✓ Loaded model {idx+1} (trial {trial.trial_id}, score={trial.score:.4f})")
+                except Exception as e:
+                    print(f"  ⚠ Failed to load model for trial {trial.trial_id}: {str(e)}")
+                    # Continue with other trials
+            
+            if len(completed_trials) > 5:
+                print(f"  ... (loaded {len(all_models)} models total)")
+            else:
+                print(f"  ✓ Successfully loaded {len(all_models)} out of {len(completed_trials)} completed models")
+            
+            if len(all_models) == 0:
+                raise RuntimeError(f"Failed to load any models for {config_name}. All trials may have missing checkpoints.")
             
             # Create directory for this configuration's models
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
