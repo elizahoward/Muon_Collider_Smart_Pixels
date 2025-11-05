@@ -76,7 +76,9 @@ class Model3(SmartPixModel):
                  dropout_rate: float = 0.0,
                  initial_lr: float = 0.000871145,
                  end_lr: float = 5.3e-05,
-                 power: int = 2):
+                 power: int = 2,
+                 bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+                 ):
         """
         Initialize Model3.
         
@@ -95,6 +97,7 @@ class Model3(SmartPixModel):
             initial_lr: Initial learning rate
             end_lr: End learning rate for polynomial decay
             power: Power for polynomial decay
+            bit_configs: List of (weight_bits, int_bits) tuples for quantization
         """
         super().__init__(tfRecordFolder, nBits, loadModel, modelPath)
         
@@ -123,12 +126,19 @@ class Model3(SmartPixModel):
         self.validation_generator = None
         
         # Results storage
-        self.training_history = None
-        self.evaluation_results = None
+        self.histories = {}
+        
+        # Initialize models dictionary
+        self.models = {"Unquantized": None}
+        self.bit_configs = bit_configs 
+        for weight_bits, int_bits in self.bit_configs:
+            config_name = f"quantized_{weight_bits}w{int_bits}i"
+            self.models[config_name] = None
         
         # Load model if requested
+        config_name = "Unquantized"
         if loadModel and modelPath:
-            self.loadModel(modelPath)
+            self.loadModel(modelPath, config_name)
     
     def loadTfRecords(self):
         """Load TFRecords using OptimizedDataGenerator4 for Model3 features."""
@@ -219,18 +229,14 @@ class Model3(SmartPixModel):
         # Output layer
         output = Dense(1, activation="sigmoid", name="output")(h)
         
-        # Create model
-        self.model = Model(
+        # Create and compile model
+        self.models["Unquantized"] = Model(
             inputs=[cluster_input, z_global_input, y_local_input], 
             outputs=output, 
             name="model3_unquantized"
         )
         
-        # Store in models dictionary
-        self.models["Unquantized"] = self.model
-        
         print("✓ Unquantized Model3 built successfully")
-        return self.model
     
     def makeUnquatizedModelHyperParameterTuning(self, hp):
         """
@@ -297,7 +303,7 @@ class Model3(SmartPixModel):
         
         return model
     
-    def makeQuantizedModel(self, bit_configs=None):
+    def makeQuantizedModel(self):
         """
         Build quantized Model3 using QKeras.
         
@@ -307,13 +313,11 @@ class Model3(SmartPixModel):
         if not QKERAS_AVAILABLE:
             raise ImportError("QKeras is required for quantized models")
         
-        if bit_configs is None:
-            bit_configs = [(8, 0), (6, 0), (4, 0)]  # Default configurations
-        
-        quantized_models = {}
-        
-        for weight_bits, int_bits in bit_configs:
+        # Default configurations
+        for weight_bits, int_bits in self.bit_configs:
             config_name = f"quantized_{weight_bits}w{int_bits}i"
+        
+        
             print(f"Building {config_name} model...")
             
             # Quantizers (use 8-bit activations regardless of weight bits)
@@ -395,29 +399,16 @@ class Model3(SmartPixModel):
                 run_eagerly=True
             )
             
-            quantized_models[config_name] = model
+            self.models[config_name] = model
         
-        # Store quantized models
-        self.models["Quantized"] = quantized_models
-        self.quantized_model = quantized_models  # For backward compatibility
+        # # Store quantized models
+        # self.models["Quantized"] = quantized_models
+        # self.quantized_model = quantized_models  # For backward compatibility
         
-        print(f"✓ Built {len(quantized_models)} quantized Model3 variants")
-        return quantized_models
+        print(f"✓ Built {len(self.bit_configs)} quantized Model3 variants")
+        # return quantized_models
     
-    def buildModel(self, model_type="unquantized", bit_configs=None):
-        """
-        Build the specified model type.
-        
-        Args:
-            model_type: "unquantized" or "quantized"
-            bit_configs: List of bit configurations for quantized models
-        """
-        if model_type == "unquantized":
-            return self.makeUnquantizedModel()
-        elif model_type == "quantized":
-            return self.makeQuantizedModel(bit_configs)
-        else:
-            raise ValueError("model_type must be 'unquantized' or 'quantized'")
+
     
     def runHyperparameterTuning(self, max_trials=75, executions_per_trial=2):
         """
@@ -472,432 +463,10 @@ class Model3(SmartPixModel):
         
         return best_model, results
     
-    def trainModel(self, epochs=200, batch_size=32, learning_rate=None, 
-                   save_best=True, early_stopping_patience=35):
-        """
-        Train the Model3.
-        
-        Args:
-            epochs: Number of training epochs
-            batch_size: Batch size for training (not used, defined in data generator)
-            learning_rate: Learning rate for optimizer (if None, uses polynomial decay)
-            save_best: Whether to save the best model
-            early_stopping_patience: Patience for early stopping
-        """
-        if self.model is None:
-            raise ValueError("Model not built. Call buildModel() first.")
-        
-        if self.training_generator is None:
-            self.loadTfRecords()
-        
-        print(f"Training Model3 for {epochs} epochs...")
-        
-        # Setup learning rate schedule
-        if learning_rate is None:
-            decay_steps = 30 * 200
-            lr_schedule = PolynomialDecay(
-                initial_learning_rate=self.initial_lr,
-                decay_steps=decay_steps,
-                end_learning_rate=self.end_lr,
-                power=self.power
-            )
-            optimizer = Adam(learning_rate=lr_schedule)
-        else:
-            optimizer = Adam(learning_rate=learning_rate)
-        
-        # Compile model
-        self.model.compile(
-            optimizer=optimizer,
-            loss="binary_crossentropy",
-            metrics=["accuracy"]
-        )
-        
-        # Create callbacks
-        callbacks = []
-        
-        if early_stopping_patience > 0:
-            callbacks.append(EarlyStopping(
-                monitor='val_loss',
-                patience=early_stopping_patience,
-                restore_best_weights=True
-            ))
-        
-        if save_best:
-            # Use .h5 format to avoid compatibility issues
-            callbacks.append(ModelCheckpoint(
-                filepath=f'./{self.modelName}_best.h5',
-                monitor='val_accuracy',
-                save_best_only=True,
-                mode='max'
-            ))
-        
-        # Train model
-        self.training_history = self.model.fit(
-            self.training_generator,
-            validation_data=self.validation_generator,
-            epochs=epochs,
-            callbacks=callbacks,
-            verbose=1
-        )
-        
-        print("✓ Model3 training completed!")
-        return self.training_history
-    
-    def evaluate(self, test_generator=None):
-        """
-        Evaluate the trained Model3.
-        
-        Args:
-            test_generator: Optional test data generator
-        """
-        if self.model is None:
-            raise ValueError("No model to evaluate. Train a model first.")
-        
-        # Use validation generator if no test generator provided
-        eval_generator = test_generator if test_generator else self.validation_generator
-        
-        if eval_generator is None:
-            self.loadTfRecords()
-            eval_generator = self.validation_generator
-        
-        print("Evaluating Model3...")
-        
-        # Get predictions
-        predictions = self.model.predict(eval_generator, verbose=1)
-        
-        # Get true labels
-        true_labels = np.concatenate([y for _, y in eval_generator])
-        
-        # Calculate metrics
-        test_loss, test_accuracy = self.model.evaluate(eval_generator, verbose=0)
-        
-        # Calculate ROC AUC
-        fpr, tpr, thresholds = roc_curve(true_labels, predictions.ravel())
-        roc_auc = auc(fpr, tpr)
-        
-        # Store results
-        self.evaluation_results = {
-            'test_loss': float(test_loss),
-            'test_accuracy': float(test_accuracy),
-            'roc_auc': float(roc_auc),
-            'fpr': fpr.tolist(),
-            'tpr': tpr.tolist()
-        }
-        
-        print(f"✓ Model3 evaluation completed!")
-        print(f"  Test Loss: {test_loss:.4f}")
-        print(f"  Test Accuracy: {test_accuracy:.4f}")
-        print(f"  ROC AUC: {roc_auc:.4f}")
-        
-        return self.evaluation_results
-    
-    def plotModel(self, save_plots=True, output_dir="./plots"):
-        """
-        Plot training history and evaluation results.
-        
-        Args:
-            save_plots: Whether to save plots to disk
-            output_dir: Directory to save plots
-        """
-        if self.training_history is None:
-            print("No training history available. Train a model first.")
-            return
-        
-        # Create output directory
-        if save_plots:
-            os.makedirs(output_dir, exist_ok=True)
-        
-        # Plot training history
-        fig, axes = plt.subplots(1, 2, figsize=(15, 5))
-        
-        # Plot accuracy
-        axes[0].plot(self.training_history.history['accuracy'], label='Training')
-        axes[0].plot(self.training_history.history['val_accuracy'], label='Validation')
-        axes[0].set_title('Model3 Accuracy')
-        axes[0].set_xlabel('Epoch')
-        axes[0].set_ylabel('Accuracy')
-        axes[0].legend()
-        axes[0].grid(True)
-        
-        # Plot loss
-        axes[1].plot(self.training_history.history['loss'], label='Training')
-        axes[1].plot(self.training_history.history['val_loss'], label='Validation')
-        axes[1].set_title('Model3 Loss')
-        axes[1].set_xlabel('Epoch')
-        axes[1].set_ylabel('Loss')
-        axes[1].legend()
-        axes[1].grid(True)
-        
-        plt.tight_layout()
-        
-        if save_plots:
-            plt.savefig(f"{output_dir}/model3_training_history.png", dpi=300, bbox_inches='tight')
-            print(f"Training history plot saved to {output_dir}/model3_training_history.png")
-        
-        plt.show()
-        
-        # Plot ROC curve if evaluation results available
-        if self.evaluation_results is not None:
-            plt.figure(figsize=(8, 6))
-            plt.plot(self.evaluation_results['fpr'], self.evaluation_results['tpr'], 
-                    label=f"ROC Curve (AUC = {self.evaluation_results['roc_auc']:.4f})")
-            plt.plot([0, 1], [0, 1], 'k--', label='Random')
-            plt.xlabel('False Positive Rate')
-            plt.ylabel('True Positive Rate')
-            plt.title('Model3 ROC Curve')
-            plt.legend()
-            plt.grid(True)
-            
-            if save_plots:
-                plt.savefig(f"{output_dir}/model3_roc_curve.png", dpi=300, bbox_inches='tight')
-                print(f"ROC curve plot saved to {output_dir}/model3_roc_curve.png")
-            
-            plt.show()
-    
-    def runAllStuff(self):
-        """
-        Run the complete Model3 pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
-        """
-        print("=== Running Complete Model3 Pipeline with Quantization Testing ===")
-        
-        # Create output directory with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = f"model3_results_{timestamp}"
-        os.makedirs(output_dir, exist_ok=True)
-        print(f"All results will be saved to: {output_dir}/")
-        
-        # Create subdirectories
-        models_dir = os.path.join(output_dir, "models")
-        plots_dir = os.path.join(output_dir, "plots")
-        os.makedirs(models_dir, exist_ok=True)
-        os.makedirs(plots_dir, exist_ok=True)
-        
-        # Load data
-        print("1. Loading TFRecords...")
-        self.loadTfRecords()
-        
-        # Results storage
-        results = []
-        
-        # Test non-quantized model first
-        print("\n2. Testing Non-quantized Model...")
-        print("2a. Building unquantized model...")
-        self.buildModel("unquantized")
-        
-        print("2b. Training unquantized model...")
-        self.trainModel(epochs=20, early_stopping_patience=15, save_best=False)
-        
-        print("2c. Evaluating unquantized model...")
-        eval_results = self.evaluate()
-        
-        # Save non-quantized model
-        print("2d. Saving unquantized model...")
-        model_save_path = os.path.join(models_dir, "model3_unquantized.h5")
-        self.model.save(model_save_path)
-        print(f"Unquantized model saved to: {model_save_path}")
-        
-        # Store non-quantized results
-        results.append({
-            'model_type': 'non_quantized',
-            'weight_bits': 'N/A',
-            'integer_bits': 'N/A',
-            'test_accuracy': eval_results['test_accuracy'],
-            'test_loss': eval_results['test_loss'],
-            'roc_auc': eval_results['roc_auc'],
-            'model_path': model_save_path
-        })
-        
-        print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
-        
-        # Plot non-quantized results
-        print("2e. Plotting non-quantized results...")
-        plot_dir_unquant = os.path.join(plots_dir, "non_quantized")
-        self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
-        
-        # Test quantized models
-        bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
-        
-        for weight_bits, int_bits in bit_configs:
-            print(f"\n3. Testing {weight_bits}-bit Quantized Model...")
-            
-            # Create completely fresh data generators for each quantized model to avoid state corruption
-            print(f"3a. Creating fresh data generators...")
-            trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
-            valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
-            
-            # Determine batch size from directory name
-            batch_size = 16384
-            if "filtering_records16384" in self.tfRecordFolder:
-                batch_size = 16384
-            elif "filtering_records1024" in self.tfRecordFolder:
-                batch_size = 1024
-            
-            # Create fresh generators
-            fresh_train_gen = ODG.OptimizedDataGenerator(
-                load_records=True, 
-                tf_records_dir=trainDir, 
-                x_feature_description=self.x_feature_description,
-                time_stamps=self.time_stamps,
-                batch_size=batch_size
-            )
-            
-            fresh_val_gen = ODG.OptimizedDataGenerator(
-                load_records=True, 
-                tf_records_dir=valDir, 
-                x_feature_description=self.x_feature_description,
-                time_stamps=self.time_stamps,
-                batch_size=batch_size
-            )
-            
-            print(f"3b. Building {weight_bits}-bit quantized model...")
-            self.buildModel("quantized", bit_configs=[(weight_bits, int_bits)])
-            
-            # Get the quantized model
-            quantized_model = self.models["Quantized"][f"quantized_{weight_bits}w{int_bits}i"]
-            
-            print(f"3c. Training {weight_bits}-bit quantized model...")
-            # Compile and train the quantized model
-            decay_steps = 30 * 200
-            lr_schedule = PolynomialDecay(
-                initial_learning_rate=self.initial_lr,
-                decay_steps=decay_steps,
-                end_learning_rate=self.end_lr,
-                power=self.power
-            )
-            optimizer = Adam(learning_rate=lr_schedule)
-            
-            quantized_model.compile(
-                optimizer=optimizer,
-                loss="binary_crossentropy",
-                metrics=["accuracy"],
-                run_eagerly=True
-            )
-            
-            # Train with early stopping using fresh generators
-            history = quantized_model.fit(
-                fresh_train_gen,
-                validation_data=fresh_val_gen,
-                epochs=20,
-                callbacks=[
-                    tf.keras.callbacks.EarlyStopping(
-                        monitor='val_loss',
-                        patience=15,
-                        restore_best_weights=True
-                    )
-                ],
-                verbose=1
-            )
-            
-            print(f"3d. Evaluating {weight_bits}-bit quantized model...")
-            # Create another fresh validation generator for evaluation
-            eval_val_gen = ODG.OptimizedDataGenerator(
-                load_records=True, 
-                tf_records_dir=valDir, 
-                x_feature_description=self.x_feature_description,
-                time_stamps=self.time_stamps,
-                batch_size=batch_size
-            )
-            
-            # Evaluate
-            test_loss, test_accuracy = quantized_model.evaluate(eval_val_gen, verbose=0)
-            
-            # Create yet another fresh validation generator for predictions
-            pred_val_gen = ODG.OptimizedDataGenerator(
-                load_records=True, 
-                tf_records_dir=valDir, 
-                x_feature_description=self.x_feature_description,
-                time_stamps=self.time_stamps,
-                batch_size=batch_size
-            )
-            
-            # Calculate ROC AUC
-            predictions = quantized_model.predict(pred_val_gen, verbose=0).ravel()
-            true_labels = np.concatenate([y for _, y in pred_val_gen])
-            
-            fpr, tpr, thresholds = roc_curve(true_labels, predictions)
-            roc_auc_score = auc(fpr, tpr)
-            
-            # Save quantized model
-            print(f"3e. Saving {weight_bits}-bit quantized model...")
-            model_save_path = os.path.join(models_dir, f"model3_quantized_{weight_bits}bit.h5")
-            quantized_model.save(model_save_path)
-            print(f"{weight_bits}-bit model saved to: {model_save_path}")
-            
-            # Store quantized results
-            results.append({
-                'model_type': 'quantized',
-                'weight_bits': weight_bits,
-                'integer_bits': int_bits,
-                'test_accuracy': float(test_accuracy),
-                'test_loss': float(test_loss),
-                'roc_auc': float(roc_auc_score),
-                'model_path': model_save_path
-            })
-            
-            print(f"{weight_bits}-bit results: Acc={test_accuracy:.4f}, AUC={roc_auc_score:.4f}")
-            
-            # Plot quantized results
-            print(f"3f. Plotting {weight_bits}-bit quantized results...")
-            # Create a temporary model3 instance for plotting
-            temp_model3 = Model3(
-                tfRecordFolder=self.tfRecordFolder,
-                conv_filters=self.conv_filters,
-                kernel_rows=self.kernel_rows,
-                kernel_cols=self.kernel_cols,
-                scalar_dense_units=self.scalar_dense_units,
-                merged_dense_1=self.merged_dense_1,
-                merged_dense_2=self.merged_dense_2,
-                dropout_rate=self.dropout_rate
-            )
-            temp_model3.model = quantized_model
-            temp_model3.training_history = history
-            temp_model3.evaluation_results = {
-                'test_loss': float(test_loss),
-                'test_accuracy': float(test_accuracy),
-                'roc_auc': float(roc_auc_score),
-                'fpr': fpr.tolist(),
-                'tpr': tpr.tolist()
-            }
-            plot_dir_quant = os.path.join(plots_dir, f"{weight_bits}bit")
-            temp_model3.plotModel(save_plots=True, output_dir=plot_dir_quant)
-        
-        # Create results summary
-        print("\n4. Results Summary:")
-        print("=" * 60)
-        print(f"{'Model Type':<15} {'Bits':<8} {'Accuracy':<10} {'Loss':<12} {'ROC AUC':<10}")
-        print("-" * 60)
-        
-        for result in results:
-            model_type = result['model_type']
-            bits = result.get('weight_bits', 'N/A')
-            acc = result['test_accuracy']
-            loss = result['test_loss']
-            auc_score = result['roc_auc']
-            
-            print(f"{model_type:<15} {bits:<8} {acc:<10.4f} {loss:<12.4f} {auc_score:<10.4f}")
-        
-        # Find best configuration
-        best_result = max(results, key=lambda x: x['test_accuracy'])
-        print(f"\nBEST CONFIGURATION:")
-        print(f"Model: {best_result['model_type']}")
-        if best_result['model_type'] == 'quantized':
-            print(f"Bits: {best_result['weight_bits']}-bit")
-        print(f"Accuracy: {best_result['test_accuracy']:.4f}")
-        print(f"ROC AUC: {best_result['roc_auc']:.4f}")
-        
-        # Save results to CSV
-        results_file = os.path.join(output_dir, "quantization_results.csv")
-        results_df = pd.DataFrame(results)
-        results_df.to_csv(results_file, index=False)
-        print(f"\nResults saved to: {results_file}")
-        
-        print(f"\n=== Model3 Quantization Pipeline Completed! ===")
-        print(f"All outputs saved to: {output_dir}/")
-        print(f"  - Models: {models_dir}/")
-        print(f"  - Plots: {plots_dir}/")
-        print(f"  - Results CSV: {results_file}")
-        
-        return results
+    #trainModel() function moved to abstract class
+    #evaluate() function moved to abstract class
+    #plotModel() function moved to abstract class
+    #runAllStuff() function moved to abstract class
 
 
 def main():
@@ -913,7 +482,11 @@ def main():
         scalar_dense_units=32,
         merged_dense_1=200,
         merged_dense_2=100,
-        dropout_rate=0.0
+        dropout_rate=0.0,
+        initial_lr=0.000871145,
+        end_lr=5.3e-05,
+        power=2,
+        bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
     )
     
     # Run complete pipeline
