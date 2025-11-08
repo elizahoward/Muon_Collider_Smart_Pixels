@@ -2,18 +2,21 @@
 """
 Analyze Hyperparameter Tuning Results: Model Complexity vs Accuracy
 
-This script parses hyperparameter tuning results from Model2 and Model3,
+This script parses hyperparameter tuning results from a specified directory,
 calculates model complexity (total number of nodes/parameters), and plots
 the relationship between model complexity and validation accuracy.
 
 Usage:
-    python analyze_hyperparameter_complexity.py
+    python analyze_hyperparameter_complexity.py [search_directory]
+
+    If no directory is provided, uses the default path specified in the script.
 
 Author: Eric
 Date: 2024
 """
 
 import os
+import sys
 import json
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,50 +61,6 @@ def calculate_model2_complexity(hyperparams):
     return total_nodes, total_params
 
 
-def calculate_model3_complexity(hyperparams):
-    """
-    Calculate total number of nodes and parameters for Model3.
-    
-    Model3 architecture:
-    - Conv2D: cluster (13x21x1) -> conv_filters filters (3x3 kernel) -> pooling (6x10) -> flatten
-    - Scalar branch: z_global + y_local (2 inputs) -> scalar_dense_units
-    - Merged: conv_output + scalar_dense_units -> merged_dense_1 -> merged_dense_2 -> 1
-    
-    Total nodes = conv_filters*60 (approx flattened) + scalar_dense_units + merged_dense_1 + merged_dense_2 + 1
-    """
-    conv_filters = hyperparams.get('conv_filters', 0)
-    kernel_rows = hyperparams.get('kernel_rows', 3)
-    kernel_cols = hyperparams.get('kernel_cols', 3)
-    scalar_dense_units = hyperparams.get('scalar_dense_units', 0)
-    merged_dense_1 = hyperparams.get('merged_dense_1', 0)
-    merged_dense_2 = hyperparams.get('merged_dense_2', 0)
-    
-    # Calculate nodes
-    # After Conv2D (13x21) -> pooling (6x10) -> flatten
-    # Approximate flattened conv output size: 6 * 10 * conv_filters = 60 * conv_filters
-    conv_nodes = 60 * conv_filters
-    total_nodes = conv_nodes + scalar_dense_units + merged_dense_1 + merged_dense_2 + 1
-    
-    # Calculate parameters (weights + biases)
-    # Conv2D layer: (kernel_rows * kernel_cols * input_channels * conv_filters) + conv_filters
-    # Input has 1 channel
-    params_conv = (kernel_rows * kernel_cols * 1 * conv_filters) + conv_filters
-    
-    # Scalar dense layer: 2 inputs (z_global, y_local concatenated) -> scalar_dense_units
-    params_scalar = (2 * scalar_dense_units) + scalar_dense_units
-    
-    # Merged layers
-    # Input to merged_dense_1: 60*conv_filters (flattened conv) + scalar_dense_units
-    conv_flattened_size = 60 * conv_filters
-    params_merged1 = ((conv_flattened_size + scalar_dense_units) * merged_dense_1) + merged_dense_1
-    params_merged2 = (merged_dense_1 * merged_dense_2) + merged_dense_2
-    params_output = (merged_dense_2 * 1) + 1
-    
-    total_params = params_conv + params_scalar + params_merged1 + params_merged2 + params_output
-    
-    return total_nodes, total_params
-
-
 def parse_trial_folder(trial_path):
     """Parse a single trial folder and extract hyperparameters and metrics."""
     trial_json_path = os.path.join(trial_path, 'trial.json')
@@ -131,7 +90,7 @@ def parse_trial_folder(trial_path):
     return None
 
 
-def analyze_hyperparameter_search(search_dir, model_name, complexity_func):
+def analyze_hyperparameter_search(search_dir, model_name, complexity_func, min_accuracy=0.55):
     """
     Analyze all trials in a hyperparameter search directory.
     
@@ -139,6 +98,7 @@ def analyze_hyperparameter_search(search_dir, model_name, complexity_func):
         search_dir: Path to hyperparameter search directory
         model_name: Name of the model (for labeling)
         complexity_func: Function to calculate model complexity
+        min_accuracy: Minimum accuracy threshold to include (default: 0.55 to exclude failed models ~0.5)
     
     Returns:
         DataFrame with trial results
@@ -169,89 +129,72 @@ def analyze_hyperparameter_search(search_dir, model_name, complexity_func):
     df = pd.DataFrame(results)
     
     if not df.empty:
-        print(f"  Completed trials: {len(df)}")
-        print(f"  Nodes range: {df['nodes'].min():.0f} - {df['nodes'].max():.0f}")
-        print(f"  Parameters range: {df['parameters'].min():.0f} - {df['parameters'].max():.0f}")
-        print(f"  Accuracy range: {df['val_accuracy'].min():.4f} - {df['val_accuracy'].max():.4f}")
-        print(f"  Best accuracy: {df['val_accuracy'].max():.4f} (nodes: {df.loc[df['val_accuracy'].idxmax(), 'nodes']:.0f}, params: {df.loc[df['val_accuracy'].idxmax(), 'parameters']:.0f})")
+        total_trials = len(df)
+        # Filter out failed models with accuracy around 0.5
+        df_filtered = df[df['val_accuracy'] >= min_accuracy].copy()
+        excluded_count = total_trials - len(df_filtered)
+        
+        print(f"  Completed trials: {total_trials}")
+        if excluded_count > 0:
+            print(f"  Excluded {excluded_count} failed models (accuracy < {min_accuracy})")
+        print(f"  Valid trials after filtering: {len(df_filtered)}")
+        if not df_filtered.empty:
+            print(f"  Nodes range: {df_filtered['nodes'].min():.0f} - {df_filtered['nodes'].max():.0f}")
+            print(f"  Parameters range: {df_filtered['parameters'].min():.0f} - {df_filtered['parameters'].max():.0f}")
+            print(f"  Accuracy range: {df_filtered['val_accuracy'].min():.4f} - {df_filtered['val_accuracy'].max():.4f}")
+            print(f"  Best accuracy: {df_filtered['val_accuracy'].max():.4f} (nodes: {df_filtered.loc[df_filtered['val_accuracy'].idxmax(), 'nodes']:.0f}, params: {df_filtered.loc[df_filtered['val_accuracy'].idxmax(), 'parameters']:.0f})")
     
-    return df
+    return df_filtered if not df.empty else df
 
 
-def plot_complexity_vs_accuracy(df_model2, df_model3, output_dir):
-    """Create simple scatter plots for each model showing nodes and parameters vs accuracy."""
+def plot_complexity_vs_accuracy(df, model_name, output_dir):
+    """Create scatter plots showing nodes and parameters vs accuracy for a single model."""
     
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
     
-    # Model2 - Nodes vs Accuracy
-    if not df_model2.empty:
-        fig, ax = plt.subplots(figsize=(10, 7))
-        ax.scatter(df_model2['nodes'], df_model2['val_accuracy'], 
-                   alpha=0.6, s=80, c='blue', edgecolors='black', linewidth=0.5)
-        ax.set_xlabel('Number of Nodes', fontsize=14)
-        ax.set_ylabel('Validation Accuracy', fontsize=14)
-        ax.set_title('Model2: Nodes vs Validation Accuracy', fontsize=16, fontweight='bold')
-        ax.grid(True, alpha=0.3)
-        plt.tight_layout()
-        plot_path = os.path.join(output_dir, 'model2_nodes_vs_accuracy.png')
-        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
-        print(f"✓ Saved: {plot_path}")
-        plt.close()
+    if df.empty:
+        print("WARNING: No data to plot!")
+        return
     
-    # Model2 - Parameters vs Accuracy
-    if not df_model2.empty:
-        fig, ax = plt.subplots(figsize=(10, 7))
-        ax.scatter(df_model2['parameters'], df_model2['val_accuracy'], 
-                   alpha=0.6, s=80, c='blue', edgecolors='black', linewidth=0.5)
-        ax.set_xlabel('Number of Parameters', fontsize=14)
-        ax.set_ylabel('Validation Accuracy', fontsize=14)
-        ax.set_title('Model2: Parameters vs Validation Accuracy', fontsize=16, fontweight='bold')
-        ax.grid(True, alpha=0.3)
-        plt.tight_layout()
-        plot_path = os.path.join(output_dir, 'model2_parameters_vs_accuracy.png')
-        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
-        print(f"✓ Saved: {plot_path}")
-        plt.close()
+    # Nodes vs Accuracy
+    fig, ax = plt.subplots(figsize=(10, 7))
+    ax.scatter(df['nodes'], df['val_accuracy'], 
+               alpha=0.6, s=80, c='blue', edgecolors='black', linewidth=0.5)
+    ax.set_xlabel('Number of Nodes', fontsize=14)
+    ax.set_ylabel('Validation Accuracy', fontsize=14)
+    ax.set_title(f'{model_name}: Nodes vs Validation Accuracy', fontsize=16, fontweight='bold')
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plot_path = os.path.join(output_dir, f'{model_name.lower()}_nodes_vs_accuracy.png')
+    plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+    print(f"✓ Saved: {plot_path}")
+    plt.close()
     
-    # Model3 - Nodes vs Accuracy
-    if not df_model3.empty:
-        fig, ax = plt.subplots(figsize=(10, 7))
-        ax.scatter(df_model3['nodes'], df_model3['val_accuracy'], 
-                   alpha=0.6, s=80, c='red', edgecolors='black', linewidth=0.5)
-        ax.set_xlabel('Number of Nodes', fontsize=14)
-        ax.set_ylabel('Validation Accuracy', fontsize=14)
-        ax.set_title('Model3: Nodes vs Validation Accuracy', fontsize=16, fontweight='bold')
-        ax.grid(True, alpha=0.3)
-        plt.tight_layout()
-        plot_path = os.path.join(output_dir, 'model3_nodes_vs_accuracy.png')
-        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
-        print(f"✓ Saved: {plot_path}")
-        plt.close()
-    
-    # Model3 - Parameters vs Accuracy
-    if not df_model3.empty:
-        fig, ax = plt.subplots(figsize=(10, 7))
-        ax.scatter(df_model3['parameters'], df_model3['val_accuracy'], 
-                   alpha=0.6, s=80, c='red', edgecolors='black', linewidth=0.5)
-        ax.set_xlabel('Number of Parameters', fontsize=14)
-        ax.set_ylabel('Validation Accuracy', fontsize=14)
-        ax.set_title('Model3: Parameters vs Validation Accuracy', fontsize=16, fontweight='bold')
-        ax.grid(True, alpha=0.3)
-        plt.tight_layout()
-        plot_path = os.path.join(output_dir, 'model3_parameters_vs_accuracy.png')
-        plt.savefig(plot_path, dpi=300, bbox_inches='tight')
-        print(f"✓ Saved: {plot_path}")
-        plt.close()
+    # Parameters vs Accuracy
+    fig, ax = plt.subplots(figsize=(10, 7))
+    ax.scatter(df['parameters'], df['val_accuracy'], 
+               alpha=0.6, s=80, c='blue', edgecolors='black', linewidth=0.5)
+    ax.set_xlabel('Number of Parameters', fontsize=14)
+    ax.set_ylabel('Validation Accuracy', fontsize=14)
+    ax.set_title(f'{model_name}: Parameters vs Validation Accuracy', fontsize=16, fontweight='bold')
+    ax.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plot_path = os.path.join(output_dir, f'{model_name.lower()}_parameters_vs_accuracy.png')
+    plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+    print(f"✓ Saved: {plot_path}")
+    plt.close()
 
 
-def save_summary_csv(df_model2, df_model3, output_dir):
-    """Save combined results to CSV."""
-    combined_df = pd.concat([df_model2, df_model3], ignore_index=True)
+def save_summary_csv(df, output_dir):
+    """Save results to CSV."""
+    if df.empty:
+        print("WARNING: No data to save!")
+        return
     
     # Select relevant columns for CSV
-    csv_df = combined_df[['model', 'trial_id', 'nodes', 'parameters', 'val_accuracy']].copy()
-    csv_df = csv_df.sort_values(['model', 'val_accuracy'], ascending=[True, False])
+    csv_df = df[['model', 'trial_id', 'nodes', 'parameters', 'val_accuracy']].copy()
+    csv_df = csv_df.sort_values('val_accuracy', ascending=False)
     
     csv_path = os.path.join(output_dir, 'hyperparameter_complexity_summary.csv')
     csv_df.to_csv(csv_path, index=False)
@@ -262,7 +205,7 @@ def save_summary_csv(df_model2, df_model3, output_dir):
     
     # Expand hyperparameters into separate columns
     detailed_rows = []
-    for _, row in combined_df.iterrows():
+    for _, row in df.iterrows():
         detailed_row = {
             'model': row['model'],
             'trial_id': row['trial_id'],
@@ -282,62 +225,59 @@ def main():
     """Main function to analyze hyperparameter tuning results."""
     print("=== Hyperparameter Tuning Complexity Analysis ===")
     
-    # Define paths
-    base_dir = "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/hyperparameter_tuning"
-    model2_dir = os.path.join(base_dir, "model2_hyperparameter_search")
-    model3_dir = os.path.join(base_dir, "model3_hyperparameter_search")
-    output_dir = "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/complexity_analysis"
-    
-    # Check if directories exist
-    if not os.path.exists(model2_dir):
-        print(f"WARNING: Model2 directory not found: {model2_dir}")
-        df_model2 = pd.DataFrame()
+    # Get search directory from command line argument or use default
+    if len(sys.argv) > 1:
+        search_dir = sys.argv[1]
     else:
-        df_model2 = analyze_hyperparameter_search(model2_dir, 'Model2', calculate_model2_complexity)
+        # Default directory - can be modified here
+        base_dir = "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/hyperparameter_tuning"
+        search_dir = os.path.join(base_dir, "model2_quantized_4w0i_hyperparameter_search")
     
-    if not os.path.exists(model3_dir):
-        print(f"WARNING: Model3 directory not found: {model3_dir}")
-        df_model3 = pd.DataFrame()
-    else:
-        df_model3 = analyze_hyperparameter_search(model3_dir, 'Model3', calculate_model3_complexity)
+    # Check if directory exists
+    if not os.path.exists(search_dir):
+        print(f"ERROR: Search directory not found: {search_dir}")
+        print("Usage: python analyze_hyperparameter_complexity.py [search_directory]")
+        return
     
-    if df_model2.empty and df_model3.empty:
-        print("ERROR: No valid trial data found for either model!")
+    # Extract model name from directory path
+    model_name = os.path.basename(search_dir.rstrip('/'))
+    if not model_name:
+        model_name = os.path.basename(os.path.dirname(search_dir))
+    
+    # Create output directory based on model name
+    output_dir = os.path.join("/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/complexity_analysis", model_name)
+    
+    print(f"Search directory: {search_dir}")
+    print(f"Model name: {model_name}")
+    print(f"Output directory: {output_dir}")
+    
+    # Analyze hyperparameter search (exclude failed models with accuracy ~0.5)
+    df = analyze_hyperparameter_search(search_dir, model_name, calculate_model2_complexity, min_accuracy=0.55)
+    
+    if df.empty:
+        print("ERROR: No valid trial data found!")
         return
     
     # Create visualizations
     print("\n=== Creating Visualizations ===")
-    plot_complexity_vs_accuracy(df_model2, df_model3, output_dir)
+    plot_complexity_vs_accuracy(df, model_name, output_dir)
     
     # Save results to CSV
     print("\n=== Saving Results ===")
-    save_summary_csv(df_model2, df_model3, output_dir)
+    save_summary_csv(df, output_dir)
     
     # Print summary statistics
     print("\n=== Summary Statistics ===")
-    if not df_model2.empty:
-        print("\nModel2:")
-        print(f"  Total trials: {len(df_model2)}")
-        print(f"  Mean accuracy: {df_model2['val_accuracy'].mean():.4f} ± {df_model2['val_accuracy'].std():.4f}")
-        print(f"  Best accuracy: {df_model2['val_accuracy'].max():.4f}")
-        print(f"  Mean nodes: {df_model2['nodes'].mean():.1f}")
-        print(f"  Mean parameters: {df_model2['parameters'].mean():.1f}")
-        corr_nodes = df_model2['nodes'].corr(df_model2['val_accuracy'])
-        corr_params = df_model2['parameters'].corr(df_model2['val_accuracy'])
-        print(f"  Nodes-Accuracy correlation: {corr_nodes:.4f}")
-        print(f"  Parameters-Accuracy correlation: {corr_params:.4f}")
-    
-    if not df_model3.empty:
-        print("\nModel3:")
-        print(f"  Total trials: {len(df_model3)}")
-        print(f"  Mean accuracy: {df_model3['val_accuracy'].mean():.4f} ± {df_model3['val_accuracy'].std():.4f}")
-        print(f"  Best accuracy: {df_model3['val_accuracy'].max():.4f}")
-        print(f"  Mean nodes: {df_model3['nodes'].mean():.1f}")
-        print(f"  Mean parameters: {df_model3['parameters'].mean():.1f}")
-        corr_nodes = df_model3['nodes'].corr(df_model3['val_accuracy'])
-        corr_params = df_model3['parameters'].corr(df_model3['val_accuracy'])
-        print(f"  Nodes-Accuracy correlation: {corr_nodes:.4f}")
-        print(f"  Parameters-Accuracy correlation: {corr_params:.4f}")
+    print(f"\n{model_name}:")
+    print(f"  Total trials: {len(df)}")
+    print(f"  Mean accuracy: {df['val_accuracy'].mean():.4f} ± {df['val_accuracy'].std():.4f}")
+    print(f"  Best accuracy: {df['val_accuracy'].max():.4f}")
+    print(f"  Mean nodes: {df['nodes'].mean():.1f}")
+    print(f"  Mean parameters: {df['parameters'].mean():.1f}")
+    corr_nodes = df['nodes'].corr(df['val_accuracy'])
+    corr_params = df['parameters'].corr(df['val_accuracy'])
+    print(f"  Nodes-Accuracy correlation: {corr_nodes:.4f}")
+    print(f"  Parameters-Accuracy correlation: {corr_params:.4f}")
     
     print(f"\n=== Analysis Complete ===")
     print(f"All results saved to: {output_dir}/")

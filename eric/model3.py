@@ -375,14 +375,14 @@ class Model3(SmartPixModel):
             )(h)
             h = QActivation(activation_quantizer, name="merged_dense2_act")(h)
             
-            # Output layer
-            output = QDense(
+            # Output layer with quantized_tanh
+            output_dense = QDense(
                 1, 
-                activation="sigmoid", 
                 kernel_quantizer=weight_quantizer, 
                 bias_quantizer=bias_quantizer, 
-                name="output"
+                name="output_dense"
             )(h)
+            output = QActivation("quantized_tanh", name="output")(output_dense)
             
             # Create model
             model = Model(
@@ -395,8 +395,7 @@ class Model3(SmartPixModel):
             model.compile(
                 optimizer=Adam(learning_rate=1e-3),
                 loss="binary_crossentropy",
-                metrics=["binary_accuracy"],
-                run_eagerly=True
+                metrics=["binary_accuracy"]
             )
             
             self.models[config_name] = model
@@ -408,7 +407,298 @@ class Model3(SmartPixModel):
         print(f"✓ Built {len(self.bit_configs)} quantized Model3 variants")
         # return quantized_models
     
-
+    def makeQuantizedModelHyperParameterTuning(self, hp, weight_bits, int_bits):
+        """
+        Build quantized Model3 for hyperparameter tuning using Keras Tuner and QKeras.
+        
+        Args:
+            hp: Keras Tuner hyperparameter object
+            weight_bits: Number of bits for weights
+            int_bits: Number of integer bits
+        """
+        if not QKERAS_AVAILABLE:
+            raise ImportError("QKeras is required for quantized models")
+        
+        # Quantizers
+        weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
+        bias_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
+        activation_quantizer = quantized_relu(8, 0)  # Always use 8-bit activations
+        
+        # Input layers
+        cluster_input = Input(shape=(13, 21), name="cluster")
+        z_global_input = Input(shape=(1,), name="z_global")
+        y_local_input = Input(shape=(1,), name="y_local")
+        
+        # Hyperparameter search space
+        conv_filters = hp.Int('conv_filters', min_value=16, max_value=64, step=16)
+        kernel_rows = hp.Choice('kernel_rows', values=[3, 3])
+        kernel_cols = hp.Choice('kernel_cols', values=[3, 3])
+        scalar_dense_units = hp.Int('scalar_dense_units', min_value=16, max_value=64, step=16)
+        merged_dense_1 = hp.Int('merged_dense_1', min_value=50, max_value=200, step=25)
+        
+        # Multiplier for second layer (0.4 to 1.0 of previous layer)
+        merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.4, max_value=1.0, step=0.2)
+        
+        # Calculate layer size with rounding
+        merged_dense_2 = int(round(merged_dense_1 * merged_multiplier_2))
+        
+        dropout_rate = hp.Float('dropout_rate', min_value=0.1, max_value=0.1, step=0.1)
+        
+        # Conv2D branch with quantization
+        conv_x = Reshape((13, 21, 1), name="add_channel")(cluster_input)
+        conv_x = QConv2D(
+            filters=conv_filters,
+            kernel_size=(kernel_rows, kernel_cols),
+            padding="same",
+            kernel_quantizer=weight_quantizer,
+            bias_quantizer=bias_quantizer,
+            name="conv2d"
+        )(conv_x)
+        conv_x = QActivation(activation_quantizer, name="conv2d_act")(conv_x)
+        conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
+        conv_x = Flatten(name="flatten_vol")(conv_x)
+        
+        # Scalar branch: concatenate z_global and y_local, then dense with quantization
+        scalar_concat = Concatenate(name="concat_scalars")([z_global_input, y_local_input])
+        scalar_x = QDense(
+            scalar_dense_units, 
+            kernel_quantizer=weight_quantizer, 
+            bias_quantizer=bias_quantizer, 
+            name="dense_scalars"
+        )(scalar_concat)
+        scalar_x = QActivation(activation_quantizer, name="dense_scalars_act")(scalar_x)
+        
+        # Merge conv and scalar branches
+        merged = Concatenate(name="concat_all")([conv_x, scalar_x])
+        
+        # Head layers with quantization
+        h = QDense(
+            merged_dense_1, 
+            kernel_quantizer=weight_quantizer, 
+            bias_quantizer=bias_quantizer, 
+            name="merged_dense1"
+        )(merged)
+        h = QActivation(activation_quantizer, name="merged_dense1_act")(h)
+        h = Dropout(dropout_rate, name="dropout_1")(h)
+        
+        h = QDense(
+            merged_dense_2, 
+            kernel_quantizer=weight_quantizer, 
+            bias_quantizer=bias_quantizer, 
+            name="merged_dense2"
+        )(h)
+        h = QActivation(activation_quantizer, name="merged_dense2_act")(h)
+        
+        # Output layer with quantized_tanh
+        output_dense = QDense(
+            1, 
+            kernel_quantizer=weight_quantizer, 
+            bias_quantizer=bias_quantizer, 
+            name="output_dense"
+        )(h)
+        output = QActivation("quantized_tanh", name="output")(output_dense)
+        
+        # Create model
+        model = Model(
+            inputs=[cluster_input, z_global_input, y_local_input], 
+            outputs=output, 
+            name=f"model3_quantized_{weight_bits}w{int_bits}i_hyperparameter_tuning"
+        )
+        
+        # Compile with hyperparameter-tuned learning rate
+        learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+        model.compile(
+            optimizer=Adam(learning_rate=learning_rate),
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"]
+        )
+        
+        return model
+    
+    def runQuantizedHyperparameterTuning(self, bit_configs=None, max_trials=50, executions_per_trial=2, numEpochs=30):
+        """
+        Run hyperparameter tuning for quantized Model3 with specified bit configurations.
+        
+        Args:
+            bit_configs: List of (weight_bits, int_bits) tuples for quantization. 
+                        If None, uses self.bit_configs
+            max_trials: Maximum number of trials for hyperparameter search
+            executions_per_trial: Number of executions per trial
+            numEpochs: Number of epochs for training
+            
+        Returns:
+            Dictionary mapping config_name to (best_model, results, tuner)
+        """
+        if not QKERAS_AVAILABLE:
+            raise ImportError("QKeras is required for quantized hyperparameter tuning")
+        
+        if bit_configs is None:
+            bit_configs = self.bit_configs
+        
+        print(f"Starting quantized hyperparameter tuning for Model3 with {len(bit_configs)} bit configurations...")
+        
+        # Load data if not already loaded
+        if self.training_generator is None:
+            self.loadTfRecords()
+        
+        # Store results for each configuration
+        all_results = {}
+        
+        for weight_bits, int_bits in bit_configs:
+            config_name = f"quantized_{weight_bits}w{int_bits}i"
+            print(f"\n{'='*60}")
+            print(f"Starting hyperparameter tuning for {config_name}")
+            print(f"{'='*60}")
+            
+            # Create a wrapper function that captures weight_bits and int_bits
+            def model_builder(hp):
+                return self.makeQuantizedModelHyperParameterTuning(hp, weight_bits, int_bits)
+            
+            # Create tuner with unique project name
+            tuner = kt.RandomSearch(
+                model_builder,
+                objective="val_binary_accuracy",
+                max_trials=max_trials,
+                executions_per_trial=executions_per_trial,
+                project_name=f"model3_quantized_{weight_bits}w{int_bits}i_hyperparameter_search",
+                directory="./hyperparameter_tuning"
+            )
+            
+            # Create callbacks
+            callbacks = [
+                EarlyStopping(
+                    monitor='val_loss',
+                    patience=10,
+                    restore_best_weights=True
+                )
+            ]
+            
+            # Run search
+            print(f"Running hyperparameter search for {config_name}...")
+            tuner.search(
+                self.training_generator,
+                validation_data=self.validation_generator,
+                epochs=numEpochs,
+                callbacks=callbacks,
+                verbose=1
+            )
+            
+            # Get all models and hyperparameters (not just the best)
+            all_trials = list(tuner.oracle.trials.values())
+            num_trials = len(all_trials)
+            
+            # Load models one by one, skipping trials with missing checkpoints
+            completed_trials = []
+            for trial in all_trials:
+                if trial.status == 'COMPLETED' and trial.score is not None:
+                    completed_trials.append(trial)
+            
+            # Sort by score (best first)
+            completed_trials.sort(key=lambda t: t.score, reverse=True)
+            
+            all_models = []
+            all_hyperparameters = []
+            print(f"\nLoading models from {len(completed_trials)} completed trials (out of {num_trials} total)...")
+            
+            for idx, trial in enumerate(completed_trials):
+                try:
+                    # Load model for this specific trial
+                    model = tuner.load_model(trial)
+                    all_models.append(model)
+                    all_hyperparameters.append(trial.hyperparameters)
+                    if idx == 0:
+                        print(f"  ✓ Loaded best model (trial {trial.trial_id}, score={trial.score:.4f})")
+                    elif idx < 5:  # Print first 5 for visibility
+                        print(f"  ✓ Loaded model {idx+1} (trial {trial.trial_id}, score={trial.score:.4f})")
+                except Exception as e:
+                    print(f"  ⚠ Failed to load model for trial {trial.trial_id}: {str(e)}")
+            
+            if len(completed_trials) > 5:
+                print(f"  ... (loaded {len(all_models)} models total)")
+            else:
+                print(f"  ✓ Successfully loaded {len(all_models)} out of {len(completed_trials)} completed models")
+            
+            if len(all_models) == 0:
+                raise RuntimeError(f"Failed to load any models for {config_name}. All trials may have missing checkpoints.")
+            
+            # Create directory for this configuration's models
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            config_dir = f"model3_{config_name}_hyperparameter_results_{timestamp}"
+            os.makedirs(config_dir, exist_ok=True)
+            print(f"\n✓ Created directory for {config_name} results: {config_dir}/")
+            
+            # Save all models and their hyperparameters
+            model_files = []
+            hyperparams_files = []
+            
+            for idx, (model, hyperparams) in enumerate(zip(all_models, all_hyperparameters)):
+                # Save model
+                model_filename = os.path.join(config_dir, f"model_trial_{idx:03d}.h5")
+                model.save(model_filename)
+                model_files.append(model_filename)
+                
+                # Save hyperparameters
+                hyperparams_dict = hyperparams.values
+                hyperparams_filename = os.path.join(config_dir, f"hyperparams_trial_{idx:03d}.json")
+                with open(hyperparams_filename, 'w') as f:
+                    json.dump(hyperparams_dict, f, indent=4)
+                hyperparams_files.append(hyperparams_filename)
+                
+                if idx == 0:  # Print best model info
+                    print(f"✓ Trial {idx} (BEST): saved to {model_filename}")
+                    print(f"  Best hyperparameters: {hyperparams_dict}")
+            
+            print(f"✓ Saved {len(model_files)} models and hyperparameter files to {config_dir}/")
+            
+            # Also save a summary JSON with all trials
+            summary_filename = os.path.join(config_dir, "trials_summary.json")
+            trials_summary = []
+            for idx, hyperparams in enumerate(all_hyperparameters):
+                trial_info = {
+                    'trial_id': idx,
+                    'model_file': f"model_trial_{idx:03d}.h5",
+                    'hyperparams_file': f"hyperparams_trial_{idx:03d}.json",
+                    'hyperparameters': hyperparams.values,
+                    'is_best': (idx == 0)
+                }
+                trials_summary.append(trial_info)
+            
+            with open(summary_filename, 'w') as f:
+                json.dump(trials_summary, f, indent=4)
+            print(f"✓ Saved trials summary to: {summary_filename}")
+            
+            # Print results
+            print(f"\n{config_name} Hyperparameter Tuning Completed!")
+            print(f"Total trials: {num_trials}")
+            
+            # Store results
+            all_results[config_name] = {
+                'best_model': all_models[0],
+                'best_hyperparameters': all_hyperparameters[0].values,
+                'all_models': all_models,
+                'all_hyperparameters': [hp.values for hp in all_hyperparameters],
+                'tuner': tuner,
+                'config_dir': config_dir,
+                'model_files': model_files,
+                'hyperparams_files': hyperparams_files,
+                'summary_file': summary_filename,
+                'num_trials': num_trials
+            }
+        
+        print(f"\n{'='*60}")
+        print(f"All quantized hyperparameter tuning completed!")
+        print(f"{'='*60}")
+        
+        # Print summary
+        print("\nSummary of saved results:")
+        for config_name, results in all_results.items():
+            print(f"  {config_name}:")
+            print(f"    Results directory: {results['config_dir']}/")
+            print(f"    Number of trials: {results['num_trials']}")
+            print(f"    Best model: {results['model_files'][0]}")
+            print(f"    Summary file: {results['summary_file']}")
+        
+        return all_results
     
     def runHyperparameterTuning(self, max_trials=75, executions_per_trial=2):
         """
