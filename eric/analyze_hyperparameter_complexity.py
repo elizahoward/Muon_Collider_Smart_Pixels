@@ -6,10 +6,19 @@ This script parses hyperparameter tuning results from a specified directory,
 calculates model complexity (total number of nodes/parameters), and plots
 the relationship between model complexity and validation accuracy.
 
+Supports both Model2 and Model3 architectures with automatic model type detection.
+
 Usage:
     python analyze_hyperparameter_complexity.py [search_directory]
 
     If no directory is provided, uses the default path specified in the script.
+
+Examples:
+    # Analyze Model2 results
+    python analyze_hyperparameter_complexity.py hyperparameter_tuning/model2_quantized_4w0i_hyperparameter_search
+    
+    # Analyze Model3 results
+    python analyze_hyperparameter_complexity.py hyperparameter_tuning/model3_quantized_4w0i_hyperparameter_search
 
 Author: Eric
 Date: 2024
@@ -61,6 +70,82 @@ def calculate_model2_complexity(hyperparams):
     return total_nodes, total_params
 
 
+def calculate_model3_complexity(hyperparams):
+    """
+    Calculate total number of nodes and parameters for Model3.
+    
+    Model3 architecture:
+    - Input: cluster (13x21), z_global, y_local (scalars)
+    - Conv2D branch: cluster -> Reshape to (13x21x1) -> Conv2D -> MaxPooling2D (2x2) -> Flatten
+    - Scalar branch: z_global + y_local -> Concatenate -> Dense (scalar_dense_units)
+    - Merge: Concatenate conv output with scalar dense output
+    - Head: Dense (merged_dense_1) -> Dropout -> Dense (merged_dense_2) -> Output (1)
+    
+    Total nodes = flattened_conv_units + scalar_dense_units + merged_dense_1 + merged_dense_2 + 1
+    """
+    conv_filters = hyperparams.get('conv_filters', 32)
+    kernel_rows = hyperparams.get('kernel_rows', 3)
+    kernel_cols = hyperparams.get('kernel_cols', 3)
+    scalar_dense_units = hyperparams.get('scalar_dense_units', 32)
+    merged_dense_1 = hyperparams.get('merged_dense_1', 200)
+    
+    # Calculate merged_dense_2 from multiplier if available
+    merged_multiplier_2 = hyperparams.get('merged_multiplier_2', None)
+    if merged_multiplier_2 is not None:
+        merged_dense_2 = int(round(merged_dense_1 * merged_multiplier_2))
+    else:
+        merged_dense_2 = hyperparams.get('merged_dense_2', 100)
+    
+    # Calculate Conv2D output shape
+    # Input: (13, 21, 1)
+    # After Conv2D with "same" padding: (13, 21, conv_filters)
+    # After MaxPooling2D (2x2): (floor(13/2), floor(21/2), conv_filters) = (6, 10, conv_filters)
+    # After Flatten: 6 * 10 * conv_filters = 60 * conv_filters
+    flattened_conv_units = 6 * 10 * conv_filters
+    
+    # Calculate nodes
+    total_nodes = flattened_conv_units + scalar_dense_units + merged_dense_1 + merged_dense_2 + 1
+    
+    # Calculate parameters (weights + biases)
+    # Conv2D layer: (kernel_rows * kernel_cols * input_channels * conv_filters) + conv_filters
+    params_conv = (kernel_rows * kernel_cols * 1 * conv_filters) + conv_filters
+    
+    # Scalar branch: 2 inputs (z_global, y_local) -> scalar_dense_units
+    params_scalar = (2 * scalar_dense_units) + scalar_dense_units
+    
+    # Merged dense 1: (flattened_conv_units + scalar_dense_units) -> merged_dense_1
+    params_merged1 = ((flattened_conv_units + scalar_dense_units) * merged_dense_1) + merged_dense_1
+    
+    # Merged dense 2: merged_dense_1 -> merged_dense_2
+    params_merged2 = (merged_dense_1 * merged_dense_2) + merged_dense_2
+    
+    # Output layer: merged_dense_2 -> 1
+    params_output = (merged_dense_2 * 1) + 1
+    
+    total_params = params_conv + params_scalar + params_merged1 + params_merged2 + params_output
+    
+    return total_nodes, total_params
+
+
+def detect_model_type(hyperparams):
+    """
+    Detect whether hyperparameters are for Model2 or Model3.
+    
+    Args:
+        hyperparams: Dictionary of hyperparameters
+    
+    Returns:
+        'model2' or 'model3'
+    """
+    # Model3 has conv_filters, Model2 has xz_units
+    if 'conv_filters' in hyperparams:
+        return 'model3'
+    elif 'xz_units' in hyperparams:
+        return 'model2'
+    else:
+        raise ValueError(f"Cannot detect model type from hyperparameters: {hyperparams.keys()}")
+
+
 def parse_trial_folder(trial_path):
     """Parse a single trial folder and extract hyperparameters and metrics."""
     trial_json_path = os.path.join(trial_path, 'trial.json')
@@ -90,14 +175,14 @@ def parse_trial_folder(trial_path):
     return None
 
 
-def analyze_hyperparameter_search(search_dir, model_name, complexity_func, min_accuracy=0.55):
+def analyze_hyperparameter_search(search_dir, model_name, complexity_func=None, min_accuracy=0.55):
     """
     Analyze all trials in a hyperparameter search directory.
     
     Args:
         search_dir: Path to hyperparameter search directory
         model_name: Name of the model (for labeling)
-        complexity_func: Function to calculate model complexity
+        complexity_func: Function to calculate model complexity (auto-detected if None)
         min_accuracy: Minimum accuracy threshold to include (default: 0.55 to exclude failed models ~0.5)
     
     Returns:
@@ -110,6 +195,24 @@ def analyze_hyperparameter_search(search_dir, model_name, complexity_func, min_a
                         if d.startswith('trial_') and os.path.isdir(os.path.join(search_dir, d))])
     
     print(f"\nAnalyzing {model_name} ({len(trial_dirs)} trials)...")
+    
+    # Auto-detect model type from first trial if complexity_func not provided
+    detected_model_type = None
+    if complexity_func is None:
+        for trial_dir in trial_dirs:
+            trial_path = os.path.join(search_dir, trial_dir)
+            trial_result = parse_trial_folder(trial_path)
+            if trial_result:
+                detected_model_type = detect_model_type(trial_result['hyperparams'])
+                if detected_model_type == 'model2':
+                    complexity_func = calculate_model2_complexity
+                elif detected_model_type == 'model3':
+                    complexity_func = calculate_model3_complexity
+                print(f"  Auto-detected model type: {detected_model_type.upper()}")
+                break
+        
+        if complexity_func is None:
+            raise ValueError(f"Could not auto-detect model type from trials in {search_dir}")
     
     for trial_dir in trial_dirs:
         trial_path = os.path.join(search_dir, trial_dir)
@@ -251,8 +354,8 @@ def main():
     print(f"Model name: {model_name}")
     print(f"Output directory: {output_dir}")
     
-    # Analyze hyperparameter search (exclude failed models with accuracy ~0.5)
-    df = analyze_hyperparameter_search(search_dir, model_name, calculate_model2_complexity, min_accuracy=0.55)
+    # Analyze hyperparameter search (auto-detects model type, excludes failed models with accuracy ~0.5)
+    df = analyze_hyperparameter_search(search_dir, model_name, complexity_func=None, min_accuracy=0.55)
     
     if df.empty:
         print("ERROR: No valid trial data found!")

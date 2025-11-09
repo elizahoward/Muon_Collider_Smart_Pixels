@@ -430,11 +430,11 @@ class Model3(SmartPixModel):
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
-        conv_filters = hp.Int('conv_filters', min_value=16, max_value=64, step=16)
+        conv_filters = hp.Int('conv_filters', min_value=16, max_value=48, step=8)
         kernel_rows = hp.Choice('kernel_rows', values=[3, 3])
         kernel_cols = hp.Choice('kernel_cols', values=[3, 3])
         scalar_dense_units = hp.Int('scalar_dense_units', min_value=16, max_value=64, step=16)
-        merged_dense_1 = hp.Int('merged_dense_1', min_value=50, max_value=200, step=25)
+        merged_dense_1 = hp.Int('merged_dense_1', min_value=20, max_value=150, step=15)
         
         # Multiplier for second layer (0.4 to 1.0 of previous layer)
         merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.4, max_value=1.0, step=0.2)
