@@ -167,8 +167,8 @@ class Model1(SmartPixModel):
         # layer 1
         x = QDense(
             17,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -181,8 +181,8 @@ class Model1(SmartPixModel):
         # layer 2 (example—you can tweak per‐layer bits)
         x = QDense(
             20,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -195,8 +195,8 @@ class Model1(SmartPixModel):
         # layer 3
         x = QDense(
             9,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -209,8 +209,8 @@ class Model1(SmartPixModel):
         # layer 4
         x = QDense(
             16,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -223,8 +223,8 @@ class Model1(SmartPixModel):
         # layer 5
         x = QDense(
             8,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -237,8 +237,8 @@ class Model1(SmartPixModel):
         # output
         x = QDense(
             1,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=0.001),
+            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
+            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
         out = QActivation("smooth_sigmoid")(x)
