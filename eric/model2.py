@@ -468,10 +468,10 @@ class Model2(SmartPixModel):
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
-        xz_units = hp.Int('xz_units', min_value=4, max_value=20, step=4)
-        yl_units = hp.Int('yl_units', min_value=4, max_value=20, step=4)
-        merged_units1 = hp.Int('merged_units1', min_value=16, max_value=64, step=8)
-        merged_units2 = hp.Int('merged_units2', min_value=8, max_value=48, step=8)
+        xz_units = hp.Int('xz_units', min_value=4, max_value=48, step=8)
+        yl_units = hp.Int('yl_units', min_value=4, max_value=48, step=8)
+        merged_units1 = hp.Int('merged_units1', min_value=32, max_value=128, step=16)
+        merged_units2 = hp.Int('merged_units2', min_value=16, max_value=64, step=8)
         merged_units3 = hp.Int('merged_units3', min_value=4, max_value=32, step=8)
         dropout_rate = hp.Float('dropout_rate', min_value=0.1, max_value=0.1, step=0.1)
         
@@ -547,6 +547,66 @@ class Model2(SmartPixModel):
         
         return model
     
+    def _calculate_model_parameters(self, hyperparams):
+        """
+        Calculate model parameters from hyperparameters without loading the model.
+        
+        Model2 architecture:
+        - Input: xz (24 features), yl (24 features)
+        - xz_dense1: xz_units
+        - yl_dense1: yl_units  
+        - concatenate: xz_units + yl_units
+        - merged_dense1: merged_units1
+        - merged_dense2: merged_units2
+        - merged_dense3: merged_units3
+        - output: 1 unit
+        
+        Returns:
+            dict: Model metadata including parameters and layer structure
+        """
+        xz_units = hyperparams.get('xz_units', 0)
+        yl_units = hyperparams.get('yl_units', 0)
+        merged_units1 = hyperparams.get('merged_units1', 0)
+        merged_units2 = hyperparams.get('merged_units2', 0)
+        merged_units3 = hyperparams.get('merged_units3', 0)
+        
+        # Input dimensions
+        xz_input_dim = 24  # z_signal + x_signal (12 each)
+        yl_input_dim = 24  # y_signal + l_signal (12 each)
+        
+        # Calculate parameters for each layer
+        xz_dense1_params = (xz_input_dim * xz_units) + xz_units
+        yl_dense1_params = (yl_input_dim * yl_units) + yl_units
+        concat_dim = xz_units + yl_units
+        merged_dense1_params = (concat_dim * merged_units1) + merged_units1
+        merged_dense2_params = (merged_units1 * merged_units2) + merged_units2
+        merged_dense3_params = (merged_units2 * merged_units3) + merged_units3
+        output_params = merged_units3 + 1
+        
+        total_params = (xz_dense1_params + yl_dense1_params + 
+                       merged_dense1_params + merged_dense2_params + 
+                       merged_dense3_params + output_params)
+        
+        layer_structure = [
+            {'name': 'xz_input', 'type': 'Input', 'shape': xz_input_dim},
+            {'name': 'yl_input', 'type': 'Input', 'shape': yl_input_dim},
+            {'name': 'xz_dense1', 'type': 'QDense', 'units': xz_units, 'parameters': xz_dense1_params},
+            {'name': 'yl_dense1', 'type': 'QDense', 'units': yl_units, 'parameters': yl_dense1_params},
+            {'name': 'concatenate', 'type': 'Concatenate', 'units': concat_dim},
+            {'name': 'merged_dense1', 'type': 'QDense', 'units': merged_units1, 'parameters': merged_dense1_params},
+            {'name': 'merged_dense2', 'type': 'QDense', 'units': merged_units2, 'parameters': merged_dense2_params},
+            {'name': 'merged_dense3', 'type': 'QDense', 'units': merged_units3, 'parameters': merged_dense3_params},
+            {'name': 'output', 'type': 'QActivation/QDense', 'units': 1, 'parameters': output_params}
+        ]
+        
+        return {
+            'total_parameters': int(total_params),
+            'trainable_parameters': int(total_params),
+            'non_trainable_parameters': 0,
+            'num_layers': len(layer_structure),
+            'layer_structure': layer_structure
+        }
+    
     def runQuantizedHyperparameterTuning(self, bit_configs=None, max_trials=50, executions_per_trial=2, numEpochs=30):
         """
         Run hyperparameter tuning for quantized Model2 with specified bit configurations.
@@ -596,13 +656,66 @@ class Model2(SmartPixModel):
                 directory="./hyperparameter_tuning"
             )
             
+            # Create directory for this configuration's models (before tuning starts)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            config_dir = f"model2_{config_name}_hyperparameter_results_{timestamp}"
+            os.makedirs(config_dir, exist_ok=True)
+            print(f"\n✓ Created directory for {config_name} results: {config_dir}/")
+            print(f"Models will be saved to this directory after each trial completes.\n")
+            
+            # Create a custom callback class that saves models after each trial
+            class SaveModelAfterTrial(tf.keras.callbacks.Callback):
+                def __init__(self, tuner, config_dir, config_name):
+                    super().__init__()
+                    self.tuner = tuner
+                    self.config_dir = config_dir
+                    self.config_name = config_name
+                    self.saved_trials = set()
+                
+                def on_epoch_end(self, epoch, logs=None):
+                    # Check if any new trials have completed after each epoch
+                    # This allows us to save models as soon as each trial finishes
+                    try:
+                        completed_trials = [t for t in self.tuner.oracle.trials.values() 
+                                          if t.status == 'COMPLETED' and t.trial_id not in self.saved_trials]
+                        
+                        for trial in completed_trials:
+                            try:
+                                # Load the model for this trial
+                                model = self.tuner.load_model(trial)
+                                
+                                # Save as H5 file
+                                model_filename = os.path.join(self.config_dir, f"model_trial_{trial.trial_id}.h5")
+                                model.save(model_filename)
+                                
+                                # Save hyperparameters
+                                hyperparams_dict = trial.hyperparameters.values
+                                hyperparams_filename = os.path.join(self.config_dir, f"hyperparams_trial_{trial.trial_id}.json")
+                                with open(hyperparams_filename, 'w') as f:
+                                    json.dump(hyperparams_dict, f, indent=4)
+                                
+                                # Mark as saved
+                                self.saved_trials.add(trial.trial_id)
+                                
+                                print(f"\n✓ Trial {trial.trial_id} completed and saved to {model_filename}")
+                                print(f"  Validation accuracy: {trial.score:.4f}")
+                                print(f"  Hyperparameters: {hyperparams_dict}\n")
+                                
+                            except Exception as e:
+                                print(f"\n⚠ Warning: Failed to save model for trial {trial.trial_id}: {str(e)}\n")
+                    except Exception as e:
+                        # Don't fail training if saving fails
+                        pass
+            
             # Create callbacks
+            save_callback = SaveModelAfterTrial(tuner, config_dir, config_name)
             callbacks = [
                 EarlyStopping(
                     monitor='val_loss',
                     patience=10,
                     restore_best_weights=True
-                )
+                ),
+                save_callback
             ]
             
             # Run search
@@ -657,51 +770,71 @@ class Model2(SmartPixModel):
             if len(all_models) == 0:
                 raise RuntimeError(f"Failed to load any models for {config_name}. All trials may have missing checkpoints.")
             
-            # Create directory for this configuration's models
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            config_dir = f"model2_{config_name}_hyperparameter_results_{timestamp}"
-            os.makedirs(config_dir, exist_ok=True)
-            print(f"\n✓ Created directory for {config_name} results: {config_dir}/")
+            # Note: Models have already been saved during training by the SaveModelAfterTrial callback
+            # This section now only creates the summary files
             
-            # Save all models and their hyperparameters
+            # Collect list of model and hyperparameter files that were saved during training
             model_files = []
             hyperparams_files = []
             
+            # Check which models were actually saved and create lists
             for idx, (model, hyperparams) in enumerate(zip(all_models, all_hyperparameters)):
-                # Save model
-                model_filename = os.path.join(config_dir, f"model_trial_{idx:03d}.h5")
-                model.save(model_filename)
-                model_files.append(model_filename)
+                trial_id = completed_trials[idx].trial_id
+                model_filename = os.path.join(config_dir, f"model_trial_{trial_id}.h5")
+                hyperparams_filename = os.path.join(config_dir, f"hyperparams_trial_{trial_id}.json")
                 
-                # Save hyperparameters
-                hyperparams_dict = hyperparams.values
-                hyperparams_filename = os.path.join(config_dir, f"hyperparams_trial_{idx:03d}.json")
-                with open(hyperparams_filename, 'w') as f:
-                    json.dump(hyperparams_dict, f, indent=4)
+                # If model wasn't saved during training (callback failed), save it now as fallback
+                if not os.path.exists(model_filename):
+                    print(f"⚠ Model for trial {trial_id} was not saved during training, saving now...")
+                    model.save(model_filename)
+                    
+                    hyperparams_dict = hyperparams.values
+                    with open(hyperparams_filename, 'w') as f:
+                        json.dump(hyperparams_dict, f, indent=4)
+                
+                model_files.append(model_filename)
                 hyperparams_files.append(hyperparams_filename)
                 
                 if idx == 0:  # Print best model info
-                    print(f"✓ Trial {idx} (BEST): saved to {model_filename}")
-                    print(f"  Best hyperparameters: {hyperparams_dict}")
+                    print(f"✓ Best model (trial {trial_id}): {model_filename}")
+                    print(f"  Best hyperparameters: {hyperparams.values}")
             
-            print(f"✓ Saved {len(model_files)} models and hyperparameter files to {config_dir}/")
+            print(f"✓ Total {len(model_files)} models saved to {config_dir}/")
             
-            # Also save a summary JSON with all trials
+            # Also save a summary JSON with all trials (enriched with metadata)
             summary_filename = os.path.join(config_dir, "trials_summary.json")
             trials_summary = []
             for idx, hyperparams in enumerate(all_hyperparameters):
+                trial = completed_trials[idx]
+                trial_id = trial.trial_id
+                
+                # Basic trial info
                 trial_info = {
-                    'trial_id': idx,
-                    'model_file': f"model_trial_{idx:03d}.h5",
-                    'hyperparams_file': f"hyperparams_trial_{idx:03d}.json",
+                    'trial_id': trial_id,
+                    'rank': idx,  # 0 = best, 1 = second best, etc.
+                    'model_file': f"model_trial_{trial_id}.h5",
+                    'hyperparams_file': f"hyperparams_trial_{trial_id}.json",
                     'hyperparameters': hyperparams.values,
                     'is_best': (idx == 0)
                 }
+                
+                # Add validation accuracy
+                if trial.score is not None:
+                    trial_info['val_accuracy'] = float(trial.score)
+                
+                # Add metrics if available
+                if hasattr(trial, 'metrics') and trial.metrics:
+                    trial_info['metrics'] = trial.metrics
+                
+                # Calculate and add model parameters and structure
+                param_metadata = self._calculate_model_parameters(hyperparams.values)
+                trial_info.update(param_metadata)
+                
                 trials_summary.append(trial_info)
             
             with open(summary_filename, 'w') as f:
                 json.dump(trials_summary, f, indent=4)
-            print(f"✓ Saved trials summary to: {summary_filename}")
+            print(f"✓ Saved enriched trials summary to: {summary_filename}")
             
             # Print results
             print(f"\n{config_name} Hyperparameter Tuning Completed!")
@@ -746,17 +879,17 @@ def main():
     
     # Initialize Model2
     model2 = Model2(
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
-        xz_units=8,
-        yl_units=8,
-        merged_units_1=64,
-        merged_units_2=32,
-        merged_units_3=16,
+        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled/filtering_records2048_data_shuffled_all",
+        xz_units=64,
+        yl_units=64,
+        merged_units_1=256,
+        merged_units_2=128,
+        merged_units_3=64,
         dropout_rate=0.1,
         initial_lr=1e-3,
         end_lr=1e-4,
         power=2,
-        bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+        bit_configs = [(16, 0), (4, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
     )
     
     # Run complete pipeline

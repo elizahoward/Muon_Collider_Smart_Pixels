@@ -329,7 +329,7 @@ class SmartPixModel(ABC):
         
         return self.evaluation_results
     
-    def runAllStuff(self,numEpochs = 1):
+    def runAllStuff(self,numEpochs = 6):
         """
         Run the complete {self.modelName} pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
         """

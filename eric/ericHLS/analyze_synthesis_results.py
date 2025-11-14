@@ -151,6 +151,19 @@ def analyze_results(results_dir, output_csv=None):
     with open(results_json, 'r') as f:
         results_data = json.load(f)
     
+    # Load validation accuracy data if available
+    val_accuracy_map = {}
+    trials_summary = os.path.join(os.path.dirname(results_dir), 'filtered_trials_summary.json')
+    if os.path.exists(trials_summary):
+        with open(trials_summary, 'r') as f:
+            trials_data = json.load(f)
+        # Create mapping from model name to validation accuracy
+        for trial in trials_data.get('trials', []):
+            model_file = trial.get('model_file', '')
+            if model_file:
+                model_name = Path(model_file).stem
+                val_accuracy_map[model_name] = trial.get('val_accuracy', None)
+    
     # Analyze each successful synthesis
     analysis = []
     
@@ -182,6 +195,7 @@ def analyze_results(results_dir, output_csv=None):
         # Combine results
         row = {
             'model_name': model_name,
+            'val_accuracy': val_accuracy_map.get(model_name, None),
             'h5_file': result['h5_file'],
             'output_dir': result['output_dir'],  # Keep original path in CSV
             'tarball': result.get('tarball', None),
@@ -217,6 +231,19 @@ def print_summary(df, results_data):
     print(f"Failed: {results_data['failed']}")
     
     if len(df) > 0:
+        print("\n" + "-" * 80)
+        print("MODEL ACCURACY STATISTICS")
+        print("-" * 80)
+        
+        if 'val_accuracy' in df.columns:
+            valid_acc = df[df['val_accuracy'].notna()]
+            if len(valid_acc) > 0:
+                print(f"\nValidation Accuracy:")
+                print(f"  Min: {valid_acc['val_accuracy'].min():.4f}")
+                print(f"  Max: {valid_acc['val_accuracy'].max():.4f}")
+                print(f"  Mean: {valid_acc['val_accuracy'].mean():.4f}")
+                print(f"  Median: {valid_acc['val_accuracy'].median():.4f}")
+        
         print("\n" + "-" * 80)
         print("RESOURCE UTILIZATION STATISTICS")
         print("-" * 80)
@@ -262,9 +289,22 @@ def print_summary(df, results_data):
         print("TOP MODELS")
         print("-" * 80)
         
+        if 'val_accuracy' in df.columns:
+            valid_acc = df[df['val_accuracy'].notna()]
+            if len(valid_acc) > 0:
+                print("\nBest Accuracy:")
+                if 'luts_used' in df.columns:
+                    best_acc = valid_acc.nlargest(5, 'val_accuracy')[['model_name', 'val_accuracy', 'luts_used', 'registers_used']]
+                else:
+                    best_acc = valid_acc.nlargest(5, 'val_accuracy')[['model_name', 'val_accuracy']]
+                print(best_acc.to_string(index=False))
+        
         if 'luts_used' in df.columns:
             print("\nSmallest (by LUT count):")
-            smallest = df.nsmallest(5, 'luts_used')[['model_name', 'luts_used', 'registers_used']]
+            if 'val_accuracy' in df.columns:
+                smallest = df.nsmallest(5, 'luts_used')[['model_name', 'val_accuracy', 'luts_used', 'registers_used']]
+            else:
+                smallest = df.nsmallest(5, 'luts_used')[['model_name', 'luts_used', 'registers_used']]
             print(smallest.to_string(index=False))
         
         if 'estimated_fmax' in df.columns:

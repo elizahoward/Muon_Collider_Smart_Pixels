@@ -33,7 +33,7 @@ def main():
     
     # Initialize Model2
     model2 = Model2(
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try3_eric/filtering_records16384_data_shuffled_single_bigData",
         xz_units=32,  # Will be overridden by hyperparameter search
         yl_units=32,
         merged_units_1=128,
@@ -50,9 +50,9 @@ def main():
     
     results = model2.runQuantizedHyperparameterTuning(
         bit_configs=bit_configs,
-        max_trials=160,
+        max_trials=5,
         executions_per_trial=1,
-        numEpochs=20
+        numEpochs=22
     )
     
     # Print results summary

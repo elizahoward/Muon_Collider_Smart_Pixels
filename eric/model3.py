@@ -515,6 +515,81 @@ class Model3(SmartPixModel):
         
         return model
     
+    def _calculate_model_parameters(self, hyperparams):
+        """
+        Calculate model parameters from hyperparameters without loading the model.
+        
+        Model3 architecture:
+        - Input: cluster (13x21), z_global (1), y_local (1)
+        - Conv2D: kernel_size=(kernel_rows, kernel_cols), filters=conv_filters
+        - MaxPooling2D (2,2) -> Flatten
+        - Scalar branch: z_global + y_local (2 features) -> dense(scalar_dense_units)
+        - Concatenate conv + scalar
+        - merged_dense_1
+        - merged_dense_2
+        - output (1)
+        
+        Returns:
+            dict: Model metadata including parameters and layer structure
+        """
+        conv_filters = hyperparams.get('conv_filters', 0)
+        kernel_rows = hyperparams.get('kernel_rows', 0)
+        kernel_cols = hyperparams.get('kernel_cols', 0)
+        scalar_dense_units = hyperparams.get('scalar_dense_units', 0)
+        merged_dense_1 = hyperparams.get('merged_dense_1', 0)
+        merged_multiplier_2 = hyperparams.get('merged_multiplier_2', 1.0)
+        merged_dense_2 = int(merged_dense_1 * merged_multiplier_2)
+        
+        # Calculate parameters for each layer
+        # Conv2D: (kernel_rows * kernel_cols * input_channels * filters) + filters
+        conv2d_params = (kernel_rows * kernel_cols * 1 * conv_filters) + conv_filters
+        
+        # After MaxPooling2D(2,2) on (13, 21) input: (6, 10, conv_filters) -> flattened to 60*conv_filters
+        conv_flattened_size = 60 * conv_filters
+        
+        # Scalar dense: (2 * scalar_dense_units) + scalar_dense_units
+        scalar_dense_params = (2 * scalar_dense_units) + scalar_dense_units
+        
+        # Concatenate: conv_flattened + scalar_dense_units
+        concat_size = conv_flattened_size + scalar_dense_units
+        
+        # Merged dense 1: (concat_size * merged_dense_1) + merged_dense_1
+        merged_dense_1_params = (concat_size * merged_dense_1) + merged_dense_1
+        
+        # Merged dense 2: (merged_dense_1 * merged_dense_2) + merged_dense_2
+        merged_dense_2_params = (merged_dense_1 * merged_dense_2) + merged_dense_2
+        
+        # Output: (merged_dense_2 * 1) + 1
+        output_params = merged_dense_2 + 1
+        
+        # Total parameters
+        total_params = (conv2d_params + scalar_dense_params + 
+                       merged_dense_1_params + merged_dense_2_params + 
+                       output_params)
+        
+        # Layer structure
+        layer_structure = [
+            {'name': 'cluster_input', 'type': 'Input', 'shape': '(13, 21)'},
+            {'name': 'z_global_input', 'type': 'Input', 'shape': 1},
+            {'name': 'y_local_input', 'type': 'Input', 'shape': 1},
+            {'name': 'conv2d', 'type': 'QConv2D', 'filters': conv_filters, 
+             'kernel_size': f'{kernel_rows}x{kernel_cols}', 'parameters': conv2d_params},
+            {'name': 'flatten', 'type': 'Flatten', 'units': conv_flattened_size},
+            {'name': 'scalar_dense', 'type': 'QDense', 'units': scalar_dense_units, 'parameters': scalar_dense_params},
+            {'name': 'concatenate', 'type': 'Concatenate', 'units': concat_size},
+            {'name': 'merged_dense_1', 'type': 'QDense', 'units': merged_dense_1, 'parameters': merged_dense_1_params},
+            {'name': 'merged_dense_2', 'type': 'QDense', 'units': merged_dense_2, 'parameters': merged_dense_2_params},
+            {'name': 'output', 'type': 'QDense', 'units': 1, 'parameters': output_params}
+        ]
+        
+        return {
+            'total_parameters': int(total_params),
+            'trainable_parameters': int(total_params),
+            'non_trainable_parameters': 0,
+            'num_layers': len(layer_structure),
+            'layer_structure': layer_structure
+        }
+    
     def runQuantizedHyperparameterTuning(self, bit_configs=None, max_trials=50, executions_per_trial=2, numEpochs=30):
         """
         Run hyperparameter tuning for quantized Model3 with specified bit configurations.
@@ -650,10 +725,13 @@ class Model3(SmartPixModel):
             
             print(f"✓ Saved {len(model_files)} models and hyperparameter files to {config_dir}/")
             
-            # Also save a summary JSON with all trials
+            # Also save a summary JSON with all trials (enriched with metadata)
             summary_filename = os.path.join(config_dir, "trials_summary.json")
             trials_summary = []
             for idx, hyperparams in enumerate(all_hyperparameters):
+                trial = completed_trials[idx]
+                
+                # Basic trial info
                 trial_info = {
                     'trial_id': idx,
                     'model_file': f"model_trial_{idx:03d}.h5",
@@ -661,11 +739,24 @@ class Model3(SmartPixModel):
                     'hyperparameters': hyperparams.values,
                     'is_best': (idx == 0)
                 }
+                
+                # Add validation accuracy
+                if trial.score is not None:
+                    trial_info['val_accuracy'] = float(trial.score)
+                
+                # Add metrics if available
+                if hasattr(trial, 'metrics') and trial.metrics:
+                    trial_info['metrics'] = trial.metrics
+                
+                # Calculate and add model parameters and structure
+                param_metadata = self._calculate_model_parameters(hyperparams.values)
+                trial_info.update(param_metadata)
+                
                 trials_summary.append(trial_info)
             
             with open(summary_filename, 'w') as f:
                 json.dump(trials_summary, f, indent=4)
-            print(f"✓ Saved trials summary to: {summary_filename}")
+            print(f"✓ Saved enriched trials summary to: {summary_filename}")
             
             # Print results
             print(f"\n{config_name} Hyperparameter Tuning Completed!")
