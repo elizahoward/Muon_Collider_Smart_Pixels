@@ -22,9 +22,13 @@ dataDir_mp = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mp/"
 dataDir_sig = "/local/d1/smartpixML/bigData/Simulation_Output_Signal/"
 dataDir_all = "/local/d1/smartpixML/bigData/allData/"
 
-
-
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
+
+doRecon = True;
+
+interactivePlots=True;
+PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
+os.makedirs(PLOT_DIR, exist_ok=True)
 
 
 # Dataset with all the stuff
@@ -32,12 +36,24 @@ savedPkl = True;
 if not savedPkl:
     truthDF, reconDF = load_parquet_pairs(dataDir_all, skip_range=skip_indices)
     truthDF.to_pickle("dfOfTruth.pkl")
+    if doRecon:
+        reconDF.to_pickle("dfOfRecon.pkl")
 else:
     truthDF = pd.read_pickle("dfOfTruth.pkl")
+    if doRecon:
+        reconDF = pd.read_pickle("dfOfRecon.pkl")
 
 
 fracBib, fracSig, fracMM, fracMP,numTotalSig,numTotalBib,truthSig,truthBib_mm,truthBib_mp,truthBib = countBibSig(truthDF,doPrint=True)
+if doRecon:
+    reconSig,reconBib_mm,reconBib_mp,reconBib,clustersSig,clustersBib,xSizesSig,xSizesBib,ySizesSig, ySizesBib,= processReconBibSig(truthDF,reconDF,doPrint=True)
 
-plt.hist(truthDF["z-global"])
+mask_bib,mask_sig,mask_bib_x,mask_sig_x,mask_bib_y,mask_sig_y, = getEricsMasks(truthBib, truthSig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,)
+plotZglobalXsize(truthBib, truthSig, xSizesSig, xSizesBib,mask_bib,mask_sig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+# plotZglobalYsize(truthBib, truthSig, ySizesSig, ySizesBib,mask_bib_y,mask_sig_y,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+plotZglobalYsize(truthBib, truthSig, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+plotZglobalXYsize(truthBib, truthSig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+ericsPlotReport(truthBib, truthSig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,PLOT_DIR=PLOT_DIR)
+# plt.hist([truthDF["z-global"],truthBib["z-global"],truthSig["z-global"]],stacked=True,histtype='step')
 plt.show()
 
