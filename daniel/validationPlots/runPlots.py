@@ -24,6 +24,7 @@ dataDir_all = "/local/d1/smartpixML/bigData/allData/"
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
 doRecon = True;
@@ -35,11 +36,16 @@ os.makedirs(PLOT_DIR, exist_ok=True)
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -49,6 +55,7 @@ savedPkl = True;
 if not savedPkl:
     truthDF, reconDF = load_parquet_pairs(dataDir_all, skip_range=skip_indices)
     truthDF.to_pickle("dfOfTruth.pkl")
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     if doRecon:
@@ -73,6 +80,8 @@ ericsPlotReport(truthBib, truthSig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,P
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 else:
     truthDF = pd.read_pickle("dfOfTruth.pkl")
 
@@ -81,6 +90,9 @@ fracBib, fracSig, fracMM, fracMP,numTotalSig,numTotalBib,truthSig,truthBib_mm,tr
 
 plt.hist(truthDF["z-global"])
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
