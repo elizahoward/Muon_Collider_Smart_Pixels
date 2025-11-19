@@ -10,7 +10,11 @@ import matplotlib
 import matplotlib.pyplot as plt                               
 import os 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import matplotlib.colors as colors
+=======
+import matplotlib.colors as mcolors
+>>>>>>> Stashed changes
 =======
 import matplotlib.colors as mcolors
 >>>>>>> Stashed changes
@@ -73,7 +77,11 @@ def load_parquet_pairs(directory, skip_range=None):
 
 def reshapeCluster(recon2d__):
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     # print("I might have broken this funciton, might need to be called on each dataframe subtype")
+=======
+    print("I might have broken this funciton, might need to be called on each dataframe subtype")
+>>>>>>> Stashed changes
 =======
     print("I might have broken this funciton, might need to be called on each dataframe subtype")
 >>>>>>> Stashed changes
@@ -108,8 +116,11 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],sh
     plt.yscale(yscale)
     plt.show()
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 #old version of the function
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 def countBibSig(truthDF,doPrint=False):
@@ -139,6 +150,7 @@ def countBibSig(truthDF,doPrint=False):
         print(f"fraction of total that are Sig: {fracSig}")
     return fracBib, fracSig, fracMM, fracMP,numSig,numBib,truthSig,truthBib_mm,truthBib_mp,truthBib
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 #new version that also does stuff with reconDF
 def processReconBibSig(truthDF,reconDF,doPrint=False):
@@ -366,6 +378,8 @@ def ericsPlotReport(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesB
     print(f"  x-size range: {xSizesSig.min()} to {xSizesSig.max()} pixels")
     print(f"  y-size range: {ySizesSig.min()} to {ySizesSig.max()} pixels")
 =======
+=======
+>>>>>>> Stashed changes
 
 # === Load Data ===
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
@@ -373,4 +387,7 @@ skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] t
 
 
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes

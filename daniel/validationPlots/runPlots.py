@@ -23,6 +23,7 @@ dataDir_sig = "/local/d1/smartpixML/bigData/Simulation_Output_Signal/"
 dataDir_all = "/local/d1/smartpixML/bigData/allData/"
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
 doRecon = True;
@@ -32,10 +33,15 @@ PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
 
 =======
+=======
+>>>>>>> Stashed changes
 
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 # Dataset with all the stuff
@@ -43,6 +49,7 @@ savedPkl = True;
 if not savedPkl:
     truthDF, reconDF = load_parquet_pairs(dataDir_all, skip_range=skip_indices)
     truthDF.to_pickle("dfOfTruth.pkl")
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     if doRecon:
         reconDF.to_pickle("dfOfRecon.pkl")
@@ -64,6 +71,8 @@ plotZglobalXYsize(truthBib, truthSig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
 ericsPlotReport(truthBib, truthSig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,PLOT_DIR=PLOT_DIR)
 # plt.hist([truthDF["z-global"],truthBib["z-global"],truthSig["z-global"]],stacked=True,histtype='step')
 =======
+=======
+>>>>>>> Stashed changes
 else:
     truthDF = pd.read_pickle("dfOfTruth.pkl")
 
@@ -71,6 +80,9 @@ else:
 fracBib, fracSig, fracMM, fracMP,numTotalSig,numTotalBib,truthSig,truthBib_mm,truthBib_mp,truthBib = countBibSig(truthDF,doPrint=True)
 
 plt.hist(truthDF["z-global"])
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 plt.show()
 
