@@ -76,7 +76,9 @@ class Model2(SmartPixModel):
                  initial_lr: float = 1e-3,
                  end_lr: float = 1e-4,
                  power: int = 2,
-                 bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+                 bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+                 trainUnquantized: bool = True,
+
                  ):
         """
         Initialize Model2.
@@ -113,6 +115,8 @@ class Model2(SmartPixModel):
         self.end_lr = end_lr
         self.power = power
         
+        self.trainUnquantized = trainUnquantized
+
         # Model2 specific feature configuration
         self.x_feature_description = ['x_profile', 'z_global', 'y_profile', 'y_local']
         
@@ -139,42 +143,42 @@ class Model2(SmartPixModel):
         if loadModel and modelPath:
             self.loadModel(modelPath,config_name)
     
-    def loadTfRecords(self):
-        """Load TFRecords using OptimizedDataGenerator4 for Model2 features."""
-        trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
-        valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
+    # def loadTfRecords(self):
+    #     """Load TFRecords using OptimizedDataGenerator4 for Model2 features."""
+    #     trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
+    #     valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
         
-        print(f"Loading training data from: {trainDir}")
-        print(f"Loading validation data from: {valDir}")
+    #     print(f"Loading training data from: {trainDir}")
+    #     print(f"Loading validation data from: {valDir}")
         
-        # Determine batch size from directory name to match TFRecord format
-        batch_size = 16384
-        if "filtering_records16384" in self.tfRecordFolder:
-            batch_size = 16384
-        elif "filtering_records1024" in self.tfRecordFolder:
-            batch_size = 1024
+    #     # Determine batch size from directory name to match TFRecord format
+    #     batch_size = 16384
+    #     if "filtering_records16384" in self.tfRecordFolder:
+    #         batch_size = 16384
+    #     elif "filtering_records1024" in self.tfRecordFolder:
+    #         batch_size = 1024
         
-        print(f"Using batch_size={batch_size} to match TFRecord format")
+    #     print(f"Using batch_size={batch_size} to match TFRecord format")
         
-        # Model2 uses x_profile, z_global, y_profile, y_local features
-        self.training_generator = ODG.OptimizedDataGenerator(
-            load_records=True, 
-            tf_records_dir=trainDir, 
-            x_feature_description=self.x_feature_description,
-            batch_size=batch_size
-        )
+    #     # Model2 uses x_profile, z_global, y_profile, y_local features
+    #     self.training_generator = ODG.OptimizedDataGenerator(
+    #         load_records=True, 
+    #         tf_records_dir=trainDir, 
+    #         x_feature_description=self.x_feature_description,
+    #         batch_size=batch_size
+    #     )
         
-        self.validation_generator = ODG.OptimizedDataGenerator(
-            load_records=True, 
-            tf_records_dir=valDir, 
-            x_feature_description=self.x_feature_description,
-            batch_size=batch_size
-        )
+    #     self.validation_generator = ODG.OptimizedDataGenerator(
+    #         load_records=True, 
+    #         tf_records_dir=valDir, 
+    #         x_feature_description=self.x_feature_description,
+    #         batch_size=batch_size
+    #     )
         
-        print(f"Training generator length: {len(self.training_generator)}")
-        print(f"Validation generator length: {len(self.validation_generator)}")
+    #     print(f"Training generator length: {len(self.training_generator)}")
+    #     print(f"Validation generator length: {len(self.validation_generator)}")
         
-        return self.training_generator, self.validation_generator
+    #     return self.training_generator, self.validation_generator
     
     def makeUnquantizedModel(self):
         """
@@ -269,6 +273,8 @@ class Model2(SmartPixModel):
         # Create model
         model = Model(
             inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input], 
+
+            
             outputs=output, 
             name="model2_hyperparameter_tuning"
         )

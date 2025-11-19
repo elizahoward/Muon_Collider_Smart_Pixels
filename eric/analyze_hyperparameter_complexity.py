@@ -348,7 +348,8 @@ def main():
         model_name = os.path.basename(os.path.dirname(search_dir))
     
     # Create output directory based on model name
-    output_dir = os.path.join("/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/complexity_analysis", model_name)
+    # output_dir = os.path.join("/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/complexity_analysis", model_name)
+    output_dir = os.path.join("./complexity_analysis", model_name)
     
     print(f"Search directory: {search_dir}")
     print(f"Model name: {model_name}")

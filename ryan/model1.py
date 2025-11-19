@@ -30,7 +30,8 @@ class Model1(SmartPixModel):
             initial_lr: float = 1e-3,
             end_lr: float = 1e-4,
             power: int = 2,
-            bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            trainUnquantized = False
             ): 
         self.tfRecordFolder = tfRecordFolder
         self.modelName = "Model1" # for other models, e.g., Model 1, Model 2, etc.
@@ -50,6 +51,8 @@ class Model1(SmartPixModel):
         self.initial_lr = initial_lr
         self.end_lr = end_lr
         self.power = power
+
+        self.trainUnquantized = trainUnquantized
         return
      
     def makeUnquantizedModel(self):
@@ -159,7 +162,9 @@ class Model1(SmartPixModel):
         input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
         input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
         input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
-        x = tf.keras.layers.Concatenate()([input1, input2, input3, input4])
+        x1 = tf.keras.layers.Concatenate()([input1, input2])
+        x2 = tf.keras.layers.Concatenate()([input3, input4])
+        x = tf.keras.layers.Concatenate()([x1,x2])
 
         ## I want to try this with 1 int bit and 7 fractional
         ## I want to try this with 0 int bit and 7 fractional
@@ -241,7 +246,7 @@ class Model1(SmartPixModel):
             bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
-        out = QActivation("smooth_sigmoid")(x)
+        out = QActivation("quantized_tanh")(x)
         config_name = f"quantized_{total_bits}w{int_bits}i"
         self.models[config_name] = tf.keras.Model(inputs=[input1, input2, input3, input4], outputs=out)
 
