@@ -31,6 +31,7 @@ class SmartPixModel(ABC):
             end_lr: float = 1e-4,
             power: int = 2,
             bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            trainUnquantized: bool = True,
             ): 
         # Do we want to specify model, modelType, bitSize, etc.
         # Decide here if we want to load a pre-trained model or create a new one from scratch
@@ -43,6 +44,8 @@ class SmartPixModel(ABC):
         self.initial_lr = initial_lr
         self.end_lr = end_lr
         self.power = power
+
+        self.trainUnquantized = trainUnquantized
         return
     
     
@@ -360,7 +363,10 @@ class SmartPixModel(ABC):
         self.buildModel("unquantized")
         
         print("2b. Training unquantized model...")
-        self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
+        if self.trainUnquantized:
+            self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
+        else:
+            self.trainModel(epochs=1, early_stopping_patience=15, save_best=False)
         
         print("2c. Evaluating unquantized model...")
         eval_results = self.evaluate()
