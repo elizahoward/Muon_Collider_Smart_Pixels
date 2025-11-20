@@ -90,15 +90,17 @@ def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",
         plt.show()
     return hist,bin_edges
 
-def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],showNums=False,figsize=(7,3),yscale="linear"):
+def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,figsize=(7,3),yscale="linear"):
     assert len(arrs) == len(pltLabels)
-    plt.figure(figsize=figsize)
+    if pltStandalone:
+        plt.figure(figsize=figsize)
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
     for i in range(len(arrs)):
         plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums)
     plt.legend()
     plt.yscale(yscale)
-    plt.show()
+    if pltStandalone:
+        plt.show()
 
 #old version of the function
 def countBibSig(truthDF,doPrint=False):
@@ -150,15 +152,57 @@ def processReconBibSig(truthDF,reconDF,doPrint=False):
     ySizesSig = np.count_nonzero(clustersSig, axis=1).max(axis=1)
     ySizesBib = np.count_nonzero(clustersBib, axis=1).max(axis=1)
 
+    nPixelsSig = np.count_nonzero(clustersSig, axis=(1,2))
+    nPixelsBib = np.count_nonzero(clustersBib, axis=(1,2))
+
     assert numSig == len(reconSig)
     assert numBib == len(reconBib)
-    return reconSig,reconBib_mm,reconBib_mp,reconBib,clustersSig,clustersBib, xSizesSig, xSizesBib,ySizesSig, ySizesBib,
+    assert len(truthSig) == len(xSizesSig)
+    assert len(truthSig) == len(ySizesSig)
+    assert len(truthSig) == len(nPixelsSig)
+    assert len(truthBib) == len(xSizesBib)
+    assert len(truthBib) == len(ySizesBib)
+    assert len(truthBib) == len(nPixelsBib)
+    truthSig.loc[:,"xSize"] = list(xSizesSig)
+    truthSig.loc[:,"ySize"] = list(ySizesSig)
+    truthSig.loc[:,"nPix"]  = list(nPixelsSig)
+    truthBib.loc[:,"xSize"] = list(xSizesBib)
+    truthBib.loc[:,"ySize"] = list(ySizesBib)
+    truthBib.loc[:,"nPix"]  = list(nPixelsBib)
+    return truthSig, truthBib, reconSig,reconBib_mm,reconBib_mp,reconBib,clustersSig,clustersBib, xSizesSig, xSizesBib,ySizesSig, ySizesBib,nPixelsSig,nPixelsBib
 
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
+def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interactivePlots=False):
+    plt.figure(figsize=(14, 6))
+    key = "pt"
+    showNums = False
+    plt.subplot(411)
+    bins = np.linspace(-0.1,0.1,100)
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2))
+    plt.ylabel("Tracks")
+    plt.subplot(412)
+    bins = np.linspace(-1,10,100)
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale='log')
+    plt.ylabel("Tracks")
+    plt.subplot(413)
+    bins = np.logspace(-1,2.04,100)
+    bins = np.concatenate(([-1,0,0.01],bins,[110,114]))
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale="linear")
+    plt.ylabel("Tracks")
+    plt.subplot(414)
+    # bins = np.logspace(-1,2.1,100)
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale="log")
+    plt.ylabel("Tracks")
+    plt.xlabel("momentum p_T")
+    plt.savefig(os.path.join(PLOT_DIR, "bib_signal_pt.png"), dpi=300, bbox_inches='tight')
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
 
-#From Eric's code
+#From Eric's code 
 def create_pastel_red_cmap():
     # Define colors from white to a pastel/soft red
     colors_list = ['#ffffff', '#ffe6e6', '#ffcccc', '#ffb3b3', '#ff9999', '#ff8080', '#ff6666', '#ff4d4d', '#ff3333', '#e62e2e']
@@ -329,6 +373,7 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     
     plt.tight_layout()
     plt.savefig(os.path.join(PLOT_DIR, "bib_signal_zglobal_vs_xysize_grid_comparison.png"), dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(PLOT_DIR, "bib_signal_zglobal_vs_xysize_grid_comparison_transparent.png"), dpi=300, bbox_inches='tight',transparent=True)
     if interactivePlots:
         plt.show()
     else:
@@ -353,3 +398,231 @@ def ericsPlotReport(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesB
     print(f"  z-global range: {z_global_sig.min():.2f} to {z_global_sig.max():.2f} mm")
     print(f"  x-size range: {xSizesSig.min()} to {xSizesSig.max()} pixels")
     print(f"  y-size range: {ySizesSig.min()} to {ySizesSig.max()} pixels")
+
+#Adapted from Eric's plot_signal_data.py
+
+def genEtaAlphaBeta(truthDF):
+    if 'z-global' in truthDF.columns:
+        theta = np.arctan(30 / truthDF['z-global'])
+        truthDF['eta'] = -np.log(np.tan(theta / 2))
+
+    # cotAlpha, cotBeta may already be present, but recalculate if not
+    if 'cotAlpha' not in truthDF.columns and {'n_x', 'n_z'}.issubset(truthDF.columns):
+        truthDF['cotAlpha'] = truthDF['n_x'] / truthDF['n_z']
+    if 'cotBeta' not in truthDF.columns and {'n_y', 'n_z'}.issubset(truthDF.columns):
+        truthDF['cotBeta'] = truthDF['n_y'] / truthDF['n_z']
+    if 'R' not in truthDF.columns:
+        #added from Eliza's code
+        truthDF['R'] = truthDF['pt']*5.36/(1.60217663*3.57)*1000 # [mm]
+
+    return truthDF
+
+# --- Plot 1: cotAlpha, cotBeta, number_eh_pairs, nPixels ---
+def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(12,8))
+
+    ax[0,0].hist(truthsig['cotAlpha'], bins=40, histtype='step', color='g', align='mid', density=True, label="Signal")
+    ax[0,0].hist(truthbib['cotAlpha'], bins=40, histtype='step', color='r', align='mid', density=True, label="BIB")
+    ax[0,0].set_xlabel('cot(α)')
+    ax[0,0].set_ylabel('Track Density')
+    ax[0,0].set_xlim(-7.5, 7.5)
+    ax[0,0].legend()
+
+    ax[1,0].hist(truthsig['cotBeta'], bins=40, histtype='step', color='g', align='mid', density=True, label="Signal")
+    ax[1,0].hist(truthbib['cotBeta'], bins=40, histtype='step', color='r', align='mid', density=True, label="BIB")
+    ax[1,0].set_xlabel('cot(β)')
+    ax[1,0].set_ylabel('Track Density')
+    ax[1,0].set_xlim(-8, 8)
+    ax[1,0].legend()
+
+    ax[0,1].hist(truthsig['number_eh_pairs'], bins=40, histtype='step', color='g', align='mid', density=True, label="Signal")
+    ax[0,1].hist(truthbib['number_eh_pairs'], bins=40, histtype='step', color='r', align='mid', density=True, label="BIB")
+    ax[0,1].set_xlabel('Number of eh pairs')
+    ax[0,1].set_ylabel('Track Density')
+    ax[0,1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: '{:.0e}'.format(x)))
+    ax[0,1].set_xlim(0, 120000)
+    ax[0,1].legend()
+
+    # nPixels: number of nonzero pixels in each cluster
+    
+    ax[1,1].hist(nPixelsSig, bins=30, histtype='step', color='g', align='mid', density=True, label="Signal")
+    ax[1,1].hist(nPixelsBib, bins=30, histtype='step', color='r', align='mid', density=True, label="BIB")
+    ax[1,1].set_xlabel('Number of pixels')
+    ax[1,1].set_ylabel('Track Density')
+    ax[1,1].legend()
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, "signal_bib_summary_histograms.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+# --- Plot 2: 2D histograms of eta vs x-size/y-size ---
+def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.05, 'wspace': 0.03}, figsize=(10,7))
+
+    # Before each hist2d call, filter out NaN and inf values for both axes
+    mask_96 = ~np.isnan(truthsig['eta']) & ~np.isnan(xSizesSig)
+    mask_96 = mask_96 & np.isfinite(truthsig['eta']) & np.isfinite(xSizesSig)
+    ax[0,1].hist2d(truthsig['eta'][mask_96], xSizesSig[mask_96], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    ax[0,1].set_title("Signal", fontsize=15)
+
+    mask_98 = ~np.isnan(truthsig['eta']) & ~np.isnan(ySizesSig)
+    mask_98 = mask_98 & np.isfinite(truthsig['eta']) & np.isfinite(ySizesSig)
+    ax[1,1].hist2d(truthsig['eta'][mask_98], ySizesSig[mask_98], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    ax[1,1].set_xlabel('η', fontsize=15)
+
+    ax[0,0].set_ylabel('x-size (# pixels)', fontsize=15)
+    ax[1,0].set_ylabel('y-size (# pixels)', fontsize=15)
+
+    #Copying Eric's code but for bib
+    # Before each hist2d call, filter out NaN and inf values for both axes
+    mask_96 = ~np.isnan(truthbib['eta']) & ~np.isnan(xSizesBib)
+    mask_96 = mask_96 & np.isfinite(truthbib['eta']) & np.isfinite(xSizesBib)
+    ax[0,0].hist2d(truthbib['eta'][mask_96], xSizesBib[mask_96], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    ax[0,0].set_title("BIB", fontsize=15)
+
+    mask_98 = ~np.isnan(truthbib['eta']) & ~np.isnan(ySizesBib)
+    mask_98 = mask_98 & np.isfinite(truthbib['eta']) & np.isfinite(ySizesBib)
+    ax[1,0].hist2d(truthbib['eta'][mask_98], ySizesBib[mask_98], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    ax[1,0].set_xlabel('η', fontsize=15)
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, "signal_eta_vs_size_2d.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+# --- Plot 3: 2D histograms of y-local vs x-size/y-size ---
+def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.05, 'wspace': 0.03}, figsize=(10,7))
+
+    # Before each hist2d call, filter out NaN and inf values for both axes
+    mask_111 = ~np.isnan(truthsig['y-local']) & ~np.isnan(xSizesSig)
+    mask_111 = mask_111 & np.isfinite(truthsig['y-local']) & np.isfinite(xSizesSig)
+    ax[0,1].hist2d(truthsig['y-local'][mask_111], xSizesSig[mask_111], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    ax[0,1].set_title("Signal", fontsize=15)
+
+    mask_113 = ~np.isnan(truthsig['y-local']) & ~np.isnan(ySizesSig)
+    mask_113 = mask_113 & np.isfinite(truthsig['y-local']) & np.isfinite(ySizesSig)
+    ax[1,1].hist2d(truthsig['y-local'][mask_113], ySizesSig[mask_113], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    ax[1,1].set_xlabel('y-local [μm]', fontsize=15)
+
+    ax[0,0].set_ylabel('x-size (# pixels)', fontsize=15)
+    ax[1,0].set_ylabel('y-size (# pixels)', fontsize=15)
+
+    
+
+
+    mask_111 = ~np.isnan(truthbib['y-local']) & ~np.isnan(xSizesBib)
+    mask_111 = mask_111 & np.isfinite(truthbib['y-local']) & np.isfinite(xSizesBib)
+    ax[0,0].hist2d(truthbib['y-local'][mask_111], xSizesBib[mask_111], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    ax[0,0].set_title("BIB", fontsize=15)
+
+    mask_113 = ~np.isnan(truthbib['y-local']) & ~np.isnan(ySizesBib)
+    mask_113 = mask_113 & np.isfinite(truthbib['y-local']) & np.isfinite(ySizesBib)
+    ax[1,0].hist2d(truthbib['y-local'][mask_113], ySizesBib[mask_113], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    ax[1,0].set_xlabel('y-local [μm]', fontsize=15)
+
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, "signal_ylocal_vs_size_2d.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+# --- Plot 4: 2D histogram of number_eh_pairs vs pt ---
+def plotEhPt(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10,5))
+    # Before each hist2d call, filter out NaN and inf values for both axes
+    mask_125 = ~np.isnan(truthsig['number_eh_pairs']) & ~np.isnan(truthsig['pt'])
+    mask_125 = mask_125 & np.isfinite(truthsig['number_eh_pairs']) & np.isfinite(truthsig['pt'])
+    ax[1].hist2d(truthsig['number_eh_pairs'][mask_125], truthsig['pt'][mask_125], bins=30, cmap='Blues')
+    ax[1].set_title("Signal", fontsize=15)
+    ax[1].set_ylabel('pt (GeV)', fontsize=15)
+    ax[1].set_xlabel('number of electron hole pairs', fontsize=15)
+
+    mask_125 = ~np.isnan(truthbib['number_eh_pairs']) & ~np.isnan(truthbib['pt'])
+    mask_125 = mask_125 & np.isfinite(truthbib['number_eh_pairs']) & np.isfinite(truthbib['pt'])
+    ax[0].hist2d(truthbib['number_eh_pairs'][mask_125], truthbib['pt'][mask_125], bins=30, cmap='Blues')
+    ax[0].set_title("BIB", fontsize=15)
+    ax[0].set_ylabel('pt (GeV)', fontsize=15)
+    ax[0].set_xlabel('number of electron hole pairs', fontsize=15)
+
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, "signal_ehpairs_vs_pt_2d.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+# --- Plot 5: charge separation for low and high pt ---
+def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
+    truthsig['q'] = truthsig['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
+    truthbib['q'] = truthbib['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
+    # Low pt (<5 GeV) and high pt (>95 GeV)
+    truthSigLow = truthsig[truthsig['pt'] < 5].copy()
+    truthSigHigh = truthsig[truthsig['pt'] > 95].copy()
+
+    truthSigLowPos = truthSigLow[truthSigLow['q'] > 0]
+    truthSigLowNeg = truthSigLow[truthSigLow['q'] < 0]
+    truthSigHighPos = truthSigHigh[truthSigHigh['q'] > 0]
+    truthSigHighNeg = truthSigHigh[truthSigHigh['q'] < 0]
+
+    truthBibLow = truthbib[truthbib['pt'] < 5].copy()
+    truthBibHigh = truthbib[truthbib['pt'] > 95].copy()
+
+    truthBibLowPos = truthBibLow[truthBibLow['q'] > 0]
+    truthBibLowNeg = truthBibLow[truthBibLow['q'] < 0]
+    truthBibHighPos = truthBibHigh[truthBibHigh['q'] > 0]
+    truthBibHighNeg = truthBibHigh[truthBibHigh['q'] < 0]
+
+    # Example: plot pt distributions for low/high pt, positive/negative charge
+    fig, ax = plt.subplots(2,2,figsize=(12,5))
+    ax[0,1].hist(truthSigLowPos['pt'], bins=30, alpha=0.7, label='Low pt, q>0')
+    ax[0,1].hist(truthSigLowNeg['pt'], bins=30, alpha=0.7, label='Low pt, q<0')
+    ax[0,1].set_title('Sig Low pt (<5 GeV)')
+    ax[0,1].set_xlabel('pt (GeV)')
+    ax[0,1].set_ylabel('Tracks')
+    ax[0,1].legend()
+
+    ax[1,1].hist(truthSigHighPos['pt'], bins=30, alpha=0.7, label='High pt, q>0')
+    ax[1,1].hist(truthSigHighNeg['pt'], bins=30, alpha=0.7, label='High pt, q<0')
+    ax[1,1].set_title('Sig High pt (>95 GeV)')
+    ax[1,1].set_xlabel('pt (GeV)')
+    ax[1,1].set_ylabel('Tracks')
+    ax[1,1].legend()
+
+    
+
+    ax[0,0].hist(truthBibLowPos['pt'], bins=30, alpha=0.7, label='Low pt, q>0')
+    ax[0,0].hist(truthBibLowNeg['pt'], bins=30, alpha=0.7, label='Low pt, q<0')
+    ax[0,0].set_title('Bib Low pt (<5 GeV)')
+    ax[0,0].set_xlabel('pt (GeV)')
+    ax[0,0].set_ylabel('Tracks')
+    ax[0,0].legend()
+
+    ax[1,0].hist(truthBibHighPos['pt'], bins=30, alpha=0.7, label='High pt, q>0')
+    ax[1,0].hist(truthBibHighNeg['pt'], bins=30, alpha=0.7, label='High pt, q<0')
+    ax[1,0].set_title('Bib High pt (>95 GeV)')
+    ax[1,0].set_xlabel('pt (GeV)')
+    ax[1,0].set_ylabel('Tracks')
+    ax[1,0].legend()
+
+
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, "signal_pt_charge_separation.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+    print(f"Plots saved in {PLOT_DIR}") 
+
+#Added plots from Eliza's code (several are also just wrapped into Eric's code)
+
