@@ -13,6 +13,7 @@ from particle import PDGID
 import sys
 sys.path.append("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots/")
 from plotUtils import *
+import pickle
 
 
 flp = 0
@@ -29,27 +30,35 @@ processRecon = False;
 interactivePlots=True;
 PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
+savedPklFromParquet = True;
 
-
+print(f"loading data, Currently loading settings: \nprocessRecon: {processRecon}\nsavedPklFromParquet: {savedPklFromParquet}\ninteractivePlots: {interactivePlots}")
 # Dataset with all the stuff
-savedPkl = True;
-if not savedPkl:
+if not savedPklFromParquet:
     truthDF, reconDF = load_parquet_pairs(dataDir_all, skip_range=skip_indices)
+    truthDF = genEtaAlphaBetaRq(truthDF)
     truthDF.to_pickle("dfOfTruth.pkl")
     if processRecon:
         reconDF.to_pickle("dfOfRecon.pkl")
 else:
-    truthDF = pd.read_pickle("dfOfTruth.pkl")
+    try:
+        truthDF = pd.read_pickle("dfOfTruth.pkl")
+    except:
+        raise Exception("You may have to first save pkls before you can read them\nHint: set savedPklFromParquet to False")
     if processRecon:
         reconDF = pd.read_pickle("dfOfRecon.pkl")
 
-truthDF = genEtaAlphaBeta(truthDF)
 
 fracBib, fracSig, fracMM, fracMP,numTotalSig,numTotalBib,truthSig,truthBib_mm,truthBib_mp,truthBib = countBibSig(truthDF,doPrint=True)
 if processRecon:
-    truthSig, truthBib,reconSig,reconBib_mm,reconBib_mp,reconBib,clustersSig,clustersBib,xSizesSig,xSizesBib,ySizesSig, ySizesBib,nPixelsSig,nPixelsBib,= processReconBibSig(truthDF,reconDF,doPrint=True)
+    truthDF = genEtaAlphaBetaRq(truthDF)
+    truthSig, truthBib,reconSig,reconBib_mm,reconBib_mp,reconBib,clustersSig,clustersBib,xSizesSig,xSizesBib,ySizesSig, ySizesBib,nPixelsSig,nPixelsBib,avgClustDictBib,avgClustDictSig,= processReconBibSig(truthDF,reconDF,doPrint=True)
     truthSig.to_pickle("dfOfTruthSig.pkl")
     truthBib.to_pickle("dfOfTruthBib.pkl")
+    with open("avgProfBib.pkl",'wb') as handle:
+        pickle.dump(avgClustDictBib,handle, protocol=pickle.HIGHEST_PROTOCOL)
+    with open("avgProfSig.pkl",'wb') as handle:
+        pickle.dump(avgClustDictSig,handle, protocol=pickle.HIGHEST_PROTOCOL)
 else:
     truthSig = pd.read_pickle("dfOfTruthSig.pkl")
     truthBib = pd.read_pickle("dfOfTruthBib.pkl")
@@ -59,7 +68,19 @@ else:
     xSizesSig=truthSig["xSize"]
     ySizesSig=truthSig["ySize"]
     nPixelsSig=truthSig["nPix"]
+    with open("avgProfBib.pkl",'rb') as handle:
+        avgClustDictBib = pickle.load(handle)
+    with open("avgProfSig.pkl",'rb') as handle:
+        avgClustDictSig = pickle.load(handle)
+print("Finished loading data, now plotting")
 
+#Eliza's plots (the unique ones)
+plotRadius(truthBib,truthSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+plotYprofileYlocalRange(avgClustDictBib,titleBibSig="Bib",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+plotYprofileYlocalRange(avgClustDictSig,titleBibSig="Signal",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+plotYprofileYZRange(avgClustDictBib,avgClustDictSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+
+#Eric's plots
 mask_bib,mask_sig,mask_bib_x,mask_sig_x,mask_bib_y,mask_sig_y, = getEricsMasks(truthBib, truthSig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,)
 plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 plotZglobalXsize(truthBib, truthSig, xSizesSig, xSizesBib,mask_bib,mask_sig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)

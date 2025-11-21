@@ -16,6 +16,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
 matplotlib.rcParams["figure.dpi"] = 150
 from particle import PDGID
+# import pickle
 
 
 
@@ -169,8 +170,177 @@ def processReconBibSig(truthDF,reconDF,doPrint=False):
     truthBib.loc[:,"xSize"] = list(xSizesBib)
     truthBib.loc[:,"ySize"] = list(ySizesBib)
     truthBib.loc[:,"nPix"]  = list(nPixelsBib)
-    return truthSig, truthBib, reconSig,reconBib_mm,reconBib_mp,reconBib,clustersSig,clustersBib, xSizesSig, xSizesBib,ySizesSig, ySizesBib,nPixelsSig,nPixelsBib
 
+    #from Eliza's code, the average yprofiles in each section
+    print("getting average cluster profile in each regime")
+    avgClustDictBib = getProfiles(truthBib, clustersBib)
+    avgClustDictSig = getProfiles(truthSig, clustersSig)
+    print("finished getting average cluster profile in each regime")
+    return truthSig, truthBib, reconSig,reconBib_mm,reconBib_mp,reconBib,clustersSig,clustersBib, xSizesSig, xSizesBib,ySizesSig, ySizesBib,nPixelsSig,nPixelsBib,avgClustDictBib,avgClustDictSig
+
+#Tighter version of Eliza's processing cuts
+def getProfiles(truth__, clusters__):
+    clusters__LowPtPosLowYl  = clusters__[np.where((truth__['q']>0) & (truth__['pt'] <5 ) & (truth__['y-local']>-4.5) & (truth__['y-local']<-2 ))]
+    clusters__HighPtPosLowYl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['y-local']>-4.5) & (truth__['y-local']<-2 ))]
+    clusters__LowPtNegLowYl  = clusters__[np.where((truth__['q']<0) & (truth__['pt'] <5 ) & (truth__['y-local']>-4.5) & (truth__['y-local']<-2 ))]
+    clusters__HighPtNegLowYl = clusters__[np.where((truth__['q']<0) & (truth__['pt'] >95) & (truth__['y-local']>-4.5) & (truth__['y-local']<-2 ))]
+    clusters__LowYl          = clusters__[np.where(                                         (truth__['y-local']>-4.5) & (truth__['y-local']<-2 ))]
+    clusters__LowPtPosMidYl =  clusters__[np.where((truth__['q']>0) & (truth__['pt'] <5 ) & (truth__['y-local']>0) & (truth__['y-local']<2 ))]
+    clusters__HighPtPosMidYl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['y-local']>0) & (truth__['y-local']<2 ))]
+    clusters__LowPtNegMidYl =  clusters__[np.where((truth__['q']<0) & (truth__['pt'] <5 ) & (truth__['y-local']>0) & (truth__['y-local']<2 ))]
+    clusters__HighPtNegMidYl = clusters__[np.where((truth__['q']<0) & (truth__['pt'] >95) & (truth__['y-local']>0) & (truth__['y-local']<2 ))]
+    clusters__MidYl          = clusters__[np.where(                                         (truth__['y-local']>0) & (truth__['y-local']<2 ))]
+    clusters__LowPtPosHighYl =  clusters__[np.where((truth__['q']>0) & (truth__['pt'] <5 ) & (truth__['y-local']>6) & (truth__['y-local']<8.5 ))]
+    clusters__HighPtPosHighYl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['y-local']>6) & (truth__['y-local']<8.5 ))]
+    clusters__LowPtNegHighYl =  clusters__[np.where((truth__['q']<0) & (truth__['pt'] <5 ) & (truth__['y-local']>6) & (truth__['y-local']<8.5 ))]
+    clusters__HighPtNegHighYl = clusters__[np.where((truth__['q']<0) & (truth__['pt'] >95) & (truth__['y-local']>6) & (truth__['y-local']<8.5 ))]
+    clusters__HighYl          = clusters__[np.where(                                         (truth__['y-local']>6) & (truth__['y-local']<8.5 ))]
+    
+    clusters__LowPtPosLowZgl =  clusters__[np.where((truth__['q']>0) & (truth__['pt'] <5 ) & (truth__['z-global']>0) & (truth__['z-global']<20 ))]
+    clusters__HighPtPosLowZgl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['z-global']>0) & (truth__['z-global']<20 ))]
+    clusters__LowPtNegLowZgl =  clusters__[np.where((truth__['q']<0) & (truth__['pt'] <5 ) & (truth__['z-global']>0) & (truth__['z-global']<20 ))]
+    clusters__HighPtNegLowZgl = clusters__[np.where((truth__['q']<0) & (truth__['pt'] >95) & (truth__['z-global']>0) & (truth__['z-global']<20 ))]
+    clusters__LowZgl          = clusters__[np.where(                                         (truth__['z-global']>0) & (truth__['z-global']<20 ))]
+    clusters__LowPtPosMidZgl =  clusters__[np.where((truth__['q']>0) & (truth__['pt'] <5 ) & (truth__['z-global']>20) & (truth__['z-global']<40 ))]
+    clusters__HighPtPosMidZgl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['z-global']>20) & (truth__['z-global']<40 ))]
+    clusters__LowPtNegMidZgl =  clusters__[np.where((truth__['q']<0) & (truth__['pt'] <5 ) & (truth__['z-global']>20) & (truth__['z-global']<40 ))]
+    clusters__HighPtNegMidZgl = clusters__[np.where((truth__['q']<0) & (truth__['pt'] >95) & (truth__['z-global']>20) & (truth__['z-global']<40 ))]
+    clusters__MidZgl          = clusters__[np.where(                                         (truth__['z-global']>20) & (truth__['z-global']<50 ))]
+    clusters__LowPtPosHighZgl =  clusters__[np.where((truth__['q']>0) & (truth__['pt'] <5 ) & (truth__['z-global']>40) & (truth__['z-global']<65 ))]
+    clusters__HighPtPosHighZgl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['z-global']>40) & (truth__['z-global']<65 ))]
+    clusters__LowPtNegHighZgl =  clusters__[np.where((truth__['q']<0) & (truth__['pt'] <5 ) & (truth__['z-global']>40) & (truth__['z-global']<65 ))]
+    clusters__HighPtNegHighZgl = clusters__[np.where((truth__['q']<0) & (truth__['pt'] >95) & (truth__['z-global']>40) & (truth__['z-global']<65 ))]
+    clusters__HighZgl          = clusters__[np.where(                                         (truth__['z-global']>40) & (truth__['z-global']<65 ))]
+    yProfile__LowPtPosLowYl = getAverageYProfile(clusters__LowPtPosLowYl)
+    yProfile__HighPtPosLowYl = getAverageYProfile(clusters__HighPtPosLowYl)
+    yProfile__LowPtNegLowYl = getAverageYProfile(clusters__LowPtNegLowYl)
+    yProfile__HighPtNegLowYl = getAverageYProfile(clusters__HighPtNegLowYl)
+    yProfile__LowPtPosMidYl = getAverageYProfile(clusters__LowPtPosMidYl)
+    yProfile__HighPtPosMidYl = getAverageYProfile(clusters__HighPtPosMidYl)
+    yProfile__LowPtNegMidYl = getAverageYProfile(clusters__LowPtNegMidYl)
+    yProfile__HighPtNegMidYl = getAverageYProfile(clusters__HighPtNegMidYl)
+    yProfile__LowPtPosHighYl = getAverageYProfile(clusters__LowPtPosHighYl)
+    yProfile__HighPtPosHighYl = getAverageYProfile(clusters__HighPtPosHighYl)
+    yProfile__LowPtNegHighYl = getAverageYProfile(clusters__LowPtNegHighYl)
+    yProfile__HighPtNegHighYl = getAverageYProfile(clusters__HighPtNegHighYl)
+    xProfile__LowPtPosLowYl = getAverageXProfile(clusters__LowPtPosLowYl)
+    xProfile__HighPtPosLowYl = getAverageXProfile(clusters__HighPtPosLowYl)
+    xProfile__LowPtNegLowYl = getAverageXProfile(clusters__LowPtNegLowYl)
+    xProfile__HighPtNegLowYl = getAverageXProfile(clusters__HighPtNegLowYl)
+    xProfile__LowPtPosMidYl = getAverageXProfile(clusters__LowPtPosMidYl)
+    xProfile__HighPtPosMidYl = getAverageXProfile(clusters__HighPtPosMidYl)
+    xProfile__LowPtNegMidYl = getAverageXProfile(clusters__LowPtNegMidYl)
+    xProfile__HighPtNegMidYl = getAverageXProfile(clusters__HighPtNegMidYl)
+    xProfile__LowPtPosHighYl = getAverageXProfile(clusters__LowPtPosHighYl)
+    xProfile__HighPtPosHighYl = getAverageXProfile(clusters__HighPtPosHighYl)
+    xProfile__LowPtNegHighYl = getAverageXProfile(clusters__LowPtNegHighYl)
+    xProfile__HighPtNegHighYl = getAverageXProfile(clusters__HighPtNegHighYl)
+
+    yProfile__LowPtPosLowZgl = getAverageYProfile(clusters__LowPtPosLowZgl)
+    yProfile__HighPtPosLowZgl = getAverageYProfile(clusters__HighPtPosLowZgl)
+    yProfile__LowPtNegLowZgl = getAverageYProfile(clusters__LowPtNegLowZgl)
+    yProfile__HighPtNegLowZgl = getAverageYProfile(clusters__HighPtNegLowZgl)
+    yProfile__LowPtPosMidZgl = getAverageYProfile(clusters__LowPtPosMidZgl)
+    yProfile__HighPtPosMidZgl = getAverageYProfile(clusters__HighPtPosMidZgl)
+    yProfile__LowPtNegMidZgl = getAverageYProfile(clusters__LowPtNegMidZgl)
+    yProfile__HighPtNegMidZgl = getAverageYProfile(clusters__HighPtNegMidZgl)
+    yProfile__LowPtPosHighZgl = getAverageYProfile(clusters__LowPtPosHighZgl)
+    yProfile__HighPtPosHighZgl = getAverageYProfile(clusters__HighPtPosHighZgl)
+    yProfile__LowPtNegHighZgl = getAverageYProfile(clusters__LowPtNegHighZgl)
+    yProfile__HighPtNegHighZgl = getAverageYProfile(clusters__HighPtNegHighZgl)
+    xProfile__LowPtPosLowZgl = getAverageXProfile(clusters__LowPtPosLowZgl)
+    xProfile__HighPtPosLowZgl = getAverageXProfile(clusters__HighPtPosLowZgl)
+    xProfile__LowPtNegLowZgl = getAverageXProfile(clusters__LowPtNegLowZgl)
+    xProfile__HighPtNegLowZgl = getAverageXProfile(clusters__HighPtNegLowZgl)
+    xProfile__LowPtPosMidZgl = getAverageXProfile(clusters__LowPtPosMidZgl)
+    xProfile__HighPtPosMidZgl = getAverageXProfile(clusters__HighPtPosMidZgl)
+    xProfile__LowPtNegMidZgl = getAverageXProfile(clusters__LowPtNegMidZgl)
+    xProfile__HighPtNegMidZgl = getAverageXProfile(clusters__HighPtNegMidZgl)
+    xProfile__LowPtPosHighZgl = getAverageXProfile(clusters__LowPtPosHighZgl)
+    xProfile__HighPtPosHighZgl = getAverageXProfile(clusters__HighPtPosHighZgl)
+    xProfile__LowPtNegHighZgl = getAverageXProfile(clusters__LowPtNegHighZgl)
+    xProfile__HighPtNegHighZgl = getAverageXProfile(clusters__HighPtNegHighZgl)
+
+    yProfile__LowYl = getAverageYProfile(clusters__LowYl)
+    yProfile__MidYl = getAverageYProfile(clusters__MidYl)
+    yProfile__HighYl = getAverageYProfile(clusters__HighYl)
+    yProfile__LowZgl = getAverageYProfile(clusters__LowZgl)
+    yProfile__MidZgl = getAverageYProfile(clusters__MidZgl)
+    yProfile__HighZgl = getAverageYProfile(clusters__HighZgl)
+
+    xProfile__LowYl = getAverageXProfile(clusters__LowYl)
+    xProfile__MidYl = getAverageXProfile(clusters__MidYl)
+    xProfile__HighYl = getAverageXProfile(clusters__HighYl)
+    xProfile__LowZgl = getAverageXProfile(clusters__LowZgl)
+    xProfile__MidZgl = getAverageXProfile(clusters__MidZgl)
+    xProfile__HighZgl = getAverageXProfile(clusters__HighZgl)
+
+
+    avgClusterDict = {        
+        "yProfileLowPtPosLowYl": yProfile__LowPtPosLowYl,
+        "yProfileHighPtPosLowYl": yProfile__HighPtPosLowYl,
+        "yProfileLowPtNegLowYl": yProfile__LowPtNegLowYl,
+        "yProfileHighPtNegLowYl": yProfile__HighPtNegLowYl,
+        "yProfileLowPtPosMidYl": yProfile__LowPtPosMidYl,
+        "yProfileHighPtPosMidYl": yProfile__HighPtPosMidYl,
+        "yProfileLowPtNegMidYl": yProfile__LowPtNegMidYl,
+        "yProfileHighPtNegMidYl": yProfile__HighPtNegMidYl,
+        "yProfileLowPtPosHighYl": yProfile__LowPtPosHighYl,
+        "yProfileHighPtPosHighYl": yProfile__HighPtPosHighYl,
+        "yProfileLowPtNegHighYl": yProfile__LowPtNegHighYl,
+        "yProfileHighPtNegHighYl": yProfile__HighPtNegHighYl,
+        "xProfileLowPtPosLowYl": xProfile__LowPtPosLowYl,
+        "xProfileHighPtPosLowYl": xProfile__HighPtPosLowYl,
+        "xProfileLowPtNegLowYl": xProfile__LowPtNegLowYl,
+        "xProfileHighPtNegLowYl": xProfile__HighPtNegLowYl,
+        "xProfileLowPtPosMidYl": xProfile__LowPtPosMidYl,
+        "xProfileHighPtPosMidYl": xProfile__HighPtPosMidYl,
+        "xProfileLowPtNegMidYl": xProfile__LowPtNegMidYl,
+        "xProfileHighPtNegMidYl": xProfile__HighPtNegMidYl,
+        "xProfileLowPtPosHighYl": xProfile__LowPtPosHighYl,
+        "xProfileHighPtPosHighYl": xProfile__HighPtPosHighYl,
+        "xProfileLowPtNegHighYl": xProfile__LowPtNegHighYl,
+        "xProfileHighPtNegHighYl": xProfile__HighPtNegHighYl,
+                
+        "yProfileLowPtPosLowZgl": yProfile__LowPtPosLowZgl,
+        "yProfileHighPtPosLowZgl": yProfile__HighPtPosLowZgl,
+        "yProfileLowPtNegLowZgl": yProfile__LowPtNegLowZgl,
+        "yProfileHighPtNegLowZgl": yProfile__HighPtNegLowZgl,
+        "yProfileLowPtPosMidZgl": yProfile__LowPtPosMidZgl,
+        "yProfileHighPtPosMidZgl": yProfile__HighPtPosMidZgl,
+        "yProfileLowPtNegMidZgl": yProfile__LowPtNegMidZgl,
+        "yProfileHighPtNegMidZgl": yProfile__HighPtNegMidZgl,
+        "yProfileLowPtPosHighZgl": yProfile__LowPtPosHighZgl,
+        "yProfileHighPtPosHighZgl": yProfile__HighPtPosHighZgl,
+        "yProfileLowPtNegHighZgl": yProfile__LowPtNegHighZgl,
+        "yProfileHighPtNegHighZgl": yProfile__HighPtNegHighZgl,
+        "xProfileLowPtPosLowZgl": xProfile__LowPtPosLowZgl,
+        "xProfileHighPtPosLowZgl": xProfile__HighPtPosLowZgl,
+        "xProfileLowPtNegLowZgl": xProfile__LowPtNegLowZgl,
+        "xProfileHighPtNegLowZgl": xProfile__HighPtNegLowZgl,
+        "xProfileLowPtPosMidZgl": xProfile__LowPtPosMidZgl,
+        "xProfileHighPtPosMidZgl": xProfile__HighPtPosMidZgl,
+        "xProfileLowPtNegMidZgl": xProfile__LowPtNegMidZgl,
+        "xProfileHighPtNegMidZgl": xProfile__HighPtNegMidZgl,
+        "xProfileLowPtPosHighZgl": xProfile__LowPtPosHighZgl,
+        "xProfileHighPtPosHighZgl": xProfile__HighPtPosHighZgl,
+        "xProfileLowPtNegHighZgl": xProfile__LowPtNegHighZgl,
+        "xProfileHighPtNegHighZgl": xProfile__HighPtNegHighZgl,
+
+        "yProfileLowYl": yProfile__LowYl,
+        "yProfileMidYl": yProfile__MidYl,
+        "yProfileHighYl": yProfile__HighYl,
+        "yProfileLowZgl": yProfile__LowZgl,
+        "yProfileMidZgl": yProfile__MidZgl,
+        "yProfileHighZgl": yProfile__HighZgl,
+        "xProfileLowYl": xProfile__LowYl,
+        "xProfileMidYl": xProfile__MidYl,
+        "xProfileHighYl": xProfile__HighYl,
+        "xProfileLowZgl": xProfile__LowZgl,
+        "xProfileMidZgl": xProfile__MidZgl,
+        "xProfileHighZgl": xProfile__HighZgl,
+    }
+    return avgClusterDict
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
@@ -401,7 +571,7 @@ def ericsPlotReport(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesB
 
 #Adapted from Eric's plot_signal_data.py
 
-def genEtaAlphaBeta(truthDF):
+def genEtaAlphaBetaRq(truthDF):
     if 'z-global' in truthDF.columns:
         theta = np.arctan(30 / truthDF['z-global'])
         truthDF['eta'] = -np.log(np.tan(theta / 2))
@@ -414,6 +584,9 @@ def genEtaAlphaBeta(truthDF):
     if 'R' not in truthDF.columns:
         #added from Eliza's code
         truthDF['R'] = truthDF['pt']*5.36/(1.60217663*3.57)*1000 # [mm]
+    if 'q' not in truthDF.columns:
+        truthDF['q'] = truthDF['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
+
 
     return truthDF
 
@@ -562,8 +735,8 @@ def plotEhPt(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactiv
 
 # --- Plot 5: charge separation for low and high pt ---
 def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
-    truthsig['q'] = truthsig['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
-    truthbib['q'] = truthbib['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
+    # truthsig['q'] = truthsig['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
+    # truthbib['q'] = truthbib['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
     # Low pt (<5 GeV) and high pt (>95 GeV)
     truthSigLow = truthsig[truthsig['pt'] < 5].copy()
     truthSigHigh = truthsig[truthsig['pt'] > 95].copy()
@@ -626,3 +799,145 @@ def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",inter
 
 #Added plots from Eliza's code (several are also just wrapped into Eric's code)
 
+def plotRadius(truthbib, truthsig,PLOT_DIR="./plots",interactivePlots=False):
+    #modified to be on same axis
+    fig, ax = plt.subplots()
+    ax.hist(truthbib['R'], histtype='step', bins = np.arange(0,25,2),label="BIB")
+    ax.hist(truthsig['R'], histtype='step', bins = np.arange(0,25,2),label="Signal")
+    plt.legend()
+    ax.set_title("Radius of track curvature")
+    ax.set_xlabel("Radius [mm]")
+    ax.set_ylabel("Tracks")
+    plt.savefig(os.path.join(PLOT_DIR, "radiusPlot.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+#Some of these may be redundant
+def getYProfiles(clusters):
+    profiles = np.sum(clusters, axis = 2)
+    #totalCharge = np.sum(profiles, axis = 1, keepdims=True)
+    return profiles
+
+def getAverageYProfile(clusters):
+    profiles=getYProfiles(clusters)
+    return np.mean(profiles, axis=0)
+
+def getXProfiles(clusters):
+    profiles = np.sum(clusters, axis = 1)
+    #totalCharge = np.sum(profiles, axis = 1, keepdims=True)
+    return profiles
+
+def getAverageXProfile(clusters):
+    profiles=getXProfiles(clusters)
+    return np.mean(profiles, axis=0)
+
+def getClusterYSizes(clusters):
+    profiles=getYProfiles(clusters)
+    bool_arr = profiles != 0
+    return np.sum(bool_arr, axis = 1)
+
+def getAverageClusterYSize(clusters):
+    clusterSizes = getClusterYSizes(clusters)
+    return np.mean(clusterSizes)
+
+def getClusterXSizes(clusters):
+    profiles=getXProfiles(clusters)
+    bool_arr = profiles != 0
+    return np.sum(bool_arr, axis = 1)
+
+def getAverageClusterXSize(clusters):
+    clusterSizes = getClusterXSizes(clusters)
+    return np.mean(clusterSizes)
+
+
+def plotYprofileYlocalRange(
+        # yProfileLowPtPosLowYl,yProfileLowPtNegLowYl,yProfileHighPtPosLowYl,yProfileHighPtNegLowYl,
+        # yProfileLowPtPosMidYl,yProfileLowPtNegMidYl,yProfileHighPtPosMidYl,yProfileHighPtNegMidYl,
+        # yProfileLowPtPosHighYl,yProfileLowPtNegHighYl,yProfileHighPtPosHighYl,yProfileHighPtNegHighYl,
+        avgClustDict,
+        titleBibSig = "Signal",
+        PLOT_DIR="./plots",interactivePlots=False
+        ):
+    yaxis=np.arange(1,14,1)
+    fig, ax = plt.subplots(1,3, sharey=True, figsize=(18,5))
+    ax[0].step(yaxis,avgClustDict["yProfileLowPtPosLowYl"], where="mid", label="Low pT (pos)", c ='r')
+    ax[0].step(yaxis,avgClustDict["yProfileLowPtNegLowYl"], where="mid", label="Low pT (neg)", c='b')
+    ax[0].step(yaxis,avgClustDict["yProfileHighPtPosLowYl"], where="mid", label="High pT (pos)", c='k')
+    ax[0].step(yaxis,avgClustDict["yProfileHighPtNegLowYl"], where="mid", label="High pT (neg)", c='k')
+    ax[0].legend()
+    ax[0].set_title("-4.5 mm < y-local < -2 mm")
+    ax[0].set_ylabel("Fraction of total cluster charge")
+    ax[0].set_xlabel("y [pixels]")
+
+    ax[1].step(yaxis,avgClustDict["yProfileLowPtPosMidYl"], where="mid", label="Low pT (pos)", c ='r')
+    ax[1].step(yaxis,avgClustDict["yProfileLowPtNegMidYl"], where="mid", label="Low pT (neg)", c='b')
+    ax[1].step(yaxis,avgClustDict["yProfileHighPtPosMidYl"], where="mid", label="High pT (pos)", c='k')
+    ax[1].step(yaxis,avgClustDict["yProfileHighPtNegMidYl"], where="mid", label="High pT (neg)", c='k')
+    ax[1].legend()
+    ax[1].set_title("0 mm < y-local < 2 mm")
+    ax[1].set_xlabel("y [pixels]")
+
+    ax[2].step(yaxis,avgClustDict["yProfileLowPtPosHighYl"], where="mid", label="Low pT (pos)", c ='r')
+    ax[2].step(yaxis,avgClustDict["yProfileLowPtNegHighYl"], where="mid", label="Low pT (neg)", c='b')
+    ax[2].step(yaxis,avgClustDict["yProfileHighPtPosHighYl"], where="mid", label="High pT (pos)", c='k')
+    ax[2].step(yaxis,avgClustDict["yProfileHighPtNegHighYl"], where="mid", label="High pT (neg)", c='k')
+    ax[2].legend()
+    ax[2].set_title("6 mm < y-local < 8.5 mm")
+    ax[2].set_xlabel("y [pixels]")
+
+    fig.suptitle(f'Average y-profiles for different ranges of y-local {titleBibSig}', fontsize=15)
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, f"{titleBibSig}yprofileVsYlocalRange.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+def plotYprofileYZRange(
+        # yProfileLowZgl,yProfileMidZgl,yProfileHighZgl,yProfileLowYl,yProfileMidYl,yProfileHighYl, 
+        avgClustDictBib, avgClustDictSig,       
+        PLOT_DIR="./plots",interactivePlots=False
+):
+    yaxis=np.arange(1,14,1)
+    fig, ax = plt.subplots(2,2,figsize=(15,7))
+    ax[0,0].step(yaxis,avgClustDictBib["yProfileLowZgl"], where="mid", label="z-global \u2208 [0,20] mm")
+    ax[0,0].step(yaxis,avgClustDictBib["yProfileMidZgl"], where="mid", label="z-global \u2208 [20,40] mm")
+    ax[0,0].step(yaxis,avgClustDictBib["yProfileHighZgl"], where="mid", label="z-global \u2208 [40,65] mm")
+    ax[0,0].legend()
+    ax[0,0].set_ylabel("Fraction of total cluster charge")
+    ax[0,0].set_xlabel("y [pixels]")
+    ax[0,0].set_title("BIB", fontsize=15)
+
+
+    ax[1,0].step(yaxis,avgClustDictBib["yProfileLowYl"], where="mid", label="y-local \u2208 [-4.5,-2] mm")
+    ax[1,0].step(yaxis,avgClustDictBib["yProfileMidYl"], where="mid", label="y-local \u2208 [0,2] mm")
+    ax[1,0].step(yaxis,avgClustDictBib["yProfileHighYl"], where="mid", label="y-local \u2208 [6,8.5] mm")
+    ax[1,0].legend()
+    ax[1,0].set_ylabel("Fraction of total cluster charge")
+    ax[1,0].set_xlabel("y [pixels]")
+
+
+    ax[0,1].step(yaxis,avgClustDictSig["yProfileLowZgl"], where="mid", label="z-global \u2208 [0,20] mm")
+    ax[0,1].step(yaxis,avgClustDictSig["yProfileMidZgl"], where="mid", label="z-global \u2208 [20,40] mm")
+    ax[0,1].step(yaxis,avgClustDictSig["yProfileHighZgl"], where="mid", label="z-global \u2208 [40,65] mm")
+    ax[0,1].legend()
+    ax[0,1].set_ylabel("Fraction of total cluster charge")
+    ax[0,1].set_xlabel("y [pixels]")
+    ax[0,1].set_title("Signal", fontsize=15)
+
+
+    ax[1,1].step(yaxis,avgClustDictSig["yProfileLowYl"], where="mid", label="y-local \u2208 [-4.5,-2] mm")
+    ax[1,1].step(yaxis,avgClustDictSig["yProfileMidYl"], where="mid", label="y-local \u2208 [0,2] mm")
+    ax[1,1].step(yaxis,avgClustDictSig["yProfileHighYl"], where="mid", label="y-local \u2208 [6,8.5] mm")
+    ax[1,1].legend()
+    ax[1,1].set_ylabel("Fraction of total cluster charge")
+    ax[1,1].set_xlabel("y [pixels]")
+
+    
+    plt.savefig(os.path.join(PLOT_DIR, f"signal_bib_allYprofilesInYlocalZglobalRanges.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
