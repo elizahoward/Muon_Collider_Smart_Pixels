@@ -39,6 +39,11 @@ class SmartPixModel(ABC):
         self.models = {"Unquantized": None, "Quantized": None} # Maybe have a dictionary to store different versions of the model
         self.hyperparameterModel = None
 
+        if loadModel:
+            if modelPath is None:
+                raise ValueError("modelPath must be provided when loadModel is True.")
+            self.loadModel(modelPath)
+
         # Learning rate parameters
         self.initial_lr = initial_lr
         self.end_lr = end_lr
@@ -486,3 +491,25 @@ class SmartPixModel(ABC):
         print(f"  - Results CSV: {results_file}")
         
         return results
+    
+    def runEval(self):
+        """
+        Run only the evaluation step for the trained {self.modelName}.
+        Assumes the model has already been built and trained.
+        """
+        print(f"=== Running {self.modelName} Evaluation Only ===")
+        
+        # Evaluate non-quantized model
+        print("\n1. Evaluating Non-quantized Model...")
+        eval_results = self.evaluate(config_name="Unquantized")
+        print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
+        
+        # Evaluate quantized models
+        for weight_bits, int_bits in self.bit_configs:
+            print(f"\n2. Evaluating {weight_bits}-bit Quantized Model...")
+            config_name = f"quantized_{weight_bits}w{int_bits}i"
+            evaluation_results = self.evaluate(config_name=config_name)
+            print(f'{weight_bits}-bit results: Acc={evaluation_results["test_accuracy"]:.4f}, AUC={evaluation_results["roc_auc"]:.4f}')
+        
+        print(f"\n=== {self.modelName} Evaluation Completed! ===")
+        return
