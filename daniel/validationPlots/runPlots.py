@@ -27,7 +27,7 @@ skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] t
 
 processRecon = False;
 
-interactivePlots=True;
+interactivePlots=False;
 PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
 savedPklFromParquet = True;
@@ -79,6 +79,10 @@ plotRadius(truthBib,truthSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots
 plotYprofileYlocalRange(avgClustDictBib,titleBibSig="Bib",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 plotYprofileYlocalRange(avgClustDictSig,titleBibSig="Signal",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 plotYprofileYZRange(avgClustDictBib,avgClustDictSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+plotClusterYSizes(truthBib,titleBibSig="Bib",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+plotClusterYSizes(truthSig,titleBibSig="Signal",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
+                      PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 
 #Eric's plots
 mask_bib,mask_sig,mask_bib_x,mask_sig_x,mask_bib_y,mask_sig_y, = getEricsMasks(truthBib, truthSig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,)

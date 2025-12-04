@@ -275,6 +275,9 @@ def getProfiles(truth__, clusters__):
     xProfile__MidZgl = getAverageXProfile(clusters__MidZgl)
     xProfile__HighZgl = getAverageXProfile(clusters__HighZgl)
 
+    yProfile__ = getAverageYProfile(clusters__)
+    xProfile__ = getAverageXProfile(clusters__)
+
 
     avgClusterDict = {        
         "yProfileLowPtPosLowYl": yProfile__LowPtPosLowYl,
@@ -339,6 +342,9 @@ def getProfiles(truth__, clusters__):
         "xProfileLowZgl": xProfile__LowZgl,
         "xProfileMidZgl": xProfile__MidZgl,
         "xProfileHighZgl": xProfile__HighZgl,
+
+        "yProfile": yProfile__,
+        "xProfile": xProfile__,
     }
     return avgClusterDict
 
@@ -420,7 +426,8 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     # mask_bib = ~np.isnan(z_global_bib) & ~np.isnan(xSizesBib)
     # mask_bib = mask_bib & np.isfinite(z_global_bib) & np.isfinite(xSizesBib)
     
-    ax[0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = ax[0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    ax[0].figure.colorbar(hb[3],ax=ax[0])#    ax[0].colorbar()
     ax[0].set_title("BIB", fontsize=20)
     ax[0].set_xlabel('z-global [mm]', fontsize=24)
     ax[0].set_ylabel('x-size (# pixels)', fontsize=24)
@@ -430,7 +437,8 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     # mask_sig = ~np.isnan(z_global_sig) & ~np.isnan(xSizesSig)
     # mask_sig = mask_sig & np.isfinite(z_global_sig) & np.isfinite(xSizesSig)
     
-    ax[1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = ax[1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    ax[1].figure.colorbar(hb[3],ax=ax[1])#    ax[1].colorbar()
     ax[1].set_title("Signal", fontsize=20)
     ax[1].set_xlabel('z-global [mm]', fontsize=24)
     ax[1].set_ylabel('x-size (# pixels)', fontsize=24)
@@ -468,7 +476,8 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
     # mask_bib_y = ~np.isnan(z_global_bib) & ~np.isnan(ySizesBib)
     # mask_bib_y = mask_bib_y & np.isfinite(z_global_bib) & np.isfinite(ySizesBib)
     
-    ax[0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = ax[0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    ax[0].figure.colorbar(hb[3],ax=ax[0])#    ax[0].colorbar()
     ax[0].set_title("BIB - Y Size", fontsize=63)
     ax[0].set_xlabel('z-global [mm]', fontsize=50)
     ax[0].set_ylabel('y-size (# pixels)', fontsize=50)
@@ -478,7 +487,8 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
     # mask_sig_y = ~np.isnan(z_global_sig) & ~np.isnan(ySizesSig)
     # mask_sig_y = mask_sig_y & np.isfinite(z_global_sig) & np.isfinite(ySizesSig)
     
-    ax[1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = ax[1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    ax[1].figure.colorbar(hb[3],ax=ax[1])#    ax[1].colorbar()
     ax[1].set_title("Signal - Y Size", fontsize=63)
     ax[1].set_xlabel('z-global [mm]', fontsize=50)
     ax[1].set_ylabel('y-size (# pixels)', fontsize=50)
@@ -513,14 +523,16 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
 
     # Top row: X-size comparisons
     # Top-left: BIB X-size
-    axes[0,0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = axes[0,0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    axes[0,0].figure.colorbar(hb[3],ax=axes[0,0])#    axes[0,0].colorbar()
     axes[0,0].set_title("BIB - X Size", fontsize=38)
     axes[0,0].set_xlabel('z-global [mm]', fontsize=31)
     axes[0,0].set_ylabel('x-size (# pixels)', fontsize=31)
     axes[0,0].tick_params(axis='both', which='major', labelsize=23)
     
     # Top-right: Signal X-size
-    axes[0,1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = axes[0,1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    axes[0,1].figure.colorbar(hb[3],ax=axes[0,1])#    axes[0,1].colorbar()
     axes[0,1].set_title("Signal - X Size", fontsize=38)
     axes[0,1].set_xlabel('z-global [mm]', fontsize=31)
     axes[0,1].set_ylabel('x-size (# pixels)', fontsize=31)
@@ -528,14 +540,16 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     
     # Bottom row: Y-size comparisons
     # Bottom-left: BIB Y-size
-    axes[1,0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = axes[1,0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    axes[1,0].figure.colorbar(hb[3],ax=axes[1,0])#    axes[1,0].colorbar()
     axes[1,0].set_title("BIB - Y Size", fontsize=38)
     axes[1,0].set_xlabel('z-global [mm]', fontsize=31)
     axes[1,0].set_ylabel('y-size (# pixels)', fontsize=31)
     axes[1,0].tick_params(axis='both', which='major', labelsize=23)
     
     # Bottom-right: Signal Y-size
-    axes[1,1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = axes[1,1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    axes[1,1].figure.colorbar(hb[3],ax=axes[1,1])#    axes[1,1].colorbar()
     axes[1,1].set_title("Signal - Y Size", fontsize=38)
     axes[1,1].set_xlabel('z-global [mm]', fontsize=31)
     axes[1,1].set_ylabel('y-size (# pixels)', fontsize=31)
@@ -638,12 +652,14 @@ def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
     # Before each hist2d call, filter out NaN and inf values for both axes
     mask_96 = ~np.isnan(truthsig['eta']) & ~np.isnan(xSizesSig)
     mask_96 = mask_96 & np.isfinite(truthsig['eta']) & np.isfinite(xSizesSig)
-    ax[0,1].hist2d(truthsig['eta'][mask_96], xSizesSig[mask_96], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    hb = ax[0,1].hist2d(truthsig['eta'][mask_96], xSizesSig[mask_96], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    ax[0,1].figure.colorbar(hb[3],ax=ax[0,1])#    ax[0,1].colorbar()
     ax[0,1].set_title("Signal", fontsize=15)
 
     mask_98 = ~np.isnan(truthsig['eta']) & ~np.isnan(ySizesSig)
     mask_98 = mask_98 & np.isfinite(truthsig['eta']) & np.isfinite(ySizesSig)
-    ax[1,1].hist2d(truthsig['eta'][mask_98], ySizesSig[mask_98], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    hb = ax[1,1].hist2d(truthsig['eta'][mask_98], ySizesSig[mask_98], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    ax[1,1].figure.colorbar(hb[3],ax=ax[1,1])#    ax[1,1].colorbar()
     ax[1,1].set_xlabel('η', fontsize=15)
 
     ax[0,0].set_ylabel('x-size (# pixels)', fontsize=15)
@@ -653,12 +669,14 @@ def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
     # Before each hist2d call, filter out NaN and inf values for both axes
     mask_96 = ~np.isnan(truthbib['eta']) & ~np.isnan(xSizesBib)
     mask_96 = mask_96 & np.isfinite(truthbib['eta']) & np.isfinite(xSizesBib)
-    ax[0,0].hist2d(truthbib['eta'][mask_96], xSizesBib[mask_96], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    hb = ax[0,0].hist2d(truthbib['eta'][mask_96], xSizesBib[mask_96], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    ax[0,0].figure.colorbar(hb[3],ax=ax[0,0])#    ax[0,0].colorbar()
     ax[0,0].set_title("BIB", fontsize=15)
 
     mask_98 = ~np.isnan(truthbib['eta']) & ~np.isnan(ySizesBib)
     mask_98 = mask_98 & np.isfinite(truthbib['eta']) & np.isfinite(ySizesBib)
-    ax[1,0].hist2d(truthbib['eta'][mask_98], ySizesBib[mask_98], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    hb = ax[1,0].hist2d(truthbib['eta'][mask_98], ySizesBib[mask_98], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    ax[1,0].figure.colorbar(hb[3],ax=ax[1,0])#    ax[1,0].colorbar()
     ax[1,0].set_xlabel('η', fontsize=15)
 
     plt.tight_layout()
@@ -675,12 +693,14 @@ def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizes
     # Before each hist2d call, filter out NaN and inf values for both axes
     mask_111 = ~np.isnan(truthsig['y-local']) & ~np.isnan(xSizesSig)
     mask_111 = mask_111 & np.isfinite(truthsig['y-local']) & np.isfinite(xSizesSig)
-    ax[0,1].hist2d(truthsig['y-local'][mask_111], xSizesSig[mask_111], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    hb = ax[0,1].hist2d(truthsig['y-local'][mask_111], xSizesSig[mask_111], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    ax[0,1].figure.colorbar(hb[3],ax=ax[0,1])#    ax[0,1].colorbar()
     ax[0,1].set_title("Signal", fontsize=15)
 
     mask_113 = ~np.isnan(truthsig['y-local']) & ~np.isnan(ySizesSig)
     mask_113 = mask_113 & np.isfinite(truthsig['y-local']) & np.isfinite(ySizesSig)
-    ax[1,1].hist2d(truthsig['y-local'][mask_113], ySizesSig[mask_113], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    hb = ax[1,1].hist2d(truthsig['y-local'][mask_113], ySizesSig[mask_113], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    ax[1,1].figure.colorbar(hb[3],ax=ax[1,1])#    ax[1,1].colorbar()
     ax[1,1].set_xlabel('y-local [μm]', fontsize=15)
 
     ax[0,0].set_ylabel('x-size (# pixels)', fontsize=15)
@@ -691,12 +711,14 @@ def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizes
 
     mask_111 = ~np.isnan(truthbib['y-local']) & ~np.isnan(xSizesBib)
     mask_111 = mask_111 & np.isfinite(truthbib['y-local']) & np.isfinite(xSizesBib)
-    ax[0,0].hist2d(truthbib['y-local'][mask_111], xSizesBib[mask_111], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    hb = ax[0,0].hist2d(truthbib['y-local'][mask_111], xSizesBib[mask_111], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    ax[0,0].figure.colorbar(hb[3],ax=ax[0,0])#    ax[0,0].colorbar()
     ax[0,0].set_title("BIB", fontsize=15)
 
     mask_113 = ~np.isnan(truthbib['y-local']) & ~np.isnan(ySizesBib)
     mask_113 = mask_113 & np.isfinite(truthbib['y-local']) & np.isfinite(ySizesBib)
-    ax[1,0].hist2d(truthbib['y-local'][mask_113], ySizesBib[mask_113], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    hb = ax[1,0].hist2d(truthbib['y-local'][mask_113], ySizesBib[mask_113], bins=[30, np.arange(0,14,1)], cmap='Blues')
+    ax[1,0].figure.colorbar(hb[3],ax=ax[1,0])#    ax[1,0].colorbar()
     ax[1,0].set_xlabel('y-local [μm]', fontsize=15)
 
 
@@ -713,14 +735,16 @@ def plotEhPt(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactiv
     # Before each hist2d call, filter out NaN and inf values for both axes
     mask_125 = ~np.isnan(truthsig['number_eh_pairs']) & ~np.isnan(truthsig['pt'])
     mask_125 = mask_125 & np.isfinite(truthsig['number_eh_pairs']) & np.isfinite(truthsig['pt'])
-    ax[1].hist2d(truthsig['number_eh_pairs'][mask_125], truthsig['pt'][mask_125], bins=30, cmap='Blues')
+    hb = ax[1].hist2d(truthsig['number_eh_pairs'][mask_125], truthsig['pt'][mask_125], bins=30, cmap='Blues')
+    ax[1].figure.colorbar(hb[3],ax=ax[1])#    ax[1].colorbar()
     ax[1].set_title("Signal", fontsize=15)
     ax[1].set_ylabel('pt (GeV)', fontsize=15)
     ax[1].set_xlabel('number of electron hole pairs', fontsize=15)
 
     mask_125 = ~np.isnan(truthbib['number_eh_pairs']) & ~np.isnan(truthbib['pt'])
     mask_125 = mask_125 & np.isfinite(truthbib['number_eh_pairs']) & np.isfinite(truthbib['pt'])
-    ax[0].hist2d(truthbib['number_eh_pairs'][mask_125], truthbib['pt'][mask_125], bins=30, cmap='Blues')
+    hb = ax[0].hist2d(truthbib['number_eh_pairs'][mask_125], truthbib['pt'][mask_125], bins=30, cmap='Blues')
+    ax[0].figure.colorbar(hb[3],ax=ax[0])#    ax[0].colorbar()
     ax[0].set_title("BIB", fontsize=15)
     ax[0].set_ylabel('pt (GeV)', fontsize=15)
     ax[0].set_xlabel('number of electron hole pairs', fontsize=15)
@@ -868,7 +892,7 @@ def plotYprofileYlocalRange(
     ax[0].step(yaxis,avgClustDict["yProfileHighPtNegLowYl"], where="mid", label="High pT (neg)", c='k')
     ax[0].legend()
     ax[0].set_title("-4.5 mm < y-local < -2 mm")
-    ax[0].set_ylabel("Fraction of total cluster charge")
+    ax[0].set_ylabel("Average charge in cluster y profile")
     ax[0].set_xlabel("y [pixels]")
 
     ax[1].step(yaxis,avgClustDict["yProfileLowPtPosMidYl"], where="mid", label="Low pT (pos)", c ='r')
@@ -906,7 +930,7 @@ def plotYprofileYZRange(
     ax[0,0].step(yaxis,avgClustDictBib["yProfileMidZgl"], where="mid", label="z-global \u2208 [20,40] mm")
     ax[0,0].step(yaxis,avgClustDictBib["yProfileHighZgl"], where="mid", label="z-global \u2208 [40,65] mm")
     ax[0,0].legend()
-    ax[0,0].set_ylabel("Fraction of total cluster charge")
+    ax[0,0].set_ylabel("Average charge in cluster y profile")
     ax[0,0].set_xlabel("y [pixels]")
     ax[0,0].set_title("BIB", fontsize=15)
 
@@ -915,7 +939,7 @@ def plotYprofileYZRange(
     ax[1,0].step(yaxis,avgClustDictBib["yProfileMidYl"], where="mid", label="y-local \u2208 [0,2] mm")
     ax[1,0].step(yaxis,avgClustDictBib["yProfileHighYl"], where="mid", label="y-local \u2208 [6,8.5] mm")
     ax[1,0].legend()
-    ax[1,0].set_ylabel("Fraction of total cluster charge")
+    ax[1,0].set_ylabel("Average charge in cluster y profile")
     ax[1,0].set_xlabel("y [pixels]")
 
 
@@ -923,7 +947,7 @@ def plotYprofileYZRange(
     ax[0,1].step(yaxis,avgClustDictSig["yProfileMidZgl"], where="mid", label="z-global \u2208 [20,40] mm")
     ax[0,1].step(yaxis,avgClustDictSig["yProfileHighZgl"], where="mid", label="z-global \u2208 [40,65] mm")
     ax[0,1].legend()
-    ax[0,1].set_ylabel("Fraction of total cluster charge")
+    ax[0,1].set_ylabel("Average charge in cluster y profile")
     ax[0,1].set_xlabel("y [pixels]")
     ax[0,1].set_title("Signal", fontsize=15)
 
@@ -932,11 +956,85 @@ def plotYprofileYZRange(
     ax[1,1].step(yaxis,avgClustDictSig["yProfileMidYl"], where="mid", label="y-local \u2208 [0,2] mm")
     ax[1,1].step(yaxis,avgClustDictSig["yProfileHighYl"], where="mid", label="y-local \u2208 [6,8.5] mm")
     ax[1,1].legend()
-    ax[1,1].set_ylabel("Fraction of total cluster charge")
+    ax[1,1].set_ylabel("Average charge in cluster y profile")
     ax[1,1].set_xlabel("y [pixels]")
 
     
     plt.savefig(os.path.join(PLOT_DIR, f"signal_bib_allYprofilesInYlocalZglobalRanges.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+def clusterYSizeVsYlocal(truth):
+    clusterSize=[]
+    ylocals=np.arange(-4.5,9,1)
+    intervals = np.arange(-5,9.5,1)
+    for i in range(len(intervals)-1):
+        cut1 = truth['y-local']>=intervals[i]
+        cut2 = truth['y-local']<intervals[i+1]
+        cut = cut1 & cut2
+        clusterThisSize = np.mean(truth[cut]["ySize"])
+        clusterSize.append(clusterThisSize)
+    return ylocals,clusterSize
+
+def plotClusterYSizes(
+        truth_,
+        titleBibSig = "Signal",
+        PLOT_DIR="./plots",interactivePlots=False):
+    ylocals,lowPosSize = clusterYSizeVsYlocal(truth_.query("pt < 5 and q > 0"))
+    ylocals,lowNegSize = clusterYSizeVsYlocal(truth_.query("pt < 5 and q < 0"))
+    ylocals,highSize = clusterYSizeVsYlocal(truth_.query("pt > 95"))
+    fig, ax = plt.subplots(figsize=(7,5))
+    ax.scatter(ylocals, lowPosSize, c='r', label="Low pT (pos)")
+    ax.scatter(ylocals, lowNegSize, c='b', label="Low pT (neg)")
+    ax.scatter(ylocals, highSize, c='k', label="High pT")
+    ax.set_xlabel("y-local [mm]")
+    ax.set_ylabel("Cluster y sizes [pixels]")
+    ax.legend()
+    ax.set_title(f"{titleBibSig}")
+    plt.savefig(os.path.join(PLOT_DIR, f"{titleBibSig}clusterYSizes.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
+        PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax=plt.subplots(ncols=2, nrows=2, figsize=(10,8))
+    xaxis = np.arange(1,22)
+    yaxis=np.arange(1,14,1)
+    ax[0,0].step(yaxis,avgClustDictSig["yProfile"], where="mid", label="Signal", c ='g')
+    ax[0,0].step(yaxis,avgClustDictBib["yProfile"], where="mid", label="Bib", c ='purple')
+    ax[0,0].legend()
+    ax[0,0].set_xlabel("y-pixels")
+    ax[0,0].set_ylabel("Total charge collected")
+    ax[0,0].set_title("Average y-profile Comaprison")
+
+    ax[0,1].step(xaxis,avgClustDictSig["xProfile"], where="mid", label="Signal", c ='g')
+    ax[0,1].step(xaxis,avgClustDictBib["xProfile"], where="mid", label="Bib", c ='purple')
+    ax[0,1].legend()
+    ax[0,1].set_xlabel("x-pixels")
+    ax[0,1].set_ylabel("Total charge collected")
+    ax[0,1].set_title("Average x-profile Comaprison")
+
+    ax[1,0].hist(truthSig["ySize"], bins=np.arange(0,14), histtype='step', density=True, label="Signal", color ='g')
+    ax[1,0].hist(truthBib["ySize"], bins=np.arange(0,14), histtype='step', density=True, label="Bib", color ='purple')
+    ax[1,0].legend()
+    ax[1,0].set_xlabel("Cluster y-size [# pixels]")
+    ax[1,0].set_ylabel("Track Density")
+    ax[1,0].set_title("Cluster y-size Comaprison")
+
+    ax[1,1].hist(truthSig["xSize"], bins=np.arange(0,22), histtype='step', density=True, label="Signal", color ='g')
+    ax[1,1].hist(truthBib["xSize"], bins=np.arange(0,22), histtype='step', density=True, label="Bib", color ='purple')
+    ax[1,1].legend()
+    ax[1,1].set_xlabel("Cluster x-size [# pixels]")
+    ax[1,1].set_ylabel("Track Density")
+    ax[1,1].set_title("Cluster x-size Comaprison")
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(PLOT_DIR, f"XYSizeProfiless.png"))
     if interactivePlots:
         plt.show()
     else:
