@@ -20,6 +20,10 @@ from datetime import datetime
 sys.path.append("../ryan")
 import OptimizedDataGenerator4 as ODG
 
+import matplotlib
+matplotlib.use('Agg')
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 class SmartPixModel(ABC):
     def __init__(self,
             tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
