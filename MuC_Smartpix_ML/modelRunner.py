@@ -3,9 +3,9 @@
 doModel1 = True
 doModel2 = True
 doModel3 = False
-numEpochs1 = 3;
-numEpochs2 = 2;
-numEpochs3 = 2;
+numEpochs1 = 3
+numEpochs2 = 2
+numEpochs3 = 2
 
 
 # import os

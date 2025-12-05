@@ -1,11 +1,5 @@
 import importlib
 import yaml
-import os
-import torch
-import numpy as np
-import matplotlib.pyplot as plt
-import dgl
-import signal
 
 def buildFromConfig(conf, run_time_args = {}):
     device = run_time_args.get('device', 'cpu')
@@ -20,6 +14,13 @@ def buildFromConfig(conf, run_time_args = {}):
         return cls(**args, **run_time_args)
     else:
         print('No module specified in config. Returning None.')
+
+def include_config(conf):
+    if 'include' in conf:
+        for i in conf['include']:
+            with open(i) as f:
+                conf.update(yaml.load(f, Loader=yaml.FullLoader))
+        del conf['include']
 
 def load_config(config_file):
     with open(config_file) as f:

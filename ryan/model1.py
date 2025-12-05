@@ -32,24 +32,23 @@ class Model1(SmartPixModel):
             power: int = 2,
             bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
             ): 
-        self.tfRecordFolder = tfRecordFolder
         self.modelName = "Model1" # for other models, e.g., Model 1, Model 2, etc.
         # self.model = None
         self.histories = {}
-        self.models = {"Unquantized": None}
-        self.bit_configs = bit_configs
-        for total_bits, int_bits in self.bit_configs:
-            config_name = f"quantized_{total_bits}w{int_bits}i"
-            self.models[config_name] = None
-        # self.quantized_model = None
-        self.hyperparameterModel = None
         self.training_generator = None
         self.validation_generator = None
         self.x_feature_description: list = ['z_global','x_size', 'y_size', 'y_local']
-        # Learning rate parameters
-        self.initial_lr = initial_lr
-        self.end_lr = end_lr
-        self.power = power
+
+        # Handle initialization that's common to all SmartPixModels, including loading models.
+        super().__init__(tfRecordFolder=tfRecordFolder, 
+            nBits=nBits, 
+            loadModel=loadModel, 
+            modelPath=modelPath,
+            initial_lr=initial_lr,
+            end_lr=end_lr,
+            power=power,
+            bit_configs=bit_configs
+        )
         return
      
     def makeUnquantizedModel(self):

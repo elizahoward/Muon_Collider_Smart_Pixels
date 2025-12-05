@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
 import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
+from qkeras import QDense, QActivation, quantized_bits, quantized_relu
 import pandas as pd
 from datetime import datetime
 sys.path.append("../ryan")
@@ -42,7 +43,12 @@ class SmartPixModel(ABC):
         self.modelName = "Base Model" # for other models, e.g., Model 1, Model 2, etc.
         self.models = {"Unquantized": None, "Quantized": None} # Maybe have a dictionary to store different versions of the model
         self.hyperparameterModel = None
+        self.bit_configs = bit_configs
+        for total_bits, int_bits in self.bit_configs:
+            config_name = f"quantized_{total_bits}w{int_bits}i"
+            self.models[config_name] = None
 
+        print(loadModel, modelPath)
         if loadModel:
             if modelPath is None:
                 raise ValueError("modelPath must be provided when loadModel is True.")
@@ -134,7 +140,9 @@ class SmartPixModel(ABC):
     config_name = f"quantized_{total_bits}w{int_bits}i"
     """
     def loadModel(self, file_path: str,config_name = "Unquantized"):
-        self.models[config_name]=tf.keras.models.load_model(file_path, compile=False)
+        print(f"Loading model from: {file_path}")
+        custom_objects = {"QDense": QDense, "QActivation": QActivation, "quantized_bits": quantized_bits, "quantized_relu": quantized_relu}
+        self.models[config_name]=tf.keras.models.load_model(file_path, compile=True, custom_objects=custom_objects)
 
     """
     config_name = Unquantized or 
@@ -311,7 +319,6 @@ class SmartPixModel(ABC):
         
         # Get predictions
         predictions = self.models[config_name].predict(eval_generator, verbose=1)
-        
         # Get true labels
         true_labels = np.concatenate([y for _, y in eval_generator])
         
@@ -346,7 +353,7 @@ class SmartPixModel(ABC):
         
         # Create output directory with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = f"{self.modelName}_results_{timestamp}"
+        output_dir = f"results/{self.modelName}_results_{timestamp}"
         os.makedirs(output_dir, exist_ok=True)
         print(f"All results will be saved to: {output_dir}/")
         
@@ -496,10 +503,14 @@ class SmartPixModel(ABC):
         
         return results
     
-    def runEval(self):
+    def runEval(self, evalAll = True):
         """
         Run only the evaluation step for the trained {self.modelName}.
         Assumes the model has already been built and trained.
+
+        evalAll: If True, evaluate both quantized and non-quantized models.
+        Default loadModel behavior populates "Unquantized" regardless of
+        quantization. Use this when checking one model at a time.
         """
         print(f"=== Running {self.modelName} Evaluation Only ===")
         
@@ -509,6 +520,10 @@ class SmartPixModel(ABC):
         print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
         
         # Evaluate quantized models
+        if not evalAll:
+            print(f"\n=== {self.modelName} Evaluation Completed! ===")
+            return
+        
         for weight_bits, int_bits in self.bit_configs:
             print(f"\n2. Evaluating {weight_bits}-bit Quantized Model...")
             config_name = f"quantized_{weight_bits}w{int_bits}i"
