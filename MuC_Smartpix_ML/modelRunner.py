@@ -30,9 +30,8 @@ if doModel1:
     
     # Initialize Model1
     model1 = Model1(
-        # tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
-        tfRecordFolder = "../ryan/tf_records1000Daniel",
-
+        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+        # tfRecordFolder = "../ryan/tf_records1000Daniel",
         initial_lr=1e-3, 
         end_lr=1e-4,
         power=2,
