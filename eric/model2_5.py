@@ -1,0 +1,426 @@
+"""
+Model2.5 Implementation based on Model2 with a single dense fusion layer
+and an 8-bit dedicated projection for the z_global feature.
+"""
+
+from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Add, Activation
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+
+from model2 import Model2
+
+try:
+    from qkeras import QDense, QActivation
+    from qkeras.quantizers import quantized_bits, quantized_relu
+    QKERAS_AVAILABLE = True
+except ImportError:
+    print("QKeras not available. Please install with: pip install qkeras")
+    QKERAS_AVAILABLE = False
+
+
+class Model2_5(Model2):
+    """
+    Model2.5: Single-hidden-layer variant of Model2 with dedicated 8-bit processing
+    for the z_global feature during quantized training.
+    """
+
+    def __init__(self,
+                 tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+                 nBits: list = None,
+                 loadModel: bool = False,
+                 modelPath: str = None,
+                 dense_units: int = 128,
+                 z_global_units: int = 128,
+                 dense2_units: int = 64,
+                 dense3_units: int = 32,
+                 dropout_rate: float = 0.1,
+                 initial_lr: float = 1e-3,
+                 end_lr: float = 1e-4,
+                 power: int = 2,
+                 bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],
+                 z_global_weight_bits: int = 8,
+                 z_global_int_bits: int = 0):
+        super().__init__(
+            tfRecordFolder=tfRecordFolder,
+            nBits=nBits,
+            loadModel=loadModel,
+            modelPath=modelPath,
+            xz_units=dense_units,
+            yl_units=z_global_units,
+            merged_units_1=dense2_units,
+            merged_units_2=dense3_units,
+            merged_units_3=32,
+            dropout_rate=dropout_rate,
+            initial_lr=initial_lr,
+            end_lr=end_lr,
+            power=power,
+            bit_configs=bit_configs
+        )
+        self.modelName = "Model2.5"
+        self.dense_units = dense_units
+        self.z_global_units = z_global_units
+        self.dense2_units = dense2_units
+        self.dense3_units = dense3_units
+        self.z_global_weight_bits = z_global_weight_bits
+        self.z_global_int_bits = z_global_int_bits
+
+    def makeUnquantizedModel(self):
+        """Build the unquantized Model2.5 architecture."""
+        print("Building unquantized Model2.5...")
+        print(f"  - Spatial features branch: {self.dense_units} units")
+        print(f"  - z_global branch: {self.z_global_units} units")
+        print(f"  - Merged dense layers: {self.dense2_units} -> {self.dense3_units}")
+        
+        # Input layers
+        x_profile_input = Input(shape=(21,), name="x_profile")
+        z_global_input = Input(shape=(1,), name="z_global")
+        y_profile_input = Input(shape=(13,), name="y_profile")
+        y_local_input = Input(shape=(1,), name="y_local")
+
+        # Spatial features branch - concatenate in two stages for HLS compatibility
+        xy_concat = Concatenate(name="xy_concat")([x_profile_input, y_profile_input])
+        other_features = Concatenate(name="other_features")([xy_concat, y_local_input])
+        other_dense = Dense(self.dense_units, activation="relu", name="other_dense")(other_features)
+
+        # z_global branch
+        z_dense = Dense(self.z_global_units, activation="relu", name="z_global_dense")(z_global_input)
+
+        # Merge both branches
+        merged = Concatenate(name="merged_features")([other_dense, z_dense])
+        
+        # Two more dense layers
+        hidden = Dense(self.dense2_units, activation="relu", name="dense2")(merged)
+        hidden = Dropout(self.dropout_rate, name="dropout1")(hidden)
+        hidden = Dense(self.dense3_units, activation="relu", name="dense3")(hidden)
+        
+        # Output layer
+        output = Dense(1, activation="sigmoid", name="output")(hidden)
+
+        self.models["Unquantized"] = Model(
+            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+            outputs=output,
+            name="model2_5_unquantized"
+        )
+        print("✓ Unquantized Model2.5 built successfully")
+
+    def makeUnquatizedModelHyperParameterTuning(self, hp):
+        """Build Model2.5 for hyperparameter tuning with progressive layer constraints."""
+        # Input layers
+        x_profile_input = Input(shape=(21,), name="x_profile")
+        z_global_input = Input(shape=(1,), name="z_global")
+        y_profile_input = Input(shape=(13,), name="y_profile")
+        y_local_input = Input(shape=(1,), name="y_local")
+
+        # Hyperparameter search space with progressive constraints
+        # First layer sizes
+        spatial_units = hp.Int('spatial_units', min_value=32, max_value=256, step=32)
+        z_global_units = hp.Int('z_global_units', min_value=16, max_value=128, step=16)
+        
+        # Calculate max size for dense2 (should not exceed concatenated size)
+        concat_size = spatial_units + z_global_units
+        dense2_max = min(256, concat_size)
+        dense2_units = hp.Int('dense2_units', min_value=32, max_value=dense2_max, step=16)
+        
+        # Calculate max size for dense3 (should not exceed dense2)
+        dense3_max = min(128, dense2_units)
+        dense3_units = hp.Int('dense3_units', min_value=16, max_value=dense3_max, step=8)
+        
+        dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.05)
+
+        # Spatial features branch - concatenate in two stages for HLS compatibility
+        xy_concat = Concatenate(name="xy_concat")([x_profile_input, y_profile_input])
+        other_features = Concatenate(name="other_features")([xy_concat, y_local_input])
+        other_dense = Dense(spatial_units, activation="relu", name="other_dense")(other_features)
+
+        # z_global branch
+        z_dense = Dense(z_global_units, activation="relu", name="z_global_dense")(z_global_input)
+
+        # Merge both branches
+        merged = Concatenate(name="merged_features")([other_dense, z_dense])
+        
+        # Two more dense layers
+        hidden = Dense(dense2_units, activation="relu", name="dense2")(merged)
+        hidden = Dropout(dropout_rate, name="dropout1")(hidden)
+        hidden = Dense(dense3_units, activation="relu", name="dense3")(hidden)
+        
+        # Output layer
+        output = Dense(1, activation="sigmoid", name="output")(hidden)
+
+        model = Model(
+            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+            outputs=output,
+            name="model2_5_hyperparameter_tuning"
+        )
+
+        learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+        model.compile(
+            optimizer=Adam(learning_rate=learning_rate),
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"]
+        )
+
+        return model
+
+    def makeQuantizedModel(self):
+        """Build quantized Model2.5 variants."""
+        if not QKERAS_AVAILABLE:
+            raise ImportError("QKeras is required for quantized models")
+
+        for weight_bits, int_bits in self.bit_configs:
+            config_name = f"quantized_{weight_bits}w{int_bits}i"
+            print(f"Building Model2.5 {config_name}...")
+            print(f"  - Spatial features branch: {self.dense_units} units ({weight_bits}-bit)")
+            print(f"  - z_global branch: {self.z_global_units} units ({self.z_global_weight_bits}-bit)")
+
+            # Quantizers
+            weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
+            z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
+            activation_quantizer = quantized_relu(8, 0)
+
+            # Input layers
+            x_profile_input = Input(shape=(21,), name="x_profile")
+            z_global_input = Input(shape=(1,), name="z_global")
+            y_profile_input = Input(shape=(13,), name="y_profile")
+            y_local_input = Input(shape=(1,), name="y_local")
+
+            # Spatial features branch - concatenate in two stages for HLS compatibility
+            xy_concat = Concatenate(name="xy_concat")([x_profile_input, y_profile_input])
+            other_features = Concatenate(name="other_features")([xy_concat, y_local_input])
+            other_dense = QDense(
+                self.dense_units,
+                kernel_quantizer=weight_quantizer,
+                bias_quantizer=weight_quantizer,
+                name="other_dense"
+            )(other_features)
+            other_dense = QActivation(activation=activation_quantizer, name="other_activation")(other_dense)
+
+            # z_global branch
+            z_dense = QDense(
+                self.z_global_units,
+                kernel_quantizer=z_weight_quantizer,
+                bias_quantizer=z_weight_quantizer,
+                name="z_global_dense"
+            )(z_global_input)
+            z_dense = QActivation(activation=activation_quantizer, name="z_activation")(z_dense)
+
+            # Merge both branches
+            merged = Concatenate(name="merged_features")([other_dense, z_dense])
+            
+            # Two more dense layers
+            hidden = QDense(
+                self.dense2_units,
+                kernel_quantizer=weight_quantizer,
+                bias_quantizer=weight_quantizer,
+                name="dense2"
+            )(merged)
+            hidden = QActivation(activation=activation_quantizer, name="dense2_activation")(hidden)
+            hidden = Dropout(self.dropout_rate, name="dropout1")(hidden)
+            
+            hidden = QDense(
+                self.dense3_units,
+                kernel_quantizer=weight_quantizer,
+                bias_quantizer=weight_quantizer,
+                name="dense3"
+            )(hidden)
+            hidden = QActivation(activation=activation_quantizer, name="dense3_activation")(hidden)
+
+            # Output layer
+            output_dense = QDense(
+                1,
+                kernel_quantizer=weight_quantizer,
+                bias_quantizer=weight_quantizer,
+                name="output"
+            )(hidden)
+            output = QActivation("sigmoid", name="output_activation")(output_dense)
+
+            model = Model(
+                inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+                outputs=output,
+                name=f"model2_5_{config_name}"
+            )
+
+            model.compile(
+                optimizer=Adam(learning_rate=self.initial_lr),
+                loss="binary_crossentropy",
+                metrics=["binary_accuracy"],
+                run_eagerly=True
+            )
+
+            self.models[config_name] = model
+
+        print(f"✓ Built {len(self.bit_configs)} quantized Model2.5 variants")
+
+    def makeQuantizedModelHyperParameterTuning(self, hp, weight_bits, int_bits):
+        """Build quantized Model2.5 for hyperparameter tuning with progressive layer constraints."""
+        if not QKERAS_AVAILABLE:
+            raise ImportError("QKeras is required for quantized models")
+
+        # Quantizers
+        weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
+        z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
+        activation_quantizer = quantized_relu(8, 0)
+
+        # Input layers
+        x_profile_input = Input(shape=(21,), name="x_profile")
+        z_global_input = Input(shape=(1,), name="z_global")
+        y_profile_input = Input(shape=(13,), name="y_profile")
+        y_local_input = Input(shape=(1,), name="y_local")
+
+        # Hyperparameter search space with progressive constraints
+        # First layer sizes
+        spatial_units = hp.Int('spatial_units', min_value=32, max_value=192, step=32)
+        z_global_units = hp.Int('z_global_units', min_value=16, max_value=128, step=16)
+        
+        # Calculate max size for dense2 (should not exceed concatenated size)
+        concat_size = spatial_units + z_global_units
+        dense2_max = min(256, concat_size)
+        dense2_units = hp.Int('dense2_units', min_value=32, max_value=dense2_max, step=16)
+        
+        # Calculate max size for dense3 (should not exceed dense2)
+        dense3_max = min(128, dense2_units)
+        dense3_units = hp.Int('dense3_units', min_value=16, max_value=dense3_max, step=8)
+        
+        dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.05)
+
+        # Spatial features branch - concatenate in two stages for HLS compatibility
+        xy_concat = Concatenate(name="xy_concat")([x_profile_input, y_profile_input])
+        other_features = Concatenate(name="other_features")([xy_concat, y_local_input])
+        other_dense = QDense(
+            spatial_units,
+            kernel_quantizer=weight_quantizer,
+            bias_quantizer=weight_quantizer,
+            name="other_dense"
+        )(other_features)
+        other_dense = QActivation(activation=activation_quantizer, name="other_activation")(other_dense)
+
+        # z_global branch
+        z_dense = QDense(
+            z_global_units,
+            kernel_quantizer=z_weight_quantizer,
+            bias_quantizer=z_weight_quantizer,
+            name="z_global_dense"
+        )(z_global_input)
+        z_dense = QActivation(activation=activation_quantizer, name="z_activation")(z_dense)
+
+        # Merge both branches
+        merged = Concatenate(name="merged_features")([other_dense, z_dense])
+        
+        # Two more dense layers
+        hidden = QDense(
+            dense2_units,
+            kernel_quantizer=weight_quantizer,
+            bias_quantizer=weight_quantizer,
+            name="dense2"
+        )(merged)
+        hidden = QActivation(activation=activation_quantizer, name="dense2_activation")(hidden)
+        hidden = Dropout(dropout_rate, name="dropout1")(hidden)
+        
+        hidden = QDense(
+            dense3_units,
+            kernel_quantizer=weight_quantizer,
+            bias_quantizer=weight_quantizer,
+            name="dense3"
+        )(hidden)
+        hidden = QActivation(activation=activation_quantizer, name="dense3_activation")(hidden)
+
+        # Output layer
+        output_dense = QDense(
+            1,
+            kernel_quantizer=weight_quantizer,
+            bias_quantizer=weight_quantizer,
+            name="output"
+        )(hidden)
+        output = QActivation("sigmoid", name="output_activation")(output_dense)
+
+        model = Model(
+            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+            outputs=output,
+            name=f"model2_5_quantized_{weight_bits}w{int_bits}i_hyperparameter_tuning"
+        )
+
+        learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+        model.compile(
+            optimizer=Adam(learning_rate=learning_rate),
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly=True
+        )
+
+        return model
+
+    def _calculate_model_parameters(self, hyperparams):
+        """Calculate parameter counts for Model2.5 architecture."""
+        spatial_units = hyperparams.get('spatial_units', self.dense_units)
+        z_global_units = hyperparams.get('z_global_units', self.z_global_units)
+        dense2_units = hyperparams.get('dense2_units', self.dense2_units)
+        dense3_units = hyperparams.get('dense3_units', self.dense3_units)
+        
+        other_dim = 21 + 13 + 1  # x_profile + y_profile + y_local
+        z_dim = 1
+
+        # First layer: spatial features and z_global
+        spatial_dense_params = (other_dim * spatial_units) + spatial_units  # weights + bias
+        z_dense_params = (z_dim * z_global_units) + z_global_units  # weights + bias
+        
+        # Second layer: concatenated (spatial_units + z_global_units) -> dense2_units
+        concat_dim = spatial_units + z_global_units
+        dense2_params = (concat_dim * dense2_units) + dense2_units
+        
+        # Third layer: dense2_units -> dense3_units
+        dense3_params = (dense2_units * dense3_units) + dense3_units
+        
+        # Output layer: dense3_units -> 1
+        output_params = dense3_units + 1
+
+        total_params = spatial_dense_params + z_dense_params + dense2_params + dense3_params + output_params
+
+        layer_structure = [
+            {'name': 'x_profile', 'type': 'Input', 'shape': 21},
+            {'name': 'y_profile', 'type': 'Input', 'shape': 13},
+            {'name': 'y_local', 'type': 'Input', 'shape': 1},
+            {'name': 'z_global', 'type': 'Input', 'shape': 1},
+            {'name': 'other_dense', 'type': 'Dense/QDense', 'units': spatial_units, 'parameters': spatial_dense_params},
+            {'name': 'z_global_dense', 'type': 'Dense/QDense (8-bit)', 'units': z_global_units, 'parameters': z_dense_params},
+            {'name': 'concatenate', 'type': 'Concatenate', 'units': concat_dim, 'parameters': 0},
+            {'name': 'dense2', 'type': 'Dense/QDense', 'units': dense2_units, 'parameters': dense2_params},
+            {'name': 'dense3', 'type': 'Dense/QDense', 'units': dense3_units, 'parameters': dense3_params},
+            {'name': 'output', 'type': 'Dense/QDense', 'units': 1, 'parameters': output_params}
+        ]
+
+        return {
+            'total_parameters': int(total_params),
+            'trainable_parameters': int(total_params),
+            'non_trainable_parameters': 0,
+            'num_layers': len(layer_structure),
+            'layer_structure': layer_structure
+        }
+
+
+def main():
+    """Example usage of Model2.5"""
+    print("=== Model2.5 Example Usage ===")
+
+    model25 = Model2_5(
+        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try3_eric/filtering_records16384_data_shuffled_single_bigData",
+        dense_units=128,
+        z_global_units=32,
+        dense2_units=128,
+        dense3_units=64,
+        dropout_rate=0.1,
+        initial_lr=1e-3,
+        end_lr=1e-4,
+        power=2,
+        bit_configs=[(4, 0)],
+        # z_global_weight_bits=8,  # Original: 8-bit z_global
+        z_global_weight_bits=4,    # Changed to 4-bit z_global
+        z_global_int_bits=0
+    )
+
+    results = model25.runAllStuff(numEpochs = 30)
+
+    print("Model2.5 quantization testing completed successfully!")
+
+
+if __name__ == "__main__":
+    main()
+
