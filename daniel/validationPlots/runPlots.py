@@ -25,9 +25,9 @@ dataDir_all = "/local/d1/smartpixML/bigData/allData/"
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
-processRecon = False;
+processRecon = True;
 
-interactivePlots=False;
+interactivePlots=True;
 PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
 savedPklFromParquet = True;
