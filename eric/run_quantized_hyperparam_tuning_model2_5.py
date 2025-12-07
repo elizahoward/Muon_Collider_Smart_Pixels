@@ -59,7 +59,7 @@ def main():
         bit_configs=bit_configs,
         max_trials=150,
         executions_per_trial=1,
-        numEpochs=20
+        numEpochs=23
     )
     
     # Print results summary

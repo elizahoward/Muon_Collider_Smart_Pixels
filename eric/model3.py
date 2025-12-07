@@ -698,7 +698,7 @@ class Model3(SmartPixModel):
             
             # Create directory for this configuration's models
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            config_dir = f"model3_{config_name}_hyperparameter_results_{timestamp}"
+            config_dir = f"{self.modelName.lower()}_{config_name}_hyperparameter_results_{timestamp}"
             os.makedirs(config_dir, exist_ok=True)
             print(f"\n✓ Created directory for {config_name} results: {config_dir}/")
             
@@ -744,9 +744,8 @@ class Model3(SmartPixModel):
                 if trial.score is not None:
                     trial_info['val_accuracy'] = float(trial.score)
                 
-                # Add metrics if available
-                if hasattr(trial, 'metrics') and trial.metrics:
-                    trial_info['metrics'] = trial.metrics
+                # Skip metrics as they're not JSON serializable (MetricsTracker object)
+                # The validation accuracy is already captured above
                 
                 # Calculate and add model parameters and structure
                 param_metadata = self._calculate_model_parameters(hyperparams.values)

@@ -105,12 +105,6 @@ class Model2_5(Model2):
 
     def makeUnquatizedModelHyperParameterTuning(self, hp):
         """Build Model2.5 for hyperparameter tuning with progressive layer constraints."""
-        # Input layers
-        x_profile_input = Input(shape=(21,), name="x_profile")
-        z_global_input = Input(shape=(1,), name="z_global")
-        y_profile_input = Input(shape=(13,), name="y_profile")
-        y_local_input = Input(shape=(1,), name="y_local")
-
         # Hyperparameter search space with progressive constraints
         # First layer sizes
         spatial_units = hp.Int('spatial_units', min_value=32, max_value=256, step=32)
@@ -126,6 +120,13 @@ class Model2_5(Model2):
         dense3_units = hp.Int('dense3_units', min_value=16, max_value=dense3_max, step=8)
         
         dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.05)
+        learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+        
+        # Input layers
+        x_profile_input = Input(shape=(21,), name="x_profile")
+        z_global_input = Input(shape=(1,), name="z_global")
+        y_profile_input = Input(shape=(13,), name="y_profile")
+        y_local_input = Input(shape=(1,), name="y_local")
 
         # Spatial features branch - concatenate in two stages for HLS compatibility
         xy_concat = Concatenate(name="xy_concat")([x_profile_input, y_profile_input])
@@ -152,7 +153,6 @@ class Model2_5(Model2):
             name="model2_5_hyperparameter_tuning"
         )
 
-        learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
         model.compile(
             optimizer=Adam(learning_rate=learning_rate),
             loss="binary_crossentropy",
@@ -255,21 +255,10 @@ class Model2_5(Model2):
         if not QKERAS_AVAILABLE:
             raise ImportError("QKeras is required for quantized models")
 
-        # Quantizers
-        weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
-        z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
-        activation_quantizer = quantized_relu(8, 0)
-
-        # Input layers
-        x_profile_input = Input(shape=(21,), name="x_profile")
-        z_global_input = Input(shape=(1,), name="z_global")
-        y_profile_input = Input(shape=(13,), name="y_profile")
-        y_local_input = Input(shape=(1,), name="y_local")
-
         # Hyperparameter search space with progressive constraints
         # First layer sizes
         spatial_units = hp.Int('spatial_units', min_value=32, max_value=192, step=32)
-        z_global_units = hp.Int('z_global_units', min_value=16, max_value=128, step=16)
+        z_global_units = hp.Int('z_global_units', min_value=4, max_value=32, step=8)
         
         # Calculate max size for dense2 (should not exceed concatenated size)
         concat_size = spatial_units + z_global_units
@@ -281,6 +270,18 @@ class Model2_5(Model2):
         dense3_units = hp.Int('dense3_units', min_value=16, max_value=dense3_max, step=8)
         
         dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.05)
+        learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+
+        # Quantizers
+        weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
+        z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
+        activation_quantizer = quantized_relu(8, 0)
+
+        # Input layers
+        x_profile_input = Input(shape=(21,), name="x_profile")
+        z_global_input = Input(shape=(1,), name="z_global")
+        y_profile_input = Input(shape=(13,), name="y_profile")
+        y_local_input = Input(shape=(1,), name="y_local")
 
         # Spatial features branch - concatenate in two stages for HLS compatibility
         xy_concat = Concatenate(name="xy_concat")([x_profile_input, y_profile_input])
@@ -338,7 +339,6 @@ class Model2_5(Model2):
             name=f"model2_5_quantized_{weight_bits}w{int_bits}i_hyperparameter_tuning"
         )
 
-        learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
         model.compile(
             optimizer=Adam(learning_rate=learning_rate),
             loss="binary_crossentropy",
