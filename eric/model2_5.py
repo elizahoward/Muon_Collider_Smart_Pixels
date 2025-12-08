@@ -11,7 +11,7 @@ from model2 import Model2
 
 try:
     from qkeras import QDense, QActivation
-    from qkeras.quantizers import quantized_bits, quantized_relu
+    from qkeras.quantizers import quantized_bits, quantized_relu, quantized_tanh
     QKERAS_AVAILABLE = True
 except ImportError:
     print("QKeras not available. Please install with: pip install qkeras")
@@ -94,7 +94,7 @@ class Model2_5(Model2):
         hidden = Dense(self.dense3_units, activation="relu", name="dense3")(hidden)
         
         # Output layer
-        output = Dense(1, activation="sigmoid", name="output")(hidden)
+        output = Dense(1, activation="tanh", name="output")(hidden)
 
         self.models["Unquantized"] = Model(
             inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
@@ -145,7 +145,7 @@ class Model2_5(Model2):
         hidden = Dense(dense3_units, activation="relu", name="dense3")(hidden)
         
         # Output layer
-        output = Dense(1, activation="sigmoid", name="output")(hidden)
+        output = Dense(1, activation="tanh", name="output")(hidden)
 
         model = Model(
             inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
@@ -231,7 +231,7 @@ class Model2_5(Model2):
                 bias_quantizer=weight_quantizer,
                 name="output"
             )(hidden)
-            output = QActivation("sigmoid", name="output_activation")(output_dense)
+            output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
 
             model = Model(
                 inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
@@ -331,7 +331,7 @@ class Model2_5(Model2):
             bias_quantizer=weight_quantizer,
             name="output"
         )(hidden)
-        output = QActivation("sigmoid", name="output_activation")(output_dense)
+        output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
 
         model = Model(
             inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],

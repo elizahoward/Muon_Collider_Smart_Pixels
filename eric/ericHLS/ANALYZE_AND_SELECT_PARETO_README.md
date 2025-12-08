@@ -466,3 +466,8 @@ Eric - December 2025
 - `parallel_hls_synthesis.py` - Next step: HLS synthesis
 - `COMPARISON_SELECTION_METHODS.md` - Pareto vs percentile methods
 
+
+
+
+
+

@@ -455,8 +455,7 @@ def copy_model_files(pareto_df, pareto_df_secondary, output_dir):
     return success_count
 
 
-def save_results(df, pareto_df_params, pareto_df_secondary_params, 
-                pareto_df_nodes, pareto_df_secondary_nodes, output_dir):
+def save_results(df, pareto_df_params, pareto_df_secondary_params, output_dir):
     """Save all analysis results and summaries."""
     print("\n" + "=" * 80)
     print("STEP 4: SAVING RESULTS")
@@ -485,49 +484,30 @@ def save_results(df, pareto_df_params, pareto_df_secondary_params,
     detailed_df.to_csv(detailed_csv, index=False)
     print(f"✓ Detailed results: {detailed_csv}")
     
-    # Save Pareto results (parameters)
+    # Save Pareto results (parameters only)
     if pareto_df_params is not None:
         primary_csv = os.path.join(output_dir, 'pareto_optimal_models_parameters_primary.csv')
         pareto_df_params.to_csv(primary_csv, index=False)
-        print(f"\n✓ Primary Pareto (parameters): {primary_csv}")
+        print(f"\n✓ Primary Pareto: {primary_csv}")
         
         if pareto_df_secondary_params is not None and not pareto_df_secondary_params.empty:
             secondary_csv = os.path.join(output_dir, 'pareto_optimal_models_parameters_secondary.csv')
             pareto_df_secondary_params.to_csv(secondary_csv, index=False)
-            print(f"✓ Secondary Pareto (parameters): {secondary_csv}")
+            print(f"✓ Secondary Pareto: {secondary_csv}")
             
             combined_df = pd.concat([pareto_df_params, pareto_df_secondary_params], ignore_index=True)
             combined_df = combined_df.sort_values('val_accuracy', ascending=False)
             combined_csv = os.path.join(output_dir, 'pareto_optimal_models_parameters_combined.csv')
             combined_df.to_csv(combined_csv, index=False)
-            print(f"✓ Combined Pareto (parameters): {combined_csv}")
-    
-    # Save Pareto results (nodes)
-    if pareto_df_nodes is not None:
-        primary_csv = os.path.join(output_dir, 'pareto_optimal_models_nodes_primary.csv')
-        pareto_df_nodes.to_csv(primary_csv, index=False)
-        print(f"\n✓ Primary Pareto (nodes): {primary_csv}")
-        
-        if pareto_df_secondary_nodes is not None and not pareto_df_secondary_nodes.empty:
-            secondary_csv = os.path.join(output_dir, 'pareto_optimal_models_nodes_secondary.csv')
-            pareto_df_secondary_nodes.to_csv(secondary_csv, index=False)
-            print(f"✓ Secondary Pareto (nodes): {secondary_csv}")
-            
-            combined_df = pd.concat([pareto_df_nodes, pareto_df_secondary_nodes], ignore_index=True)
-            combined_df = combined_df.sort_values('val_accuracy', ascending=False)
-            combined_csv = os.path.join(output_dir, 'pareto_optimal_models_nodes_combined.csv')
-            combined_df.to_csv(combined_csv, index=False)
-            print(f"✓ Combined Pareto (nodes): {combined_csv}")
+            print(f"✓ Combined Pareto: {combined_csv}")
     
     # Save JSON summary
     summary = {
         'timestamp': datetime.now().isoformat(),
         'input_directory': os.path.basename(output_dir.rstrip('_pareto_hls_ready')),
         'total_models': len(df),
-        'primary_pareto_parameters': len(pareto_df_params) if pareto_df_params is not None else 0,
-        'secondary_pareto_parameters': len(pareto_df_secondary_params) if pareto_df_secondary_params is not None and not pareto_df_secondary_params.empty else 0,
-        'primary_pareto_nodes': len(pareto_df_nodes) if pareto_df_nodes is not None else 0,
-        'secondary_pareto_nodes': len(pareto_df_secondary_nodes) if pareto_df_secondary_nodes is not None and not pareto_df_secondary_nodes.empty else 0,
+        'primary_pareto_models': len(pareto_df_params) if pareto_df_params is not None else 0,
+        'secondary_pareto_models': len(pareto_df_secondary_params) if pareto_df_secondary_params is not None and not pareto_df_secondary_params.empty else 0,
         'accuracy_range': {
             'min': float(df['val_accuracy'].min()),
             'max': float(df['val_accuracy'].max()),
@@ -625,14 +605,13 @@ Examples:
         print("\nError: No valid trials found!")
         sys.exit(1)
     
-    # Step 2: Generate complexity plots
+    # Step 2: Generate complexity plots (parameters only)
     print("\n" + "=" * 80)
     print("STEP 2: GENERATING PLOTS")
     print("=" * 80)
     
-    print("\nCreating complexity vs accuracy plots...")
+    print("\nCreating complexity vs accuracy plot...")
     plot_complexity_vs_accuracy(df, args.output_dir, model_name, 'parameters')
-    plot_complexity_vs_accuracy(df, args.output_dir, model_name, 'nodes')
     
     # Select Pareto models for parameters
     print("\n" + "=" * 80)
@@ -640,46 +619,36 @@ Examples:
     print("=" * 80)
     pareto_df_params, pareto_df_secondary_params = select_pareto_models(df, 'parameters')
     
-    # Select Pareto models for nodes
-    print("\n" + "=" * 80)
-    print("PARETO SELECTION: NODES")
-    print("=" * 80)
-    pareto_df_nodes, pareto_df_secondary_nodes = select_pareto_models(df, 'nodes')
+    # Set nodes selections to None (not used)
+    pareto_df_nodes = None
+    pareto_df_secondary_nodes = None
     
-    # Generate Pareto front plots
-    print("\nCreating Pareto front plots...")
+    # Generate Pareto front plot (parameters only)
+    print("\nCreating Pareto front plot...")
     plot_pareto_front(df, pareto_df_params, pareto_df_secondary_params, 
                      args.output_dir, model_name, 'parameters')
-    plot_pareto_front(df, pareto_df_nodes, pareto_df_secondary_nodes, 
-                     args.output_dir, model_name, 'nodes')
     
-    # Combine all Pareto models (union of parameters and nodes selections)
+    # Use parameters-based Pareto models only
     print("\n" + "=" * 80)
-    print("COMBINING PARETO SELECTIONS")
+    print("SELECTED PARETO MODELS")
     print("=" * 80)
     
     all_pareto_ids = set()
     all_pareto_ids.update(pareto_df_params['trial_id'].values)
-    all_pareto_ids.update(pareto_df_nodes['trial_id'].values)
     if pareto_df_secondary_params is not None:
         all_pareto_ids.update(pareto_df_secondary_params['trial_id'].values)
-    if pareto_df_secondary_nodes is not None:
-        all_pareto_ids.update(pareto_df_secondary_nodes['trial_id'].values)
     
     all_pareto_df = df[df['trial_id'].isin(all_pareto_ids)].copy()
     
-    print(f"\nTotal unique Pareto models: {len(all_pareto_df)}")
-    print(f"  From parameters (primary): {len(pareto_df_params)}")
-    print(f"  From parameters (secondary): {len(pareto_df_secondary_params) if pareto_df_secondary_params is not None else 0}")
-    print(f"  From nodes (primary): {len(pareto_df_nodes)}")
-    print(f"  From nodes (secondary): {len(pareto_df_secondary_nodes) if pareto_df_secondary_nodes is not None else 0}")
+    print(f"\nTotal Pareto models selected: {len(all_pareto_df)}")
+    print(f"  Primary Pareto: {len(pareto_df_params)}")
+    print(f"  Secondary Pareto: {len(pareto_df_secondary_params) if pareto_df_secondary_params is not None else 0}")
     
     # Copy model files
     copy_model_files(all_pareto_df, None, args.output_dir)
     
     # Save all results
-    save_results(df, pareto_df_params, pareto_df_secondary_params,
-                pareto_df_nodes, pareto_df_secondary_nodes, args.output_dir)
+    save_results(df, pareto_df_params, pareto_df_secondary_params, args.output_dir)
     
     # Final summary
     print("\n" + "=" * 80)
@@ -688,8 +657,7 @@ Examples:
     print(f"\nOutput directory: {args.output_dir}")
     print(f"\nContents:")
     print(f"  - {len(all_pareto_df)} H5 model files (Pareto optimal)")
-    print(f"  - 4 complexity analysis plots")
-    print(f"  - 2 Pareto front plots (parameters + nodes)")
+    print(f"  - 2 plots (complexity analysis + Pareto front)")
     print(f"  - Multiple CSV files with results")
     print(f"  - JSON summary file")
     print(f"\nReady for HLS synthesis! Run:")
