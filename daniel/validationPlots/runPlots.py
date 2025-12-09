@@ -25,12 +25,14 @@ dataDir_all = "/local/d1/smartpixML/bigData/allData/"
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
-processRecon = True;
+processRecon = False;
 
 interactivePlots=True;
 PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
 savedPklFromParquet = True;
+
+processTracks = True;
 
 print(f"loading data, Currently loading settings: \nprocessRecon: {processRecon}\nsavedPklFromParquet: {savedPklFromParquet}\ninteractivePlots: {interactivePlots}")
 # Dataset with all the stuff
@@ -72,7 +74,16 @@ else:
         avgClustDictBib = pickle.load(handle)
     with open("avgProfSig.pkl",'rb') as handle:
         avgClustDictSig = pickle.load(handle)
-print("Finished loading data, now plotting")
+print("Finished loading data [not counting tracks], now plotting")
+
+if processTracks:
+    print("Start loading track data")
+    tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm=loadAllTracks()
+    print("finished loading track data")
+    plotTrackPPt(tracksBib, tracksSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    plotPtTrackAndParquet(tracksBib, tracksSig,truthBib,truthSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    plotPCalcTrackComparison(tracksBib,bibSigLabel="BIB",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    plotPCalcTrackComparison(tracksSig,bibSigLabel="Signal",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 
 #Eliza's plots (the unique ones)
 plotRadius(truthBib,truthSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)

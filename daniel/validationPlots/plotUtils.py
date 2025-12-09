@@ -1053,7 +1053,9 @@ def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
 ########################
 
 
-trackDir1 = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
+trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
+trackDirBib_mp = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/'
+trackDirSig = '/local/d1/smartpixML/bigData/tracklists/signal_tracklists'
 #I think these are newest 
 trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]
 def loadTrackData(directory, trackHeader = trackHeader):
@@ -1066,3 +1068,103 @@ def loadTrackData(directory, trackHeader = trackHeader):
 #         pd.read_csv(os.path.join(directory, file), sep=' ', header=None, names=log_header)
 #         for file in os.listdir(directory) if "_log" in file
 #     ])
+def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig):
+    tracksBib_mm = loadTrackData(trackDirBib_mm)
+    tracksBib_mp = loadTrackData(trackDirBib_mp)
+    tracksBib = pd.concat([tracksBib_mm,tracksBib_mp])
+    tracksSig = loadTrackData(trackDirSig)
+    return tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm
+
+def plotTrackPPt(tracksBib, tracksSig,PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
+    plt.subplot(121)
+    plt.hist(tracksBib["p"],label="p")
+    plt.hist(tracksBib["pt"], label="pt",alpha=0.7)
+    print("FIX BINS!")
+    plt.title("BIB tracklists, p and pt")
+    plt.legend()
+    plt.yscale('log')
+
+    plt.subplot(122)
+    plt.hist(tracksSig["p"],label="p")
+    plt.hist(tracksSig["pt"], label="pt",alpha=0.7)
+    plt.title("Sig tracklists, p and pt")
+    plt.legend()
+    plt.yscale('log')
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(PLOT_DIR, f"TrackPPt.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+def plotPtTrackAndParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
+    plt.subplot(121)
+    plt.hist(truthBib["pt"],bins=30,label="pt from parquet")
+    plt.hist(tracksBib["pt"],bins=30,label="pt from track",alpha=0.7)
+    print("FIX BINS!")
+    plt.title("BIB pt comparison tracklists to parquets")
+    plt.legend()
+    plt.yscale('log')
+    
+    plt.subplot(122)
+    plt.hist(truthSig["pt"],bins=30,label="pt from parquet")
+    plt.hist(tracksSig["pt"],bins=30,label="pt from track",alpha=0.7)
+    plt.title("Signal pt comparison tracklists to parquets")
+    plt.legend()
+    plt.yscale('log')
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(PLOT_DIR, f"TrackParquetPPt.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",showUnitVerification=False,PLOT_DIR="./plots",interactivePlots=False):
+    z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"]))
+    x = z*tracksDF["cota"]
+    y = z*tracksDF["cotb"]
+    qq = x**2 +y**2 +z**2 
+
+    counts, bins,_ = plt.hist(qq,bins=np.linspace(0,2,20))
+    plt.title("Magnitude of a vector, should be 1")
+    if interactivePlots and showUnitVerification:
+        print(counts)
+        print(bins)
+        print(np.linspace(0,2,20))
+        plt.show()
+    else:
+        plt.close()
+    assert np.all(bins==np.linspace(0,2,20))
+    Most0 = counts==0;
+    assert not Most0[9]
+    Most0[9] = True
+    assert np.all(Most0)
+
+    p = tracksDF["pt"] / np.sqrt((z**2 +y**2)/(x**2 +y**2 +z**2 ))
+
+    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
+    plt.subplot(121)    
+    plt.hist(p,label="p recalculated based on cota, cotb, pt, in the tracklists")
+    plt.hist(tracksDF["p"],label="p directly as saved in tracklists",alpha = 0.5)
+    plt.yscale('log')
+    plt.title(f"{bibSigLabel}")
+    plt.legend()
+
+    plt.subplot(122)
+    plt.hist(p - tracksDF["p"])
+    plt.title(f"Difference between p saved in {bibSigLabel} tracklists and \n p recalculated from cota, cotb, pt saved in tracklists")
+    plt.yscale('log')
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(PLOT_DIR, f"TrackPCalcComparison{bibSigLabel}.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
