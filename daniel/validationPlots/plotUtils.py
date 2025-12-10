@@ -1101,50 +1101,18 @@ def plotTrackPPt(tracksBib, tracksSig,PLOT_DIR="./plots",interactivePlots=False)
         plt.close()
 
 def plotPtTrackAndParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plots",interactivePlots=False):
-    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
-    plt.subplot(121)
-    plt.hist(truthBib["pt"],bins=30,label="pt from parquet")
-    plt.hist(tracksBib["pt"],bins=30,label="pt from track",alpha=0.7)
-    print("FIX BINS!")
-    plt.title("BIB pt comparison tracklists to parquets")
-    plt.legend()
-    plt.yscale('log')
-    
-    plt.subplot(122)
-    plt.hist(truthSig["pt"],bins=30,label="pt from parquet")
-    plt.hist(tracksSig["pt"],bins=30,label="pt from track",alpha=0.7)
-    plt.title("Signal pt comparison tracklists to parquets")
-    plt.legend()
-    plt.yscale('log')
+    key = "pt"
+    binsBib = 30
+    binsSig = 30
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 
-    fig.tight_layout()
-
-    plt.savefig(os.path.join(PLOT_DIR, f"TrackParquetPPt.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
-
-def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",showUnitVerification=False,PLOT_DIR="./plots",interactivePlots=False):
-    z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"]))
-    x = z*tracksDF["cota"]
-    y = z*tracksDF["cotb"]
-    qq = x**2 +y**2 +z**2 
-
-    counts, bins,_ = plt.hist(qq,bins=np.linspace(0,2,20))
-    plt.title("Magnitude of a vector, should be 1")
-    if interactivePlots and showUnitVerification:
-        print(counts)
-        print(bins)
-        print(np.linspace(0,2,20))
-        plt.show()
-    else:
-        plt.close()
-    assert np.all(bins==np.linspace(0,2,20))
-    Most0 = counts==0;
-    assert not Most0[9]
-    Most0[9] = True
-    assert np.all(Most0)
+def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",interactivePlots=False):
+    # z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"]))
+    # x = z*tracksDF["cota"]
+    # y = z*tracksDF["cotb"]
+    x = tracksDF['x']
+    y = tracksDF['y']
+    z = tracksDF['z']
 
     p = tracksDF["pt"] / np.sqrt((z**2 +y**2)/(x**2 +y**2 +z**2 ))
 
@@ -1164,6 +1132,79 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",showUnitVerificatio
     fig.tight_layout()
 
     plt.savefig(os.path.join(PLOT_DIR, f"TrackPCalcComparison{bibSigLabel}.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+def calcNxyzTrack(tracksDF,showUnitVerification=False):
+    z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"])) #locdir[2] https://github.com/elizahoward/pixelav/blob/30d7585448f87bcdf10f7f066005a04e4bd34a52/ppixelav2_list_trkpy_n_2f_custom.c#L341
+    flipCoefficient = (np.array(tracksDF["flp"] == 0)*2-1)*-1
+    z=flipCoefficient*z
+    x = z*tracksDF["cota"] #locdir[0]
+    y = z*tracksDF["cotb"] #locdir[1]
+    qq = x**2 +y**2 +z**2 
+
+    counts, bins,_ = plt.hist(qq,bins=np.linspace(0,2,20))
+    plt.title("Magnitude of a vector, should be 1")
+    if showUnitVerification:
+        print(counts)
+        print(bins)
+        print(np.linspace(0,2,20))
+        plt.show()
+    else:
+        plt.close()
+    assert np.all(bins==np.linspace(0,2,20))
+    Most0 = counts==0;
+    assert not Most0[9]
+    Most0[9] = True
+    assert np.all(Most0)
+
+
+    #then pixelAV
+    tracksDF['m'] = tracksDF['hit_pdg'].apply(lambda pid: 105.7 if abs(int(pid))==13 else 0.511 if abs(int(pid))==11 else np.nan) #MeV
+    print(f"Nan m count: {np.count_nonzero(np.isnan(tracksDF['m']))}")
+    tracksDF['scalePion'] = 139.57/tracksDF['m']
+    tracksDF['n_x'] = x*tracksDF['p']*tracksDF['scalePion']
+    tracksDF['n_y'] = y*tracksDF['p']*tracksDF['scalePion']
+    tracksDF['n_z'] = z*tracksDF['p']*tracksDF['scalePion']
+
+    tracksDF['x'] = x
+    tracksDF['y'] = y
+    tracksDF['z'] = z
+    return tracksDF
+
+def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plots",interactivePlots=False):
+    binsBib = 30
+    binsSig = 30
+    recalcStr = "(recalculated)"
+    print("FIX BINS!")
+    key = "n_x"
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    key = "n_y"
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    key = "n_z"
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStr = "",
+                        PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
+    plt.subplot(121)
+    plt.hist(truthBib[key],bins=binsBib,label=f"{key} from parquet")
+    plt.hist(tracksBib[key],bins=binsBib,label=f"{key} from track {recalcStr}",alpha=0.7)
+    plt.title(f"BIB {key} comparison tracklists to parquets")
+    plt.legend()
+    plt.yscale('log')
+    
+    plt.subplot(122)
+    plt.hist(truthSig[key],bins=binsSig,label=f"{key} from parquet")
+    plt.hist(tracksSig[key],bins=binsSig,label=f"{key} from track {recalcStr}",alpha=0.7)
+    plt.title(f"Signal {key} comparison tracklists to parquets")
+    plt.legend()
+    plt.yscale('log')
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(PLOT_DIR, f"TrackParquet{key}.png"))
     if interactivePlots:
         plt.show()
     else:

@@ -25,6 +25,10 @@ dataDir_all = "/local/d1/smartpixML/bigData/allData/"
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
+trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
+trackDirBib_mp = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/'
+trackDirSig = '/local/d1/smartpixML/bigData/tracklists/signal_tracklists'
+
 processRecon = False;
 
 interactivePlots=True;
@@ -78,12 +82,18 @@ print("Finished loading data [not counting tracks], now plotting")
 
 if processTracks:
     print("Start loading track data")
-    tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm=loadAllTracks()
+    tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm=loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig)
+    tracksBib = calcNxyzTrack(tracksBib)
+    tracksSig = calcNxyzTrack(tracksSig)
     print("finished loading track data")
+    
     plotTrackPPt(tracksBib, tracksSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
     plotPtTrackAndParquet(tracksBib, tracksSig,truthBib,truthSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
     plotPCalcTrackComparison(tracksBib,bibSigLabel="BIB",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
     plotPCalcTrackComparison(tracksSig,bibSigLabel="Signal",PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+
+    plotNxyzTrackParquet(tracksBib, tracksSig,truthBib,truthSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+
 
 #Eliza's plots (the unique ones)
 plotRadius(truthBib,truthSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
