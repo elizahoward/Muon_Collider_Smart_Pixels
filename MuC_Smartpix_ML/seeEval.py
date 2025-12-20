@@ -6,6 +6,7 @@ sys.path.append('../eric/')
 import argparse
 import os
 import tensorflow as tf
+import numpy as np
 
 from Model_Classes import SmartPixModel
 from model1 import Model1
@@ -24,8 +25,8 @@ def build_see_config(config, random_flip_rate=0.0, flip_tensor=None):
     config['config']['flip_tensor'] = flip_tensor
     return config
 
-# ~80% ChatGPT. Just makes a copy of the model with modified quantizers.
-def clone_functional_model(old_model):
+# ~70% ChatGPT. Just makes a copy of the model with modified quantizers.
+def clone_functional_model(old_model, random_flip_rate=0.0, flip_bits=[]):
     """
     Deep-clone a Functional model, preserving:
     - Input names
@@ -54,12 +55,29 @@ def clone_functional_model(old_model):
         # --- Other layers ---
         layer_config = layer.get_config()
         if isinstance(layer, QDense):
-            print("Replacing quantized_bits with see_quantizer.")
-            layer_config['kernel_quantizer'] = build_see_config(layer_config['kernel_quantizer'], random_flip_rate=0.001)
-            layer_config['bias_quantizer']   = build_see_config(layer_config['bias_quantizer'],   random_flip_rate=0.001)
-
+            print(layer_config)
+            kernel_flip_tensor = None
+            bias_flip_tensor   = None
+            if [bit for bit in flip_bits if bit['layer_name'] == layer.name]:
+                kernel_flip_tensor = np.zeros([layer.input_shape[-1], layer.units], dtype=np.int32)
+                bias_flip_tensor   = np.zeros([layer.units], dtype=np.int32)
+                for bit in flip_bits:
+                    if bit['layer_name'] == layer.name:
+                        if bit['type'] == 'kernel':
+                            if bit['bit_position'] == layer.kernel_quantizer.bits - 1:
+                                kernel_flip_tensor[bit['indices']] ^= - (1 << bit['bit_position'])
+                            else:
+                                kernel_flip_tensor[bit['indices']] ^= 1 << bit['bit_position']
+                        elif bit['type'] == 'bias':
+                            if bit['bit_position'] == layer.bias_quantizer.bits - 1:
+                                bias_flip_tensor[bit['indices']] ^= - (1 << bit['bit_position'])
+                            else:
+                                bias_flip_tensor[bit['indices']] ^= 1 << bit['bit_position']
+                kernel_flip_tensor = tf.constant(kernel_flip_tensor, dtype=tf.int32)
+                bias_flip_tensor   = tf.constant(bias_flip_tensor,   dtype=tf.int32)
+            layer_config['kernel_quantizer'] = build_see_config(layer_config['kernel_quantizer'], random_flip_rate=random_flip_rate, flip_tensor=kernel_flip_tensor)
+            layer_config['bias_quantizer']   = build_see_config(layer_config['bias_quantizer'],   random_flip_rate=random_flip_rate, flip_tensor=bias_flip_tensor)
         print(f"Cloning layer: {layer.name} ({layer.__class__.__name__})")
-        # print(f"  Config: {layer_config}")
 
         new_layer = layer.__class__.from_config(layer_config)
         new_layer._name = layer._name
@@ -102,6 +120,8 @@ def main():
     add_arg('--config', type=str, default=None, help='Path to model config')
     add_arg('--training_dir', type=str, default=None, help='Path to training directory')
     add_arg('--quantization', type=int, default=-1, help='Which version of quantization to use. -1 for no quantization')
+    add_arg('--random_flip_rate', type=float, default=0.0, help='Random bit flip rate to apply to cloned model')
+    add_arg('--flip', type=str, nargs='*', help='Specific bits to flip in the format layer_name:type:indices:bit_position. Example: q_dense_5:kernel:8,0:2')
 
     args = parser.parse_args()
 
@@ -120,11 +140,26 @@ def main():
     model.runEval(False)
 
     old_model = model.models["Unquantized"]
-    new_model = clone_functional_model(old_model)
-    new_model.compile(metrics=['accuracy'], loss='binary_crossentropy', optimizer='adam', run_eagerly=True)
+    flip_bits = []
+    if args.flip is not None:
+        for flip_str in args.flip:
+            layer_name, type_str, indices_str, bit_position_str = flip_str.split(':')
+            indices = tuple(int(i) for i in indices_str.split(','))
+            bit_position = int(bit_position_str)
+            flip_bits.append({
+                'layer_name': layer_name,
+                'type': type_str,
+                'indices': indices,
+                'bit_position': bit_position
+            })
+    print("Cloning model with the following bit flips:")
+    for bit in flip_bits:
+        print(bit)
+    new_model = clone_functional_model(old_model, random_flip_rate=args.random_flip_rate, flip_bits=flip_bits)
+    new_model.compile(metrics=['accuracy'], loss='binary_crossentropy', optimizer='adam')
 
-    print("Running evaluation on original model:")
-    model.runEval(False)
+    # print("Running evaluation on original model:")
+    # model.runEval(False)
 
     print("Running evaluation on cloned model with modified kernels:")
     model.models["Unquantized"] = new_model
