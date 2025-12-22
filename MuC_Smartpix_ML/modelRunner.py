@@ -1,7 +1,7 @@
 ##Common runner script
 
 doModel1 = True
-doModel2 = True
+doModel2 = False
 doModel3 = False
 numEpochs1 = 50
 numEpochs2 = 50
