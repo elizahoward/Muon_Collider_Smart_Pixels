@@ -305,6 +305,14 @@ class OptimizedDataGenerator(tf.keras.utils.Sequence):
             self.save_batches_parallel() # save all the batches
 
         self.tfrecord_filenames = np.sort(np.array(tf.io.gfile.glob(os.path.join(self.tf_records_dir, "*.tfrecord"))))
+
+        self.num_batches = len(self.tfrecord_filenames)
+        if self.num_batches == 0:
+            raise ValueError(f"No TFRecord files were found in {self.tf_records_dir}.")
+
+        # Indices determine which TFRecord shard backs each Sequence batch; shuffle them per epoch.
+        self.indices = np.arange(self.num_batches, dtype=np.int64)
+
         self.quantize = quantize
         self.epoch_count = 0
         self.on_epoch_end()
@@ -487,7 +495,10 @@ class OptimizedDataGenerator(tf.keras.utils.Sequence):
         TODO: prefetching (un-done)
         """
                 
-        tfrecord_path = self.tfrecord_filenames[batch_index]
+        if batch_index >= self.num_batches:
+            raise IndexError(f"Batch index {batch_index} out of range for {self.num_batches} batches.")
+
+        tfrecord_path = self.tfrecord_filenames[self.indices[batch_index]]
         raw_dataset = tf.data.TFRecordDataset(tfrecord_path)
         parsed_dataset = raw_dataset.map(self._parse_tfrecord_fn, num_parallel_calls=tf.data.AUTOTUNE)
         
@@ -526,20 +537,17 @@ class OptimizedDataGenerator(tf.keras.utils.Sequence):
 
 
     def __len__(self):
-        if len(self.file_offsets) != 1: # used when TFRecord files are created during initialization
-            num_batches = self.file_offsets[-1] // self.batch_size
-        else: # used during loading saved TFRecord files
-            files=[f for f in os.listdir(self.tf_records_dir) if f.endswith(".tfrecord")]
-            num_batches = len(files)
-        return num_batches
+        return self.num_batches
 
     def on_epoch_end(self):
         '''
-        This shuffles the file ordering so that it shuffles the ordering in which the TFRecord
-        are loaded during the training for each epochs.
+        Actively shuffle the TFRecord shard order between epochs so each pass
+        traverses the data in a different sequence.
         '''
         gc.collect()
         self.epoch_count += 1
+        if self.num_batches > 1:
+            np.random.shuffle(self.indices)
         # Log quantization status once
         if self.epoch_count == 1:
             logging.warning(f"Quantization is {self.quantize} in data generator. This may affect model performance.")

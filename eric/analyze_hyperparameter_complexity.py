@@ -6,7 +6,7 @@ This script parses hyperparameter tuning results from a specified directory,
 calculates model complexity (total number of nodes/parameters), and plots
 the relationship between model complexity and validation accuracy.
 
-Supports both Model2 and Model3 architectures with automatic model type detection.
+Supports Model2, Model2.5, and Model3 architectures with automatic model type detection.
 
 Usage:
     python analyze_hyperparameter_complexity.py [search_directory]
@@ -16,6 +16,9 @@ Usage:
 Examples:
     # Analyze Model2 results
     python analyze_hyperparameter_complexity.py hyperparameter_tuning/model2_quantized_4w0i_hyperparameter_search
+    
+    # Analyze Model2.5 results
+    python analyze_hyperparameter_complexity.py hyperparameter_tuning/model2_5_quantized_4w0i_hyperparameter_search
     
     # Analyze Model3 results
     python analyze_hyperparameter_complexity.py hyperparameter_tuning/model3_quantized_4w0i_hyperparameter_search
@@ -31,6 +34,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
+
+# Try to import TensorFlow for loading H5 models
+try:
+    import tensorflow as tf
+    from tensorflow import keras
+    TF_AVAILABLE = True
+except ImportError:
+    TF_AVAILABLE = False
+    print("Warning: TensorFlow not available. Will use manual parameter calculation.")
 
 
 def calculate_model2_complexity(hyperparams):
@@ -66,6 +78,50 @@ def calculate_model2_complexity(hyperparams):
     params_output = (merged_units3 * 1) + 1
     
     total_params = params_xz + params_yl + params_merged1 + params_merged2 + params_merged3 + params_output
+    
+    return total_nodes, total_params
+
+
+def calculate_model2_5_complexity(hyperparams):
+    """
+    Calculate total number of nodes and parameters for Model2.5.
+    
+    Model2.5 architecture:
+    - Input: x_profile (21), z_global (1), y_profile (13), y_local (1)
+    - Spatial features branch: x_profile + y_profile + y_local (35 inputs) -> spatial_units
+    - z_global branch: z_global (1 input) -> z_global_units
+    - Merge: Concatenate both branches -> (spatial_units + z_global_units)
+    - Dense2: (spatial_units + z_global_units) -> dense2_units
+    - Dense3: dense2_units -> dense3_units
+    - Output: dense3_units -> 1
+    
+    Total nodes = spatial_units + z_global_units + dense2_units + dense3_units + 1
+    """
+    spatial_units = hyperparams.get('spatial_units', 0)
+    z_global_units = hyperparams.get('z_global_units', 0)
+    dense2_units = hyperparams.get('dense2_units', 0)
+    dense3_units = hyperparams.get('dense3_units', 0)
+    
+    # Calculate nodes
+    total_nodes = spatial_units + z_global_units + dense2_units + dense3_units + 1
+    
+    # Calculate parameters (weights + biases)
+    # Spatial features branch: 35 inputs (21 + 13 + 1) -> spatial_units
+    params_spatial = (35 * spatial_units) + spatial_units
+    
+    # Z-global branch: 1 input -> z_global_units
+    params_z_global = (1 * z_global_units) + z_global_units
+    
+    # Dense2: (spatial_units + z_global_units) -> dense2_units
+    params_dense2 = ((spatial_units + z_global_units) * dense2_units) + dense2_units
+    
+    # Dense3: dense2_units -> dense3_units
+    params_dense3 = (dense2_units * dense3_units) + dense3_units
+    
+    # Output layer: dense3_units -> 1
+    params_output = (dense3_units * 1) + 1
+    
+    total_params = params_spatial + params_z_global + params_dense2 + params_dense3 + params_output
     
     return total_nodes, total_params
 
@@ -127,27 +183,107 @@ def calculate_model3_complexity(hyperparams):
     return total_nodes, total_params
 
 
+def extract_complexity_from_h5(h5_path):
+    """
+    Extract parameter count and node count directly from H5 model file.
+    
+    Args:
+        h5_path: Path to H5 model file
+        
+    Returns:
+        tuple: (total_nodes, total_params) or (None, None) if failed
+    """
+    if not TF_AVAILABLE:
+        return None, None
+    
+    if not os.path.exists(h5_path):
+        return None, None
+    
+    try:
+        # Load model with custom objects for QKeras if needed
+        custom_objects = {}
+        try:
+            from qkeras import QDense, QActivation, quantized_bits, quantized_relu
+            custom_objects = {
+                'QDense': QDense,
+                'QActivation': QActivation,
+                'quantized_bits': quantized_bits,
+                'quantized_relu': quantized_relu
+            }
+        except ImportError:
+            pass
+        
+        # Load the model
+        model = keras.models.load_model(h5_path, custom_objects=custom_objects, compile=False)
+        
+        # Count total trainable parameters
+        total_params = model.count_params()
+        
+        # Count nodes (neurons) in dense/conv layers
+        total_nodes = 0
+        for layer in model.layers:
+            layer_type = layer.__class__.__name__
+            
+            # For Dense and QDense layers, count units
+            if 'Dense' in layer_type:
+                units = layer.units
+                total_nodes += units
+            
+            # For Conv2D layers, count filters
+            elif 'Conv2D' in layer_type:
+                filters = layer.filters
+                # After pooling and flattening, this contributes to node count
+                # For simplicity, we count output feature map size
+                # This is approximate - actual node count after flatten depends on input shape
+                pass  # Will be counted when flattened
+            
+            # For Flatten layers, get output shape
+            elif 'Flatten' in layer_type:
+                output_shape = layer.output_shape
+                if output_shape and len(output_shape) > 1:
+                    # Product of all dimensions except batch
+                    nodes_from_flatten = int(np.prod(output_shape[1:]))
+                    total_nodes += nodes_from_flatten
+        
+        # Clean up
+        del model
+        tf.keras.backend.clear_session()
+        
+        return total_nodes, total_params
+        
+    except Exception as e:
+        print(f"  Warning: Could not load H5 model {os.path.basename(h5_path)}: {e}")
+        return None, None
+
+
 def detect_model_type(hyperparams):
     """
-    Detect whether hyperparameters are for Model2 or Model3.
+    Detect whether hyperparameters are for Model2, Model2.5, or Model3.
     
     Args:
         hyperparams: Dictionary of hyperparameters
     
     Returns:
-        'model2' or 'model3'
+        'model2', 'model2_5', or 'model3'
     """
-    # Model3 has conv_filters, Model2 has xz_units
+    # Model3 has conv_filters
     if 'conv_filters' in hyperparams:
         return 'model3'
+    # Model2.5 has spatial_units
+    elif 'spatial_units' in hyperparams:
+        return 'model2_5'
+    # Model2 has xz_units
     elif 'xz_units' in hyperparams:
         return 'model2'
     else:
         raise ValueError(f"Cannot detect model type from hyperparameters: {hyperparams.keys()}")
 
 
-def parse_trial_folder(trial_path):
-    """Parse a single trial folder and extract hyperparameters and metrics."""
+def parse_trial_folder(trial_path, trial_id=None):
+    """
+    Parse a single trial folder and extract hyperparameters and metrics.
+    Supports both Keras Tuner format (trial_XXX/trial.json) and flat format.
+    """
     trial_json_path = os.path.join(trial_path, 'trial.json')
     
     if not os.path.exists(trial_json_path):
@@ -167,7 +303,8 @@ def parse_trial_folder(trial_path):
                 'trial_id': trial_data['trial_id'],
                 'hyperparams': hyperparams,
                 'val_accuracy': score,
-                'status': status
+                'status': status,
+                'is_keras_tuner_format': True
             }
     except Exception as e:
         print(f"Error parsing {trial_path}: {e}")
@@ -175,9 +312,73 @@ def parse_trial_folder(trial_path):
     return None
 
 
+def parse_flat_format_trial(search_dir, trial_id):
+    """
+    Parse trial from flat directory format (model_trial_XXX.h5 + hyperparams_trial_XXX.json).
+    
+    Args:
+        search_dir: Base directory containing model and hyperparam files
+        trial_id: Trial ID number (e.g., 1, 2, 3...)
+        
+    Returns:
+        dict with trial information or None
+    """
+    # Format trial ID as zero-padded 3-digit string
+    trial_id_str = f"{trial_id:03d}"
+    
+    # Look for hyperparameters file
+    hyperparam_file = os.path.join(search_dir, f'hyperparams_trial_{trial_id_str}.json')
+    if not os.path.exists(hyperparam_file):
+        return None
+    
+    # Look for model file
+    model_file = os.path.join(search_dir, f'model_trial_{trial_id_str}.h5')
+    if not os.path.exists(model_file):
+        return None
+    
+    try:
+        # Load hyperparameters
+        with open(hyperparam_file, 'r') as f:
+            hyperparams = json.load(f)
+        
+        # Try to load validation accuracy from trials_summary.json
+        summary_file = os.path.join(search_dir, 'trials_summary.json')
+        val_accuracy = None
+        
+        if os.path.exists(summary_file):
+            try:
+                with open(summary_file, 'r') as f:
+                    summary_data = json.load(f)
+                
+                # Find this trial in the summary
+                for trial in summary_data:
+                    if trial.get('trial_id') == trial_id or trial.get('trial_id') == trial_id_str:
+                        val_accuracy = trial.get('val_accuracy') or trial.get('validation_accuracy') or trial.get('score')
+                        break
+            except Exception as e:
+                print(f"  Warning: Could not parse trials_summary.json: {e}")
+        
+        # Only return if we have validation accuracy
+        if val_accuracy is not None and val_accuracy > 0:
+            return {
+                'trial_id': trial_id_str,
+                'hyperparams': hyperparams,
+                'val_accuracy': val_accuracy,
+                'status': 'COMPLETED',
+                'is_keras_tuner_format': False,
+                'model_file': model_file
+            }
+    
+    except Exception as e:
+        print(f"  Warning: Error parsing trial {trial_id_str}: {e}")
+    
+    return None
+
+
 def analyze_hyperparameter_search(search_dir, model_name, complexity_func=None, min_accuracy=0.55):
     """
     Analyze all trials in a hyperparameter search directory.
+    Supports both Keras Tuner format and flat H5 format.
     
     Args:
         search_dir: Path to hyperparameter search directory
@@ -190,44 +391,121 @@ def analyze_hyperparameter_search(search_dir, model_name, complexity_func=None, 
     """
     results = []
     
-    # Find all trial directories
+    # Detect directory format
     trial_dirs = sorted([d for d in os.listdir(search_dir) 
                         if d.startswith('trial_') and os.path.isdir(os.path.join(search_dir, d))])
     
-    print(f"\nAnalyzing {model_name} ({len(trial_dirs)} trials)...")
+    # Check for flat format (model_trial_XXX.h5 files)
+    h5_files = sorted([f for f in os.listdir(search_dir) 
+                       if f.startswith('model_trial_') and f.endswith('.h5')])
     
-    # Auto-detect model type from first trial if complexity_func not provided
-    detected_model_type = None
-    if complexity_func is None:
+    is_flat_format = len(h5_files) > 0 and len(trial_dirs) == 0
+    use_h5_extraction = TF_AVAILABLE and (is_flat_format or len(h5_files) > 0)
+    
+    if is_flat_format:
+        print(f"\nAnalyzing {model_name} (flat format, {len(h5_files)} H5 models)...")
+        print(f"  Will extract parameters directly from H5 files")
+        
+        # Extract trial IDs from H5 filenames
+        trial_ids = []
+        for h5_file in h5_files:
+            try:
+                trial_id = int(h5_file.replace('model_trial_', '').replace('.h5', ''))
+                trial_ids.append(trial_id)
+            except:
+                pass
+        
+        # Parse each trial
+        for trial_id in sorted(trial_ids):
+            trial_result = parse_flat_format_trial(search_dir, trial_id)
+            
+            if trial_result:
+                # Try to extract from H5 first
+                nodes, params = extract_complexity_from_h5(trial_result['model_file'])
+                
+                # Fall back to manual calculation if H5 extraction failed
+                if nodes is None or params is None:
+                    # Auto-detect model type if needed
+                    if complexity_func is None:
+                        detected_model_type = detect_model_type(trial_result['hyperparams'])
+                        if detected_model_type == 'model2':
+                            complexity_func = calculate_model2_complexity
+                        elif detected_model_type == 'model2_5':
+                            complexity_func = calculate_model2_5_complexity
+                        elif detected_model_type == 'model3':
+                            complexity_func = calculate_model3_complexity
+                    
+                    nodes, params = complexity_func(trial_result['hyperparams'])
+                
+                results.append({
+                    'model': model_name,
+                    'trial_id': trial_result['trial_id'],
+                    'nodes': nodes,
+                    'parameters': params,
+                    'val_accuracy': trial_result['val_accuracy'],
+                    'hyperparams': trial_result['hyperparams']
+                })
+    
+    else:
+        # Keras Tuner format
+        print(f"\nAnalyzing {model_name} (Keras Tuner format, {len(trial_dirs)} trials)...")
+        if use_h5_extraction:
+            print(f"  Will try to extract parameters from H5 files when available")
+        
+        # Auto-detect model type from first trial if complexity_func not provided
+        detected_model_type = None
+        if complexity_func is None:
+            for trial_dir in trial_dirs:
+                trial_path = os.path.join(search_dir, trial_dir)
+                trial_result = parse_trial_folder(trial_path)
+                if trial_result:
+                    detected_model_type = detect_model_type(trial_result['hyperparams'])
+                    if detected_model_type == 'model2':
+                        complexity_func = calculate_model2_complexity
+                    elif detected_model_type == 'model2_5':
+                        complexity_func = calculate_model2_5_complexity
+                    elif detected_model_type == 'model3':
+                        complexity_func = calculate_model3_complexity
+                    print(f"  Auto-detected model type: {detected_model_type.upper()}")
+                    break
+            
+            if complexity_func is None:
+                raise ValueError(f"Could not auto-detect model type from trials in {search_dir}")
+        
         for trial_dir in trial_dirs:
             trial_path = os.path.join(search_dir, trial_dir)
             trial_result = parse_trial_folder(trial_path)
+            
             if trial_result:
-                detected_model_type = detect_model_type(trial_result['hyperparams'])
-                if detected_model_type == 'model2':
-                    complexity_func = calculate_model2_complexity
-                elif detected_model_type == 'model3':
-                    complexity_func = calculate_model3_complexity
-                print(f"  Auto-detected model type: {detected_model_type.upper()}")
-                break
-        
-        if complexity_func is None:
-            raise ValueError(f"Could not auto-detect model type from trials in {search_dir}")
-    
-    for trial_dir in trial_dirs:
-        trial_path = os.path.join(search_dir, trial_dir)
-        trial_result = parse_trial_folder(trial_path)
-        
-        if trial_result:
-            nodes, params = complexity_func(trial_result['hyperparams'])
-            results.append({
-                'model': model_name,
-                'trial_id': trial_result['trial_id'],
-                'nodes': nodes,
-                'parameters': params,
-                'val_accuracy': trial_result['val_accuracy'],
-                'hyperparams': trial_result['hyperparams']
-            })
+                # Try to find and load H5 file for this trial
+                nodes, params = None, None
+                
+                if use_h5_extraction:
+                    # Look for H5 file in trial directory or parent
+                    possible_h5_paths = [
+                        os.path.join(trial_path, 'best_model.h5'),
+                        os.path.join(trial_path, 'model.h5'),
+                        os.path.join(search_dir, f"model_trial_{trial_result['trial_id']}.h5")
+                    ]
+                    
+                    for h5_path in possible_h5_paths:
+                        if os.path.exists(h5_path):
+                            nodes, params = extract_complexity_from_h5(h5_path)
+                            if nodes is not None and params is not None:
+                                break
+                
+                # Fall back to manual calculation
+                if nodes is None or params is None:
+                    nodes, params = complexity_func(trial_result['hyperparams'])
+                
+                results.append({
+                    'model': model_name,
+                    'trial_id': trial_result['trial_id'],
+                    'nodes': nodes,
+                    'parameters': params,
+                    'val_accuracy': trial_result['val_accuracy'],
+                    'hyperparams': trial_result['hyperparams']
+                })
     
     df = pd.DataFrame(results)
     

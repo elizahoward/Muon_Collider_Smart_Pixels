@@ -5,7 +5,7 @@ from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import PolynomialDecay, ExponentialDecay, CosineDecay
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, Callback
 import keras_tuner as kt
 from sklearn.metrics import roc_curve, auc
 from pathlib import Path
@@ -24,6 +24,148 @@ import OptimizedDataGenerator4 as ODG
 import matplotlib
 matplotlib.use('Agg')
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+class WarmupThenDecay(tf.keras.optimizers.schedules.LearningRateSchedule):
+    """
+    Two-phase schedule for quantized models:
+      1) Warmup with conservative LR for a few epochs
+      2) Slightly higher LR that decays polynomially to the final value
+    """
+    def __init__(self, warmup_steps, warmup_lr, boosted_lr, total_steps, end_lr, power=1.0):
+        super().__init__()
+        self.warmup_steps = tf.cast(warmup_steps, tf.float32)
+        self.warmup_lr = tf.cast(warmup_lr, tf.float32)
+        self.boosted_lr = tf.cast(boosted_lr, tf.float32)
+        self.total_steps = tf.cast(tf.maximum(total_steps, 1), tf.float32)
+        self.end_lr = tf.cast(end_lr, tf.float32)
+        self.power = tf.cast(power, tf.float32)
+
+    def __call__(self, step):
+        step = tf.cast(step, tf.float32)
+        decay_steps = tf.maximum(self.total_steps - self.warmup_steps, 1.0)
+        progress = tf.minimum(1.0, tf.maximum(0.0, (step - self.warmup_steps) / decay_steps))
+        decay_lr = (self.boosted_lr - self.end_lr) * tf.pow(1.0 - progress, self.power) + self.end_lr
+        return tf.where(step < self.warmup_steps, self.warmup_lr, decay_lr)
+
+    def get_config(self):
+        return {
+            "warmup_steps": float(self.warmup_steps.numpy()),
+            "warmup_lr": float(self.warmup_lr.numpy()),
+            "boosted_lr": float(self.boosted_lr.numpy()),
+            "total_steps": float(self.total_steps.numpy()),
+            "end_lr": float(self.end_lr.numpy()),
+            "power": float(self.power.numpy())
+        }
+
+
+class GradientMonitor(Callback):
+    """
+    Callback to monitor gradient magnitudes during training.
+    Helps detect vanishing/exploding gradients.
+    """
+    def __init__(self, log_freq=5, training_generator=None):
+        super().__init__()
+        self.log_freq = log_freq
+        self.training_generator = training_generator
+        self.gradient_stats = {
+            'epoch': [],
+            'mean_grad_norm': [],
+            'max_grad_norm': [],
+            'min_grad_norm': [],
+            'layer_stats': {}
+        }
+    
+    def on_epoch_end(self, epoch, logs=None):
+        if epoch % self.log_freq == 0 or epoch == 0:
+            if self.training_generator is None:
+                return
+            
+            try:
+                # Get a sample batch from the generator
+                # Reset generator to get a fresh batch
+                batch_data = next(iter(self.training_generator))
+                
+                # Handle different batch formats
+                if isinstance(batch_data, tuple) and len(batch_data) == 2:
+                    # Standard format: (x, y)
+                    x, y = batch_data
+                elif isinstance(batch_data, dict):
+                    # Model2 format: dict with features, need to extract y separately
+                    # The generator yields (features_dict, y) but might be wrapped
+                    # Try to get y from the generator's structure
+                    x = batch_data
+                    # For Model2, we need to get y from the generator differently
+                    # Create a temporary iterator to get both x and y
+                    temp_iter = iter(self.training_generator)
+                    temp_batch = next(temp_iter)
+                    if isinstance(temp_batch, tuple) and len(temp_batch) == 2:
+                        x, y = temp_batch
+                    else:
+                        # If we can't get y easily, skip gradient monitoring for this epoch
+                        return
+                else:
+                    return
+                
+                # Get gradients using GradientTape
+                with tf.GradientTape() as tape:
+                    # Forward pass
+                    y_pred = self.model(x, training=True)
+                    
+                    # Compute loss
+                    if hasattr(self.model, 'compiled_loss') and self.model.compiled_loss is not None:
+                        loss = self.model.compiled_loss(y, y_pred)
+                    else:
+                        loss = tf.keras.losses.binary_crossentropy(y, y_pred)
+                
+                # Compute gradients
+                trainable_vars = self.model.trainable_variables
+                gradients = tape.gradient(loss, trainable_vars)
+                
+                # Filter out None gradients
+                gradients = [g for g in gradients if g is not None]
+                
+                if len(gradients) == 0:
+                    return
+                
+                # Calculate gradient norms
+                grad_norms = []
+                for g in gradients:
+                    if g is not None:
+                        norm = tf.norm(g)
+                        if tf.is_tensor(norm):
+                            grad_norms.append(norm.numpy())
+                        else:
+                            grad_norms.append(float(norm))
+                
+                if len(grad_norms) == 0:
+                    return
+                
+                mean_norm = np.mean(grad_norms)
+                max_norm = np.max(grad_norms)
+                min_norm = np.min(grad_norms)
+                
+                # Store statistics
+                self.gradient_stats['epoch'].append(epoch)
+                self.gradient_stats['mean_grad_norm'].append(float(mean_norm))
+                self.gradient_stats['max_grad_norm'].append(float(max_norm))
+                self.gradient_stats['min_grad_norm'].append(float(min_norm))
+                
+                # Print warning if gradients are vanishing
+                if mean_norm < 1e-6:
+                    print(f"\n⚠ WARNING: Vanishing gradients detected at epoch {epoch}!")
+                    print(f"   Mean gradient norm: {mean_norm:.2e}")
+                elif max_norm > 100:
+                    print(f"\n⚠ WARNING: Large gradients detected at epoch {epoch}!")
+                    print(f"   Max gradient norm: {max_norm:.2e}")
+                
+                # Log gradient stats
+                print(f"\n[Gradient Monitor] Epoch {epoch}:")
+                print(f"  Mean grad norm: {mean_norm:.2e}")
+                print(f"  Max grad norm: {max_norm:.2e}")
+                print(f"  Min grad norm: {min_norm:.2e}")
+            except Exception as e:
+                # Silently skip if gradient computation fails
+                pass
 
 class SmartPixModel(ABC):
     def __init__(self,
@@ -155,10 +297,85 @@ class SmartPixModel(ABC):
             raise Exception("Model exists. To overwrite existing saved model, set overwrite to True.")
         self.models[config_name].save(file_path)
     
+    def warmStartQuantizedModel(self, quantized_config_name, source_config_name="Unquantized"):
+        """
+        Warm-start a quantized model by copying weights from an unquantized (or other) model.
+        This implements quantization-aware fine-tuning by initializing the quantized model
+        with pre-trained weights.
+        
+        Args:
+            quantized_config_name: Name of the quantized model config (e.g., "quantized_4w0i")
+            source_config_name: Name of the source model to copy from (default: "Unquantized")
+        
+        Note:
+            - Only copies weights for layers with matching names
+            - QDense layers can receive weights from Dense layers
+            - Biases are copied if they exist in both models
+            - Prints a summary of which layers were successfully copied
+        """
+        if self.models[source_config_name] is None:
+            raise ValueError(f"Source model '{source_config_name}' not found. Train it first.")
+        if self.models[quantized_config_name] is None:
+            raise ValueError(f"Quantized model '{quantized_config_name}' not found. Build it first.")
+        
+        source_model = self.models[source_config_name]
+        target_model = self.models[quantized_config_name]
+        
+        print(f"\n{'='*60}")
+        print(f"Warm-starting {quantized_config_name} from {source_config_name}")
+        print(f"{'='*60}")
+        
+        # Create a mapping of layer names to layers for the source model
+        source_layers = {layer.name: layer for layer in source_model.layers}
+        
+        copied_layers = []
+        skipped_layers = []
+        
+        for target_layer in target_model.layers:
+            layer_name = target_layer.name
+            
+            # Skip input, concatenate, dropout, and activation layers (no weights)
+            if len(target_layer.get_weights()) == 0:
+                continue
+            
+            # Try to find matching source layer
+            if layer_name in source_layers:
+                source_layer = source_layers[layer_name]
+                source_weights = source_layer.get_weights()
+                
+                # Check if weights are compatible
+                target_weights = target_layer.get_weights()
+                if len(source_weights) == len(target_weights):
+                    # Check shapes match
+                    shapes_match = all(sw.shape == tw.shape 
+                                      for sw, tw in zip(source_weights, target_weights))
+                    
+                    if shapes_match:
+                        target_layer.set_weights(source_weights)
+                        copied_layers.append(layer_name)
+                        print(f"  ✓ Copied weights: {layer_name} (shape: {source_weights[0].shape})")
+                    else:
+                        skipped_layers.append((layer_name, "shape mismatch"))
+                        print(f"  ⚠ Skipped {layer_name}: shape mismatch")
+                else:
+                    skipped_layers.append((layer_name, "weight count mismatch"))
+                    print(f"  ⚠ Skipped {layer_name}: weight count mismatch")
+            else:
+                skipped_layers.append((layer_name, "not found in source"))
+                print(f"  ⚠ Skipped {layer_name}: not found in source model")
+        
+        print(f"\n{'='*60}")
+        print(f"Warm-start summary:")
+        print(f"  ✓ Copied: {len(copied_layers)} layers")
+        print(f"  ⚠ Skipped: {len(skipped_layers)} layers")
+        print(f"{'='*60}\n")
+        
+        return copied_layers, skipped_layers
+    
     #dataset
     def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
                    save_best=True, early_stopping_patience=20,
-                   run_eagerly = False,config_name = "Unquantized"):
+                   run_eagerly = False, config_name = "Unquantized", clipnorm=None):
         """
         Train the {self.modelName}.
         
@@ -167,7 +384,11 @@ class SmartPixModel(ABC):
             batch_size: Batch size for training (not used, defined in data generator)
             learning_rate: Learning rate for optimizer (if None, uses polynomial decay)
             save_best: Whether to save the best model
-            early_stopping_patience: Patience for early stopping
+            early_stopping_patience: Patience for early stopping (<=0 disables it)
+            run_eagerly: Whether to run model in eager mode (required for QKeras)
+            config_name: Name of model configuration to train
+            clipnorm: Gradient clipping by global norm. If None, no clipping. 
+                     Recommended: 1.0 for quantized models to prevent gradient explosions.
         """
         if self.models[config_name] is None:
             raise ValueError("Model not built. Call buildModel() first.")
@@ -183,16 +404,46 @@ class SmartPixModel(ABC):
         # Setup learning rate schedule
         if learning_rate is None:
             from tensorflow.keras.optimizers.schedules import PolynomialDecay
-            decay_steps = 30 * 200
-            lr_schedule = PolynomialDecay(
-                initial_learning_rate=self.initial_lr,
-                decay_steps=decay_steps,
-                end_learning_rate=self.end_lr,
-                power=self.power
-            )
-            optimizer = Adam(learning_rate=lr_schedule)
+            # Calculate decay_steps based on actual training configuration
+            steps_per_epoch = len(self.training_generator)
+            decay_steps = epochs * steps_per_epoch
+            
+            # Quantized models get a warmup + boosted LR before decaying
+            is_quantized = config_name.startswith("quantized_")
+            if is_quantized:
+                warmup_epochs = max(3, min(6, epochs // 10))  # ~10% of training
+                warmup_epochs = min(warmup_epochs, max(1, epochs - 1))  # keep warmup < total epochs
+                warmup_steps = warmup_epochs * steps_per_epoch
+                warmup_lr = self.initial_lr * 0.4   # conservative start (e.g., 4e-4)
+                boosted_lr = min(self.initial_lr * 0.9, self.initial_lr)  # slight boost (e.g., 9e-4)
+                end_lr = self.end_lr * 0.1          # final fine-tune LR (e.g., 1e-5)
+                
+                print("Quantized model detected - using warmup + boosted polynomial decay")
+                print(f"  Warmup: {warmup_epochs} epochs @ {warmup_lr:.2e}")
+                print(f"  Boosted LR after warmup: {boosted_lr:.2e} (decays to {end_lr:.2e})")
+                print(f"Learning rate decay: {decay_steps} steps ({epochs} epochs × {steps_per_epoch} steps/epoch)")
+                
+                lr_schedule = WarmupThenDecay(
+                    warmup_steps=warmup_steps,
+                    warmup_lr=warmup_lr,
+                    boosted_lr=boosted_lr,
+                    total_steps=decay_steps,
+                    end_lr=end_lr,
+                    power=self.power
+                )
+            else:
+                initial_lr = self.initial_lr
+                end_lr = self.end_lr
+                print(f"Learning rate decay: {decay_steps} steps ({epochs} epochs × {steps_per_epoch} steps/epoch)")
+                lr_schedule = PolynomialDecay(
+                    initial_learning_rate=initial_lr,
+                    decay_steps=decay_steps,
+                    end_learning_rate=end_lr,
+                    power=self.power
+                )
+            optimizer = Adam(learning_rate=lr_schedule, clipnorm=clipnorm)
         else:
-            optimizer = Adam(learning_rate=learning_rate)
+            optimizer = Adam(learning_rate=learning_rate, clipnorm=clipnorm)
         
         # Compile model
         self.models[config_name].compile(
@@ -204,6 +455,10 @@ class SmartPixModel(ABC):
         
         # Create callbacks
         callbacks = []
+        
+        # Add gradient monitoring callback (pass training generator for batch access)
+        gradient_monitor = GradientMonitor(log_freq=5, training_generator=self.training_generator)
+        callbacks.append(gradient_monitor)
         
         if early_stopping_patience > 0:
             callbacks.append(EarlyStopping(
@@ -231,6 +486,20 @@ class SmartPixModel(ABC):
         )
         
         print(f"✓ {self.modelName} {config_name} training completed!")
+        
+        # Print gradient statistics summary
+        if hasattr(gradient_monitor, 'gradient_stats') and len(gradient_monitor.gradient_stats['epoch']) > 0:
+            print(f"\n[Gradient Statistics Summary for {config_name}]")
+            final_mean = gradient_monitor.gradient_stats['mean_grad_norm'][-1]
+            final_max = gradient_monitor.gradient_stats['max_grad_norm'][-1]
+            final_min = gradient_monitor.gradient_stats['min_grad_norm'][-1]
+            print(f"  Final mean gradient norm: {final_mean:.2e}")
+            print(f"  Final max gradient norm: {final_max:.2e}")
+            print(f"  Final min gradient norm: {final_min:.2e}")
+            
+            if final_mean < 1e-6:
+                print(f"  ⚠ WARNING: Very small gradients detected - may indicate vanishing gradient problem!")
+        
         return self.histories[config_name]
   
     #plot based on history
@@ -423,24 +692,24 @@ class SmartPixModel(ABC):
             self.buildModel("quantized")
 
             
-            # Get the quantized model
-            # quantized_model = self.models[config_name]
-
+            # Warm-start: Copy weights from unquantized model to quantized model
+            print(f"3c. Warm-starting {weight_bits}-bit quantized model from unquantized model...")
+            self.warmStartQuantizedModel(config_name, source_config_name="Unquantized")
             
-            print(f"3c. Training {weight_bits}-bit quantized model...")
-            self.trainModel(epochs=numEpochs,early_stopping_patience=15,
+            print(f"3d. Training {weight_bits}-bit quantized model...")
+            self.trainModel(epochs=numEpochs,early_stopping_patience=0,
                             config_name=config_name,
-                            learning_rate=None,run_eagerly=True,)
+                            learning_rate=None,run_eagerly=True,clipnorm=1.0)
             # Compile and train the quantized model
             #deleted that code, because you have a function for it
             
-            print(f"3d. Evaluating {weight_bits}-bit quantized model...")
+            print(f"3e. Evaluating {weight_bits}-bit quantized model...")
             # Create another fresh validation generator for evaluation NO, don't need to
             evaluation_results = self.evaluate(test_generator = None, config_name = config_name)
             
             
             # Save quantized model
-            print(f"3e. Saving {weight_bits}-bit quantized model...")
+            print(f"3f. Saving {weight_bits}-bit quantized model...")
             model_save_path = os.path.join(models_dir, f"{self.modelName}_quantized_{weight_bits}bit.h5")
             self.saveModel(file_path = model_save_path, config_name = config_name)
             # quantized_model.save(model_save_path)
@@ -460,12 +729,13 @@ class SmartPixModel(ABC):
             print(f'{weight_bits}-bit results: Acc={evaluation_results["test_accuracy"]:.4f}, AUC={evaluation_results["roc_auc"]:.4f}')
             
             # Plot quantized results
-            print(f"3f. Plotting {weight_bits}-bit quantized results...")
+            print(f"3g. Plotting {weight_bits}-bit quantized results...")
             plot_dir_quant = os.path.join(plots_dir, f"{weight_bits}bit")
             self.plotModel(save_plots=True,output_dir=plot_dir_quant,config_name = config_name)
             # # Create a temporary {self.modelName} instance for plotting
         
         # Create results summary
+        results.sort(key=lambda x: x['test_accuracy'], reverse=True)
         print("\n4. Results Summary:")
         print("=" * 60)
         print(f"{'Model Type':<15} {'Bits':<8} {'Accuracy':<10} {'Loss':<12} {'ROC AUC':<10}")
@@ -481,7 +751,7 @@ class SmartPixModel(ABC):
             print(f"{model_type:<15} {bits:<8} {acc:<10.4f} {loss:<12.4f} {auc_score:<10.4f}")
         
         # Find best configuration
-        best_result = max(results, key=lambda x: x['test_accuracy'])
+        best_result = results[0]
         print(f"\nBEST CONFIGURATION:")
         print(f"Model: {best_result['model_type']}")
         if best_result['model_type'] == 'quantized':

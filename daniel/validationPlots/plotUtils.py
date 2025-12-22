@@ -426,7 +426,7 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     # mask_bib = ~np.isnan(z_global_bib) & ~np.isnan(xSizesBib)
     # mask_bib = mask_bib & np.isfinite(z_global_bib) & np.isfinite(xSizesBib)
     
-    hb = ax[0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = ax[0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,22,1)], cmap=pastel_red_cmap)
     ax[0].figure.colorbar(hb[3],ax=ax[0])#    ax[0].colorbar()
     ax[0].set_title("BIB", fontsize=20)
     ax[0].set_xlabel('z-global [mm]', fontsize=24)
@@ -437,7 +437,7 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     # mask_sig = ~np.isnan(z_global_sig) & ~np.isnan(xSizesSig)
     # mask_sig = mask_sig & np.isfinite(z_global_sig) & np.isfinite(xSizesSig)
     
-    hb = ax[1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = ax[1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,22,1)], cmap=pastel_red_cmap)
     ax[1].figure.colorbar(hb[3],ax=ax[1])#    ax[1].colorbar()
     ax[1].set_title("Signal", fontsize=20)
     ax[1].set_xlabel('z-global [mm]', fontsize=24)
@@ -476,7 +476,7 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
     # mask_bib_y = ~np.isnan(z_global_bib) & ~np.isnan(ySizesBib)
     # mask_bib_y = mask_bib_y & np.isfinite(z_global_bib) & np.isfinite(ySizesBib)
     
-    hb = ax[0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = ax[0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,14,1)], cmap=pastel_red_cmap)
     ax[0].figure.colorbar(hb[3],ax=ax[0])#    ax[0].colorbar()
     ax[0].set_title("BIB - Y Size", fontsize=63)
     ax[0].set_xlabel('z-global [mm]', fontsize=50)
@@ -487,7 +487,7 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
     # mask_sig_y = ~np.isnan(z_global_sig) & ~np.isnan(ySizesSig)
     # mask_sig_y = mask_sig_y & np.isfinite(z_global_sig) & np.isfinite(ySizesSig)
     
-    hb = ax[1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = ax[1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,14,1)], cmap=pastel_red_cmap)
     ax[1].figure.colorbar(hb[3],ax=ax[1])#    ax[1].colorbar()
     ax[1].set_title("Signal - Y Size", fontsize=63)
     ax[1].set_xlabel('z-global [mm]', fontsize=50)
@@ -523,7 +523,7 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
 
     # Top row: X-size comparisons
     # Top-left: BIB X-size
-    hb = axes[0,0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = axes[0,0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,22,1)], cmap=pastel_red_cmap)
     axes[0,0].figure.colorbar(hb[3],ax=axes[0,0])#    axes[0,0].colorbar()
     axes[0,0].set_title("BIB - X Size", fontsize=38)
     axes[0,0].set_xlabel('z-global [mm]', fontsize=31)
@@ -531,7 +531,7 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     axes[0,0].tick_params(axis='both', which='major', labelsize=23)
     
     # Top-right: Signal X-size
-    hb = axes[0,1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = axes[0,1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,22,1)], cmap=pastel_red_cmap)
     axes[0,1].figure.colorbar(hb[3],ax=axes[0,1])#    axes[0,1].colorbar()
     axes[0,1].set_title("Signal - X Size", fontsize=38)
     axes[0,1].set_xlabel('z-global [mm]', fontsize=31)
@@ -540,7 +540,7 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     
     # Bottom row: Y-size comparisons
     # Bottom-left: BIB Y-size
-    hb = axes[1,0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = axes[1,0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,14,1)], cmap=pastel_red_cmap)
     axes[1,0].figure.colorbar(hb[3],ax=axes[1,0])#    axes[1,0].colorbar()
     axes[1,0].set_title("BIB - Y Size", fontsize=38)
     axes[1,0].set_xlabel('z-global [mm]', fontsize=31)
@@ -548,7 +548,7 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     axes[1,0].tick_params(axis='both', which='major', labelsize=23)
     
     # Bottom-right: Signal Y-size
-    hb = axes[1,1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,9,1)], cmap=pastel_red_cmap)
+    hb = axes[1,1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,14,1)], cmap=pastel_red_cmap)
     axes[1,1].figure.colorbar(hb[3],ax=axes[1,1])#    axes[1,1].colorbar()
     axes[1,1].set_title("Signal - Y Size", fontsize=38)
     axes[1,1].set_xlabel('z-global [mm]', fontsize=31)
@@ -587,9 +587,9 @@ def ericsPlotReport(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesB
 
 def genEtaAlphaBetaRq(truthDF):
     if 'z-global' in truthDF.columns:
-        theta = np.arctan(30 / truthDF['z-global'])
+        theta = np.arctan2(30, truthDF['z-global'])
         truthDF['eta'] = -np.log(np.tan(theta / 2))
-
+  
     # cotAlpha, cotBeta may already be present, but recalculate if not
     if 'cotAlpha' not in truthDF.columns and {'n_x', 'n_z'}.issubset(truthDF.columns):
         truthDF['cotAlpha'] = truthDF['n_x'] / truthDF['n_z']
@@ -600,7 +600,15 @@ def genEtaAlphaBetaRq(truthDF):
         truthDF['R'] = truthDF['pt']*5.36/(1.60217663*3.57)*1000 # [mm]
     if 'q' not in truthDF.columns:
         truthDF['q'] = truthDF['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
+    if 'scalePion' not in truthDF.columns:
+        #relative masses of pion and muon/electron, comes from pixelav https://github.com/elizahoward/pixelav/blob/30d7585448f87bcdf10f7f066005a04e4bd34a52/ppixelav2_list_trkpy_n_2f_custom.c#L358
+        truthDF['m'] = truthDF['PID'].apply(lambda pid: 105.7 if abs(int(pid))==13 else 0.511 if abs(int(pid))==11 else np.nan) #MeV
+        truthDF['scalePion'] = 139.57/truthDF['m']
+        truthDF['p_calc1'] = np.sqrt(truthDF['n_x']*truthDF['n_x'] + truthDF['n_y']*truthDF['n_y'] +truthDF['n_z']*truthDF['n_z'])
+        truthDF['p_calc1'] = truthDF['p_calc1'] / truthDF['scalePion']
 
+        truthDF['p_calc2'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
+        truthDF['p_calc3'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
 
     return truthDF
 
@@ -652,7 +660,7 @@ def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
     # Before each hist2d call, filter out NaN and inf values for both axes
     mask_96 = ~np.isnan(truthsig['eta']) & ~np.isnan(xSizesSig)
     mask_96 = mask_96 & np.isfinite(truthsig['eta']) & np.isfinite(xSizesSig)
-    hb = ax[0,1].hist2d(truthsig['eta'][mask_96], xSizesSig[mask_96], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    hb = ax[0,1].hist2d(truthsig['eta'][mask_96], xSizesSig[mask_96], bins=[30, np.arange(0,22,1)], cmap='Blues')
     ax[0,1].figure.colorbar(hb[3],ax=ax[0,1])#    ax[0,1].colorbar()
     ax[0,1].set_title("Signal", fontsize=15)
 
@@ -669,7 +677,7 @@ def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
     # Before each hist2d call, filter out NaN and inf values for both axes
     mask_96 = ~np.isnan(truthbib['eta']) & ~np.isnan(xSizesBib)
     mask_96 = mask_96 & np.isfinite(truthbib['eta']) & np.isfinite(xSizesBib)
-    hb = ax[0,0].hist2d(truthbib['eta'][mask_96], xSizesBib[mask_96], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    hb = ax[0,0].hist2d(truthbib['eta'][mask_96], xSizesBib[mask_96], bins=[30, np.arange(0,22,1)], cmap='Blues')
     ax[0,0].figure.colorbar(hb[3],ax=ax[0,0])#    ax[0,0].colorbar()
     ax[0,0].set_title("BIB", fontsize=15)
 
@@ -693,7 +701,7 @@ def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizes
     # Before each hist2d call, filter out NaN and inf values for both axes
     mask_111 = ~np.isnan(truthsig['y-local']) & ~np.isnan(xSizesSig)
     mask_111 = mask_111 & np.isfinite(truthsig['y-local']) & np.isfinite(xSizesSig)
-    hb = ax[0,1].hist2d(truthsig['y-local'][mask_111], xSizesSig[mask_111], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    hb = ax[0,1].hist2d(truthsig['y-local'][mask_111], xSizesSig[mask_111], bins=[30, np.arange(0,22,1)], cmap='Blues')
     ax[0,1].figure.colorbar(hb[3],ax=ax[0,1])#    ax[0,1].colorbar()
     ax[0,1].set_title("Signal", fontsize=15)
 
@@ -711,7 +719,7 @@ def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizes
 
     mask_111 = ~np.isnan(truthbib['y-local']) & ~np.isnan(xSizesBib)
     mask_111 = mask_111 & np.isfinite(truthbib['y-local']) & np.isfinite(xSizesBib)
-    hb = ax[0,0].hist2d(truthbib['y-local'][mask_111], xSizesBib[mask_111], bins=[30, np.arange(0,9,1)], cmap='Blues')
+    hb = ax[0,0].hist2d(truthbib['y-local'][mask_111], xSizesBib[mask_111], bins=[30, np.arange(0,22,1)], cmap='Blues')
     ax[0,0].figure.colorbar(hb[3],ax=ax[0,0])#    ax[0,0].colorbar()
     ax[0,0].set_title("BIB", fontsize=15)
 
@@ -1018,15 +1026,15 @@ def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
     ax[0,1].set_ylabel("Total charge collected")
     ax[0,1].set_title("Average x-profile Comaprison")
 
-    ax[1,0].hist(truthSig["ySize"], bins=np.arange(0,14), histtype='step', density=True, label="Signal", color ='g')
-    ax[1,0].hist(truthBib["ySize"], bins=np.arange(0,14), histtype='step', density=True, label="Bib", color ='purple')
+    ax[1,0].hist(truthSig["ySize"], bins=np.arange(0,14,1), histtype='step', density=True, label="Signal", color ='g')
+    ax[1,0].hist(truthBib["ySize"], bins=np.arange(0,14,1), histtype='step', density=True, label="Bib", color ='purple')
     ax[1,0].legend()
     ax[1,0].set_xlabel("Cluster y-size [# pixels]")
     ax[1,0].set_ylabel("Track Density")
     ax[1,0].set_title("Cluster y-size Comaprison")
 
-    ax[1,1].hist(truthSig["xSize"], bins=np.arange(0,22), histtype='step', density=True, label="Signal", color ='g')
-    ax[1,1].hist(truthBib["xSize"], bins=np.arange(0,22), histtype='step', density=True, label="Bib", color ='purple')
+    ax[1,1].hist(truthSig["xSize"], bins=np.arange(0,22,1), histtype='step', density=True, label="Signal", color ='g')
+    ax[1,1].hist(truthBib["xSize"], bins=np.arange(0,22,1), histtype='step', density=True, label="Bib", color ='purple')
     ax[1,1].legend()
     ax[1,1].set_xlabel("Cluster x-size [# pixels]")
     ax[1,1].set_ylabel("Track Density")
@@ -1035,6 +1043,168 @@ def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
     fig.tight_layout()
 
     plt.savefig(os.path.join(PLOT_DIR, f"XYSizeProfiless.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+########################
+# Utilities for plotting tracklists
+########################
+
+
+trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
+trackDirBib_mp = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/'
+trackDirSig = '/local/d1/smartpixML/bigData/tracklists/signal_tracklists'
+#I think these are newest 
+trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]
+def loadTrackData(directory, trackHeader = trackHeader):
+    return pd.concat([
+        pd.read_csv(os.path.join(directory, file), sep=' ', header=None, names=trackHeader)
+        for file in os.listdir(directory) if "_tracklist" in file
+    ])
+# def load_log_data(directory,log_header=logHeader):
+#     return pd.concat([
+#         pd.read_csv(os.path.join(directory, file), sep=' ', header=None, names=log_header)
+#         for file in os.listdir(directory) if "_log" in file
+#     ])
+def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig):
+    tracksBib_mm = loadTrackData(trackDirBib_mm)
+    tracksBib_mp = loadTrackData(trackDirBib_mp)
+    tracksBib = pd.concat([tracksBib_mm,tracksBib_mp])
+    tracksSig = loadTrackData(trackDirSig)
+    return tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm
+
+def plotTrackPPt(tracksBib, tracksSig,PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
+    plt.subplot(121)
+    plt.hist(tracksBib["p"],label="p")
+    plt.hist(tracksBib["pt"], label="pt",alpha=0.7)
+    print("FIX BINS!")
+    plt.title("BIB tracklists, p and pt")
+    plt.legend()
+    plt.yscale('log')
+
+    plt.subplot(122)
+    plt.hist(tracksSig["p"],label="p")
+    plt.hist(tracksSig["pt"], label="pt",alpha=0.7)
+    plt.title("Sig tracklists, p and pt")
+    plt.legend()
+    plt.yscale('log')
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(PLOT_DIR, f"TrackPPt.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+def plotPtTrackAndParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plots",interactivePlots=False):
+    key = "pt"
+    binsBib = 30
+    binsSig = 30
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+
+def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",interactivePlots=False):
+    # z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"]))
+    # x = z*tracksDF["cota"]
+    # y = z*tracksDF["cotb"]
+    x = tracksDF['x']
+    y = tracksDF['y']
+    z = tracksDF['z']
+
+    p = tracksDF["pt"] / np.sqrt((z**2 +y**2)/(x**2 +y**2 +z**2 ))
+
+    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
+    plt.subplot(121)    
+    plt.hist(p,label="p recalculated based on cota, cotb, pt, in the tracklists")
+    plt.hist(tracksDF["p"],label="p directly as saved in tracklists",alpha = 0.5)
+    plt.yscale('log')
+    plt.title(f"{bibSigLabel}")
+    plt.legend()
+
+    plt.subplot(122)
+    plt.hist(p - tracksDF["p"])
+    plt.title(f"Difference between p saved in {bibSigLabel} tracklists and \n p recalculated from cota, cotb, pt saved in tracklists")
+    plt.yscale('log')
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(PLOT_DIR, f"TrackPCalcComparison{bibSigLabel}.png"))
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+
+def calcNxyzTrack(tracksDF,showUnitVerification=False):
+    z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"])) #locdir[2] https://github.com/elizahoward/pixelav/blob/30d7585448f87bcdf10f7f066005a04e4bd34a52/ppixelav2_list_trkpy_n_2f_custom.c#L341
+    flipCoefficient = (np.array(tracksDF["flp"] == 0)*2-1)*-1
+    z=flipCoefficient*z
+    x = z*tracksDF["cota"] #locdir[0]
+    y = z*tracksDF["cotb"] #locdir[1]
+    qq = x**2 +y**2 +z**2 
+
+    counts, bins,_ = plt.hist(qq,bins=np.linspace(0,2,20))
+    plt.title("Magnitude of a vector, should be 1")
+    if showUnitVerification:
+        print(counts)
+        print(bins)
+        print(np.linspace(0,2,20))
+        plt.show()
+    else:
+        plt.close()
+    assert np.all(bins==np.linspace(0,2,20))
+    Most0 = counts==0;
+    assert not Most0[9]
+    Most0[9] = True
+    assert np.all(Most0)
+
+
+    #then pixelAV
+    tracksDF['m'] = tracksDF['hit_pdg'].apply(lambda pid: 105.7 if abs(int(pid))==13 else 0.511 if abs(int(pid))==11 else np.nan) #MeV
+    print(f"Nan m count: {np.count_nonzero(np.isnan(tracksDF['m']))}")
+    tracksDF['scalePion'] = 139.57/tracksDF['m']
+    tracksDF['n_x'] = x*tracksDF['p']*tracksDF['scalePion']
+    tracksDF['n_y'] = y*tracksDF['p']*tracksDF['scalePion']
+    tracksDF['n_z'] = z*tracksDF['p']*tracksDF['scalePion']
+
+    tracksDF['x'] = x
+    tracksDF['y'] = y
+    tracksDF['z'] = z
+    return tracksDF
+
+def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plots",interactivePlots=False):
+    binsBib = 30
+    binsSig = 30
+    recalcStr = "(recalculated)"
+    print("FIX BINS!")
+    key = "n_x"
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    key = "n_y"
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    key = "n_z"
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStr = "",
+                        PLOT_DIR="./plots",interactivePlots=False):
+    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
+    plt.subplot(121)
+    plt.hist(truthBib[key],bins=binsBib,label=f"{key} from parquet")
+    plt.hist(tracksBib[key],bins=binsBib,label=f"{key} from track {recalcStr}",alpha=0.7)
+    plt.title(f"BIB {key} comparison tracklists to parquets")
+    plt.legend()
+    plt.yscale('log')
+    
+    plt.subplot(122)
+    plt.hist(truthSig[key],bins=binsSig,label=f"{key} from parquet")
+    plt.hist(tracksSig[key],bins=binsSig,label=f"{key} from track {recalcStr}",alpha=0.7)
+    plt.title(f"Signal {key} comparison tracklists to parquets")
+    plt.legend()
+    plt.yscale('log')
+
+    fig.tight_layout()
+
+    plt.savefig(os.path.join(PLOT_DIR, f"TrackParquet{key}.png"))
     if interactivePlots:
         plt.show()
     else:

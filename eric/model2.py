@@ -34,9 +34,10 @@ import pandas as pd
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/MuC_Smartpix_ML/')
 sys.path.append('../MuC_Smartpix_ML/')
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/ryan/')
+sys.path.append('/local/d1/smartpixML/filtering_models/shuffling_data/')
 
 from Model_Classes import SmartPixModel
-import OptimizedDataGenerator4 as ODG
+import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
 
 # QKeras imports for quantized models
 try:
@@ -157,14 +158,14 @@ class Model2(SmartPixModel):
         print(f"Using batch_size={batch_size} to match TFRecord format")
         
         # Model2 uses x_profile, z_global, y_profile, y_local features
-        self.training_generator = ODG.OptimizedDataGenerator(
+        self.training_generator = ODG2.OptimizedDataGeneratorDataShuffledBigData(
             load_records=True, 
             tf_records_dir=trainDir, 
             x_feature_description=self.x_feature_description,
             batch_size=batch_size
         )
         
-        self.validation_generator = ODG.OptimizedDataGenerator(
+        self.validation_generator = ODG2.OptimizedDataGeneratorDataShuffledBigData(
             load_records=True, 
             tf_records_dir=valDir, 
             x_feature_description=self.x_feature_description,
@@ -356,14 +357,15 @@ class Model2(SmartPixModel):
             )(merged_dense)
             merged_dense = QActivation(activation=activation_quantizer, name="merged_relu3")(merged_dense)
             
-            # Output layer
+            # Output layer - use sigmoid for binary classification (matches unquantized)
+            # Note: Use name "output" (not "output_dense") to match unquantized model for warm-start
             output_dense = QDense(
                 1,
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=bias_quantizer,
-                name="output_dense"
+                name="output"
             )(merged_dense)
-            output = QActivation("quantized_tanh", name="output")(output_dense)
+            output = QActivation("sigmoid", name="output_activation")(output_dense)  # MUST be sigmoid for binary_crossentropy!
             
             # Create model
             model = Model(
@@ -372,9 +374,11 @@ class Model2(SmartPixModel):
                 name=f"model2_{config_name}"
             )
             
-            # Compile model
+            # Compile model with polynomial decay learning rate schedule (matches unquantized)
+            # Note: Learning rate schedule will be set during training via trainModel()
+            # This is just a placeholder - the actual schedule is applied in Model_Classes.trainModel()
             model.compile(
-                optimizer=Adam(learning_rate=1e-3),
+                optimizer=Adam(learning_rate=self.initial_lr),  # Will be overridden by trainModel with schedule
                 loss="binary_crossentropy",
                 metrics=["binary_accuracy"],
                 run_eagerly=True
@@ -520,14 +524,15 @@ class Model2(SmartPixModel):
         )(merged_dense)
         merged_dense = QActivation(activation=activation_quantizer, name="merged_relu3")(merged_dense)
         
-        # Output layer with quantized_tanh
+        # Output layer with sigmoid for binary classification (matches unquantized)
+        # Note: Use name "output" (not "output_dense") to match unquantized model for warm-start
         output_dense = QDense(
             1,
             kernel_quantizer=weight_quantizer,
             bias_quantizer=bias_quantizer,
-            name="output_dense"
+            name="output"
         )(merged_dense)
-        output = QActivation("quantized_tanh", name="output")(output_dense)
+        output = QActivation("sigmoid", name="output_activation")(output_dense)
         
         # Create model
         model = Model(
@@ -658,7 +663,7 @@ class Model2(SmartPixModel):
             
             # Create directory for this configuration's models (before tuning starts)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            config_dir = f"model2_{config_name}_hyperparameter_results_{timestamp}"
+            config_dir = f"{self.modelName.lower()}_{config_name}_hyperparameter_results_{timestamp}"
             os.makedirs(config_dir, exist_ok=True)
             print(f"\n✓ Created directory for {config_name} results: {config_dir}/")
             print(f"Models will be saved to this directory after each trial completes.\n")
@@ -822,9 +827,8 @@ class Model2(SmartPixModel):
                 if trial.score is not None:
                     trial_info['val_accuracy'] = float(trial.score)
                 
-                # Add metrics if available
-                if hasattr(trial, 'metrics') and trial.metrics:
-                    trial_info['metrics'] = trial.metrics
+                # Skip metrics as they're not JSON serializable (MetricsTracker object)
+                # The validation accuracy is already captured above
                 
                 # Calculate and add model parameters and structure
                 param_metadata = self._calculate_model_parameters(hyperparams.values)
@@ -871,32 +875,28 @@ class Model2(SmartPixModel):
     
     #plotModel() function moved to abstract class
     #runAllStuff() function moved to abstract class
-
-
 def main():
     """Example usage of Model2"""
     print("=== Model2 Example Usage ===")
     
     # Initialize Model2
     model2 = Model2(
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled/filtering_records2048_data_shuffled_all",
-        xz_units=64,
-        yl_units=64,
-        merged_units_1=256,
-        merged_units_2=128,
-        merged_units_3=64,
+        # tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled/filtering_records2048_data_shuffled_all",
+        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try3_eric/filtering_records16384_data_shuffled_single_bigData",
+        xz_units=32,
+        yl_units=32,
+        merged_units_1=128,
+        merged_units_2=64,
+        merged_units_3=32,
         dropout_rate=0.1,
         initial_lr=1e-3,
         end_lr=1e-4,
         power=2,
-        bit_configs = [(16, 0), (4, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+        bit_configs = [(6, 0), (5, 0), (4, 0), (3, 0), (2, 0)]
     )
     
-    # Run complete pipeline
-    results = model2.runAllStuff()
+    # Run complete pipeline (more epochs for quantized model to converge)
+    results = model2.runAllStuff(numEpochs = 50)
     
-    print("Model2 quantization testing completed successfully!")
-
-
 if __name__ == "__main__":
     main()
