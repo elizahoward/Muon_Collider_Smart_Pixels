@@ -13,7 +13,7 @@ def run_commands(commands):
         else:
             subprocess.run(command)
 
-def pool_commands(num_cores):
+def pool_commands(commands, num_cores):
     # Create a pool of processes to run in parallel
     pool = multiprocessing.Pool(num_cores)
     

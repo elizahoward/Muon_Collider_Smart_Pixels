@@ -5,6 +5,8 @@ import os
 import argparse
 import sys
 from datetime import datetime
+from pathlib import Path
+import shutil
 
 def run_executable(executable_path, options):
     command = [executable_path] + options
@@ -13,10 +15,12 @@ def run_executable(executable_path, options):
 def run_commands(commands):
     for command in commands:
         print(command)
-        #if "pixelav" in command[0] or "ddsim" in command[0]:
-        #    subprocess.run(command[1:], cwd=command[0])
-        #else:
-        subprocess.run(command)
+        if "PixelAV" in command[0]:
+            subprocess.run(command[1:], cwd=command[0])
+        elif "ddsim" in command[0] or "pgun_lcio.py" in command[1] or "make_tracklists.py" in command[1]:
+            subprocess.run(command, env=env)
+        else:
+            subprocess.run(command)
 
 def pool_commands(commands, num_cores):
     # Create a pool of processes to run in parallel
@@ -34,90 +38,175 @@ def pool_commands(commands, num_cores):
 # user options
 parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-c", "--ncpu", help="Number of cores to use", default=35, type=int)
-parser.add_argument("-bs", "--bin_size", help="Number of tracks per tracklist", default=10, type=int)
-parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=10, type=int)
+parser.add_argument("-bs", "--bin_size", help="Number of tracks per track list", default=1, type=int)
+parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=1, type=int)
 parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
 parser.add_argument("-flp", "--flp", help="Direction of sensor (1 for FE side out, 0 for FE side down)", default=0, type=int)
 parser.add_argument("-bd", "--benchmark_dir", help="Muon collider simulation benchmark directory", default="/home/karri/mucLLPs/mucoll-benchmarks/", type=str)
+parser.add_argument("-dbg", "--debug", help="Skips main stuff done in pixelav so we can check variables", default=False, type=bool)
+
+# If you want to provide your own intermediate files as a starting point, specify their directories with these options
+parser.add_argument("-pg", "--pgun_dir", help="Directory containing particle gun output", default=None, type=str)
+parser.add_argument("-ds", "--detsim_dir", help="Directory containing detector simulation output", default=None, type=str)
+parser.add_argument("-tl", "--tracklist_dir", help="Directory containing track list outputs", default=None, type=str)
+parser.add_argument("-pav", "--pixelav_dir", help="Directory containing pixelav outputs", default=None, type=str)
 ops = parser.parse_args()
 
-# from bin size and total tracks, get number of tracklists
-nTracklists = int(np.ceil(ops.track_total / ops.bin_size))
+# from bin size and total tracks, get number of track lists
+if ops.tracklist_dir is not None:
+    nTracklists = len(os.listdir(ops.tracklist_dir)) # Fix later to count only relevant files
+elif ops.pixelav_dir is not None:
+    nTracklists = len(os.listdir(ops.pixelav_dir)) # Fix later to count only relevant files
+else:
+    nTracklists = int(np.ceil(ops.track_total / ops.bin_size))
+
+repodir = Path(__file__).resolve().parent.parent
+
+# determine which step to start from
+start_point = [ops.pgun_dir, ops.detsim_dir, ops.tracklist_dir, ops.pixelav_dir]
+start_point = [bool(x) for x in start_point]
+if sum(start_point) == 0:
+    start_step = 0  # start from particle gun
+elif sum(start_point) != 1:
+    raise ValueError("Please provide only one intermediate step directory to start from.")
+else:
+    start_step = start_point.index(True) + 1
 
 # Use date and time to create unique output directory
-output_dir = f"Data_Files/Data_Set_{datetime.now().strftime('%Y%m%d_%H%M%S')}" 
-os.makedirs(output_dir)
+if start_step==0:
+    output_dir = f"{repodir}/Data_Files/Data_Set_{datetime.now().strftime('%Y%m%d_%H%M%S')}" 
+    os.makedirs(output_dir)
+else:
+    start_dir = [ops.pgun_dir, ops.detsim_dir, ops.tracklist_dir, ops.pixelav_dir][start_step - 1]
+    output_dir = Path(start_dir).parent
+
+# ADD CHECK TO MAKE SURE TOTAL TRACKS AND BIN SIZE ARE CONSISTENT WITH PROVIDED INTERMEDIATE FILES
 
 # create output directories for each intermediate step
 output_dir_pgun = f"{output_dir}/Particle_Gun"
-output_dir_fluka = f"{output_dir}/FLUKA"
 output_dir_detsim = f"{output_dir}/Detector_Sim"
 output_dir_tracklists = f"{output_dir}/Track_Lists"
 output_dir_pixelav = f"{output_dir}/PixelAV"
 output_dir_parquet = f"{output_dir}/Parquet_Files"
-os.makedirs(output_dir_pgun)
-os.makedirs(output_dir_fluka)
-os.makedirs(output_dir_detsim)
-os.makedirs(output_dir_tracklists)
-os.makedirs(output_dir_pixelav)
-os.makedirs(output_dir_parquet)
+
+#output_dir_fluka = f"{output_dir}/FLUKA"
+
+output_dirs=[output_dir_pgun, output_dir_detsim, output_dir_tracklists, output_dir_pixelav, output_dir_parquet]
+
+if start_step==0:
+    for dir in output_dirs:
+        os.makedirs(dir)
+else:
+    for dir in output_dirs[start_step:]:
+        shutil.rmtree(dir) # make sure directory will be empty
+        os.makedirs(dir)
 
 # set up MuColl environment
-#subprocess.run(["source", "/cvmfs/muoncollider.cern.ch/release/2.8-patch2/setup.sh"])
+
+# Step 1: Source the setup.sh and capture the resulting environment
+def get_env_from_setup(script_path):
+    # Launch a new bash shell, source the script, and print the environment
+    command = f"bash -c 'source {script_path} >/dev/null 2>&1 && env'"
+    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        raise RuntimeError(f"Failed to source {script_path}:\n{result.stderr}")
+
+    env = {}
+    for line in result.stdout.splitlines():
+        if '=' in line:
+            key, value = line.split('=', 1)
+            env[key] = value
+
+    return env
+
+if start_step <= 3: 
+    # Step 2: Load environment from setup.sh
+    env = os.environ.copy()
+    env.update(get_env_from_setup('/cvmfs/muoncollider.cern.ch/release/2.8-patch2/setup.sh'))
+else:
+    env = None
 
 subprocess.run("source /cvmfs/muoncollider.cern.ch/release/2.8-patch2/setup.sh", shell=True, executable="/bin/bash")
 
 commands = [] 
 
+print(f"Running {nTracklists} tracklists with {ops.bin_size} tracks each, using {ops.ncpu} cores")
+
 # Signal
+
+# First run particle gun and detector sim
+signal_particle_gun = f"{output_dir_pgun}/particle_gun.slcio"
+signal_detetor_sim = f"{output_dir_detsim}/signal_detsim.slcio"
+signal_tracklist = f"{output_dir_tracklists}/signal_tracks_*.txt"
+
+# Particle gun
+run_particle_gun = ["python3", f"{ops.benchmark_dir}/generation/pgun/pgun_lcio.py", 
+                        "-s", "12345", 
+                        "-e", f"{ops.track_total}", 
+                        "--pdg", "13", "-13",
+                        "--p", "1", "100", 
+                        "--theta", "10", "170", 
+                        "--dz", "0", "0", "1.5", 
+                        "--d0", "0", "0", "0.0009",
+                        "--", signal_particle_gun]
+
+# Run Detector Simulation
+run_detsim = ["ddsim", "--steeringFile", f"{ops.benchmark_dir}/simulation/ilcsoft/steer_baseline.py",
+                "--inputFile", signal_particle_gun,
+                "--outputFile", signal_detetor_sim]
+
+# Make tracklist
+make_tracklist = ["python3",  f"{repodir}/MuC_Smartpix_Data_Production/Tracklist_Production/make_tracklists.py", 
+                    "-i", signal_detetor_sim, 
+                    "-o", signal_tracklist, 
+                    "-f", str(ops.float_precision), 
+                    "-b", str(ops.bin_size),
+                    "-p", "13", 
+                    "-flp", f"{ops.flp}"]
+# commands
+if start_step == 0:
+    command_tuple = (run_particle_gun, run_detsim, make_tracklist,)
+elif start_step == 1:
+    command_tuple = (run_detsim, make_tracklist,)
+elif start_step == 2:
+    command_tuple = (make_tracklist,)
+else:
+    command_tuple = None
+
+if command_tuple is not None:
+    commands.append([command_tuple,])
+    # Run in parallel
+    pool_commands(commands, ops.ncpu)
+
+commands = []
+                  
 for run in range(nTracklists): 
 
     # Define file names
-    signal_particle_gun = f"{output_dir_pgun}/particle_gun{run}.sclio"
-    signal_detetor_sim = f"{output_dir_detsim}/signal_detsim{run}.slcio"
-    signal_tracklist = f"{output_dir_tracklists}/signal_tracks{run}.txt"
-    signal_pixelav_seed = f"{output_dir_pixelav}/signal_seed{run}"
-    signal_pixelav_out = f"{output_dir_pixelav}/signal_pixelav{run}.out"
-    signal_parquet = f"{output_dir_parquet}/signal_*{run}.parquet"
-
-    # Particle gun
-    run_particle_gun = ["python3", f"{ops.benchmark_dir}/generation/pgun/pgun_lcio.py", 
-                         "-s", "12345", 
-                         "-e", f"{ops.bin_size}", 
-                         "--pdg", "13", "-13",
-                         "--p", "1", "100", 
-                         "--theta", "10", "170", 
-                         "--dz", "0", "0", "1.5", 
-                         "--d0", "0", "0", "0.0009",
-                         f"--{signal_particle_gun}"]
+    signal_tracklist = f"{output_dir_tracklists}/signal_tracks_{run}.txt"
+    signal_pixelav_seed = f"{output_dir_pixelav}/signal_seed_{run}"
+    signal_pixelav_out = f"{output_dir_pixelav}/signal_pixelav_{run}.out"
+    signal_parquet = f"{output_dir_parquet}/signal_*_{run}.parquet" # include * here so it can be easily replaced when the different parquet files are written
     
-    # Run Detector Simulation
-    run_detsim = ["ddsim", "--steeringFile", f"{ops.benchmark_dir}/simulation/ilcsoft/steer_baseline.py",
-                  "--inputFile", "output_gen.slcio",
-                  "--outputFile", "output_sim.slcio"]
-
-    # Make tracklist
-    make_tracklist = ["python3",  "MuC_Smartpix_Data_Production/Tracklist_Production/make_tracklists.py", 
-                      "-i", signal_detetor_sim, 
-                      "-o", signal_tracklist, 
-                      "-f", str(ops.float_precision), 
-                      "-p", "13", 
-                      "-flp", f"{ops.flp}"]
-    
-    # Run pixelAV
-    run_pixelAV = ["./MuC_Smartpix_Data_Production/PixelAV/bin/ppixelav2_custom.exe", 
+    # Run pixelAV Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV
+    run_pixelAV = [f"{repodir}/MuC_Smartpix_Data_Production/PixelAV", "./bin/ppixelav2_custom.exe", 
                    "1", 
                    signal_tracklist, 
                    signal_pixelav_out, 
                    signal_pixelav_seed]
 
     # Write parquet file
-    make_parquet = ["python3", "/MuC_Smartpix_Data_Production/Data_Processing/datagen.py", 
+    make_parquet = ["python3", f"{repodir}/MuC_Smartpix_Data_Production/Data_Processing/datagen.py", 
                     "-i", signal_pixelav_out, 
                     "-o", signal_parquet]
 
     # commands
-    commands.append([(run_particle_gun, run_detsim, make_tracklist, run_pixelAV, make_parquet,),]) # weird formatting is because pool expects a tuple at input
+    if start_step <=3:
+        command_tuple=(run_pixelAV, make_parquet,)
+    elif start_step ==4:
+        command_tuple=(make_parquet,)
+    commands.append([command_tuple,]) # weird formatting is because pool expects a tuple at input
 
 # Run in parallel
 pool_commands(commands, ops.ncpu)

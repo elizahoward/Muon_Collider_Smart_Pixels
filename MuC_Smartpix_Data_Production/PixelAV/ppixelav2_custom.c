@@ -458,7 +458,7 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
     
     printf("End on day %d at %02d:%02d:%02d\n", yday, hour, min, sec);
     
-    
+    return 0;
 } /* MAIN__ */
 
 #include "ppixelav2.c"

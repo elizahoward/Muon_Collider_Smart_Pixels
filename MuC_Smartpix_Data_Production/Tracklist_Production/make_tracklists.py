@@ -68,6 +68,7 @@ parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.Argumen
 parser.add_argument("-i", "--input_file", help="Input file", type=str, required=True)
 parser.add_argument("-o", "--output_file", help="Output file", type=str, required=True)
 parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
+parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=1, type=int)
 parser.add_argument("-p", "--allowedPIDS", help="Allowed PIDs (comma-separated)", type=int, nargs="+", required=True)
 parser.add_argument("-flp", "--flp", help="Direction of sensor (1 for FE side out, 0 for FE side down)", default=0, type=int)
 ops = parser.parse_args()
@@ -77,8 +78,8 @@ ops = parser.parse_args()
 ROOT.gROOT.SetBatch()
 
 # check if output directory exists
-if not os.path.isdir(ops.output_file):
-    raise Exception(f"Directory {ops.output_file} does not exist")
+#if not os.path.isdir(ops.output_file):
+#    raise Exception(f"Directory {ops.output_file} does not exist")
 
 # convert this to writing to a log file
 print(f"Getting tracks from file: {ops.input_file}\n")
@@ -172,12 +173,19 @@ for ievt,event in enumerate(reader):
         track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg]
         tracks.append(track)
 
-print(f"Writing {len(tracks)} tracks to {ops.output_file}\n") 
+binsize = ops.bin_size
+float_precision = ops.float_precision
+numFiles = int(np.ceil(len(tracks)/binsize))
 
-with open(ops.output_file, 'w') as out_file:
-    for track in tracks:
-        track = list(track)
+print(f"Writing {len(tracks)} tracks to {numFiles} files with {binsize} tracks per file\n")
 
-        formatted_sublist = [f"{element:.{ops.float_precision}f}" if isinstance(element, float) else element for element in track]
-        line = ' '.join(map(str, formatted_sublist)) + '\n'
-        out_file.write(line)
+for fileNum in range(numFiles):
+    with open(ops.output_file.replace("*", str(fileNum)), 'w') as file:
+        for track in tracks[fileNum*binsize:(fileNum+1)*binsize]:
+
+            # set flp to an int
+            track = list(track)
+
+            formatted_sublist = [f"{element:.{float_precision}f}" if isinstance(element, float) else element for element in track]
+            line = ' '.join(map(str, formatted_sublist)) + '\n'
+            file.write(line)

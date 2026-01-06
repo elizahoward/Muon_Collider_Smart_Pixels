@@ -4,7 +4,7 @@ import pandas as pd
 import math
 import os
 
-def split(output_file,tag,df1,df2,df3):
+def split(output_file,df1,df2,df3):
 
         df1.columns = df1.columns.astype(str)
         df2.columns = df2.columns.astype(str)
