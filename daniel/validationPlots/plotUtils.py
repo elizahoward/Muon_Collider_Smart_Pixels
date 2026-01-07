@@ -1075,22 +1075,22 @@ def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,tr
     tracksSig = loadTrackData(trackDirSig)
     return tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm
 
-def plotTrackPPt(tracksBib, tracksSig,PLOT_DIR="./plots",interactivePlots=False):
+def plotTrackPPt(tracksBib, tracksSig,binsBib=30,binsSig=30,yscale='log',PLOT_DIR="./plots",interactivePlots=False):
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)
-    plt.hist(tracksBib["p"],label="p")
-    plt.hist(tracksBib["pt"], label="pt",alpha=0.7)
+    plt.hist(tracksBib["p"],label="p",bins=binsBib)
+    plt.hist(tracksBib["pt"], label="pt",alpha=0.7,bins=binsBib)
     print("FIX BINS!")
     plt.title("BIB tracklists, p and pt")
     plt.legend()
-    plt.yscale('log')
+    plt.yscale(yscale)
 
     plt.subplot(122)
-    plt.hist(tracksSig["p"],label="p")
-    plt.hist(tracksSig["pt"], label="pt",alpha=0.7)
+    plt.hist(tracksSig["p"],label="p",bins=binsSig)
+    plt.hist(tracksSig["pt"], label="pt",alpha=0.7,bins=binsSig)
     plt.title("Sig tracklists, p and pt")
     plt.legend()
-    plt.yscale('log')
+    plt.yscale(yscale)
 
     fig.tight_layout()
 
