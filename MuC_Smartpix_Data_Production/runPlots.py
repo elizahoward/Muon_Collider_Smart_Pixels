@@ -36,20 +36,20 @@ trackDirSig = f"{data_main_dir}/Track_Lists"
 
 processRecon = True;
 
-interactivePlots=True;
+interactivePlots=False;
 PLOT_DIR = data_main_dir
 os.makedirs(PLOT_DIR, exist_ok=True)
 savedPklFromParquet = False;
 
-processTracks = False;
+processTracks = True;
 
 print(f"loading data, Currently loading settings: \nprocessRecon: {processRecon}\nsavedPklFromParquet: {savedPklFromParquet}\ninteractivePlots: {interactivePlots}")
 # Dataset with all the stuff
 if not savedPklFromParquet:
     truthDF, reconDF = load_parquet_pairs(dataDir_sig)
-    truthDF2, reconDF2 = load_parquet_pairs(dataDir_mm)
-    truthDF = pd.concat([truthDF,truthDF2])
-    reconDF = pd.concat([reconDF,reconDF2])
+    # truthDF2, reconDF2 = load_parquet_pairs(dataDir_mm)
+    # truthDF = pd.concat([truthDF,truthDF2])
+    # reconDF = pd.concat([reconDF,reconDF2])
     truthDF = genEtaAlphaBetaRq(truthDF)
     truthDF.to_pickle("dfOfTruth.pkl")
     if processRecon:

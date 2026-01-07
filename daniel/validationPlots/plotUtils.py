@@ -454,7 +454,10 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     print(f"Plot saved as: {os.path.join(PLOT_DIR, 'bib_signal_zglobal_vs_xsize_comparison.png')}")
     print(f"BIB z-global range: {z_global_bib.min():.2f} to {z_global_bib.max():.2f} mm")
     print(f"Signal z-global range: {z_global_sig.min():.2f} to {z_global_sig.max():.2f} mm")
-    print(f"BIB x-size range: {xSizesBib.min()} to {xSizesBib.max()} pixels")
+    if len(truthbib)>0:
+        print(f"BIB x-size range: {xSizesBib.min()} to {xSizesBib.max()} pixels")
+    else:
+        print("no bib, so not printing bib x-size range")
     print(f"Signal x-size range: {xSizesSig.min()} to {xSizesSig.max()} pixels")
 
 
@@ -574,9 +577,12 @@ def ericsPlotReport(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesB
     print(f"3. 2x2 grid: {os.path.join(PLOT_DIR, 'bib_signal_zglobal_vs_xysize_grid_comparison.png')}")
     
     print(f"\nBIB statistics:")
-    print(f"  z-global range: {z_global_bib.min():.2f} to {z_global_bib.max():.2f} mm")
-    print(f"  x-size range: {xSizesBib.min()} to {xSizesBib.max()} pixels")
-    print(f"  y-size range: {ySizesBib.min()} to {ySizesBib.max()} pixels")
+    if len(truthbib)>0:
+        print(f"  z-global range: {z_global_bib.min():.2f} to {z_global_bib.max():.2f} mm")
+        print(f"  x-size range: {xSizesBib.min()} to {xSizesBib.max()} pixels")
+        print(f"  y-size range: {ySizesBib.min()} to {ySizesBib.max()} pixels")
+    else:
+        print("no bib, so not printing bib statisticst")
     
     print(f"\nSignal statistics:")
     print(f"  z-global range: {z_global_sig.min():.2f} to {z_global_sig.max():.2f} mm")
@@ -1061,7 +1067,7 @@ trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_
 def loadTrackData(directory, trackHeader = trackHeader):
     return pd.concat([
         pd.read_csv(os.path.join(directory, file), sep=' ', header=None, names=trackHeader)
-        for file in os.listdir(directory) if "_tracklist" in file
+        for file in os.listdir(directory) if (("_tracklist" in file) or ("_tracks" in file))
     ])
 # def load_log_data(directory,log_header=logHeader):
 #     return pd.concat([
