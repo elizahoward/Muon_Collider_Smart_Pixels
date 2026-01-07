@@ -30,14 +30,14 @@ dataDir_sig = f"{data_main_dir}/Parquet_Files"
 
 #skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
-trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
+# trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
 # trackDirBib_mp = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/'
 trackDirSig = f"{data_main_dir}/Track_Lists"
 
 processRecon = True;
 
-interactivePlots=False;
-PLOT_DIR = data_main_dir
+interactivePlots=True;
+PLOT_DIR = f"{data_main_dir}/plots/"
 os.makedirs(PLOT_DIR, exist_ok=True)
 savedPklFromParquet = False;
 
