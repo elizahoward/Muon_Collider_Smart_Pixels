@@ -1,11 +1,7 @@
 import numpy as np
 import pyLCIO
 import ROOT
-import glob
-import os
-import json
 from math import *
-import csv
 import argparse
 
 sensorAngles = np.arange(-np.pi,np.pi+2*np.pi/8,np.pi/8)
@@ -170,6 +166,11 @@ for ievt,event in enumerate(reader):
 
         p = mcp_tlv.P()
         pt = mcp_tlv.Pt()
+
+        # Skip tracks with momentum 0
+        if round(p, ops.float_precision)==0 or round(pt, ops.float_precision)==0:
+            continue
+
         track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg]
         tracks.append(track)
 

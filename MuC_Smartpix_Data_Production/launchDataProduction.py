@@ -99,7 +99,6 @@ else:
 
 # ADD CHECK TO MAKE SURE TOTAL TRACKS AND BIN SIZE ARE CONSISTENT WITH PROVIDED INTERMEDIATE FILES
 
-
 # create output directories for each intermediate step
 output_dir_pgun = f"{output_dir}/Particle_Gun"
 output_dir_detsim = f"{output_dir}/Detector_Sim"
@@ -116,7 +115,7 @@ if start_step==0:
         os.makedirs(dir)
 else:
     for dir in output_dirs[start_step:]:
-        shutil.rmtree(dir) # make sure directory will be empty
+        shutil.rmtree(dir, ignore_errors=True) # make sure directory will be empty
         os.makedirs(dir)
 
 # set up MuColl environment
@@ -210,6 +209,7 @@ for run in range(nTracklists):
                    signal_tracklist, 
                    signal_pixelav_out, 
                    signal_pixelav_seed,
+                   signal_pixelav_log
                    ]
 
     # Write parquet file
