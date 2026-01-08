@@ -201,6 +201,7 @@ for run in range(nTracklists):
     signal_tracklist = f"{output_dir_tracklists}/signal_tracks_{run}.txt"
     signal_pixelav_seed = f"{output_dir_pixelav}/signal_seed_{run}"
     signal_pixelav_out = f"{output_dir_pixelav}/signal_pixelav_{run}.out"
+    signal_pixelav_log = f"{output_dir_pixelav}/signal_pixelav_log_{run}.txt"
     signal_parquet = f"{output_dir_parquet}/signal_*_{run}.parquet" # include * here so it can be easily replaced when the different parquet files are written
     
     # Run pixelAV Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/PixelAV
@@ -208,7 +209,8 @@ for run in range(nTracklists):
                    "1", 
                    signal_tracklist, 
                    signal_pixelav_out, 
-                   signal_pixelav_seed]
+                   signal_pixelav_seed,
+                   ]
 
     # Write parquet file
     make_parquet = ["python3", f"{repodir}/MuC_Smartpix_Data_Production/Data_Processing/datagen.py", 

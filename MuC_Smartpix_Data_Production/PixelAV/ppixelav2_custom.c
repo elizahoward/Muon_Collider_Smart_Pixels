@@ -151,7 +151,7 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
     static int fileind, filebase, fileoff, runsize, irun, ievent, frun, nskip, procid, new_drde, ehole;
     static float rvec[4], pimom, xoffset, yoffset, lenxmin, lenxmax, deltaxlen, lenymin, lenymax, deltaylen, locdir[3], cotalpha, cotbeta;
     static float clusxlen, clusylen;
-    static char outfile[500], seedfile[500];
+    static char outfile[500], seedfile[500], logfile[500];
     static double alpha;
     float scale = 1;
 
@@ -184,6 +184,7 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
       sscanf(argv[2],"%s", &track_list);
       sscanf(argv[3],"%s", &outfile);
       sscanf(argv[4],"%s", &seedfile);
+      sscanf(argv[5],"%s", &logfile);
       printf("Track list file: %s \n", track_list);
     }
     
@@ -415,7 +416,13 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
 	  }
 	}    
 	fclose(ofp);      
-      } 
+} 
+else{
+  ofp = fopen(logfile, "a");
+  fprintf(ofp,"NehBig event %4d track  ",ievent);
+  fprintf(ofp,"%f %f %f %d %f %f %f %f %f \n", cotatrack[ievent], cotbtrack[ievent], ppiontrack[ievent], flipped[ievent], ylocal[ievent], zglobal[ievent], pttrack[ievent], hittime[ievent], PID0[ievent]);
+  fclose(ofp);
+}
       
     incr: ievent += 1;
       
