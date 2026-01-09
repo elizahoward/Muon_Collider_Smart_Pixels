@@ -54,6 +54,8 @@ def load_parquet_pairs(directory, skip_range=None):
                 recon_df["source"] = "sig"
                 # truth_sig.append(df)
                 # recon_sig.append(recon_df)
+            # else:
+                # print("GAAAHHHHH")
             truthDFs.append(df)
             reconDFs.append(recon_df)
     print("done with the for loop, now concatenating the dataframes")
@@ -458,7 +460,10 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
         print(f"BIB x-size range: {xSizesBib.min()} to {xSizesBib.max()} pixels")
     else:
         print("no bib, so not printing bib x-size range")
-    print(f"Signal x-size range: {xSizesSig.min()} to {xSizesSig.max()} pixels")
+    if len(truthsig)>0:
+        print(f"Signal x-size range: {xSizesSig.min()} to {xSizesSig.max()} pixels")
+    else:
+        print("no signal, so not printing signal x-size range")
 
 
 # --- Plot 2: Side-by-side comparison of z-global vs y-size ---
@@ -585,9 +590,12 @@ def ericsPlotReport(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesB
         print("no bib, so not printing bib statisticst")
     
     print(f"\nSignal statistics:")
-    print(f"  z-global range: {z_global_sig.min():.2f} to {z_global_sig.max():.2f} mm")
-    print(f"  x-size range: {xSizesSig.min()} to {xSizesSig.max()} pixels")
-    print(f"  y-size range: {ySizesSig.min()} to {ySizesSig.max()} pixels")
+    if len(truthsig)>0:
+        print(f"  z-global range: {z_global_sig.min():.2f} to {z_global_sig.max():.2f} mm")
+        print(f"  x-size range: {xSizesSig.min()} to {xSizesSig.max()} pixels")
+        print(f"  y-size range: {ySizesSig.min()} to {ySizesSig.max()} pixels")
+    else:
+        print("no signal, so not printing sig statisticst")
 
 #Adapted from Eric's plot_signal_data.py
 
@@ -1074,11 +1082,12 @@ def loadTrackData(directory, trackHeader = trackHeader):
 #         pd.read_csv(os.path.join(directory, file), sep=' ', header=None, names=log_header)
 #         for file in os.listdir(directory) if "_log" in file
 #     ])
+#can also pass in None for the directories
 def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig):
-    tracksBib_mm = loadTrackData(trackDirBib_mm)
-    tracksBib_mp = loadTrackData(trackDirBib_mp)
+    tracksBib_mm = loadTrackData(trackDirBib_mm)  if trackDirBib_mm else pd.DataFrame(columns=trackHeader)
+    tracksBib_mp = loadTrackData(trackDirBib_mp)  if trackDirBib_mp else pd.DataFrame(columns=trackHeader)
     tracksBib = pd.concat([tracksBib_mm,tracksBib_mp])
-    tracksSig = loadTrackData(trackDirSig)
+    tracksSig = loadTrackData(trackDirSig) if trackDirSig else pd.DataFrame(columns=trackHeader)
     return tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm
 
 def plotTrackPPt(tracksBib, tracksSig,binsBib=30,binsSig=30,yscale='log',PLOT_DIR="./plots",interactivePlots=False):
@@ -1144,6 +1153,9 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
         plt.close()
 
 def calcNxyzTrack(tracksDF,showUnitVerification=False):
+    # if len(tracksDF)==0:
+    #     print("tracklist is empty, so no calculation")
+    #     return tracksDF
     z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"])) #locdir[2] https://github.com/elizahoward/pixelav/blob/30d7585448f87bcdf10f7f066005a04e4bd34a52/ppixelav2_list_trkpy_n_2f_custom.c#L341
     flipCoefficient = (np.array(tracksDF["flp"] == 0)*2-1)*-1
     z=flipCoefficient*z
@@ -1162,14 +1174,16 @@ def calcNxyzTrack(tracksDF,showUnitVerification=False):
         plt.close()
     assert np.all(bins==np.linspace(0,2,20))
     Most0 = counts==0;
-    assert not Most0[9]
-    Most0[9] = True
-    assert np.all(Most0)
+    if len(tracksDF)!=0:
+        assert not Most0[9]
+        Most0[9] = True
+        assert np.all(Most0)
 
 
     #then pixelAV
     tracksDF['m'] = tracksDF['hit_pdg'].apply(lambda pid: 105.7 if abs(int(pid))==13 else 0.511 if abs(int(pid))==11 else np.nan) #MeV
-    print(f"Nan m count: {np.count_nonzero(np.isnan(tracksDF['m']))}")
+    if len(tracksDF)!=0:
+        print(f"Nan m count: {np.count_nonzero(np.isnan(tracksDF['m']))}")
     tracksDF['scalePion'] = 139.57/tracksDF['m']
     tracksDF['n_x'] = x*tracksDF['p']*tracksDF['scalePion']
     tracksDF['n_y'] = y*tracksDF['p']*tracksDF['scalePion']

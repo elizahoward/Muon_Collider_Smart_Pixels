@@ -22,21 +22,27 @@ dataDir_mm = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mm/"
 dataDir_mp = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mp/"
 dataDir_sig = "/local/d1/smartpixML/bigData/Simulation_Output_Signal/"
 dataDir_all = "/local/d1/smartpixML/bigData/allData/"
+dataDir_all = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Parquet_Files"
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
 trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
 trackDirBib_mp = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/'
 trackDirSig = '/local/d1/smartpixML/bigData/tracklists/signal_tracklists'
+trackDirBib_mm = '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Track_Lists'
+trackDirBib_mp = None
+trackDirSig = None
 
-processRecon = False;
+processRecon = True;
 
-interactivePlots=True;
+interactivePlots=False;
 PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
 os.makedirs(PLOT_DIR, exist_ok=True)
-savedPklFromParquet = True;
+savedPklFromParquet = False;
 
 processTracks = True;
+if (not processRecon) and (not savedPklFromParquet):
+    raise ValueError("If reprocessing the parquets, must also do processRecon=True")
 
 print(f"loading data, Currently loading settings: \nprocessRecon: {processRecon}\nsavedPklFromParquet: {savedPklFromParquet}\ninteractivePlots: {interactivePlots}")
 # Dataset with all the stuff
