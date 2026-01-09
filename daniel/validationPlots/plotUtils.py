@@ -848,8 +848,10 @@ def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",inter
 def plotRadius(truthbib, truthsig,PLOT_DIR="./plots",interactivePlots=False):
     #modified to be on same axis
     fig, ax = plt.subplots()
-    ax.hist(truthbib['R'], histtype='step', bins = np.arange(0,25,2),label="BIB")
-    ax.hist(truthsig['R'], histtype='step', bins = np.arange(0,25,2),label="Signal")
+    bins = np.arange(0,25,2)
+    bins = 25
+    ax.hist(truthbib['R'], histtype='step', bins = bins,label="BIB")
+    ax.hist(truthsig['R'], histtype='step', bins = bins,label="Signal")
     plt.legend()
     ax.set_title("Radius of track curvature")
     ax.set_xlabel("Radius [mm]")
@@ -1088,7 +1090,7 @@ def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,tr
     tracksBib_mp = loadTrackData(trackDirBib_mp)  if trackDirBib_mp else pd.DataFrame(columns=trackHeader)
     tracksBib = pd.concat([tracksBib_mm,tracksBib_mp])
     tracksSig = loadTrackData(trackDirSig) if trackDirSig else pd.DataFrame(columns=trackHeader)
-    return tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm
+    return tracksBib, tracksSig, tracksBib_mp,tracksBib_mm
 
 def plotTrackPPt(tracksBib, tracksSig,binsBib=30,binsSig=30,yscale='log',PLOT_DIR="./plots",interactivePlots=False):
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))

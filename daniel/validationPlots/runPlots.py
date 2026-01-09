@@ -15,6 +15,7 @@ sys.path.append("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_P
 from plotUtils import *
 import pickle
 
+raise ValueError("This is old code, please use runPlots2 instead")
 
 flp = 0
 # trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]
@@ -88,7 +89,7 @@ print("Finished loading data [not counting tracks], now plotting")
 
 if processTracks:
     print("Start loading track data")
-    tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm=loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig)
+    tracksBib, tracksSig, tracksBib_mp,tracksBib_mm=loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig)
     tracksBib = calcNxyzTrack(tracksBib)
     tracksSig = calcNxyzTrack(tracksSig)
     print("finished loading track data")
