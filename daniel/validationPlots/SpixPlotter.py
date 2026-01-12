@@ -18,10 +18,10 @@ import pickle
 class SmartpixPlotter():
     def __init__(self,
                  #flp=0, unused
-                 dataDir_mm: str = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mm/",
-                 dataDir_mp: str = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mp/",
-                 dataDir_sig: str = "/local/d1/smartpixML/bigData/Simulation_Output_Signal/",
-                 dataDir_all: str = "/local/d1/smartpixML/bigData/allData/",
+                #  parquetDir_mm: str = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mm/", Not yet implemented
+                #  parquetDir_mp: str = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mp/",
+                #  parquetDir_sig: str = "/local/d1/smartpixML/bigData/Simulation_Output_Signal/",
+                 parquetDir_all: str = "/local/d1/smartpixML/bigData/allData/",
                  skip_indices: list = list(range(1730 - 124+87, 1769)),
                  trackDirBib_mm: str = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/',
                  trackDirBib_mp: str = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/',
@@ -34,10 +34,10 @@ class SmartpixPlotter():
                  plotTracklists: bool = True,
                  plotParquets: bool = True,
                  ):
-        self.dataDir_mm = dataDir_mm 
-        self.dataDir_mp = dataDir_mp 
-        self.dataDir_sig = dataDir_sig 
-        self.dataDir_all = dataDir_all 
+        # self.parquetDir_mm = parquetDir_mm 
+        # self.parquetDir_mp = parquetDir_mp 
+        # self.parquetDir_sig = parquetDir_sig 
+        self.parquetDir_all = parquetDir_all 
         self.skip_indices = skip_indices 
         self.trackDirBib_mm = trackDirBib_mm 
         self.trackDirBib_mp = trackDirBib_mp 
@@ -55,8 +55,8 @@ class SmartpixPlotter():
             raise ValueError("If reprocessing the parquets, must also do processRecon=True")
         
         self.loadParquetData()
-        if self.processTracks:
-            self.loadTrackData()
+        # if self.processTracks:
+        self.loadTrackData()
         
         return
     def loadParquetData(self):
@@ -64,7 +64,7 @@ class SmartpixPlotter():
               f"\nsavedPklFromParquet: {self.savedPklFromParquet}\ninteractivePlots: {self.interactivePlots}")
         # Dataset with all the stuff
         if not self.savedPklFromParquet:
-            self.truthDF, self.reconDF = load_parquet_pairs(self.dataDir_all, skip_range=self.skip_indices)
+            self.truthDF, self.reconDF = load_parquet_pairs(self.parquetDir_all, skip_range=self.skip_indices)
             self.truthDF = genEtaAlphaBetaRq(self.truthDF)
             self.truthDF.to_pickle("dfOfTruth.pkl")
             if self.processRecon:
@@ -105,7 +105,7 @@ class SmartpixPlotter():
     def loadTrackData(self):
         if not self.processTracks:
             print("process Tracks is set to false, so not loading tracklists")
-            return
+            # return
         print("Start loading track data")
         self.tracksBib, self.tracksSig, self.tracksBib_mp,self.tracksBib_mm=loadAllTracks(trackDirBib_mm=self.trackDirBib_mm,trackDirBib_mp=self.trackDirBib_mp,trackDirSig=self.trackDirSig)
         self.tracksBib = calcNxyzTrack(self.tracksBib)
@@ -116,6 +116,8 @@ class SmartpixPlotter():
         print(f"interactivePlots: {self.interactivePlots}\nplotTracklists: {self.plotTracklists}\nplotParquets: {self.plotParquets}\n")
         print(f"Plotting directory: {self.PLOT_DIR}")
         if self.plotTracklists:
+            if not self.processTracks:
+                raise ValueError("Cannot plot tracklists if tracklists are not being processed (so invalid flag combo)")
             plotTrackPPt(self.tracksBib, self.tracksSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotPtTrackAndParquet(self.tracksBib, self.tracksSig,self.truthBib,self.truthSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotPCalcTrackComparison(self.tracksBib,bibSigLabel="BIB",PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
