@@ -1,3 +1,8 @@
+'''
+Author: Daniel Abadjiev, calls code borrowed from Eliza Howard and Eric You
+Date: January, 2026
+Description: Class for plotting with plotUtils to validate dataset
+'''
 import numpy as np 
 import pandas as pd
 import matplotlib
@@ -34,6 +39,7 @@ class SmartpixPlotter():
                  processOldTracks:bool = False,
                  plotTracklists: bool = True,
                  plotParquets: bool = True,
+                 styleSheet: str = 'seaborn-v0_8'
                  ):
         # self.parquetDir_mm = parquetDir_mm 
         # self.parquetDir_mp = parquetDir_mp 
@@ -52,6 +58,8 @@ class SmartpixPlotter():
         self.plotTracklists = plotTracklists
         self.plotParquets = plotParquets
 
+        self.styleSheet = styleSheet
+
         os.makedirs(self.PLOT_DIR, exist_ok=True)
         if (not processRecon) and (not savedPklFromParquet):
             raise ValueError("If reprocessing the parquets, must also do processRecon=True")
@@ -60,6 +68,7 @@ class SmartpixPlotter():
         # if self.processTracks:
         self.loadTrackData()
         
+        plt.style.use(self.styleSheet)
         return
     def loadParquetData(self):
         print(f"loading data, Currently loading settings: \nprocessRecon: {self.processRecon}"+

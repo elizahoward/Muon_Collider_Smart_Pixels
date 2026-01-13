@@ -1,3 +1,8 @@
+'''
+Author: Daniel Abadjiev, calls code borrowed from Eliza Howard and Eric You
+Date: January, 2026
+Description: Runner for the SmartpixPlotter class to make plots to validate the dataset, with passable arguments to customize plotting.
+'''
 import os
 import sys
 sys.path.append("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots")
@@ -19,7 +24,8 @@ def main(parquetDir_all,
             processTracks,
             processOldTracks,
             plotTracklists,
-            plotParquets,):
+            plotParquets,
+            styleSheet,):
     plotter = SmartpixPlotter(
                     #  parquetDir_mm = parquetDir_mm , #Not yet implemented
                     #  parquetDir_mp = parquetDir_mp ,
@@ -37,6 +43,7 @@ def main(parquetDir_all,
                     processOldTracks = processOldTracks,
                     plotTracklists = plotTracklists,
                     plotParquets = plotParquets,
+                    styleSheet = styleSheet,
                     )
     plotter.runPlots()
 
@@ -58,6 +65,8 @@ parser.add_argument("-pp", "--processParquets", action = 'store_true')
 parser.add_argument("-pltt", "--plotTracklists", action = 'store_true')
 parser.add_argument("-pltp", "--plotParquets", action = 'store_true')
 parser.add_argument("-plti", "--interactivePlots", action = 'store_true')
+# parser.add_argument("-s","--styleSheet",default="seaborn-v0_8-colorblind",type=str)
+parser.add_argument("-s","--styleSheet",default="seaborn-v0_8-talk",type=str)
 
 ops = parser.parse_args()
 
@@ -78,6 +87,8 @@ savedPklFromParquet = not ops.processParquets
 plotTracklists = ops.plotTracklists
 plotParquets = ops.plotParquets
 interactivePlots = ops.interactivePlots
+
+styleSheet = ops.styleSheet
 
 
 repodir = Path(__file__).resolve().parent.parent.parent
@@ -144,4 +155,5 @@ main(parquetDir_all,
             processTracks,
             processOldTracks,
             plotTracklists,
-            plotParquets,)
+            plotParquets,
+            styleSheet,)
