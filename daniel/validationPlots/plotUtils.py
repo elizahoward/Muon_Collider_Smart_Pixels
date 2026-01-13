@@ -79,8 +79,10 @@ def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",
         plt.figure(figsize=(4,1))
     if bins is None:
         hist, bin_edges = np.histogram(arr)
-    else:
+    elif len(bins) ==1:
         hist, bin_edges = np.histogram(arr,bins=bins)
+    else:
+        hist, bin_edges = np.histogram(np.clip(arr,bins[0],bins[-1]),bins=bins)
     plt.stairs(hist*postScale,bin_edges,label=pltLabel)
     if showNums:
         for i in range(len(hist)):
@@ -364,29 +366,36 @@ def closePlot(PLOT_DIR, interactivePlots, plotName,printOutputDir=True,transpare
         print(f"Plot saved as: {os.path.join(PLOT_DIR, plotName)}")
     
 
-def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interactivePlots=False):
-    plt.figure(figsize=(10, 6))
+def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interactivePlots=False,doPrint=True):
+    plt.figure(figsize=(5, 3))
     key = "pt"
     showNums = False
-    plt.subplot(411)
+    plt.subplot(211)
     bins = np.linspace(-0.1,0.1,100)
-    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2))
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution (low pt)",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2))
     plt.ylabel("Tracks")
-    plt.subplot(412)
+    plt.subplot(212)
     bins = np.linspace(-1,10,100)
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale='log')
+    plt.ylabel("Tracks (log scale)")
+    plt.xlabel("momentum pT (GeV)")
+    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt_lowPtRange.png")
+    plt.figure(figsize=(5, 3))
+    plt.subplot(211)
+    bins = np.logspace(-1,2,100)
+    bins = np.concatenate(([-1,0,0.01],bins,[102,109,110,114]))
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale="linear")
     plt.ylabel("Tracks")
-    plt.subplot(413)
-    bins = np.logspace(-1,2.04,100)
-    bins = np.concatenate(([-1,0,0.01],bins,[110,114]))
-    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale="linear")
-    plt.ylabel("Tracks")
-    plt.subplot(414)
-    # bins = np.logspace(-1,2.1,100)
+    plt.subplot(212)
+    # bins = np.logspace(-1,2.1,100)py
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale="log")
-    plt.ylabel("Tracks")
-    plt.xlabel("momentum pT")
-    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt.png")
+    plt.ylabel("Tracks (log scale)")
+    plt.xlabel("momentum pT (GeV)")
+    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt_fullRange.png")
+    if doPrint:
+        print(f"BIB pt min: {np.min(truthBib['pt'])} and max: {np.max(truthBib['pt'])}")
+        print(f"Signal pt min: {np.min(truthSig['pt'])} and max: {np.max(truthSig['pt'])}")
+
 
 #From Eric's code 
 def create_pastel_red_cmap():
@@ -813,15 +822,23 @@ def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",inter
 
 def plotRadius(truthbib, truthsig,PLOT_DIR="./plots",interactivePlots=False):
     #modified to be on same axis
-    fig, ax = plt.subplots()
-    bins = np.arange(0,25,2)
-    bins = 25
-    ax.hist(truthbib['R'], histtype='step', bins = bins,label="BIB")
-    ax.hist(truthsig['R'], histtype='step', bins = bins,label="Signal")
+    plt.figure(figsize=(8,5))
+    plt.subplot(211)
+    bins = np.arange(0,25,2) #If you use this, need to clip for underflow/overflow
+    # bins = 25
+    plt.hist(np.clip(truthbib['R'],bins[0],bins[-1]), histtype='step', bins = bins,label="BIB")
+    plt.hist(np.clip(truthsig['R'],bins[0],bins[-1]), histtype='step', bins = bins,label="Signal")
     plt.legend()
-    ax.set_title("Radius of track curvature")
-    ax.set_xlabel("Radius [mm]")
-    ax.set_ylabel("Tracks")
+    plt.title("Radius of track curvature")
+    plt.xlabel("Radius [mm]")
+    plt.ylabel("Tracks")
+    plt.subplot(212)
+    plt.plot(truthbib['R'],truthbib['pt'],label="BIB")
+    plt.plot(truthsig['R'],truthsig['pt'],label="Signal",alpha=0.7)
+    plt.legend()
+    plt.title("Radius of track curvature vs. pt")
+    plt.xlabel("Radius [mm]")
+    plt.ylabel("pT [GeV]")
     closePlot(PLOT_DIR, interactivePlots,  "radiusPlot.png")
 
 #Some of these may be redundant
@@ -1124,16 +1141,17 @@ def calcNxyzTrack(tracksDF,showUnitVerification=False):
     y = z*tracksDF["cotb"] #locdir[1]
     qq = x**2 +y**2 +z**2 
 
-    counts, bins,_ = plt.hist(qq,bins=np.linspace(0,2,20))
+    unitHistBins = np.linspace(0,2,20)
+    counts, bins,_ = plt.hist(np.clip(qq,unitHistBins[0],unitHistBins[-1]),bins=unitHistBins)
     plt.title("Magnitude of a vector, should be 1")
     if showUnitVerification:
         print(counts)
         print(bins)
-        print(np.linspace(0,2,20))
+        print(unitHistBins)
         plt.show()
     else:
         plt.close()
-    assert np.all(bins==np.linspace(0,2,20))
+    assert np.all(bins==unitHistBins)
     Most0 = counts==0;
     if len(tracksDF)!=0:
         assert not Most0[9]
@@ -1160,7 +1178,6 @@ def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plo
     binsSig = 30
     recalcStr = "(recalculated)"
     print("FIX BINS!")
-    print("COMBINE INTO ONE PLOT")
     fig, ax=plt.subplots(ncols=2, nrows=3, figsize=(10,13))
 
     key = "n_x"
