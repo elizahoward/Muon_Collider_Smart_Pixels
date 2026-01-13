@@ -352,8 +352,20 @@ def getProfiles(truth__, clusters__):
 
 skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
+#common in every plotting code
+def closePlot(PLOT_DIR, interactivePlots, plotName,printOutputDir=True,transparent = False):
+    plt.tight_layout()
+    plt.savefig(os.path.join(PLOT_DIR, plotName), dpi=300, bbox_inches='tight',transparent=transparent)
+    if interactivePlots:
+        plt.show()
+    else:
+        plt.close()
+    if printOutputDir:
+        print(f"Plot saved as: {os.path.join(PLOT_DIR, plotName)}")
+    
+
 def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interactivePlots=False):
-    plt.figure(figsize=(14, 6))
+    plt.figure(figsize=(10, 6))
     key = "pt"
     showNums = False
     plt.subplot(411)
@@ -373,12 +385,8 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
     # bins = np.logspace(-1,2.1,100)
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale="log")
     plt.ylabel("Tracks")
-    plt.xlabel("momentum p_T")
-    plt.savefig(os.path.join(PLOT_DIR, "bib_signal_pt.png"), dpi=300, bbox_inches='tight')
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    plt.xlabel("momentum pT")
+    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt.png")
 
 #From Eric's code 
 def create_pastel_red_cmap():
@@ -446,14 +454,8 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     ax[1].set_ylabel('x-size (# pixels)', fontsize=24)
     ax[1].tick_params(axis='both', which='major', labelsize=16)
     
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, "bib_signal_zglobal_vs_xsize_comparison.png"), dpi=300, bbox_inches='tight')
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_zglobal_vs_xsize_comparison.png")
     
-    print(f"Plot saved as: {os.path.join(PLOT_DIR, 'bib_signal_zglobal_vs_xsize_comparison.png')}")
     print(f"BIB z-global range: {z_global_bib.min():.2f} to {z_global_bib.max():.2f} mm")
     print(f"Signal z-global range: {z_global_sig.min():.2f} to {z_global_sig.max():.2f} mm")
     if len(truthbib)>0:
@@ -502,12 +504,7 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
     ax[1].set_ylabel('y-size (# pixels)', fontsize=50)
     ax[1].tick_params(axis='both', which='major', labelsize=40)
     
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, "bib_signal_zglobal_vs_ysize_comparison.png"), dpi=300, bbox_inches='tight')
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_zglobal_vs_ysize_comparison.png")
 
 # --- Plot 3: 2x2 grid showing both x-size and y-size comparisons ---
 def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -563,21 +560,16 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     axes[1,1].set_ylabel('y-size (# pixels)', fontsize=31)
     axes[1,1].tick_params(axis='both', which='major', labelsize=23)
     
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, "bib_signal_zglobal_vs_xysize_grid_comparison.png"), dpi=300, bbox_inches='tight')
-    plt.savefig(os.path.join(PLOT_DIR, "bib_signal_zglobal_vs_xysize_grid_comparison_transparent.png"), dpi=300, bbox_inches='tight',transparent=True)
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_zglobal_vs_xysize_grid_comparison.png")
 
 
 
 def ericsPlotReport(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,PLOT_DIR="./plots"):
     z_global_bib = truthbib['z-global']
     z_global_sig = truthsig['z-global']
-    print(f"Plots saved:")
+    print(f"Plots saved (seems like redundant printing):")
     print(f"1. X-size only: {os.path.join(PLOT_DIR, 'bib_signal_zglobal_vs_xsize_comparison_with_ysize.png')}")
+    print("Actually I don't think that one is saved?")
     print(f"2. Y-size only: {os.path.join(PLOT_DIR, 'bib_signal_zglobal_vs_ysize_comparison.png')}")
     print(f"3. 2x2 grid: {os.path.join(PLOT_DIR, 'bib_signal_zglobal_vs_xysize_grid_comparison.png')}")
     
@@ -660,12 +652,7 @@ def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plot
     ax[1,1].set_ylabel('Track Density')
     ax[1,1].legend()
 
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, "signal_bib_summary_histograms.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots, "signal_bib_summary_histograms.png")
 
 # --- Plot 2: 2D histograms of eta vs x-size/y-size ---
 def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -701,12 +688,7 @@ def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
     ax[1,0].figure.colorbar(hb[3],ax=ax[1,0])#    ax[1,0].colorbar()
     ax[1,0].set_xlabel('η', fontsize=15)
 
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, "signal_eta_vs_size_2d.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots, "signal_eta_vs_size_2d.png")
 
 # --- Plot 3: 2D histograms of y-local vs x-size/y-size ---
 def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -744,12 +726,7 @@ def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizes
     ax[1,0].set_xlabel('y-local [μm]', fontsize=15)
 
 
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, "signal_ylocal_vs_size_2d.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots, "signal_ylocal_vs_size_2d.png")
 
 # --- Plot 4: 2D histogram of number_eh_pairs vs pt ---
 def plotEhPt(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -772,12 +749,7 @@ def plotEhPt(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactiv
     ax[0].set_xlabel('number of electron hole pairs', fontsize=15)
 
 
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, "signal_ehpairs_vs_pt_2d.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  "signal_ehpairs_vs_pt_2d.png")
 
 # --- Plot 5: charge separation for low and high pt ---
 def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -834,14 +806,8 @@ def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",inter
 
 
 
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, "signal_pt_charge_separation.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots, "signal_pt_charge_separation.png")
 
-    print(f"Plots saved in {PLOT_DIR}") 
 
 #Added plots from Eliza's code (several are also just wrapped into Eric's code)
 
@@ -856,11 +822,7 @@ def plotRadius(truthbib, truthsig,PLOT_DIR="./plots",interactivePlots=False):
     ax.set_title("Radius of track curvature")
     ax.set_xlabel("Radius [mm]")
     ax.set_ylabel("Tracks")
-    plt.savefig(os.path.join(PLOT_DIR, "radiusPlot.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  "radiusPlot.png")
 
 #Some of these may be redundant
 def getYProfiles(clusters):
@@ -936,12 +898,7 @@ def plotYprofileYlocalRange(
     ax[2].set_xlabel("y [pixels]")
 
     fig.suptitle(f'Average y-profiles for different ranges of y-local {titleBibSig}', fontsize=15)
-    plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, f"{titleBibSig}yprofileVsYlocalRange.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  f"{titleBibSig}yprofileVsYlocalRange.png")
 
 def plotYprofileYZRange(
         # yProfileLowZgl,yProfileMidZgl,yProfileHighZgl,yProfileLowYl,yProfileMidYl,yProfileHighYl, 
@@ -984,11 +941,8 @@ def plotYprofileYZRange(
     ax[1,1].set_xlabel("y [pixels]")
 
     
-    plt.savefig(os.path.join(PLOT_DIR, f"signal_bib_allYprofilesInYlocalZglobalRanges.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  f"signal_bib_allYprofilesInYlocalZglobalRanges.png")
+
 
 def clusterYSizeVsYlocal(truth):
     clusterSize=[]
@@ -1017,11 +971,7 @@ def plotClusterYSizes(
     ax.set_ylabel("Cluster y sizes [pixels]")
     ax.legend()
     ax.set_title(f"{titleBibSig}")
-    plt.savefig(os.path.join(PLOT_DIR, f"{titleBibSig}clusterYSizes.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  f"{titleBibSig}clusterYSizes.png")
 
 def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
         PLOT_DIR="./plots",interactivePlots=False):
@@ -1056,13 +1006,10 @@ def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
     ax[1,1].set_ylabel("Track Density")
     ax[1,1].set_title("Cluster x-size Comaprison")
 
-    fig.tight_layout()
+    # fig.tight_layout()
 
-    plt.savefig(os.path.join(PLOT_DIR, f"XYSizeProfiless.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  f"XYSizeProfiless.png")
+
 
 ########################
 # Utilities for plotting tracklists
@@ -1113,27 +1060,28 @@ def plotTrackPPt(tracksBib, tracksSig,binsBib=30,binsSig=30,yscale='log',PLOT_DI
     plt.title("BIB tracklists, p and pt")
     plt.legend()
     plt.yscale(yscale)
+    plt.ylabel("N tracks")
+    plt.xlabel("momentum (GeV)")
 
     plt.subplot(122)
     plt.hist(tracksSig["p"],label="p",bins=binsSig)
     plt.hist(tracksSig["pt"], label="pt",alpha=0.7,bins=binsSig)
     plt.title("Sig tracklists, p and pt")
     plt.legend()
+    plt.xlabel("momentum (GeV)")
+    plt.ylabel("N tracks")
     plt.yscale(yscale)
 
-    fig.tight_layout()
+    # fig.tight_layout()
 
-    plt.savefig(os.path.join(PLOT_DIR, f"TrackPPt.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  f"TrackPPt.png")
+
 
 def plotPtTrackAndParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plots",interactivePlots=False):
     key = "pt"
     binsBib = 30
     binsSig = 30
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,xlabel="pT (GeV)")
 
 def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",interactivePlots=False):
     # z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"]))
@@ -1152,19 +1100,18 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
     plt.yscale('log')
     plt.title(f"{bibSigLabel}")
     plt.legend()
+    plt.ylabel("N tracks")
+    plt.xlabel("Momentum (GeV)")
 
     plt.subplot(122)
     plt.hist(p - tracksDF["p"])
     plt.title(f"Difference between p saved in {bibSigLabel} tracklists and \n p recalculated from cota, cotb, pt saved in tracklists")
     plt.yscale('log')
+    plt.ylabel("N tracks")
+    plt.xlabel('Momentum - momentum = "0" (GeV)')
 
-    fig.tight_layout()
 
-    plt.savefig(os.path.join(PLOT_DIR, f"TrackPCalcComparison{bibSigLabel}.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    closePlot(PLOT_DIR, interactivePlots,  f"TrackPCalcComparison{bibSigLabel}.png")
 
 def calcNxyzTrack(tracksDF,showUnitVerification=False):
     # if len(tracksDF)==0:
@@ -1213,33 +1160,39 @@ def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plo
     binsSig = 30
     recalcStr = "(recalculated)"
     print("FIX BINS!")
+    print("COMBINE INTO ONE PLOT")
+    fig, ax=plt.subplots(ncols=2, nrows=3, figsize=(10,13))
+
     key = "n_x"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[321,322],xlabel = "momentum*scalePion (GeV*scalePion)")
     key = "n_y"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[323,324],xlabel = "momentum*scalePion (GeV*scalePion)")
     key = "n_z"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[325,326],xlabel = "momentum*scalePion (GeV*scalePion)")
+    closePlot(PLOT_DIR, interactivePlots, "TrackParquet_nxnynz.png")
 def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStr = "",
-                        PLOT_DIR="./plots",interactivePlots=False):
-    fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
-    plt.subplot(121)
+                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = ""):
+    if isSubplot and len(subplots) ==0:
+        raise ValueError("if using this method for subplots, need to have list of subplots")
+    if not isSubplot:
+        fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
+        subplots = [121, 122]
+    plt.subplot(subplots[0])
     plt.hist(truthBib[key],bins=binsBib,label=f"{key} from parquet")
     plt.hist(tracksBib[key],bins=binsBib,label=f"{key} from track {recalcStr}",alpha=0.7)
     plt.title(f"BIB {key} comparison tracklists to parquets")
     plt.legend()
+    plt.xlabel(xlabel)
+    plt.ylabel("N tracks")
     plt.yscale('log')
     
-    plt.subplot(122)
+    plt.subplot(subplots[1])
     plt.hist(truthSig[key],bins=binsSig,label=f"{key} from parquet")
     plt.hist(tracksSig[key],bins=binsSig,label=f"{key} from track {recalcStr}",alpha=0.7)
     plt.title(f"Signal {key} comparison tracklists to parquets")
     plt.legend()
+    plt.xlabel(xlabel)
+    plt.ylabel("N tracks")
     plt.yscale('log')
-
-    fig.tight_layout()
-
-    plt.savefig(os.path.join(PLOT_DIR, f"TrackParquet{key}.png"))
-    if interactivePlots:
-        plt.show()
-    else:
-        plt.close()
+    if not isSubplot:
+        closePlot(PLOT_DIR, interactivePlots,  f"TrackParquet{key}.png")

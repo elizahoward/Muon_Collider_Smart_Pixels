@@ -31,6 +31,7 @@ class SmartpixPlotter():
                  PLOT_DIR: os.path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots"),
                  savedPklFromParquet: bool = False,
                  processTracks: bool = True,
+                 processOldTracks:bool = False,
                  plotTracklists: bool = True,
                  plotParquets: bool = True,
                  ):
@@ -47,6 +48,7 @@ class SmartpixPlotter():
         self.PLOT_DIR = PLOT_DIR 
         self.savedPklFromParquet = savedPklFromParquet 
         self.processTracks = processTracks 
+        self.processOldTracks = processOldTracks
         self.plotTracklists = plotTracklists
         self.plotParquets = plotParquets
 
@@ -107,7 +109,7 @@ class SmartpixPlotter():
             print("process Tracks is set to false, so not loading tracklists")
             # return
         print("Start loading track data")
-        self.tracksBib, self.tracksSig, self.tracksBib_mp,self.tracksBib_mm=loadAllTracks(trackDirBib_mm=self.trackDirBib_mm,trackDirBib_mp=self.trackDirBib_mp,trackDirSig=self.trackDirSig)
+        self.tracksBib, self.tracksSig, self.tracksBib_mp,self.tracksBib_mm=loadAllTracks(trackDirBib_mm=self.trackDirBib_mm,trackDirBib_mp=self.trackDirBib_mp,trackDirSig=self.trackDirSig, useBibSigIndic=(not self.processOldTracks))
         self.tracksBib = calcNxyzTrack(self.tracksBib)
         self.tracksSig = calcNxyzTrack(self.tracksSig)
         print("finished loading track data")

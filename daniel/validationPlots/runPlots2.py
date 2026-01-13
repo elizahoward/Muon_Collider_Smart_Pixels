@@ -17,6 +17,7 @@ def main(parquetDir_all,
             PLOT_DIR,
             savedPklFromParquet,
             processTracks,
+            processOldTracks,
             plotTracklists,
             plotParquets,):
     plotter = SmartpixPlotter(
@@ -33,6 +34,7 @@ def main(parquetDir_all,
                     PLOT_DIR = PLOT_DIR,# os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots"),
                     savedPklFromParquet = savedPklFromParquet,
                     processTracks = processTracks,
+                    processOldTracks = processOldTracks,
                     plotTracklists = plotTracklists,
                     plotParquets = plotParquets,
                     )
@@ -51,6 +53,7 @@ parser.add_argument("-dplt", "--PLOT_DIR", help = "Directory for plot outputs", 
 parser.add_argument("-dd","--defaultDirs", action = "store_true")
 parser.add_argument("-pr", "--processRecon", action = 'store_true')
 parser.add_argument("-pt", "--processTracks", action = 'store_true')
+parser.add_argument("-po", "--processOldTracks", action = 'store_true')
 parser.add_argument("-pp", "--processParquets", action = 'store_true')
 parser.add_argument("-pltt", "--plotTracklists", action = 'store_true')
 parser.add_argument("-pltp", "--plotParquets", action = 'store_true')
@@ -70,6 +73,7 @@ defaultDirs = ops.defaultDirs
 processRecon = ops.processRecon
 processTracks = ops.processTracks
 # processParquets = ops.processParquets
+processOldTracks = ops.processOldTracks
 savedPklFromParquet = not ops.processParquets
 plotTracklists = ops.plotTracklists
 plotParquets = ops.plotParquets
@@ -80,6 +84,9 @@ repodir = Path(__file__).resolve().parent.parent.parent
 print("Assuming you are starting in .....daniel/validationPlots, so git repo dir is ", repodir)
 assert repodir.parts[-1] == 'Muon_Collider_Smart_Pixels'
 
+if processOldTracks and (not processTracks):
+    raise ValueError("Warning: it looks like you misinterpreted flags, processOldTracks is something you can set only if you are processing tracks, and they follow old naming conventions.")
+
 if defaultDirs:
     print("Using default directories")
     if (parquetDir_all is not None) or (trackDirBib_mm is not None) or (trackDirBib_mp is not None) or (trackDirSig is not None) or (None is not None):
@@ -89,15 +96,16 @@ if defaultDirs:
     parquetDir_sig = "/local/d1/smartpixML/bigData/Simulation_Output_Signal/"
     parquetDir_all = "/local/d1/smartpixML/bigData/allData/"
     parquetDir_all = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Parquet_Files"
+    parquetDir_all = None
 
     skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
     trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
     trackDirBib_mp = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/'
     trackDirSig = '/local/d1/smartpixML/bigData/tracklists/signal_tracklists'
-    trackDirBib_mm = '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Track_Lists'
-    trackDirBib_mp = None
-    trackDirSig = None
+    # trackDirBib_mm = '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Track_Lists'
+    # trackDirBib_mp = None
+    # trackDirSig = None
 
     print("Repo dir (currently unused)",repodir)
 
@@ -134,5 +142,6 @@ main(parquetDir_all,
             PLOT_DIR,
             savedPklFromParquet,
             processTracks,
+            processOldTracks,
             plotTracklists,
             plotParquets,)
