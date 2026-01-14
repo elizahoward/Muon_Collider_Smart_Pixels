@@ -265,19 +265,27 @@ for file_path in file_list:
             # Calculate beta from phi and gamma0
             beta=phi-(gamma0-np.pi/2)
 
+            # Alternative cota and cotb calculation
+            hit_p = hit.getMomentum()
+            cota1 = hit_p[2]/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))
+            cotb1 = (hit_p[0]*sin(gamma0)-hit_p[1]*cos(gamma0))/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))
+
             # If we are unflipped, we must adjust alpha and beta, and flip y-local
             if ops.flp == 0:
                 beta += np.pi
                 alpha = 2*np.pi-alpha
                 ylocal *= -1
+                cota1 *= -1
 
             cota = 1./np.tan(alpha)
             cotb = 1./np.tan(beta)
 
-            #alternative calculation
-            print(f"Original: {cota}, {cotb}")
-            hit_p = hit.getMomentum()
-            print(f"Alternative: {hit_p[2]/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))}, {(hit_p[0]*sin(gamma0)-hit_p[1]*cos(gamma0))/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))}")
+            # Compare different calculations
+            if cota-cota1>0.01:
+                print(f"PROBLEM: cota not matching. Original: {cota}; Alternative: {cota1}")
+            if cotb-cotb1>0.01:
+                print(f"PROBLEM: cota not matching. Original: {cotb}; Alternative: {cotb1}")
+            
 
             # Skip tracks with momentum 0
             if round(p, ops.float_precision)==0 or round(pt, ops.float_precision)==0:
