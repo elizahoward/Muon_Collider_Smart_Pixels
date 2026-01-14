@@ -1146,7 +1146,7 @@ def calcNxyzTrack(tracksDF,showUnitVerification=False):
     #     print("tracklist is empty, so no calculation")
     #     return tracksDF
     z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"])) #locdir[2] https://github.com/elizahoward/pixelav/blob/30d7585448f87bcdf10f7f066005a04e4bd34a52/ppixelav2_list_trkpy_n_2f_custom.c#L341
-    flipCoefficient = (np.array(tracksDF["flp"] == 0)*2-1)*-1
+    flipCoefficient = ((np.array(tracksDF["flp"]) == 0)*2-1)*-1
     z=flipCoefficient*z
     x = z*tracksDF["cota"] #locdir[0]
     y = z*tracksDF["cotb"] #locdir[1]
