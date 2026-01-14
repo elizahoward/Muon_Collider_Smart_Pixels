@@ -18,12 +18,11 @@ from plotUtils import *
 import pickle
 
 
-data_main_dir = f"{repodir}/Data_Files/Data_Set_20260108_114627"
+data_main_dir = f"{repodir}/Data_Files/Data_Set_20260114_133722"
 
 
 flp = 0
 # trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]
-dataDir_mm = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mm/"
 # dataDir_mp = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mp/"
 dataDir_sig = f"{data_main_dir}/Parquet_Files"
 #dataDir_all = "/local/d1/smartpixML/bigData/allData/"

@@ -5,7 +5,10 @@ from math import *
 import argparse
 import os
 import random
-import matplotlib.pyplot as plt
+from plothelper import *
+
+# setup plotter
+plt = PlotHelper()
 
 sensorAngles = np.arange(-np.pi,np.pi+2*np.pi/8,np.pi/8)
 
@@ -69,7 +72,7 @@ parser.add_argument("-odir", "--output_folder", help="Output folder", type=str)
 parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
 parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=100, type=int)
 parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=1, type=int) 
-parser.add_argument("-p", "--plot", help="Include if you want to make plots at this stage")
+parser.add_argument("-p", "--plot", help="Include if you want to make plots at this stage", action='store_true')
 parser.add_argument("-flp", "--flp", help="Direction of sensor (1 for FE side out, 0 for FE side down)", default=0, type=int)
 parser.add_argument("-sig", "--signal", help="Are you generating signal?", action='store_true')
 parser.add_argument("-bmm", "--bib_mm", help="Are you running mm bib?", action='store_true')
@@ -270,6 +273,11 @@ for file_path in file_list:
 
             cota = 1./np.tan(alpha)
             cotb = 1./np.tan(beta)
+
+            #alternative calculation
+            print(f"Original: {cota}, {cotb}")
+            hit_p = hit.getMomentum()
+            print(f"Alternative: {hit_p[2]/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))}, {(hit_p[0]*sin(gamma0)-hit_p[1]*cos(gamma0))/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))}")
 
             # Skip tracks with momentum 0
             if round(p, ops.float_precision)==0 or round(pt, ops.float_precision)==0:
