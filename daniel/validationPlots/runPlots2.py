@@ -2,6 +2,12 @@
 Author: Daniel Abadjiev, calls code borrowed from Eliza Howard and Eric You
 Date: January, 2026
 Description: Runner for the SmartpixPlotter class to make plots to validate the dataset, with passable arguments to customize plotting.
+
+Example Usage:
+
+python runPlots2.py  --processTracks --dataDir_all Data_Set_20260107_140951 --processParquets --processRecon --interactivePlots --plotTracklists --plotParquets
+
+python runPlots2.py  --processTracks --defaultDirs --plotTracklists --plotParquets --interactivePlots --processOldTracks 
 '''
 import os
 import sys

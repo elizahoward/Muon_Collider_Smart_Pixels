@@ -396,6 +396,17 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
         print(f"BIB pt min: {np.min(truthBib['pt'])} and max: {np.max(truthBib['pt'])}")
         print(f"Signal pt min: {np.min(truthSig['pt'])} and max: {np.max(truthSig['pt'])}")
 
+def plotPtEta(truthSig,truthBib,PLOT_DIR='./plots',interactivePlots=False):
+    plt.figure(figsize=(5,4))
+    # plt.figure()
+    plt.plot(truthSig["eta"],truthSig["pt"],',',label="Signal")
+    plt.plot(truthBib["eta"],truthBib["pt"],',',label="BIB")
+    plt.legend()
+    plt.xlabel('η')
+    plt.ylabel("pT (GeV)")
+    plt.title("pT vs. η")
+    closePlot(PLOT_DIR,interactivePlots,"bib_signal_ptEta.png")
+
 
 #From Eric's code 
 def create_pastel_red_cmap():

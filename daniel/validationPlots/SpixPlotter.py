@@ -149,6 +149,7 @@ class SmartpixPlotter():
             #Eric's plots
             mask_bib,mask_sig,mask_bib_x,mask_sig_x,mask_bib_y,mask_sig_y, = getEricsMasks(self.truthBib, self.truthSig, self.xSizesSig, self.xSizesBib, self.ySizesSig, self.ySizesBib,)
             plotPt(self.truthSig,self.truthBib_mm,self.truthBib_mp,self.truthBib,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
+            plotPtEta(self.truthSig,self.truthBib,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotZglobalXsize(self.truthBib, self.truthSig, self.xSizesSig, self.xSizesBib,mask_bib,mask_sig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             # plotZglobalYsize(self.truthBib, self.truthSig, self.ySizesSig, self.ySizesBib,mask_bib_y,mask_sig_y,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotZglobalYsize(self.truthBib, self.truthSig, self.ySizesSig, self.ySizesBib,mask_bib,mask_sig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
