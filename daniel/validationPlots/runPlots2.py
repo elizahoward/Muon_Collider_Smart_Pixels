@@ -129,6 +129,7 @@ if defaultDirs:
     # PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
 if dataDir_all is not None:
     print("Using a dataset directory with subfolders, following Eliza's 2026 dataset format, ignoring other directories")
+    print("Setting plot directory inside dataset folder")
     #either dataDir_all is a string witht the dataset name, in which case join paths from DataFiles and repodir
     #otherwise, dataDir_all should be an absolute path to the dataset
     # if 
@@ -143,6 +144,7 @@ if dataDir_all is not None:
     trackDirBib_mm = datasetDir.joinpath("Track_Lists")
     trackDirBib_mp = datasetDir.joinpath("Track_Lists")
     trackDirSig = datasetDir.joinpath("Track_Lists")
+    PLOT_DIR = datasetDir.joinpath("plots")
     #Need to implement a combined tracklist directory
     # raise NotImplementedError("Didn't actually implement this yet")
 
