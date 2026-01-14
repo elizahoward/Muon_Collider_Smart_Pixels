@@ -277,7 +277,10 @@ else:
 # Use date and time to create unique output directory
 if start_step==0:
     output_dir = f"{repodir}/Data_Files/Data_Set_{datetime.now().strftime('%Y%m%d_%H%M%S')}" 
-    os.makedirs(output_dir)
+    try:
+        os.makedirs(output_dir)
+    except:
+        raise  FileNotFoundError("You may not have the soft link for Data_Files. Run: ln -s /local/d1/smartpixML/2026Datasets/Data_Files")
 else:
     start_dir = start_options[start_step - 1]
     output_dir = Path(start_dir).parent
