@@ -72,7 +72,7 @@ parser.add_argument("-pltt", "--plotTracklists", action = 'store_true')
 parser.add_argument("-pltp", "--plotParquets", action = 'store_true')
 parser.add_argument("-plti", "--interactivePlots", action = 'store_true')
 # parser.add_argument("-s","--styleSheet",default="seaborn-v0_8-colorblind",type=str)
-parser.add_argument("-s","--styleSheet",default="seaborn-v0_8-talk",type=str)
+parser.add_argument("-s","--styleSheet",default="tableau-colorblind10",type=str) #ggplot, classic, default are also acceptable. Seaborn stylesheets mess things up
 
 ops = parser.parse_args()
 
