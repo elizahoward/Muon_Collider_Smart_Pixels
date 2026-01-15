@@ -437,55 +437,79 @@ def getEricsMasks(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
 
     return mask_bib,mask_sig,mask_bib_x,mask_sig_x,mask_bib_y,mask_sig_y,
 
+#This should not be called directly!
+#Only use this inside other functions that e.g. use this and deal with figsize/subplot outside
+def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title):
+    if not( keyX in truthDF.columns ):
+        raise Exception(f"{keyX} not present in truthbib or truthsig dataframes")
+    if not( keyY in truthDF.columns ):
+        raise Exception(f"{keyY} not present in truthbib or truthsig dataframes")
+    plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title)
+
+def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title):
+    counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],bins=[binsX,binsY],cmap=cmap)
+    plt.colorbar(im,ax=plt.gca())
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    # ax[0].tick_params(axis='both', which='major',)
+
+def plot1by2BibSig2dHisto(truthBib, truthSig,keyX, keyY,mask_bib,mask_sig,binsX,binsY,cmap,xlabel,ylabel,title,PLOT_DIR="./plots",interactivePlots=False):
+    # fig, ax = plt.subplots(1, 2, figsize=(14, 6))
+    fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+    plt.subplot(121)
+    plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB")
+
+    plt.subplot(122)
+    plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal")
+    
+    closePlot(PLOT_DIR, interactivePlots,  f"{title}.png")
+
+def plot2by2BibSig2dHisto(truthBib, truthSig,keyX1, keyY1,keyX2, keyY2,mask_bib,mask_sig,binsX1,binsY1,binsX2,binsY2,cmap,xlabel1,ylabel1,xlabel2,ylabel2,title,PLOT_DIR="./plots",interactivePlots=False):
+    # fig, ax = plt.subplots(2, 2, figsize=(20, 16))
+    fig, ax = plt.subplots(2, 2, figsize=(10, 7))
+    plt.subplot(221)
+    plot2dHistFromTruth(truthBib,keyX1, keyY1,mask_bib,binsX1,binsY1,cmap,xlabel1,ylabel1,"BIB")
+
+    plt.subplot(222)
+    plot2dHistFromTruth(truthSig,keyX1, keyY1,mask_sig,binsX1,binsY1,cmap,xlabel1,ylabel1,"Signal")
+
+    plt.subplot(223)
+    plot2dHistFromTruth(truthBib,keyX2, keyY2,mask_bib,binsX2,binsY2,cmap,xlabel2,ylabel2,"")
+
+    plt.subplot(224)
+    plot2dHistFromTruth(truthSig,keyX2, keyY2,mask_sig,binsX2,binsY2,cmap,xlabel2,ylabel2,"")
+    
+    closePlot(PLOT_DIR, interactivePlots,  f"{title}.png")
+#Theoretically could write a method that instead takes in separate x arrays or y arrays, but seems like that's not necessary
+#The only time it would be used would be with avgClustDict or with nPixelsBib/nPixelsSig, and it looks like those are not used in 2d hists
+# def plot1by2(truthBib, truthSig,keyX, keyY,mask_bib,mask_sig,binsX,binsY,cmap,xlabel,ylabel,title,PLOT_DIR="./plots",interactivePlots=False):
+
 # --- Plot: Side-by-side comparison of z-global vs x-size ---
 def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
-    fig, ax = plt.subplots(1, 2, figsize=(14, 6))
     if not( 'z-global' in truthbib.columns and 'z-global' in truthsig.columns ):
         raise Exception("z-global not present in truthbib or truthsig dataframes")
     assert len(truthbib) == len(xSizesBib)
     assert len(truthsig) == len(xSizesSig)
 
     pastel_red_cmap = create_pastel_red_cmap()
+    
+    plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'xSize',mask_bib,mask_sig,30,np.arange(0,22,1),pastel_red_cmap,'z-global [mm]','x-size (# pixels)', "bib_signal_zglobal_vs_xsize_comparison",PLOT_DIR,interactivePlots)
 
+    printEricRangeThing(truthbib,truthsig,'z-global','xSize')
 
-    #Now fully just Eric's code
-    z_global_bib = truthbib['z-global']
-    z_global_sig = truthsig['z-global']
+def printEricRangeThing(truthbib,truthsig,key1,key2):
     
-    # Left panel: BIB
-    # mask_bib = ~np.isnan(z_global_bib) & ~np.isnan(xSizesBib)
-    # mask_bib = mask_bib & np.isfinite(z_global_bib) & np.isfinite(xSizesBib)
-    
-    hb = ax[0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,22,1)], cmap=pastel_red_cmap)
-    ax[0].figure.colorbar(hb[3],ax=ax[0])#    ax[0].colorbar()
-    ax[0].set_title("BIB",)
-    ax[0].set_xlabel('z-global [mm]',)
-    ax[0].set_ylabel('x-size (# pixels)',)
-    ax[0].tick_params(axis='both', which='major',)
-    
-    # Right panel: Signal
-    # mask_sig = ~np.isnan(z_global_sig) & ~np.isnan(xSizesSig)
-    # mask_sig = mask_sig & np.isfinite(z_global_sig) & np.isfinite(xSizesSig)
-    
-    hb = ax[1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,22,1)], cmap=pastel_red_cmap)
-    ax[1].figure.colorbar(hb[3],ax=ax[1])#    ax[1].colorbar()
-    ax[1].set_title("Signal",)
-    ax[1].set_xlabel('z-global [mm]',)
-    ax[1].set_ylabel('x-size (# pixels)',)
-    ax[1].tick_params(axis='both', which='major',)
-    
-    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_zglobal_vs_xsize_comparison.png")
-    
-    print(f"BIB z-global range: {z_global_bib.min():.2f} to {z_global_bib.max():.2f} mm")
-    print(f"Signal z-global range: {z_global_sig.min():.2f} to {z_global_sig.max():.2f} mm")
+    print(f"BIB {key1} range: {truthbib[key1].min():.2f} to {truthbib[key1].max():.2f} mm")
+    print(f"Signal {key1} range: {truthsig[key1].min():.2f} to {truthsig[key1].max():.2f} mm")
     if len(truthbib)>0:
-        print(f"BIB x-size range: {xSizesBib.min()} to {xSizesBib.max()} pixels")
+        print(f"BIB {key2} range: {truthbib[key2].min()} to {truthbib[key2].max()} pixels")
     else:
-        print("no bib, so not printing bib x-size range")
+        print(f"no bib, so not printing bib {key2} range")
     if len(truthsig)>0:
-        print(f"Signal x-size range: {xSizesSig.min()} to {xSizesSig.max()} pixels")
+        print(f"Signal {key2} range: {truthsig[key2].min()} to {truthsig[key2].max()} pixels")
     else:
-        print("no signal, so not printing signal x-size range")
+        print(f"no signal, so not printing signal {key2} range")
 
 
 # --- Plot 2: Side-by-side comparison of z-global vs y-size ---
@@ -497,34 +521,8 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
 
     pastel_red_cmap = create_pastel_red_cmap()
 
-    z_global_bib = truthbib['z-global']
-    z_global_sig = truthsig['z-global']
+    plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'ySize',mask_bib_y,mask_sig_y,30,np.arange(0,14,1),pastel_red_cmap,'z-global [mm]','y-size (# pixels)', "bib_signal_zglobal_vs_ysize_comparison",PLOT_DIR,interactivePlots)
 
-    #Now fully just Eric's code
-    fig, ax = plt.subplots(1, 2, figsize=(18, 8))
-    # Left panel: BIB
-    # mask_bib_y = ~np.isnan(z_global_bib) & ~np.isnan(ySizesBib)
-    # mask_bib_y = mask_bib_y & np.isfinite(z_global_bib) & np.isfinite(ySizesBib)
-    
-    hb = ax[0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,14,1)], cmap=pastel_red_cmap)
-    ax[0].figure.colorbar(hb[3],ax=ax[0])#    ax[0].colorbar()
-    ax[0].set_title("BIB - Y Size",)
-    ax[0].set_xlabel('z-global [mm]',)
-    ax[0].set_ylabel('y-size (# pixels)',)
-    ax[0].tick_params(axis='both', which='major',)
-    
-    # Right panel: Signal
-    # mask_sig_y = ~np.isnan(z_global_sig) & ~np.isnan(ySizesSig)
-    # mask_sig_y = mask_sig_y & np.isfinite(z_global_sig) & np.isfinite(ySizesSig)
-    
-    hb = ax[1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,14,1)], cmap=pastel_red_cmap)
-    ax[1].figure.colorbar(hb[3],ax=ax[1])#    ax[1].colorbar()
-    ax[1].set_title("Signal - Y Size",)
-    ax[1].set_xlabel('z-global [mm]',)
-    ax[1].set_ylabel('y-size (# pixels)',)
-    ax[1].tick_params(axis='both', which='major',)
-    
-    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_zglobal_vs_ysize_comparison.png")
 
 # --- Plot 3: 2x2 grid showing both x-size and y-size comparisons ---
 def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -538,49 +536,13 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     z_global_bib = truthbib['z-global']
     z_global_sig = truthsig['z-global']
 
-    fig, axes = plt.subplots(2, 2, figsize=(20, 16))
-    #Now fully just Eric's code
+    binsZGlobal = 30
+    binsXSize = np.arange(0,22,1)
+    binsYSize = np.arange(0,14,1)
+    plot2by2BibSig2dHisto(truthbib,truthsig,'z-global','xSize','z-global','ySize',mask_bib,mask_sig,
+                          binsZGlobal,binsXSize,binsZGlobal,binsYSize,pastel_red_cmap,'','x-size (# pixels)',
+                          'z-global [mm]','y-size (# pixels)',"bib_signal_zglobal_vs_xysize_grid_comparison",PLOT_DIR,interactivePlots)
 
-    print("TODO!!!! DECIDE WHETHER TO USE SEPARATE X AND Y MASKS")
-    mask_bib_y = mask_bib
-    mask_sig_y = mask_sig
-
-
-    # Top row: X-size comparisons
-    # Top-left: BIB X-size
-    hb = axes[0,0].hist2d(z_global_bib[mask_bib], xSizesBib[mask_bib], bins=[30, np.arange(0,22,1)], cmap=pastel_red_cmap)
-    axes[0,0].figure.colorbar(hb[3],ax=axes[0,0])#    axes[0,0].colorbar()
-    axes[0,0].set_title("BIB - X Size",)
-    axes[0,0].set_xlabel('z-global [mm]',)
-    axes[0,0].set_ylabel('x-size (# pixels)',)
-    axes[0,0].tick_params(axis='both', which='major',)
-    
-    # Top-right: Signal X-size
-    hb = axes[0,1].hist2d(z_global_sig[mask_sig], xSizesSig[mask_sig], bins=[30, np.arange(0,22,1)], cmap=pastel_red_cmap)
-    axes[0,1].figure.colorbar(hb[3],ax=axes[0,1])#    axes[0,1].colorbar()
-    axes[0,1].set_title("Signal - X Size",)
-    axes[0,1].set_xlabel('z-global [mm]',)
-    axes[0,1].set_ylabel('x-size (# pixels)',)
-    axes[0,1].tick_params(axis='both', which='major',)
-    
-    # Bottom row: Y-size comparisons
-    # Bottom-left: BIB Y-size
-    hb = axes[1,0].hist2d(z_global_bib[mask_bib_y], ySizesBib[mask_bib_y], bins=[30, np.arange(0,14,1)], cmap=pastel_red_cmap)
-    axes[1,0].figure.colorbar(hb[3],ax=axes[1,0])#    axes[1,0].colorbar()
-    axes[1,0].set_title("BIB - Y Size",)
-    axes[1,0].set_xlabel('z-global [mm]',)
-    axes[1,0].set_ylabel('y-size (# pixels)',)
-    axes[1,0].tick_params(axis='both', which='major',)
-    
-    # Bottom-right: Signal Y-size
-    hb = axes[1,1].hist2d(z_global_sig[mask_sig_y], ySizesSig[mask_sig_y], bins=[30, np.arange(0,14,1)], cmap=pastel_red_cmap)
-    axes[1,1].figure.colorbar(hb[3],ax=axes[1,1])#    axes[1,1].colorbar()
-    axes[1,1].set_title("Signal - Y Size",)
-    axes[1,1].set_xlabel('z-global [mm]',)
-    axes[1,1].set_ylabel('y-size (# pixels)',)
-    axes[1,1].tick_params(axis='both', which='major',)
-    
-    closePlot(PLOT_DIR, interactivePlots,  "bib_signal_zglobal_vs_xysize_grid_comparison.png")
 
 
 
@@ -676,100 +638,32 @@ def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plot
 
 # --- Plot 2: 2D histograms of eta vs x-size/y-size ---
 def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
-    fig, ax = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.05, 'wspace': 0.03}, figsize=(10,7))
+    # fig, ax = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.05, 'wspace': 0.03}, figsize=(10,7))
 
-    # Before each hist2d call, filter out NaN and inf values for both axes
-    mask_96 = ~np.isnan(truthsig['eta']) & ~np.isnan(xSizesSig)
-    mask_96 = mask_96 & np.isfinite(truthsig['eta']) & np.isfinite(xSizesSig)
-    hb = ax[0,1].hist2d(truthsig['eta'][mask_96], xSizesSig[mask_96], bins=[30, np.arange(0,22,1)], cmap='Blues')
-    ax[0,1].figure.colorbar(hb[3],ax=ax[0,1])#    ax[0,1].colorbar()
-    ax[0,1].set_title("Signal",)
+    binsEta = 30
+    binsXSize = np.arange(0,22,1)
+    binsYSize = np.arange(0,14,1)
+    plot2by2BibSig2dHisto(truthbib,truthsig,'eta','xSize','eta','ySize',mask_bib,mask_sig,
+                          binsEta,binsXSize,binsEta,binsYSize,'Blues','','x-size (# pixels)',
+                          'η','y-size (# pixels)',"bib_signal_eta_vs_size_2d",PLOT_DIR,interactivePlots)
 
-    mask_98 = ~np.isnan(truthsig['eta']) & ~np.isnan(ySizesSig)
-    mask_98 = mask_98 & np.isfinite(truthsig['eta']) & np.isfinite(ySizesSig)
-    hb = ax[1,1].hist2d(truthsig['eta'][mask_98], ySizesSig[mask_98], bins=[30, np.arange(0,14,1)], cmap='Blues')
-    ax[1,1].figure.colorbar(hb[3],ax=ax[1,1])#    ax[1,1].colorbar()
-    ax[1,1].set_xlabel('η',)
-
-    ax[0,0].set_ylabel('x-size (# pixels)',)
-    ax[1,0].set_ylabel('y-size (# pixels)',)
-
-    #Copying Eric's code but for bib
-    # Before each hist2d call, filter out NaN and inf values for both axes
-    mask_96 = ~np.isnan(truthbib['eta']) & ~np.isnan(xSizesBib)
-    mask_96 = mask_96 & np.isfinite(truthbib['eta']) & np.isfinite(xSizesBib)
-    hb = ax[0,0].hist2d(truthbib['eta'][mask_96], xSizesBib[mask_96], bins=[30, np.arange(0,22,1)], cmap='Blues')
-    ax[0,0].figure.colorbar(hb[3],ax=ax[0,0])#    ax[0,0].colorbar()
-    ax[0,0].set_title("BIB",)
-
-    mask_98 = ~np.isnan(truthbib['eta']) & ~np.isnan(ySizesBib)
-    mask_98 = mask_98 & np.isfinite(truthbib['eta']) & np.isfinite(ySizesBib)
-    hb = ax[1,0].hist2d(truthbib['eta'][mask_98], ySizesBib[mask_98], bins=[30, np.arange(0,14,1)], cmap='Blues')
-    ax[1,0].figure.colorbar(hb[3],ax=ax[1,0])#    ax[1,0].colorbar()
-    ax[1,0].set_xlabel('η',)
-
-    closePlot(PLOT_DIR, interactivePlots, "signal_eta_vs_size_2d.png")
 
 # --- Plot 3: 2D histograms of y-local vs x-size/y-size ---
 def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
-    fig, ax = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.05, 'wspace': 0.03}, figsize=(10,7))
+    # fig, ax = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.05, 'wspace': 0.03}, figsize=(10,7))
 
-    # Before each hist2d call, filter out NaN and inf values for both axes
-    mask_111 = ~np.isnan(truthsig['y-local']) & ~np.isnan(xSizesSig)
-    mask_111 = mask_111 & np.isfinite(truthsig['y-local']) & np.isfinite(xSizesSig)
-    hb = ax[0,1].hist2d(truthsig['y-local'][mask_111], xSizesSig[mask_111], bins=[30, np.arange(0,22,1)], cmap='Blues')
-    ax[0,1].figure.colorbar(hb[3],ax=ax[0,1])#    ax[0,1].colorbar()
-    ax[0,1].set_title("Signal",)
+    binsYlocal = 30
+    binsXSize = np.arange(0,22,1)
+    binsYSize = np.arange(0,14,1)
+    plot2by2BibSig2dHisto(truthbib,truthsig,'y-local','xSize','y-local','ySize',mask_bib,mask_sig,
+                          binsYlocal,binsXSize,binsYlocal,binsYSize,'Blues','','x-size (# pixels)',
+                          'y-local [μm]','y-size (# pixels)',"bib_signal_ylocal_vs_size_2d",PLOT_DIR,interactivePlots)
 
-    mask_113 = ~np.isnan(truthsig['y-local']) & ~np.isnan(ySizesSig)
-    mask_113 = mask_113 & np.isfinite(truthsig['y-local']) & np.isfinite(ySizesSig)
-    hb = ax[1,1].hist2d(truthsig['y-local'][mask_113], ySizesSig[mask_113], bins=[30, np.arange(0,14,1)], cmap='Blues')
-    ax[1,1].figure.colorbar(hb[3],ax=ax[1,1])#    ax[1,1].colorbar()
-    ax[1,1].set_xlabel('y-local [μm]',)
-
-    ax[0,0].set_ylabel('x-size (# pixels)',)
-    ax[1,0].set_ylabel('y-size (# pixels)',)
-
-    
-
-
-    mask_111 = ~np.isnan(truthbib['y-local']) & ~np.isnan(xSizesBib)
-    mask_111 = mask_111 & np.isfinite(truthbib['y-local']) & np.isfinite(xSizesBib)
-    hb = ax[0,0].hist2d(truthbib['y-local'][mask_111], xSizesBib[mask_111], bins=[30, np.arange(0,22,1)], cmap='Blues')
-    ax[0,0].figure.colorbar(hb[3],ax=ax[0,0])#    ax[0,0].colorbar()
-    ax[0,0].set_title("BIB",)
-
-    mask_113 = ~np.isnan(truthbib['y-local']) & ~np.isnan(ySizesBib)
-    mask_113 = mask_113 & np.isfinite(truthbib['y-local']) & np.isfinite(ySizesBib)
-    hb = ax[1,0].hist2d(truthbib['y-local'][mask_113], ySizesBib[mask_113], bins=[30, np.arange(0,14,1)], cmap='Blues')
-    ax[1,0].figure.colorbar(hb[3],ax=ax[1,0])#    ax[1,0].colorbar()
-    ax[1,0].set_xlabel('y-local [μm]',)
-
-
-    closePlot(PLOT_DIR, interactivePlots, "signal_ylocal_vs_size_2d.png")
 
 # --- Plot 4: 2D histogram of number_eh_pairs vs pt ---
 def plotEhPt(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10,5))
-    # Before each hist2d call, filter out NaN and inf values for both axes
-    mask_125 = ~np.isnan(truthsig['number_eh_pairs']) & ~np.isnan(truthsig['pt'])
-    mask_125 = mask_125 & np.isfinite(truthsig['number_eh_pairs']) & np.isfinite(truthsig['pt'])
-    hb = ax[1].hist2d(truthsig['number_eh_pairs'][mask_125], truthsig['pt'][mask_125], bins=30, cmap='Blues')
-    ax[1].figure.colorbar(hb[3],ax=ax[1])#    ax[1].colorbar()
-    ax[1].set_title("Signal",)
-    ax[1].set_ylabel('pt (GeV)',)
-    ax[1].set_xlabel('number of electron hole pairs',)
-
-    mask_125 = ~np.isnan(truthbib['number_eh_pairs']) & ~np.isnan(truthbib['pt'])
-    mask_125 = mask_125 & np.isfinite(truthbib['number_eh_pairs']) & np.isfinite(truthbib['pt'])
-    hb = ax[0].hist2d(truthbib['number_eh_pairs'][mask_125], truthbib['pt'][mask_125], bins=30, cmap='Blues')
-    ax[0].figure.colorbar(hb[3],ax=ax[0])#    ax[0].colorbar()
-    ax[0].set_title("BIB",)
-    ax[0].set_ylabel('pt (GeV)',)
-    ax[0].set_xlabel('number of electron hole pairs',)
-
-
-    closePlot(PLOT_DIR, interactivePlots,  "signal_ehpairs_vs_pt_2d.png")
+    plot1by2BibSig2dHisto(truthbib,truthsig,'number_eh_pairs','pt',mask_bib,mask_sig,30,30,'Blues',
+                          'Number of electron hole pairs','pT (GeV)',"bib_signal_ehpairs_vs_pt_2d",PLOT_DIR, interactivePlots)
 
 # --- Plot 5: charge separation for low and high pt ---
 def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -826,7 +720,7 @@ def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",inter
 
 
 
-    closePlot(PLOT_DIR, interactivePlots, "signal_pt_charge_separation.png")
+    closePlot(PLOT_DIR, interactivePlots, "bib_signal_pt_charge_separation.png")
 
 
 #Added plots from Eliza's code (several are also just wrapped into Eric's code)
@@ -1123,7 +1017,7 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
 
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)    
-    plt.hist(p,label="p recalculated based on cota, cotb, pt, in the tracklists")
+    plt.hist(p,label="p recalculated using \n cota, cotb, pt, in the tracklists")
     plt.hist(tracksDF["p"],label="p directly as saved in tracklists",alpha = 0.5)
     plt.yscale('log')
     plt.title(f"{bibSigLabel}")
