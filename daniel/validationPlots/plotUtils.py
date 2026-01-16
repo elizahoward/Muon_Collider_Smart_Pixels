@@ -74,7 +74,8 @@ def reshapeCluster(recon2d__):
     # print("I might have broken this funciton, might need to be called on each dataframe subtype")
     return recon2d__.to_numpy().reshape(recon2d__.shape[0],13,21)
 
-def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",showNums=True):
+def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",showNums=True,
+              xlabel="",ylabel="",):
     if pltStandalone:
         plt.figure(figsize=(4,1))
     if bins is None:
@@ -84,6 +85,8 @@ def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",
     else:
         hist, bin_edges = np.histogram(np.clip(arr,bins[0],bins[-1]),bins=bins)
     plt.stairs(hist*postScale,bin_edges,label=pltLabel)
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
     if showNums:
         for i in range(len(hist)):
             # Calculate the x-coordinate for the center of the bar
@@ -95,17 +98,64 @@ def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",
         plt.show()
     return hist,bin_edges
 
-def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,figsize=(7,3),yscale="linear"):
+#Returns a bins equally spaced (with linspace or logspace based on @spacing) for use with .hist
+def prepHistBins(arrs,binCount,spacing='linear',doPrint=False,arrNames=["BIB   ","Signal"]):
+    #TODO fix error if arrs looks something like np.max([[1,2],[1,3,4]]) but maybe that's not the most common use case
+    #Apparently it is common enough, so this fixes it
+    # binMax = np.max([np.max(arr1), np.max(arr2)])
+    # binMin = np.min([np.min(arr1), np.min(arr2)])
+    binMax = np.max([np.max(arrs[i]) for i in range(len(arrs))])
+    binMin = np.min([np.min(arrs[i]) for i in range(len(arrs))])
+    if doPrint:
+        for i in range(len(arrs)):
+            print(f"{arrNames[i]} max is {np.max(arrs[i])} and min is {np.min(arrs[i])}")
+            # print(f"{arr2Name} max is {np.max(arr2)} and min is {np.min(arr2)}")
+        print(f"So bins go from {binMin} to {binMax}, and there are {binCount} bins with {spacing} spacing")
+    if spacing =='linear':
+        bins = np.linspace(binMin,binMax,binCount)
+    elif spacing =='log':
+        bins = np.logspace(binMin,binMax,binCount)
+    else:
+        raise NotImplementedError("bin spacing must linear or log")   
+    return bins
+
+def plotHistoBibSig(truthBib,truthSig,key,pltStandalone,bins=None,showNums=False,figsize=(7,2), title="", xlabel="",ylabel="Tracks",
+                    PLOT_DIR=None,interactivePlots=None,saveTitle=None,yscale='linear'):
+    if pltStandalone and len(title)==0:
+        title = f"{key} distribution"
+    if len(xlabel)==0:
+        xlabel = f"{key}"
+    if (bins is None) or np.ndim(bins)==0:
+        print(f"Setting the histogram bins to be the collective range for BIB and Signal of {key}")
+        binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
+        bins = prepHistBins([truthBib[key],truthSig[key]],binCount,spacing='linear',doPrint=True,arrNames = [f"BIB    {key}", f"Signal {key}"])
+        # print(bins)
+    plotManyHisto([truthSig[key],truthBib[key]],bins=bins,title=title,pltStandalone=pltStandalone,
+                  pltLabels=[f"Signal",f"BIB"],showNums=showNums,figsize=figsize,yscale=yscale,
+                  PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,saveTitle=saveTitle,xlabel=xlabel,ylabel=ylabel)
+
+
+def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,
+                  figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",
+                  PLOT_DIR=None,interactivePlots=None,saveTitle=None):
     assert len(arrs) == len(pltLabels)
     if pltStandalone:
         plt.figure(figsize=figsize)
+    else:
+        if (PLOT_DIR is not None) or (interactivePlots is not None) or (saveTitle is not None):
+            raise ValueError("Why are you passing plot saving instructions in plotManyHisto when this is not a standalone plot?")
+    if (bins is None) or np.ndim(bins)==0:
+        print(f"Setting the histogram bins to be the collective range for the input arrs")
+        binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
+        bins = prepHistBins(arrs,binCount,doPrint=True,)
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
     for i in range(len(arrs)):
-        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums)
+        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel)
     plt.legend()
+    plt.xlabel(xlabel)
     plt.yscale(yscale)
     if pltStandalone:
-        plt.show()
+        closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
 
 #old version of the function
 def countBibSig(truthDF,doPrint=False):
@@ -372,25 +422,33 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
     showNums = False
     plt.subplot(211)
     bins = np.linspace(-0.1,0.1,100)
-    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution (low pt)",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2))
-    plt.ylabel("Tracks")
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution (low pt)",
+                  pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],
+                  bins=bins,showNums=showNums,figsize=(7,2))
+    # plt.ylabel("Tracks")
     plt.subplot(212)
     bins = np.linspace(-1,10,100)
-    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale='log')
-    plt.ylabel("Tracks (log scale)")
-    plt.xlabel("momentum pT (GeV)")
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,
+                  pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,
+                  showNums=showNums,figsize=(7,2),yscale='log',xlabel="momentum pT (GeV)",ylabel="Tracks (log scale)")
+    # plt.ylabel("Tracks (log scale)")
+    # plt.xlabel("momentum pT (GeV)")
     closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt_lowPtRange.png")
     plt.figure(figsize=(7, 5))
     plt.subplot(211)
     bins = np.logspace(-1,2,100)
     bins = np.concatenate(([-1,0,0.01],bins,[102,109,110,114]))
-    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale="linear")
-    plt.ylabel("Tracks")
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution",
+                  pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],
+                  bins=bins,showNums=showNums,figsize=(7,2),yscale="linear")
+    # plt.ylabel("Tracks")
     plt.subplot(212)
     # bins = np.logspace(-1,2.1,100)py
-    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,showNums=showNums,figsize=(7,2),yscale="log")
-    plt.ylabel("Tracks (log scale)")
-    plt.xlabel("momentum pT (GeV)")
+    plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,
+                  pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,
+                  showNums=showNums,figsize=(7,2),yscale="log",xlabel="momentum pT (GeV)",ylabel="Tracks (log scale)")
+    # plt.ylabel("Tracks (log scale)")
+    # plt.xlabel("momentum pT (GeV)")
     closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt_fullRange.png")
     if doPrint:
         print(f"BIB pt min: {np.min(truthBib['pt'])} and max: {np.max(truthBib['pt'])}")
@@ -730,13 +788,9 @@ def plotRadius(truthbib, truthsig,PLOT_DIR="./plots",interactivePlots=False):
     plt.figure(figsize=(8,5))
     plt.subplot(211)
     bins = np.arange(0,25,2) #If you use this, need to clip for underflow/overflow
-    # bins = 25
-    plt.hist(np.clip(truthbib['R'],bins[0],bins[-1]), histtype='step', bins = bins,label="BIB")
-    plt.hist(np.clip(truthsig['R'],bins[0],bins[-1]), histtype='step', bins = bins,label="Signal")
-    plt.legend()
-    plt.title("Radius of track curvature")
-    plt.xlabel("Radius [mm]")
-    plt.ylabel("Tracks")
+    bins = 25
+    plotHistoBibSig(truthbib,truthsig,"R",pltStandalone=False,bins=bins,xlabel="Radius [mm]",title="Radius of track curvature")
+
     plt.subplot(212)
     plt.plot(truthbib['R'],truthbib['pt'],label="BIB")
     plt.plot(truthsig['R'],truthsig['pt'],label="Signal",alpha=0.7)
@@ -930,7 +984,7 @@ def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
 
     # fig.tight_layout()
 
-    closePlot(PLOT_DIR, interactivePlots,  f"XYSizeProfiless.png")
+    closePlot(PLOT_DIR, interactivePlots,  f"XYSizeProfiles.png")
 
 
 ########################
