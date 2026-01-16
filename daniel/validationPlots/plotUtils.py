@@ -682,7 +682,7 @@ def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plot
     # ax[0,1].set_xlim(0, 120000)
     # nPixels: number of nonzero pixels in each cluster
     plt.subplot(224)
-    plotHistoBibSig(truthbib,truthsig,"nPix",pltStandalone=False,bins=30,xlabel="Number pixels",title="")
+    plotHistoBibSig(truthbib,truthsig,"nPix",pltStandalone=False,bins=47,xlabel="Number pixels",title="")
 
     closePlot(PLOT_DIR, interactivePlots, "signal_bib_summary_histograms.png")
 
