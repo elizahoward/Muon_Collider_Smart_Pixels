@@ -160,6 +160,16 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pl
     if pltStandalone:
         closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
 
+#Plots one variable vs. another
+#Do not use standalone! 
+def plotAvsB(truthSig,truthBib,keyX,keyY,xlabel,ylabel,title,alpha=1):
+    plt.plot(truthSig[keyX],truthSig[keyY],',',label="Signal",alpha=alpha)
+    plt.plot(truthBib[keyX],truthBib[keyY],',',label="BIB",alpha=alpha)
+    plt.legend()
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+
 #old version of the function
 def countBibSig(truthDF,doPrint=False):
     truthSig = truthDF.query('source == "sig"')
@@ -456,13 +466,8 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
 def plotPtEta(truthSig,truthBib,PLOT_DIR='./plots',interactivePlots=False):
     plt.figure(figsize=(5,4))
     # plt.figure()
-    plt.plot(truthSig["eta"],truthSig["pt"],',',label="Signal")
-    plt.plot(truthBib["eta"],truthBib["pt"],',',label="BIB")
-    plt.legend()
-    plt.xlabel('η')
-    plt.ylabel("pT (GeV)")
-    plt.title("pT vs. η")
-    closePlot(PLOT_DIR,interactivePlots,"bib_signal_ptEta.png")
+    plotAvsB(truthSig,truthBib,"eta","pt",'η',"pT (GeV)","pT vs. η")
+    closePlot(PLOT_DIR,interactivePlots,"signal_bib_ptEta.png")
 
 
 #From Eric's code 
@@ -550,6 +555,7 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     assert len(truthsig) == len(xSizesSig)
 
     pastel_red_cmap = create_pastel_red_cmap()
+    pastel_red_cmap = 'Blues'
     
     plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'xSize',mask_bib,mask_sig,30,np.arange(0,22,1),pastel_red_cmap,'z-global [mm]','x-size (# pixels)', "bib_signal_zglobal_vs_xsize_comparison",PLOT_DIR,interactivePlots)
 
@@ -577,6 +583,7 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
     assert len(truthsig) == len(ySizesSig)
 
     pastel_red_cmap = create_pastel_red_cmap()
+    pastel_red_cmap = 'Blues'
 
     plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'ySize',mask_bib_y,mask_sig_y,30,np.arange(0,14,1),
                           pastel_red_cmap,'z-global [mm]','y-size (# pixels)', "bib_signal_zglobal_vs_ysize_comparison",
@@ -591,6 +598,7 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     assert len(truthsig) == len(ySizesSig)
 
     pastel_red_cmap = create_pastel_red_cmap()
+    pastel_red_cmap = 'Blues'
 
     binsZGlobal = 30
     binsXSize = np.arange(0,22,1)
@@ -659,7 +667,8 @@ def genEtaAlphaBetaRq(truthDF):
 
 # --- Plot 1: cotAlpha, cotBeta, number_eh_pairs, nPixels ---
 def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plots",interactivePlots=False):
-    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(12,8))
+    # fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(12,8))
+    fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(10,7))
     plt.subplot(221)
     plotHistoBibSig(truthbib,truthsig,"cotAlpha",pltStandalone=False,bins=40,xlabel="cot(α)",title="")
     # ax[0,0].set_xlim(-7.5, 7.5)
@@ -675,6 +684,15 @@ def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plot
     plotHistoBibSig(truthbib,truthsig,"nPix",pltStandalone=False,bins=47,xlabel="Number pixels",title="")
 
     closePlot(PLOT_DIR, interactivePlots, "signal_bib_summary_histograms.png")
+
+#Added at Karri's suggestion
+def plotCotACotBZY(truthBib, truthSig,PLOT_DIR="./plots",interactivePlots=False):
+    plt.figure(figsize=(10, 4))
+    plt.subplot(221)
+    plotAvsB(truthSig,truthBib,"z-global","cotAlpha","z-global [mm]","cot(α)","cot(α) vs z-global",alpha =0.1)
+    plt.subplot(222)
+    plotAvsB(truthSig,truthBib,"y-local","cotBeta","y-local [μm]","cot(β)","cot(β) vs y-local",alpha = 0.03)
+    closePlot(PLOT_DIR,interactivePlots,"signal_bib_cotAvsZ_cotBvsY.png")
 
 # --- Plot 2: 2D histograms of eta vs x-size/y-size ---
 def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -738,7 +756,7 @@ def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",inter
                   pltLabels=['High pt, q>0','High pt, q<0'],xlabel='pt (GeV)')
 
 
-    closePlot(PLOT_DIR, interactivePlots, "bib_signal_pt_charge_separation.png")
+    closePlot(PLOT_DIR, interactivePlots, "ELIZAHATESTHIS_bib_signal_pt_charge_separation.png")
 
 
 #Added plots from Eliza's code (several are also just wrapped into Eric's code)
