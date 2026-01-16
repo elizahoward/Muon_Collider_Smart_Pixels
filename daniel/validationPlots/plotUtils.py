@@ -102,8 +102,6 @@ def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",
 def prepHistBins(arrs,binCount,spacing='linear',doPrint=False,arrNames=["BIB   ","Signal"]):
     #TODO fix error if arrs looks something like np.max([[1,2],[1,3,4]]) but maybe that's not the most common use case
     #Apparently it is common enough, so this fixes it
-    # binMax = np.max([np.max(arr1), np.max(arr2)])
-    # binMin = np.min([np.min(arr1), np.min(arr2)])
     binMax = np.max([np.max(arrs[i]) for i in range(len(arrs))])
     binMin = np.min([np.min(arrs[i]) for i in range(len(arrs))])
     if doPrint:
@@ -237,7 +235,7 @@ def processReconBibSig(truthDF,reconDF,doPrint=False):
     print("finished getting average cluster profile in each regime")
     return truthSig, truthBib, reconSig,reconBib_mm,reconBib_mp,reconBib,clustersSig,clustersBib, xSizesSig, xSizesBib,ySizesSig, ySizesBib,nPixelsSig,nPixelsBib,avgClustDictBib,avgClustDictSig
 
-#Tighter version of Eliza's processing cuts
+#Tighter version of Eliza's processing cuts, that could be refactored to be shorter
 def getProfiles(truth__, clusters__):
     clusters__LowPtPosLowYl  = clusters__[np.where((truth__['q']>0) & (truth__['pt'] <5 ) & (truth__['y-local']>-4.5) & (truth__['y-local']<-2 ))]
     clusters__HighPtPosLowYl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['y-local']>-4.5) & (truth__['y-local']<-2 ))]
@@ -264,7 +262,7 @@ def getProfiles(truth__, clusters__):
     clusters__HighPtPosMidZgl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['z-global']>20) & (truth__['z-global']<40 ))]
     clusters__LowPtNegMidZgl =  clusters__[np.where((truth__['q']<0) & (truth__['pt'] <5 ) & (truth__['z-global']>20) & (truth__['z-global']<40 ))]
     clusters__HighPtNegMidZgl = clusters__[np.where((truth__['q']<0) & (truth__['pt'] >95) & (truth__['z-global']>20) & (truth__['z-global']<40 ))]
-    clusters__MidZgl          = clusters__[np.where(                                         (truth__['z-global']>20) & (truth__['z-global']<50 ))]
+    clusters__MidZgl          = clusters__[np.where(                                         (truth__['z-global']>20) & (truth__['z-global']<40 ))]
     clusters__LowPtPosHighZgl =  clusters__[np.where((truth__['q']>0) & (truth__['pt'] <5 ) & (truth__['z-global']>40) & (truth__['z-global']<65 ))]
     clusters__HighPtPosHighZgl = clusters__[np.where((truth__['q']>0) & (truth__['pt'] >95) & (truth__['z-global']>40) & (truth__['z-global']<65 ))]
     clusters__LowPtNegHighZgl =  clusters__[np.where((truth__['q']<0) & (truth__['pt'] <5 ) & (truth__['z-global']>40) & (truth__['z-global']<65 ))]
@@ -429,16 +427,14 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
     bins = np.linspace(-0.1,0.1,100)
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution (low pt)",
                   pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],
-                  bins=bins,showNums=showNums,figsize=(7,2))
-    # plt.ylabel("Tracks")
+                  bins=bins,showNums=showNums,figsize=(7,2),)
     plt.subplot(212)
     bins = np.linspace(-1,10,100)
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,
                   pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,
-                  showNums=showNums,figsize=(7,2),yscale='log',xlabel="momentum pT (GeV)",ylabel="Tracks (log scale)")
-    # plt.ylabel("Tracks (log scale)")
-    # plt.xlabel("momentum pT (GeV)")
+                  showNums=showNums,figsize=(7,2),yscale='log',xlabel="Momentum pT (GeV)",ylabel="Tracks (log scale)")
     closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt_lowPtRange.png")
+
     plt.figure(figsize=(7, 5))
     plt.subplot(211)
     bins = np.logspace(-1,2,100)
@@ -446,15 +442,13 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title=f"{key} distribution",
                   pltStandalone=False,pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],
                   bins=bins,showNums=showNums,figsize=(7,2),yscale="linear")
-    # plt.ylabel("Tracks")
     plt.subplot(212)
-    # bins = np.logspace(-1,2.1,100)py
+    # bins = np.logspace(-1,2.1,100)
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,
                   pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,
-                  showNums=showNums,figsize=(7,2),yscale="log",xlabel="momentum pT (GeV)",ylabel="Tracks (log scale)")
-    # plt.ylabel("Tracks (log scale)")
-    # plt.xlabel("momentum pT (GeV)")
+                  showNums=showNums,figsize=(7,2),yscale="log",xlabel="Momentum pT (GeV)",ylabel="Tracks (log scale)")
     closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt_fullRange.png")
+
     if doPrint:
         print(f"BIB pt min: {np.min(truthBib['pt'])} and max: {np.max(truthBib['pt'])}")
         print(f"Signal pt min: {np.min(truthSig['pt'])} and max: {np.max(truthSig['pt'])}")
@@ -584,7 +578,9 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
 
     pastel_red_cmap = create_pastel_red_cmap()
 
-    plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'ySize',mask_bib_y,mask_sig_y,30,np.arange(0,14,1),pastel_red_cmap,'z-global [mm]','y-size (# pixels)', "bib_signal_zglobal_vs_ysize_comparison",PLOT_DIR,interactivePlots)
+    plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'ySize',mask_bib_y,mask_sig_y,30,np.arange(0,14,1),
+                          pastel_red_cmap,'z-global [mm]','y-size (# pixels)', "bib_signal_zglobal_vs_ysize_comparison",
+                          PLOT_DIR,interactivePlots)
 
 
 # --- Plot 3: 2x2 grid showing both x-size and y-size comparisons ---
@@ -596,15 +592,13 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
 
     pastel_red_cmap = create_pastel_red_cmap()
 
-    z_global_bib = truthbib['z-global']
-    z_global_sig = truthsig['z-global']
-
     binsZGlobal = 30
     binsXSize = np.arange(0,22,1)
     binsYSize = np.arange(0,14,1)
     plot2by2BibSig2dHisto(truthbib,truthsig,'z-global','xSize','z-global','ySize',mask_bib,mask_sig,
                           binsZGlobal,binsXSize,binsZGlobal,binsYSize,pastel_red_cmap,'','x-size (# pixels)',
-                          'z-global [mm]','y-size (# pixels)',"bib_signal_zglobal_vs_xysize_grid_comparison",PLOT_DIR,interactivePlots)
+                          'z-global [mm]','y-size (# pixels)',"bib_signal_zglobal_vs_xysize_grid_comparison",
+                          PLOT_DIR,interactivePlots)
 
 
 
@@ -666,21 +660,17 @@ def genEtaAlphaBetaRq(truthDF):
 # --- Plot 1: cotAlpha, cotBeta, number_eh_pairs, nPixels ---
 def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plots",interactivePlots=False):
     fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(12,8))
-
     plt.subplot(221)
     plotHistoBibSig(truthbib,truthsig,"cotAlpha",pltStandalone=False,bins=40,xlabel="cot(α)",title="")
     # ax[0,0].set_xlim(-7.5, 7.5)
-
     plt.subplot(222)
     plotHistoBibSig(truthbib,truthsig,"cotBeta",pltStandalone=False,bins=40,xlabel="cot(β)",title="")
     # ax[1,0].set_xlim(-8, 8)
-
     plt.subplot(223)
     plotHistoBibSig(truthbib,truthsig,"number_eh_pairs",pltStandalone=False,bins=40,xlabel="Number of eh pairs",title="")
-    #MAYBE SET THE YAXIS THING 
+    #TODO MAYBE SET THE YAXIS THING 
     # ax[0,1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: '{:.0e}'.format(x)))
     # ax[0,1].set_xlim(0, 120000)
-    # nPixels: number of nonzero pixels in each cluster
     plt.subplot(224)
     plotHistoBibSig(truthbib,truthsig,"nPix",pltStandalone=False,bins=47,xlabel="Number pixels",title="")
 
@@ -689,7 +679,6 @@ def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plot
 # --- Plot 2: 2D histograms of eta vs x-size/y-size ---
 def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
     # fig, ax = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.05, 'wspace': 0.03}, figsize=(10,7))
-
     binsEta = 30
     binsXSize = np.arange(0,22,1)
     binsYSize = np.arange(0,14,1)
@@ -701,7 +690,6 @@ def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
 # --- Plot 3: 2D histograms of y-local vs x-size/y-size ---
 def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
     # fig, ax = plt.subplots(2, 2, sharex='col', sharey='row', gridspec_kw={'hspace': 0.05, 'wspace': 0.03}, figsize=(10,7))
-
     binsYlocal = 30
     binsXSize = np.arange(0,22,1)
     binsYSize = np.arange(0,14,1)
@@ -717,8 +705,6 @@ def plotEhPt(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactiv
 
 # --- Plot 5: charge separation for low and high pt ---
 def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
-    # truthsig['q'] = truthsig['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
-    # truthbib['q'] = truthbib['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
     # Low pt (<5 GeV) and high pt (>95 GeV)
     truthSigLow = truthsig[truthsig['pt'] < 5].copy()
     truthSigHigh = truthsig[truthsig['pt'] > 95].copy()
@@ -761,7 +747,7 @@ def plotRadius(truthbib, truthsig,PLOT_DIR="./plots",interactivePlots=False):
     #modified to be on same axis
     plt.figure(figsize=(8,5))
     plt.subplot(211)
-    bins = np.arange(0,25,2) #If you use this, need to clip for underflow/overflow
+    bins = np.arange(0,25,2) 
     # bins = 25
     plotHistoBibSig(truthbib,truthsig,"R",pltStandalone=False,bins=bins,xlabel="Radius [mm]",title="Radius of track curvature")
 
@@ -944,7 +930,6 @@ def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
 
     ySizeBins = np.arange(0,14,1)
     xSizeBins = np.arange(0,22,1)
-
     plt.subplot(223)
     plotHistoBibSig(truthBib,truthSig,"ySize",pltStandalone=False,bins=ySizeBins,xlabel="Cluster y-size [# pixels]",title="Cluster y-size Comparison")
     plt.subplot(224)
@@ -971,7 +956,7 @@ def loadTrackData(directory, trackHeader = trackHeader, bibSigIndic="_"):
     if len(tracks)==0:
         print("\nWARNING!!")
         print("There are no tracklists with the indicator ",bibSigIndic)
-        print("Warning!!!!\n\n")
+        print("Warning!!!!\n")
         return pd.DataFrame(columns=trackHeader)
     else:
         return pd.concat(tracks)
@@ -1033,10 +1018,10 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
     plt.ylabel("N tracks")
     plt.xlabel('Momentum - momentum = "0" (GeV)')
 
-
     closePlot(PLOT_DIR, interactivePlots,  f"TrackPCalcComparison{bibSigLabel}.png")
 
 def calcNxyzTrack(tracksDF,showUnitVerification=False):
+    # I want the calculation to still happen even if tracklist is empty, so that the columns exist, and just are empty
     # if len(tracksDF)==0:
     #     print("tracklist is empty, so no calculation")
     #     return tracksDF
@@ -1064,7 +1049,6 @@ def calcNxyzTrack(tracksDF,showUnitVerification=False):
         Most0[9] = True
         assert np.all(Most0)
 
-
     #then pixelAV
     tracksDF['m'] = tracksDF['hit_pdg'].apply(lambda pid: 105.7 if abs(int(pid))==13 else 0.511 if abs(int(pid))==11 else np.nan) #MeV
     if len(tracksDF)!=0:
@@ -1083,7 +1067,6 @@ def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plo
     binsBib = 30
     binsSig = 30
     recalcStr = "(recalculated)"
-    print("FIX BINS!")
     fig, ax=plt.subplots(ncols=2, nrows=3, figsize=(10,13))
 
     key = "n_x"
@@ -1093,6 +1076,7 @@ def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plo
     key = "n_z"
     plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[325,326],xlabel = "momentum*scalePion (GeV*scalePion)")
     closePlot(PLOT_DIR, interactivePlots, "TrackParquet_nxnynz.png")
+
 def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStr = "",
                         PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = ""):
     if isSubplot and len(subplots) ==0:
