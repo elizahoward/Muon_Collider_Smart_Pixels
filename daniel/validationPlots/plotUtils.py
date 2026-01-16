@@ -75,16 +75,16 @@ def reshapeCluster(recon2d__):
     return recon2d__.to_numpy().reshape(recon2d__.shape[0],13,21)
 
 def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",showNums=True,
-              xlabel="",ylabel="",):
+              xlabel="",ylabel="",alpha=1,):
     if pltStandalone:
         plt.figure(figsize=(4,1))
     if bins is None:
         hist, bin_edges = np.histogram(arr)
-    elif len(bins) ==1:
+    elif np.ndim(bins)==0 or len(bins) ==1:
         hist, bin_edges = np.histogram(arr,bins=bins)
     else:
         hist, bin_edges = np.histogram(np.clip(arr,bins[0],bins[-1]),bins=bins)
-    plt.stairs(hist*postScale,bin_edges,label=pltLabel)
+    plt.stairs(hist*postScale,bin_edges,label=pltLabel,alpha=alpha)
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
     if showNums:
@@ -116,7 +116,10 @@ def prepHistBins(arrs,binCount,spacing='linear',doPrint=False,arrNames=["BIB   "
     elif spacing =='log':
         bins = np.logspace(binMin,binMax,binCount)
     else:
-        raise NotImplementedError("bin spacing must linear or log")   
+        raise NotImplementedError("bin spacing must linear or log")
+    if (bins is None) or np.any(np.isnan(bins)):
+        print("Encountered nan values in setting the bins, so returning bins=30")
+        return 30
     return bins
 
 def plotHistoBibSig(truthBib,truthSig,key,pltStandalone,bins=None,showNums=False,figsize=(7,2), title="", xlabel="",ylabel="Tracks",
@@ -147,7 +150,9 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pl
     if (bins is None) or np.ndim(bins)==0:
         print(f"Setting the histogram bins to be the collective range for the input arrs")
         binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
-        bins = prepHistBins(arrs,binCount,doPrint=True,)
+        bins = prepHistBins(arrs,binCount,doPrint=True,arrNames=pltLabels)
+        # print(bins)
+
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
     for i in range(len(arrs)):
         plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel)
@@ -662,35 +667,22 @@ def genEtaAlphaBetaRq(truthDF):
 def plotEricVarsHistos(truthbib, truthsig,nPixelsSig,nPixelsBib,PLOT_DIR="./plots",interactivePlots=False):
     fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(12,8))
 
-    ax[0,0].hist(truthsig['cotAlpha'], bins=40, histtype='step', color='g', align='mid', density=True, label="Signal")
-    ax[0,0].hist(truthbib['cotAlpha'], bins=40, histtype='step', color='r', align='mid', density=True, label="BIB")
-    ax[0,0].set_xlabel('cot(α)')
-    ax[0,0].set_ylabel('Track Density')
-    ax[0,0].set_xlim(-7.5, 7.5)
-    ax[0,0].legend()
+    plt.subplot(221)
+    plotHistoBibSig(truthbib,truthsig,"cotAlpha",pltStandalone=False,bins=40,xlabel="cot(α)",title="")
+    # ax[0,0].set_xlim(-7.5, 7.5)
 
-    ax[1,0].hist(truthsig['cotBeta'], bins=40, histtype='step', color='g', align='mid', density=True, label="Signal")
-    ax[1,0].hist(truthbib['cotBeta'], bins=40, histtype='step', color='r', align='mid', density=True, label="BIB")
-    ax[1,0].set_xlabel('cot(β)')
-    ax[1,0].set_ylabel('Track Density')
-    ax[1,0].set_xlim(-8, 8)
-    ax[1,0].legend()
+    plt.subplot(222)
+    plotHistoBibSig(truthbib,truthsig,"cotBeta",pltStandalone=False,bins=40,xlabel="cot(β)",title="")
+    # ax[1,0].set_xlim(-8, 8)
 
-    ax[0,1].hist(truthsig['number_eh_pairs'], bins=40, histtype='step', color='g', align='mid', density=True, label="Signal")
-    ax[0,1].hist(truthbib['number_eh_pairs'], bins=40, histtype='step', color='r', align='mid', density=True, label="BIB")
-    ax[0,1].set_xlabel('Number of eh pairs')
-    ax[0,1].set_ylabel('Track Density')
-    ax[0,1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: '{:.0e}'.format(x)))
-    ax[0,1].set_xlim(0, 120000)
-    ax[0,1].legend()
-
+    plt.subplot(223)
+    plotHistoBibSig(truthbib,truthsig,"number_eh_pairs",pltStandalone=False,bins=40,xlabel="Number of eh pairs",title="")
+    #MAYBE SET THE YAXIS THING 
+    # ax[0,1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: '{:.0e}'.format(x)))
+    # ax[0,1].set_xlim(0, 120000)
     # nPixels: number of nonzero pixels in each cluster
-    
-    ax[1,1].hist(nPixelsSig, bins=30, histtype='step', color='g', align='mid', density=True, label="Signal")
-    ax[1,1].hist(nPixelsBib, bins=30, histtype='step', color='r', align='mid', density=True, label="BIB")
-    ax[1,1].set_xlabel('Number of pixels')
-    ax[1,1].set_ylabel('Track Density')
-    ax[1,1].legend()
+    plt.subplot(224)
+    plotHistoBibSig(truthbib,truthsig,"nPix",pltStandalone=False,bins=30,xlabel="Number pixels",title="")
 
     closePlot(PLOT_DIR, interactivePlots, "signal_bib_summary_histograms.png")
 
@@ -746,36 +738,18 @@ def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",inter
 
     # Example: plot pt distributions for low/high pt, positive/negative charge
     fig, ax = plt.subplots(2,2,figsize=(12,5))
-    ax[0,1].hist(truthSigLowPos['pt'], bins=30, alpha=0.7, label='Low pt, q>0')
-    ax[0,1].hist(truthSigLowNeg['pt'], bins=30, alpha=0.7, label='Low pt, q<0')
-    ax[0,1].set_title('Sig Low pt (<5 GeV)')
-    ax[0,1].set_xlabel('pt (GeV)')
-    ax[0,1].set_ylabel('Tracks')
-    ax[0,1].legend()
-
-    ax[1,1].hist(truthSigHighPos['pt'], bins=30, alpha=0.7, label='High pt, q>0')
-    ax[1,1].hist(truthSigHighNeg['pt'], bins=30, alpha=0.7, label='High pt, q<0')
-    ax[1,1].set_title('Sig High pt (>95 GeV)')
-    ax[1,1].set_xlabel('pt (GeV)')
-    ax[1,1].set_ylabel('Tracks')
-    ax[1,1].legend()
-
-    
-
-    ax[0,0].hist(truthBibLowPos['pt'], bins=30, alpha=0.7, label='Low pt, q>0')
-    ax[0,0].hist(truthBibLowNeg['pt'], bins=30, alpha=0.7, label='Low pt, q<0')
-    ax[0,0].set_title('Bib Low pt (<5 GeV)')
-    ax[0,0].set_xlabel('pt (GeV)')
-    ax[0,0].set_ylabel('Tracks')
-    ax[0,0].legend()
-
-    ax[1,0].hist(truthBibHighPos['pt'], bins=30, alpha=0.7, label='High pt, q>0')
-    ax[1,0].hist(truthBibHighNeg['pt'], bins=30, alpha=0.7, label='High pt, q<0')
-    ax[1,0].set_title('Bib High pt (>95 GeV)')
-    ax[1,0].set_xlabel('pt (GeV)')
-    ax[1,0].set_ylabel('Tracks')
-    ax[1,0].legend()
-
+    plt.subplot(222)
+    plotManyHisto([truthSigLowPos['pt'],truthSigLowNeg['pt']],bins=30,title='Sig Low pt (<5 GeV)',pltStandalone=False,
+                  pltLabels=['Low pt, q>0','Low pt, q<0'],xlabel='pt (GeV)',yscale='log',)
+    plt.subplot(224)
+    plotManyHisto([truthSigHighPos['pt'],truthSigHighNeg['pt']],bins=30,title='Sig High pt (>95 GeV)',pltStandalone=False,
+                  pltLabels=['High pt, q>0','High pt, q<0'],xlabel='pt (GeV)')   
+    plt.subplot(221)
+    plotManyHisto([truthBibLowPos['pt'],truthBibLowNeg['pt']],bins=30,title='Bib Low pt (<5 GeV)',pltStandalone=False,
+                  pltLabels=['Low pt, q>0','Low pt, q<0'],xlabel='pt (GeV)',yscale='log',)
+    plt.subplot(223)
+    plotManyHisto([truthBibHighPos['pt'],truthBibHighNeg['pt']],bins=30,title='Bib High pt (>95 GeV)',pltStandalone=False,
+                  pltLabels=['High pt, q>0','High pt, q<0'],xlabel='pt (GeV)')
 
 
     closePlot(PLOT_DIR, interactivePlots, "bib_signal_pt_charge_separation.png")
@@ -788,7 +762,7 @@ def plotRadius(truthbib, truthsig,PLOT_DIR="./plots",interactivePlots=False):
     plt.figure(figsize=(8,5))
     plt.subplot(211)
     bins = np.arange(0,25,2) #If you use this, need to clip for underflow/overflow
-    bins = 25
+    # bins = 25
     plotHistoBibSig(truthbib,truthsig,"R",pltStandalone=False,bins=bins,xlabel="Radius [mm]",title="Radius of track curvature")
 
     plt.subplot(212)
@@ -954,35 +928,27 @@ def plotXYProfile(truthBib, truthSig, avgClustDictSig, avgClustDictBib,
     fig, ax=plt.subplots(ncols=2, nrows=2, figsize=(10,8))
     xaxis = np.arange(1,22)
     yaxis=np.arange(1,14,1)
-    ax[0,0].step(yaxis,avgClustDictSig["yProfile"], where="mid", label="Signal", c ='g')
-    ax[0,0].step(yaxis,avgClustDictBib["yProfile"], where="mid", label="Bib", c ='purple')
+    ax[0,0].step(yaxis,avgClustDictSig["yProfile"], where="mid", label="Signal")#, c ='g')
+    ax[0,0].step(yaxis,avgClustDictBib["yProfile"], where="mid", label="BIB")#, c ='purple')
     ax[0,0].legend()
     ax[0,0].set_xlabel("y-pixels")
     ax[0,0].set_ylabel("Total charge collected")
     ax[0,0].set_title("Average y-profile Comaprison")
 
-    ax[0,1].step(xaxis,avgClustDictSig["xProfile"], where="mid", label="Signal", c ='g')
-    ax[0,1].step(xaxis,avgClustDictBib["xProfile"], where="mid", label="Bib", c ='purple')
+    ax[0,1].step(xaxis,avgClustDictSig["xProfile"], where="mid", label="Signal")#, c ='g')
+    ax[0,1].step(xaxis,avgClustDictBib["xProfile"], where="mid", label="BIB")#, c ='purple')
     ax[0,1].legend()
     ax[0,1].set_xlabel("x-pixels")
     ax[0,1].set_ylabel("Total charge collected")
     ax[0,1].set_title("Average x-profile Comaprison")
 
-    ax[1,0].hist(truthSig["ySize"], bins=np.arange(0,14,1), histtype='step', density=True, label="Signal", color ='g')
-    ax[1,0].hist(truthBib["ySize"], bins=np.arange(0,14,1), histtype='step', density=True, label="Bib", color ='purple')
-    ax[1,0].legend()
-    ax[1,0].set_xlabel("Cluster y-size [# pixels]")
-    ax[1,0].set_ylabel("Track Density")
-    ax[1,0].set_title("Cluster y-size Comaprison")
+    ySizeBins = np.arange(0,14,1)
+    xSizeBins = np.arange(0,22,1)
 
-    ax[1,1].hist(truthSig["xSize"], bins=np.arange(0,22,1), histtype='step', density=True, label="Signal", color ='g')
-    ax[1,1].hist(truthBib["xSize"], bins=np.arange(0,22,1), histtype='step', density=True, label="Bib", color ='purple')
-    ax[1,1].legend()
-    ax[1,1].set_xlabel("Cluster x-size [# pixels]")
-    ax[1,1].set_ylabel("Track Density")
-    ax[1,1].set_title("Cluster x-size Comaprison")
-
-    # fig.tight_layout()
+    plt.subplot(223)
+    plotHistoBibSig(truthBib,truthSig,"ySize",pltStandalone=False,bins=ySizeBins,xlabel="Cluster y-size [# pixels]",title="Cluster y-size Comparison")
+    plt.subplot(224)
+    plotHistoBibSig(truthBib,truthSig,"xSize",pltStandalone=False,bins=xSizeBins,xlabel="Cluster x-size [# pixels]",title="Cluster x-size Comparison")
 
     closePlot(PLOT_DIR, interactivePlots,  f"XYSizeProfiles.png")
 
@@ -1030,25 +996,11 @@ def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,tr
 def plotTrackPPt(tracksBib, tracksSig,binsBib=30,binsSig=30,yscale='log',PLOT_DIR="./plots",interactivePlots=False):
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)
-    plt.hist(tracksBib["p"],label="p",bins=binsBib)
-    plt.hist(tracksBib["pt"], label="pt",alpha=0.7,bins=binsBib)
-    print("FIX BINS!")
-    plt.title("BIB tracklists, p and pt")
-    plt.legend()
-    plt.yscale(yscale)
-    plt.ylabel("N tracks")
-    plt.xlabel("momentum (GeV)")
-
+    plotManyHisto([tracksBib["p"],tracksBib["pt"]],binsBib,title="BIB tracklists, p and pT",yscale=yscale,
+                  pltLabels=["p","pT"],xlabel="Momentum (GeV)",pltStandalone=False,)
     plt.subplot(122)
-    plt.hist(tracksSig["p"],label="p",bins=binsSig)
-    plt.hist(tracksSig["pt"], label="pt",alpha=0.7,bins=binsSig)
-    plt.title("Sig tracklists, p and pt")
-    plt.legend()
-    plt.xlabel("momentum (GeV)")
-    plt.ylabel("N tracks")
-    plt.yscale(yscale)
-
-    # fig.tight_layout()
+    plotManyHisto([tracksSig["p"],tracksSig["pt"]],binsSig,title="Sig tracklists, p and pT",yscale=yscale,
+                  pltLabels=["p","pT"],xlabel="Momentum (GeV)",pltStandalone=False,)
 
     closePlot(PLOT_DIR, interactivePlots,  f"TrackPPt.png")
 
@@ -1071,13 +1023,8 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
 
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)    
-    plt.hist(p,label="p recalculated using \n cota, cotb, pt, in the tracklists")
-    plt.hist(tracksDF["p"],label="p directly as saved in tracklists",alpha = 0.5)
-    plt.yscale('log')
-    plt.title(f"{bibSigLabel}")
-    plt.legend()
-    plt.ylabel("N tracks")
-    plt.xlabel("Momentum (GeV)")
+    plotManyHisto([p,tracksDF["p"]],pltStandalone=False,title=f"{bibSigLabel}",xlabel="Momentum (GeV)",yscale='log',
+                  pltLabels=["p recalculated using \n cota, cotb, pt, in the tracklists","p directly as saved in tracklists"],)
 
     plt.subplot(122)
     plt.hist(p - tracksDF["p"])
@@ -1154,21 +1101,14 @@ def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, 
         fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
         subplots = [121, 122]
     plt.subplot(subplots[0])
-    plt.hist(truthBib[key],bins=binsBib,label=f"{key} from parquet")
-    plt.hist(tracksBib[key],bins=binsBib,label=f"{key} from track {recalcStr}",alpha=0.7)
-    plt.title(f"BIB {key} comparison tracklists to parquets")
-    plt.legend()
-    plt.xlabel(xlabel)
-    plt.ylabel("N tracks")
-    plt.yscale('log')
+    plotManyHisto([truthBib[key],tracksBib[key]],binsBib,title=f"BIB {key} comparison tracklists to parquets",
+                  pltLabels=[f"{key} from parquet",f"{key} from track {recalcStr}"],pltStandalone=False,yscale='log',
+                  xlabel=xlabel,ylabel="N tracks",)
     
     plt.subplot(subplots[1])
-    plt.hist(truthSig[key],bins=binsSig,label=f"{key} from parquet")
-    plt.hist(tracksSig[key],bins=binsSig,label=f"{key} from track {recalcStr}",alpha=0.7)
-    plt.title(f"Signal {key} comparison tracklists to parquets")
-    plt.legend()
-    plt.xlabel(xlabel)
-    plt.ylabel("N tracks")
-    plt.yscale('log')
+    plotManyHisto([truthSig[key],tracksSig[key]],binsSig,title=f"Signal {key} comparison tracklists to parquets",
+                  pltLabels=[f"{key} from parquet",f"{key} from track {recalcStr}"],pltStandalone=False,yscale='log',
+                  xlabel=xlabel,ylabel="N tracks",)
+
     if not isSubplot:
         closePlot(PLOT_DIR, interactivePlots,  f"TrackParquet{key}.png")
