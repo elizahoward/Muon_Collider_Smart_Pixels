@@ -5,6 +5,8 @@ Description: Runner for the SmartpixPlotter class to make plots to validate the 
 
 Example Usage:
 
+python runPlots2.py  --processTracks --processParquets --processRecon --plotTracklists --plotParquets -da Data_Set_20260118_154506_flp1
+
 python runPlots2.py  --processTracks --dataDir_all Data_Set_20260107_140951 --processParquets --processRecon --interactivePlots --plotTracklists --plotParquets
 
 python runPlots2.py  --processTracks --defaultDirs --plotTracklists --plotParquets --interactivePlots --processOldTracks 
@@ -32,6 +34,10 @@ def main(parquetDir_all,
             plotTracklists,
             plotParquets,
             styleSheet,):
+    # print(parquetDir_all)
+    # print(trackDirBib_mm)
+    # print(trackDirBib_mp)
+    # print(trackDirSig)
     plotter = SmartpixPlotter(
                     #  parquetDir_mm = parquetDir_mm , #Not yet implemented
                     #  parquetDir_mp = parquetDir_mp ,

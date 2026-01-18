@@ -133,13 +133,17 @@ def plotHistoBibSig(truthBib,truthSig,key,pltStandalone,bins=None,showNums=False
         # print(bins)
     plotManyHisto([truthSig[key],truthBib[key]],bins=bins,title=title,pltStandalone=pltStandalone,
                   pltLabels=[f"Signal",f"BIB"],showNums=showNums,figsize=figsize,yscale=yscale,
-                  PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,saveTitle=saveTitle,xlabel=xlabel,ylabel=ylabel)
+                  PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,saveTitle=saveTitle,xlabel=xlabel,ylabel=ylabel,alphas=[1,0.7])
 
 
 def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,
                   figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",
-                  PLOT_DIR=None,interactivePlots=None,saveTitle=None):
+                  PLOT_DIR=None,interactivePlots=None,saveTitle=None,alphas = None):
     assert len(arrs) == len(pltLabels)
+    if alphas is None:
+        alphas = [1 for i in range(len(arrs))]
+    else:
+        assert len(alphas) == len(arrs)
     if pltStandalone:
         plt.figure(figsize=figsize)
     else:
@@ -153,7 +157,7 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pl
 
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
     for i in range(len(arrs)):
-        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel)
+        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel,alpha=alphas[i])
     plt.legend()
     plt.xlabel(xlabel)
     plt.yscale(yscale)
@@ -1000,10 +1004,10 @@ def plotTrackPPt(tracksBib, tracksSig,binsBib=30,binsSig=30,yscale='log',PLOT_DI
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)
     plotManyHisto([tracksBib["p"],tracksBib["pt"]],binsBib,title="BIB tracklists, p and pT",yscale=yscale,
-                  pltLabels=["p","pT"],xlabel="Momentum (GeV)",pltStandalone=False,)
+                  pltLabels=["p","pT"],xlabel="Momentum (GeV)",pltStandalone=False,alphas=[1,0.5])
     plt.subplot(122)
     plotManyHisto([tracksSig["p"],tracksSig["pt"]],binsSig,title="Sig tracklists, p and pT",yscale=yscale,
-                  pltLabels=["p","pT"],xlabel="Momentum (GeV)",pltStandalone=False,)
+                  pltLabels=["p","pT"],xlabel="Momentum (GeV)",pltStandalone=False,alphas=[1,0.5],)
 
     closePlot(PLOT_DIR, interactivePlots,  f"TrackPPt.png")
 
@@ -1026,7 +1030,7 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
 
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)    
-    plotManyHisto([p,tracksDF["p"]],pltStandalone=False,title=f"{bibSigLabel}",xlabel="Momentum (GeV)",yscale='log',
+    plotManyHisto([p,tracksDF["p"]],pltStandalone=False,title=f"{bibSigLabel}",xlabel="Momentum (GeV)",yscale='log',alphas=[1,0.5],
                   pltLabels=["p recalculated using \n cota, cotb, pt, in the tracklists","p directly as saved in tracklists"],)
 
     plt.subplot(122)
@@ -1105,12 +1109,12 @@ def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, 
     plt.subplot(subplots[0])
     plotManyHisto([truthBib[key],tracksBib[key]],binsBib,title=f"BIB {key} comparison tracklists to parquets",
                   pltLabels=[f"{key} from parquet",f"{key} from track {recalcStr}"],pltStandalone=False,yscale='log',
-                  xlabel=xlabel,ylabel="N tracks",)
+                  xlabel=xlabel,ylabel="N tracks",alphas=[1,0.5])
     
     plt.subplot(subplots[1])
     plotManyHisto([truthSig[key],tracksSig[key]],binsSig,title=f"Signal {key} comparison tracklists to parquets",
                   pltLabels=[f"{key} from parquet",f"{key} from track {recalcStr}"],pltStandalone=False,yscale='log',
-                  xlabel=xlabel,ylabel="N tracks",)
+                  xlabel=xlabel,ylabel="N tracks",alphas=[1,0.5],)
 
     if not isSubplot:
         closePlot(PLOT_DIR, interactivePlots,  f"TrackParquet{key}.png")
