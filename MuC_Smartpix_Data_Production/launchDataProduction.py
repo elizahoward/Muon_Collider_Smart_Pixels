@@ -194,7 +194,7 @@ def generate_bib():
 
     commands = []
                     
-    for run in range(nTracklists): 
+    for run in range(int(nTracklists/2)): 
 
         for bib_type in ["mm","mp"]:
 
