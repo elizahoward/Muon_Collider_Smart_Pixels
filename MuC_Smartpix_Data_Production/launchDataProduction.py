@@ -101,11 +101,11 @@ def generate_signal():
         make_tracklist.append("-p")
 
     # Construct tuple of commands based on which step we are starting from
-    if start_step == 0:
+    if START_STEP == 0:
         command_tuple = (run_particle_gun, run_detsim, make_tracklist,)
-    elif start_step == 1:
+    elif START_STEP == 1:
         command_tuple = (run_detsim, make_tracklist,)
-    elif start_step == 2:
+    elif START_STEP == 2:
         command_tuple = (make_tracklist,)
     else:
         command_tuple = None
@@ -147,9 +147,9 @@ def generate_signal():
                         "-o", signal_parquet]
 
         # Construct tuple of commands based on which step we are starting from
-        if start_step <= 3:
+        if START_STEP <= 3:
             command_tuple=(run_pixelAV, make_parquet,)
-        elif start_step == 4:
+        elif START_STEP == 4:
             command_tuple=(make_parquet,)
         commands.append([command_tuple,]) # weird formatting is because pool expects a tuple at input
 
@@ -158,7 +158,7 @@ def generate_signal():
 
 def generate_bib():
     # Make tracklist
-    if start_step<=2:
+    if START_STEP<=2:
         make_tracklist_bibmm = ["python3",  f"{repodir}/MuC_Smartpix_Data_Production/Tracklist_Production/make_tracklists.py", 
                             "-odir", output_dir_tracklists, 
                             "-f", str(ops.float_precision), 
@@ -221,9 +221,9 @@ def generate_bib():
 
             
             # Construct tuple of commands based on which step we are starting from
-            if start_step <= 3:
+            if START_STEP <= 3:
                 command_tuple=(run_pixelAV, make_parquet,)
-            elif start_step == 4:
+            elif START_STEP == 4:
                 command_tuple=(make_parquet,)
             commands.append([command_tuple,]) # weird formatting is because pool expects a tuple at input
 
@@ -267,22 +267,22 @@ repodir = Path(__file__).resolve().parent.parent
 start_options = [ops.pgun_dir, ops.detsim_dir, ops.tracklist_dir, ops.pixelav_dir]
 start_options_bool = [bool(x) for x in start_options]
 if sum(start_options_bool) == 0:
-    start_step = 0  # start from particle gun
+    START_STEP = 0  # start from particle gun
 
 elif sum(start_options_bool) != 1:
     raise ValueError("Please provide only one intermediate step directory to start from.")
 else:
-    start_step = start_options_bool.index(True) + 1
+    START_STEP = start_options_bool.index(True) + 1
 
 # Use date and time to create unique output directory
-if start_step==0:
+if START_STEP==0:
     output_dir = f"{repodir}/Data_Files/Data_Set_{datetime.now().strftime('%Y%m%d_%H%M%S')}" 
     try:
         os.makedirs(output_dir)
     except:
         raise  FileNotFoundError("You may not have the soft link for Data_Files. Run: ln -s /local/d1/smartpixML/2026Datasets/Data_Files")
 else:
-    start_dir = start_options[start_step - 1]
+    start_dir = start_options[START_STEP - 1]
     output_dir = Path(start_dir).parent
 
 # ADD CHECK TO MAKE SURE TOTAL TRACKS AND BIN SIZE ARE CONSISTENT WITH PROVIDED INTERMEDIATE FILES
@@ -298,16 +298,16 @@ output_dir_parquet = f"{output_dir}/Parquet_Files"
 
 output_dirs=[output_dir_pgun, output_dir_detsim, output_dir_tracklists, output_dir_pixelav, output_dir_parquet]
 
-if start_step==0:
+if START_STEP==0:
     for dir in output_dirs:
         os.makedirs(dir)
 else:
-    for dir in output_dirs[start_step:]:
+    for dir in output_dirs[START_STEP:]:
         shutil.rmtree(dir, ignore_errors=True) # make sure directory will be empty
         os.makedirs(dir)
 
 # set up MuColl environment
-if start_step <= 3: 
+if START_STEP <= 3: 
     # Load environment from relevant setup.sh for running a particle gun, detector simulation, and reading/processing resulting sclio file
     env=os.environ.copy()
     env.update(get_env_from_setup('/cvmfs/muoncollider.cern.ch/release/2.8-patch2/setup.sh'))

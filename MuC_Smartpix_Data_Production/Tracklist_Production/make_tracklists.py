@@ -78,8 +78,6 @@ parser.add_argument("-sig", "--signal", help="Are you generating signal?", actio
 parser.add_argument("-bmm", "--bib_mm", help="Are you running mm bib?", action='store_true')
 parser.add_argument("-bmp", "--bib_mp", help="Are you running mp bib?", action='store_true')
 
-print("Here 1")
-
 ops = parser.parse_args()
 
 # get a list of files based on what you want to make tracklists for
@@ -100,11 +98,9 @@ elif ops.bib_mm or ops.bib_mp:
     file_list=os.listdir(directory_path)
     file_list = [os.path.join(directory_path, file) for file in file_list]
 else: 
-    raise Exception("You must include one of the flags for signal (-s), bib mm (-bmm), or bib mp (-bmp)")
+    raise Exception("You must include one of the flags for signal (-sig), bib mm (-bmm), or bib mp (-bmp)")
 
 output_file=f"{ops.output_folder}/{output_file_form}"
-print("Here 2")
-print(output_file)
     
 # ############## SETUP #############################
 # Prevent ROOT from drawing while you're running -- good for slow remote servers
@@ -267,24 +263,24 @@ for file_path in file_list:
 
             # Alternative cota and cotb calculation
             hit_p = hit.getMomentum()
-            cota1 = hit_p[2]/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))
-            cotb1 = (hit_p[0]*sin(gamma0)-hit_p[1]*cos(gamma0))/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))
+            cota = hit_p[2]/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))
+            cotb = (hit_p[0]*sin(gamma0)-hit_p[1]*cos(gamma0))/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))
 
             # If we are unflipped, we must adjust alpha and beta, and flip y-local
             if ops.flp == 0:
                 beta += np.pi
                 alpha = 2*np.pi-alpha
                 ylocal *= -1
-                cota1 *= -1
+                cota *= -1
 
-            cota = 1./np.tan(alpha)
-            cotb = 1./np.tan(beta)
+            cota1 = 1./np.tan(alpha)
+            cotb1 = 1./np.tan(beta)
 
             # Compare different calculations
-            if cota-cota1>0.01:
-                print(f"PROBLEM: cota not matching. Original: {cota}; Alternative: {cota1}")
-            if cotb-cotb1>0.01:
-                print(f"PROBLEM: cota not matching. Original: {cotb}; Alternative: {cotb1}")
+            if abs(cota-cota1)>0.01:
+                print(f"PROBLEM: cota not matching. Saved to track list: {cota}; Alternative: {cota1}")
+            if abs(cotb-cotb1)>0.01:
+                print(f"PROBLEM: cota not matching. Saved to track list: {cotb}; Alternative: {cotb1}")
             
 
             # Skip tracks with momentum 0

@@ -294,25 +294,32 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
       ranlux_(rvec,&c__4);
       cotbeta = cotbtrack[ievent];	
       if(fabsf(cotbeta) > 10.) goto incr;
+
       cotalpha = cotatrack[ievent];
       if(fabsf(cotalpha) > 10.) goto incr;
+
+      /* Get dir_z first */
       locdir[2] = 1./sqrt((double)(1.+cotbeta*cotbeta+cotalpha*cotalpha));
-	/* track travels in the E-field direction in the unflipped coordinate system */
+
+	    /* track travels in the E-field direction in the unflipped coordinate system */
       if(flipped[ievent] == 0) locdir[2] = -locdir[2];
-      locdir[0] = cotalpha*locdir[2];
-      locdir[1] = cotbeta*locdir[2];
+
+      locdir[0] = cotalpha*locdir[2]; /* dir_x = dir_z * cot(alpha) */
+      locdir[1] = cotbeta*locdir[2];  /* dir_y = dir_z * cot(beta) */
 			   
       /*  Calculate the offsets from the detector center to its front face */
       
       xoffset = locdir[0]/locdir[2] * thick / 2.;
       yoffset = locdir[1]/locdir[2] * thick / 2.;
       
+      /* The entry point will depend on the choice of coordinates (z axis direction) */
       if(locdir[2] < 0.) {
 	      vect[2] = thick;
       } else {
 	      vect[2] = 0.;
       }
 
+      /* PixelAV was designed for pions, so for other particles we scale the momentum bu the ration of pion mass to particle mass*/
       if (PID[ievent]==11) {
         scale = 139.57/0.511;
       }
@@ -332,9 +339,9 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
       //printf("\n\n vect: %f, %f, %f, %f, %f, %f \n\n", vect[0], vect[1], vect[2], vect[3], vect[4], vect[5]);
 
       /*  Set Bfield z-direction for this event */
-      
       bfield.f[2] = bfield_z;
       if(cotalpha < 0.) {bfield.f[2] = -bfield_z;}
+      
       //printf("\n\n bfield: (%f, %f, %f)\n\n", bfield.f[0], bfield.f[1], bfield.f[2]);
       
       /*  Propagate the track and make e-h pairs */
