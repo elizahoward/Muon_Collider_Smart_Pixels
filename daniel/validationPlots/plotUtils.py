@@ -127,9 +127,12 @@ def plotHistoBibSig(truthBib,truthSig,key,pltStandalone,bins=None,showNums=False
     if len(xlabel)==0:
         xlabel = f"{key}"
     if (bins is None) or np.ndim(bins)==0:
-        print(f"Setting the histogram bins to be the collective range for BIB and Signal of {key}")
-        binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
-        bins = prepHistBins([truthBib[key],truthSig[key]],binCount,spacing='linear',doPrint=True,arrNames = [f"BIB    {key}", f"Signal {key}"])
+        if type(bins)==str:
+            print(f"Using bins {bins}")
+        else:
+            print(f"Setting the histogram bins to be the collective range for BIB and Signal of {key}")
+            binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
+            bins = prepHistBins([truthBib[key],truthSig[key]],binCount,spacing='linear',doPrint=True,arrNames = [f"BIB    {key}", f"Signal {key}"])
         # print(bins)
     plotManyHisto([truthSig[key],truthBib[key]],bins=bins,title=title,pltStandalone=pltStandalone,
                   pltLabels=[f"Signal",f"BIB"],showNums=showNums,figsize=figsize,yscale=yscale,
@@ -150,9 +153,12 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pl
         if (PLOT_DIR is not None) or (interactivePlots is not None) or (saveTitle is not None):
             raise ValueError("Why are you passing plot saving instructions in plotManyHisto when this is not a standalone plot?")
     if (bins is None) or np.ndim(bins)==0:
-        print(f"Setting the histogram bins to be the collective range for the input arrs")
-        binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
-        bins = prepHistBins(arrs,binCount,doPrint=True,arrNames=pltLabels)
+        if type(bins)==str:
+            print(f"Using bins {bins}")
+        else:
+            print(f"Setting the histogram bins to be the collective range for the input arrs")
+            binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
+            bins = prepHistBins(arrs,binCount,doPrint=True,arrNames=pltLabels)
         # print(bins)
 
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
@@ -663,7 +669,8 @@ def genEtaAlphaBetaRq(truthDF):
     if 'R' not in truthDF.columns:
         #added from Eliza's code
         truthDF['R'] = truthDF['pt']*5.36/(1.60217663*3.57)*1000 # [mm]
-    if 'q' not in truthDF.columns:
+    # if 'q' not in truthDF.columns:
+    if True:
         truthDF['q'] = truthDF['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
     if 'scalePion' not in truthDF.columns:
         #relative masses of pion and muon/electron, comes from pixelav https://github.com/elizahoward/pixelav/blob/30d7585448f87bcdf10f7f066005a04e4bd34a52/ppixelav2_list_trkpy_n_2f_custom.c#L358
@@ -1103,29 +1110,76 @@ def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plo
     fig, ax=plt.subplots(ncols=2, nrows=3, figsize=(10,13))
 
     key = "n_x"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[321,322],xlabel = "momentum*scalePion (GeV/c*scalePion)")
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStrTrack=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[321,322],xlabel = "momentum*scalePion (GeV/c*scalePion)")
     key = "n_y"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[323,324],xlabel = "momentum*scalePion (GeV/c*scalePion)")
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStrTrack=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[323,324],xlabel = "momentum*scalePion (GeV/c*scalePion)")
     key = "n_z"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[325,326],xlabel = "momentum*scalePion (GeV/c*scalePion)")
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStrTrack=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[325,326],xlabel = "momentum*scalePion (GeV/c*scalePion)")
     closePlot(PLOT_DIR, interactivePlots, "TrackParquet_nxnynz.png")
 
-def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStr = "",
-                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = ""):
+def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStrTrack = "",recalcStrParq = "",
+                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = "",keyTruth=None):
+    if keyTruth is None:
+        keyTruth = key
     if isSubplot and len(subplots) ==0:
         raise ValueError("if using this method for subplots, need to have list of subplots")
     if not isSubplot:
         fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
         subplots = [121, 122]
     plt.subplot(subplots[0])
-    plotManyHisto([truthBib[key],tracksBib[key]],binsBib,title=f"BIB {key} comparison tracklists to parquets",
-                  pltLabels=[f"{key} from parquet",f"{key} from track {recalcStr}"],pltStandalone=False,yscale='log',
+    plotManyHisto([truthBib[keyTruth],tracksBib[key]],binsBib,title=f"BIB {key} comparison tracklists to parquets",
+                  pltLabels=[f"{keyTruth} from parquet {recalcStrParq}",f"{key} from track {recalcStrTrack}"],pltStandalone=False,yscale='log',
                   xlabel=xlabel,ylabel="N tracks",alphas=[1,0.5])
     
     plt.subplot(subplots[1])
-    plotManyHisto([truthSig[key],tracksSig[key]],binsSig,title=f"Signal {key} comparison tracklists to parquets",
-                  pltLabels=[f"{key} from parquet",f"{key} from track {recalcStr}"],pltStandalone=False,yscale='log',
+    plotManyHisto([truthSig[keyTruth],tracksSig[key]],binsSig,title=f"Signal {key} comparison tracklists to parquets",
+                  pltLabels=[f"{keyTruth} from parquet {recalcStrParq}",f"{key} from track {recalcStrTrack}"],pltStandalone=False,yscale='log',
                   xlabel=xlabel,ylabel="N tracks",alphas=[1,0.5],)
 
     if not isSubplot:
         closePlot(PLOT_DIR, interactivePlots,  f"TrackParquet{key}.png")
+
+# trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]
+parquetTrackKeys = ["cotAlpha","cotBeta","p_calc1","flpNO","y-local","z-global","pt","hit_time","PID"]
+# ['x-entry', 'y-entry', 'z-entry', 'n_x', 'n_y', 'n_z', 'number_eh_pairs',
+#        'y-local', 'z-global', 'pt', 'hit_time', 'PID', 'cotAlpha', 'cotBeta',
+#        'y-midplane', 'x-midplane', 'adjusted_hit_time',
+#        'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian',
+#        'source', 'eta', 'R', 'q', 'm', 'scalePion', 'p_calc1', 'p_calc2',
+#        'p_calc3', 'xSize', 'ySize', 'nPix']
+recalcStrs = ["", "", "(recalculated)", "", "", "", "", "", ""]
+def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,recalcStrs=recalcStrs,
+                     xlabels = ["cot(α)", "cot(β)", "p [GeV/c]", "NO", "y-local [μm]", "z-global [mm]", "pT [GeV/c]", "raw hit time [s]", "PID"],
+                     PLOT_DIR="./plots",interactivePlots=False):
+    assert len(trackHeader) == len(parquetTrackKeys)
+    assert len(trackHeader) == len(xlabels)
+    assert len(trackHeader) == len(recalcStrs)
+    assert len(trackHeader) == 9
+    binsBib = 30
+    binsSig = 30
+    fig, ax = plt.subplots(ncols=2, nrows=8, figsize=(10,20))
+    
+    # subplotsList = [[921,922],[923,924],[925,926],[927,928],[929,ax[4,1]],[ax[5,0],ax[5,1]],[ax[6,0],ax[6,1]],
+    #                 [ax[15],ax[16]],[ax[17],ax[18]]]
+    # subplotsList = [[921,922],[923,924],[925,926],[927,928],[929,ax[4,1].get_subplotspec()],[plt.GridSpec(9,2)[5,0],plt.GridSpec(9,2)[5,1]],[plt.GridSpec(9,2)[6,0],plt.GridSpec(9,2)[6,1]],
+    #                 [plt.GridSpec(9,2)[7,0],plt.GridSpec(9,2)[7,1]],[plt.GridSpec(9,2)[8,0],plt.GridSpec(9,2)[8,1]]]
+    # subplotsList = [[821,822],[823,824],[825,826],[],[827,828],[829,plt.GridSpec(8,2)[4,1]],[plt.GridSpec(8,2)[5,0],plt.GridSpec(8,2)[5,1]],[plt.GridSpec(8,2)[6,0],plt.GridSpec(8,2)[6,1]],
+    #                 [plt.GridSpec(8,2)[7,0],plt.GridSpec(8,2)[7,1]]]
+    subplotsList = [[821,822],[823,824],[825,826],[],[827,828],[829,ax[4,1].get_subplotspec()],[ax[5,0].get_subplotspec(),ax[5,1].get_subplotspec()],[ax[6,0].get_subplotspec(),ax[6,1].get_subplotspec()],
+                    [ax[7,0].get_subplotspec(),ax[7,1].get_subplotspec()]]
+    assert len(subplotsList) ==9
+    for idx, key in enumerate(trackHeader):
+        if key == "flp":
+            continue
+        if key == "hit_pdg":
+            binsBib = 'auto'
+            binsBib = np.linspace(-13,13,26)
+        else:
+            binsBib=30
+        plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,keyTruth=parquetTrackKeys[idx],binsBib=binsBib, binsSig=binsSig,recalcStrParq=recalcStrs[idx],PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=subplotsList[idx],xlabel = xlabels[idx])
+    closePlot(PLOT_DIR, interactivePlots, "TrackParquet_allVars.png")
+    plt.hist(truthBib['PID'])
+    closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_parq.png")
+    
+    plt.hist(tracksBib['hit_pdg'])
+    closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_track.png")

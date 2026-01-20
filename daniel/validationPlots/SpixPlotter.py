@@ -136,6 +136,7 @@ class SmartpixPlotter():
             plotPCalcTrackComparison(self.tracksSig,bibSigLabel="Signal",PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
 
             plotNxyzTrackParquet(self.tracksBib, self.tracksSig,self.truthBib,self.truthSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
+            plotAllTrackVars(self.tracksBib, self.tracksSig,self.truthBib,self.truthSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
         if self.plotParquets:
             #Eliza's plots (the unique ones)
             plotCotACotBZY(self.truthBib,self.truthSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
