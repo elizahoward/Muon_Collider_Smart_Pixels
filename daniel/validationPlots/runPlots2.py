@@ -118,8 +118,8 @@ if defaultDirs:
     parquetDir_mp = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mp/"
     parquetDir_sig = "/local/d1/smartpixML/bigData/Simulation_Output_Signal/"
     parquetDir_all = "/local/d1/smartpixML/bigData/allData/"
-    parquetDir_all = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Parquet_Files"
-    parquetDir_all = None
+    # parquetDir_all = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Parquet_Files"
+    # parquetDir_all = None
 
     skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 

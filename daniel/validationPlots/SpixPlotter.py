@@ -19,6 +19,7 @@ import sys
 sys.path.append("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots/")
 from plotUtils import *
 import pickle
+from pathlib import Path
 
 class SmartpixPlotter():
     def __init__(self,
@@ -77,40 +78,40 @@ class SmartpixPlotter():
         if not self.savedPklFromParquet:
             self.truthDF, self.reconDF = load_parquet_pairs(self.parquetDir_all, skip_range=self.skip_indices)
             self.truthDF = genEtaAlphaBetaRq(self.truthDF)
-            self.truthDF.to_pickle("dfOfTruth.pkl")
+            self.truthDF.to_pickle(Path(self.PLOT_DIR).joinpath("dfOfTruth.pkl"))
             if self.processRecon:
-                self.reconDF.to_pickle("dfOfRecon.pkl")
+                self.reconDF.to_pickle(Path(self.PLOT_DIR).joinpath("dfOfRecon.pkl"))
         else:
             try:
-                self.truthDF = pd.read_pickle("dfOfTruth.pkl")
+                self.truthDF = pd.read_pickle(Path(self.PLOT_DIR).joinpath("dfOfTruth.pkl"))
             except:
                 raise Exception("You may have to first save pkls before you can read them\nHint: set savedPklFromParquet to False")
             if self.processRecon:
-                self.reconDF = pd.read_pickle("dfOfRecon.pkl")
+                self.reconDF = pd.read_pickle(Path(self.PLOT_DIR).joinpath("dfOfRecon.pkl"))
 
 
         self.fracBib, self.fracSig, self.fracMM, self.fracMP,self.numTotalSig,self.numTotalBib,self.truthSig,self.truthBib_mm,self.truthBib_mp,self.truthBib = countBibSig(self.truthDF,doPrint=True)
         if self.processRecon:
             self.truthDF = genEtaAlphaBetaRq(self.truthDF)
             self.truthSig, self.truthBib,self.reconSig,self.reconBib_mm,self.reconBib_mp,self.reconBib,self.clustersSig,self.clustersBib,self.xSizesSig,self.xSizesBib,self.ySizesSig, self.ySizesBib,self.nPixelsSig,self.nPixelsBib,self.avgClustDictBib,self.avgClustDictSig,= processReconBibSig(self.truthDF,self.reconDF,doPrint=True)
-            self.truthSig.to_pickle("dfOfTruthSig.pkl")
-            self.truthBib.to_pickle("dfOfTruthBib.pkl")
-            with open("avgProfBib.pkl",'wb') as handle:
+            self.truthSig.to_pickle(Path(self.PLOT_DIR).joinpath("dfOfTruthSig.pkl"))
+            self.truthBib.to_pickle(Path(self.PLOT_DIR).joinpath("dfOfTruthBib.pkl"))
+            with open(Path(self.PLOT_DIR).joinpath("avgProfBib.pkl"),'wb') as handle:
                 pickle.dump(self.avgClustDictBib,handle, protocol=pickle.HIGHEST_PROTOCOL)
-            with open("avgProfSig.pkl",'wb') as handle:
+            with open(Path(self.PLOT_DIR).joinpath("avgProfSig.pkl"),'wb') as handle:
                 pickle.dump(self.avgClustDictSig,handle, protocol=pickle.HIGHEST_PROTOCOL)
         else:
-            self.truthSig = pd.read_pickle("dfOfTruthSig.pkl")
-            self.truthBib = pd.read_pickle("dfOfTruthBib.pkl")
+            self.truthSig = pd.read_pickle(Path(self.PLOT_DIR).joinpath("dfOfTruthSig.pkl"))
+            self.truthBib = pd.read_pickle(Path(self.PLOT_DIR).joinpath("dfOfTruthBib.pkl"))
             self.xSizesBib=self.truthBib["xSize"]
             self.ySizesBib=self.truthBib["ySize"]
             self.nPixelsBib=self.truthBib["nPix"]
             self.xSizesSig=self.truthSig["xSize"]
             self.ySizesSig=self.truthSig["ySize"]
             self.nPixelsSig=self.truthSig["nPix"]
-            with open("avgProfBib.pkl",'rb') as handle:
+            with open(Path(self.PLOT_DIR).joinpath("avgProfBib.pkl"),'rb') as handle:
                 self.avgClustDictBib = pickle.load(handle)
-            with open("avgProfSig.pkl",'rb') as handle:
+            with open(Path(self.PLOT_DIR).joinpath("avgProfSig.pkl"),'rb') as handle:
                 self.avgClustDictSig = pickle.load(handle)
         print("Finished loading parquet data [not counting tracks], now proceeding to plotting or tracklists")
     def loadTrackData(self):
@@ -164,4 +165,6 @@ class SmartpixPlotter():
             plotEhPt(self.truthBib, self.truthSig, mask_bib,mask_sig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotPtLowHigh(self.truthBib, self.truthSig, mask_bib,mask_sig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
         print("Done plotting")
+        return
+    def plotSingleTrack(self, index):
         return
