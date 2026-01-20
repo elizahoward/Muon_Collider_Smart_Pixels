@@ -74,7 +74,7 @@ def generate_signal():
     # Particle gun
     run_particle_gun = ["python3", f"{ops.benchmark_dir}/generation/pgun/pgun_lcio.py", 
                             "-s", "12345", 
-                            "-e", f"{ops.track_total}", 
+                            "-e", f"{int(ops.track_total*1.115)}", 
                             "--pdg", "13", "-13",
                             "--p", "1", "100", 
                             "--theta", "10", "170", 
@@ -194,7 +194,7 @@ def generate_bib():
 
     commands = []
                     
-    for run in range(nTracklists): 
+    for run in range(int(nTracklists/2)): 
 
         for bib_type in ["mm","mp"]:
 
