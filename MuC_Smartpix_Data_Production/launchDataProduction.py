@@ -1,3 +1,11 @@
+"""
+Docstring for MuC_Smartpix_Data_Production.launchDataProduction
+
+source /cvmfs/muoncollider.cern.ch/release/2.8-patch2/setup.sh
+python3 MuC_Smartpix_Data_Production/Tracklist_Production/make_tracklists_extra_info.py -sig -i /home/elizahoward/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_flp_0/Detector_Sim/signal_detsim.slcio -odir /home/elizahoward/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_flp_0/Track_Lists -t 1000 -b 1000
+"""
+
+
 import numpy as np
 import os
 import argparse
