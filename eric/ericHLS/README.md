@@ -1,6 +1,18 @@
+# HLS Workflow Tools (Updated Jan 2026)
+
+This directory contains tools for selecting Pareto optimal models and synthesizing them to HLS (High-Level Synthesis) implementations.
+
+## 🚀 Quick Start - See [STREAMLINED_WORKFLOW.md](STREAMLINED_WORKFLOW.md)
+
+The complete workflow is now just **2 simple steps**:
+1. Select Pareto optimal models with `analyze_and_select_pareto.py`
+2. Run HLS synthesis with `parallel_hls_synthesis.py`
+
+---
+
 # Parallel HLS Synthesis Tool
 
-This directory contains a tool for parallel synthesis of neural network models to HLS (High-Level Synthesis) implementations.
+This directory contains tools for parallel synthesis of neural network models to HLS implementations.
 
 ## Overview
 
