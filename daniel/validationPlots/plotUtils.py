@@ -127,9 +127,12 @@ def plotHistoBibSig(truthBib,truthSig,key,pltStandalone,bins=None,showNums=False
     if len(xlabel)==0:
         xlabel = f"{key}"
     if (bins is None) or np.ndim(bins)==0:
-        print(f"Setting the histogram bins to be the collective range for BIB and Signal of {key}")
-        binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
-        bins = prepHistBins([truthBib[key],truthSig[key]],binCount,spacing='linear',doPrint=True,arrNames = [f"BIB    {key}", f"Signal {key}"])
+        if type(bins)==str:
+            print(f"Using bins {bins}")
+        else:
+            print(f"Setting the histogram bins to be the collective range for BIB and Signal of {key}")
+            binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
+            bins = prepHistBins([truthBib[key],truthSig[key]],binCount,spacing='linear',doPrint=True,arrNames = [f"BIB    {key}", f"Signal {key}"])
         # print(bins)
     plotManyHisto([truthSig[key],truthBib[key]],bins=bins,title=title,pltStandalone=pltStandalone,
                   pltLabels=[f"Signal",f"BIB"],showNums=showNums,figsize=figsize,yscale=yscale,
@@ -150,9 +153,12 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pl
         if (PLOT_DIR is not None) or (interactivePlots is not None) or (saveTitle is not None):
             raise ValueError("Why are you passing plot saving instructions in plotManyHisto when this is not a standalone plot?")
     if (bins is None) or np.ndim(bins)==0:
-        print(f"Setting the histogram bins to be the collective range for the input arrs")
-        binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
-        bins = prepHistBins(arrs,binCount,doPrint=True,arrNames=pltLabels)
+        if type(bins)==str:
+            print(f"Using bins {bins}")
+        else:
+            print(f"Setting the histogram bins to be the collective range for the input arrs")
+            binCount = bins if ((bins is not None) and np.ndim(bins)==0) else 30
+            bins = prepHistBins(arrs,binCount,doPrint=True,arrNames=pltLabels)
         # print(bins)
 
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
@@ -235,12 +241,20 @@ def processReconBibSig(truthDF,reconDF,doPrint=False):
     assert len(truthBib) == len(xSizesBib)
     assert len(truthBib) == len(ySizesBib)
     assert len(truthBib) == len(nPixelsBib)
-    truthSig.loc[:,"xSize"] = list(xSizesSig)
-    truthSig.loc[:,"ySize"] = list(ySizesSig)
-    truthSig.loc[:,"nPix"]  = list(nPixelsSig)
-    truthBib.loc[:,"xSize"] = list(xSizesBib)
-    truthBib.loc[:,"ySize"] = list(ySizesBib)
-    truthBib.loc[:,"nPix"]  = list(nPixelsBib)
+    # truthSig.loc[:,"xSize"] = list(xSizesSig)
+    # truthSig.loc[:,"ySize"] = list(ySizesSig)
+    # truthSig.loc[:,"nPix"]  = list(nPixelsSig)
+    # truthBib.loc[:,"xSize"] = list(xSizesBib)
+    # truthBib.loc[:,"ySize"] = list(ySizesBib)
+    # truthBib.loc[:,"nPix"]  = list(nPixelsBib)
+    #The error doesn't go away if use the top code
+    #And based on behavior, seems fine
+    truthSig["xSize"] = list(xSizesSig)
+    truthSig["ySize"] = list(ySizesSig)
+    truthSig["nPix"]  = list(nPixelsSig)
+    truthBib["xSize"] = list(xSizesBib)
+    truthBib["ySize"] = list(ySizesBib)
+    truthBib["nPix"]  = list(nPixelsBib)
 
     #from Eliza's code, the average yprofiles in each section
     print("getting average cluster profile in each regime")
@@ -446,7 +460,7 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
     bins = np.linspace(-1,10,100)
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,
                   pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,
-                  showNums=showNums,figsize=(7,2),yscale='log',xlabel="Momentum pT (GeV)",ylabel="Tracks (log scale)")
+                  showNums=showNums,figsize=(7,2),yscale='log',xlabel="Momentum pT [GeV/c]",ylabel="Tracks (log scale)")
     closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt_lowPtRange.png")
 
     plt.figure(figsize=(7, 5))
@@ -460,7 +474,7 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
     # bins = np.logspace(-1,2.1,100)
     plotManyHisto([truthSig[key],truthBib_mm[key],truthBib_mp[key],truthBib[key]],title="",pltStandalone=False,
                   pltLabels=[f"sig {key}",f"bib mm {key}",f"bib mp {key}",f"bib {key}"],bins=bins,
-                  showNums=showNums,figsize=(7,2),yscale="log",xlabel="Momentum pT (GeV)",ylabel="Tracks (log scale)")
+                  showNums=showNums,figsize=(7,2),yscale="log",xlabel="Momentum pT [GeV/c]",ylabel="Tracks (log scale)")
     closePlot(PLOT_DIR, interactivePlots,  "bib_signal_pt_fullRange.png")
 
     if doPrint:
@@ -470,7 +484,7 @@ def plotPt(truthSig,truthBib_mm,truthBib_mp,truthBib,PLOT_DIR='./plots',interact
 def plotPtEta(truthSig,truthBib,PLOT_DIR='./plots',interactivePlots=False):
     plt.figure(figsize=(5,4))
     # plt.figure()
-    plotAvsB(truthSig,truthBib,"eta","pt",'η',"pT (GeV)","pT vs. η")
+    plotAvsB(truthSig,truthBib,"eta","pt",'η',"pT [GeV/c]","pT vs. η")
     closePlot(PLOT_DIR,interactivePlots,"signal_bib_ptEta.png")
 
 
@@ -655,7 +669,8 @@ def genEtaAlphaBetaRq(truthDF):
     if 'R' not in truthDF.columns:
         #added from Eliza's code
         truthDF['R'] = truthDF['pt']*5.36/(1.60217663*3.57)*1000 # [mm]
-    if 'q' not in truthDF.columns:
+    # if 'q' not in truthDF.columns:
+    if True:
         truthDF['q'] = truthDF['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
     if 'scalePion' not in truthDF.columns:
         #relative masses of pion and muon/electron, comes from pixelav https://github.com/elizahoward/pixelav/blob/30d7585448f87bcdf10f7f066005a04e4bd34a52/ppixelav2_list_trkpy_n_2f_custom.c#L358
@@ -666,6 +681,15 @@ def genEtaAlphaBetaRq(truthDF):
 
         truthDF['p_calc2'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
         truthDF['p_calc3'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
+
+        truthDF['betaGamma'] = truthDF['p_calc2'] / truthDF['m'] * 1000 #conversion from MeV to GeV for mass
+        #TODO: Decide which p calculation to use
+    if 'pathLength' not in truthDF.columns:
+        #TODO double check thickness
+        thick = 50.0 #um I think
+        truthDF['pathLength'] = thick * np.sqrt( truthDF['n_x']* truthDF['n_x'] + truthDF['n_y']* truthDF['n_y'] + truthDF['n_z']* truthDF['n_z']) / truthDF['n_y']
+        truthDF['EHperMicron'] = truthDF['number_eh_pairs'] / np.abs(truthDF['pathLength'])
+
 
     return truthDF
 
@@ -723,7 +747,7 @@ def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizes
 # --- Plot 4: 2D histogram of number_eh_pairs vs pt ---
 def plotEhPt(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
     plot1by2BibSig2dHisto(truthbib,truthsig,'number_eh_pairs','pt',mask_bib,mask_sig,30,30,'Blues',
-                          'Number of electron hole pairs','pT (GeV)',"bib_signal_ehpairs_vs_pt_2d",PLOT_DIR, interactivePlots)
+                          'Number of electron hole pairs','pT [GeV/c]',"bib_signal_ehpairs_vs_pt_2d",PLOT_DIR, interactivePlots)
 
 # --- Plot 5: charge separation for low and high pt ---
 def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
@@ -747,17 +771,17 @@ def plotPtLowHigh(truthbib, truthsig, mask_bib,mask_sig,PLOT_DIR="./plots",inter
     # Example: plot pt distributions for low/high pt, positive/negative charge
     fig, ax = plt.subplots(2,2,figsize=(12,5))
     plt.subplot(222)
-    plotManyHisto([truthSigLowPos['pt'],truthSigLowNeg['pt']],bins=30,title='Sig Low pt (<5 GeV)',pltStandalone=False,
-                  pltLabels=['Low pt, q>0','Low pt, q<0'],xlabel='pt (GeV)',yscale='log',)
+    plotManyHisto([truthSigLowPos['pt'],truthSigLowNeg['pt']],bins=30,title='Sig Low pt (<5 GeV/c)',pltStandalone=False,
+                  pltLabels=['Low pt, q>0','Low pt, q<0'],xlabel='pt [GeV/c]',yscale='log',)
     plt.subplot(224)
-    plotManyHisto([truthSigHighPos['pt'],truthSigHighNeg['pt']],bins=30,title='Sig High pt (>95 GeV)',pltStandalone=False,
-                  pltLabels=['High pt, q>0','High pt, q<0'],xlabel='pt (GeV)')   
+    plotManyHisto([truthSigHighPos['pt'],truthSigHighNeg['pt']],bins=30,title='Sig High pt (>95 GeV/c)',pltStandalone=False,
+                  pltLabels=['High pt, q>0','High pt, q<0'],xlabel='pt [GeV/c]')   
     plt.subplot(221)
-    plotManyHisto([truthBibLowPos['pt'],truthBibLowNeg['pt']],bins=30,title='Bib Low pt (<5 GeV)',pltStandalone=False,
-                  pltLabels=['Low pt, q>0','Low pt, q<0'],xlabel='pt (GeV)',yscale='log',)
+    plotManyHisto([truthBibLowPos['pt'],truthBibLowNeg['pt']],bins=30,title='Bib Low pt (<5 GeV/c)',pltStandalone=False,
+                  pltLabels=['Low pt, q>0','Low pt, q<0'],xlabel='pt [GeV/c]',yscale='log',)
     plt.subplot(223)
-    plotManyHisto([truthBibHighPos['pt'],truthBibHighNeg['pt']],bins=30,title='Bib High pt (>95 GeV)',pltStandalone=False,
-                  pltLabels=['High pt, q>0','High pt, q<0'],xlabel='pt (GeV)')
+    plotManyHisto([truthBibHighPos['pt'],truthBibHighNeg['pt']],bins=30,title='Bib High pt (>95 GeV/c)',pltStandalone=False,
+                  pltLabels=['High pt, q>0','High pt, q<0'],xlabel='pt [GeV/c]')
 
 
     closePlot(PLOT_DIR, interactivePlots, "ELIZAHATESTHIS_bib_signal_pt_charge_separation.png")
@@ -779,7 +803,7 @@ def plotRadius(truthbib, truthsig,PLOT_DIR="./plots",interactivePlots=False):
     plt.legend()
     plt.title("Radius of track curvature vs. pt")
     plt.xlabel("Radius [mm]")
-    plt.ylabel("pT [GeV]")
+    plt.ylabel("pT [GeV/c]")
     closePlot(PLOT_DIR, interactivePlots,  "radiusPlot.png")
 
 #Some of these may be redundant
@@ -1004,10 +1028,10 @@ def plotTrackPPt(tracksBib, tracksSig,binsBib=30,binsSig=30,yscale='log',PLOT_DI
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)
     plotManyHisto([tracksBib["p"],tracksBib["pt"]],binsBib,title="BIB tracklists, p and pT",yscale=yscale,
-                  pltLabels=["p","pT"],xlabel="Momentum (GeV)",pltStandalone=False,alphas=[1,0.5])
+                  pltLabels=["p","pT"],xlabel="Momentum [GeV/c]",pltStandalone=False,alphas=[1,0.5])
     plt.subplot(122)
     plotManyHisto([tracksSig["p"],tracksSig["pt"]],binsSig,title="Sig tracklists, p and pT",yscale=yscale,
-                  pltLabels=["p","pT"],xlabel="Momentum (GeV)",pltStandalone=False,alphas=[1,0.5],)
+                  pltLabels=["p","pT"],xlabel="Momentum [GeV/c]",pltStandalone=False,alphas=[1,0.5],)
 
     closePlot(PLOT_DIR, interactivePlots,  f"TrackPPt.png")
 
@@ -1016,7 +1040,7 @@ def plotPtTrackAndParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./pl
     key = "pt"
     binsBib = 30
     binsSig = 30
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,xlabel="pT (GeV)")
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,xlabel="pT [GeV/c]")
 
 def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",interactivePlots=False):
     # z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"]))
@@ -1027,10 +1051,10 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
     z = tracksDF['z']
 
     p = tracksDF["pt"] / np.sqrt((z**2 +y**2)/(x**2 +y**2 +z**2 ))
-
+    assert len(p)==len(tracksDF["p"])
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)    
-    plotManyHisto([p,tracksDF["p"]],pltStandalone=False,title=f"{bibSigLabel}",xlabel="Momentum (GeV)",yscale='log',alphas=[1,0.5],
+    plotManyHisto([p,tracksDF["p"]],pltStandalone=False,title=f"{bibSigLabel}",xlabel="Momentum [GeV/c]",yscale='log',alphas=[1,0.5],
                   pltLabels=["p recalculated using \n cota, cotb, pt, in the tracklists","p directly as saved in tracklists"],)
 
     plt.subplot(122)
@@ -1038,7 +1062,7 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
     plt.title(f"Difference between p saved in {bibSigLabel} tracklists and \n p recalculated from cota, cotb, pt saved in tracklists")
     plt.yscale('log')
     plt.ylabel("N tracks")
-    plt.xlabel('Momentum - momentum = "0" (GeV)')
+    plt.xlabel('Momentum - momentum = "0" [GeV/c]')
 
     closePlot(PLOT_DIR, interactivePlots,  f"TrackPCalcComparison{bibSigLabel}.png")
 
@@ -1092,29 +1116,94 @@ def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plo
     fig, ax=plt.subplots(ncols=2, nrows=3, figsize=(10,13))
 
     key = "n_x"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[321,322],xlabel = "momentum*scalePion (GeV*scalePion)")
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStrTrack=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[321,322],xlabel = "momentum*scalePion (GeV/c*scalePion)")
     key = "n_y"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[323,324],xlabel = "momentum*scalePion (GeV*scalePion)")
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStrTrack=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[323,324],xlabel = "momentum*scalePion (GeV/c*scalePion)")
     key = "n_z"
-    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStr=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[325,326],xlabel = "momentum*scalePion (GeV*scalePion)")
+    plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,recalcStrTrack=recalcStr,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=[325,326],xlabel = "momentum*scalePion (GeV/c*scalePion)")
     closePlot(PLOT_DIR, interactivePlots, "TrackParquet_nxnynz.png")
 
-def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStr = "",
-                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = ""):
+def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStrTrack = "",recalcStrParq = "",
+                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = "",keyTruth=None):
+    if keyTruth is None:
+        keyTruth = key
     if isSubplot and len(subplots) ==0:
         raise ValueError("if using this method for subplots, need to have list of subplots")
     if not isSubplot:
         fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
         subplots = [121, 122]
     plt.subplot(subplots[0])
-    plotManyHisto([truthBib[key],tracksBib[key]],binsBib,title=f"BIB {key} comparison tracklists to parquets",
-                  pltLabels=[f"{key} from parquet",f"{key} from track {recalcStr}"],pltStandalone=False,yscale='log',
+    plotManyHisto([truthBib[keyTruth],tracksBib[key]],binsBib,title=f"BIB {key} comparison tracklists to parquets",
+                  pltLabels=[f"{keyTruth} from parquet {recalcStrParq}",f"{key} from track {recalcStrTrack}"],pltStandalone=False,yscale='log',
                   xlabel=xlabel,ylabel="N tracks",alphas=[1,0.5])
     
     plt.subplot(subplots[1])
-    plotManyHisto([truthSig[key],tracksSig[key]],binsSig,title=f"Signal {key} comparison tracklists to parquets",
-                  pltLabels=[f"{key} from parquet",f"{key} from track {recalcStr}"],pltStandalone=False,yscale='log',
+    plotManyHisto([truthSig[keyTruth],tracksSig[key]],binsSig,title=f"Signal {key} comparison tracklists to parquets",
+                  pltLabels=[f"{keyTruth} from parquet {recalcStrParq}",f"{key} from track {recalcStrTrack}"],pltStandalone=False,yscale='log',
                   xlabel=xlabel,ylabel="N tracks",alphas=[1,0.5],)
 
     if not isSubplot:
         closePlot(PLOT_DIR, interactivePlots,  f"TrackParquet{key}.png")
+
+# trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]
+parquetTrackKeys = ["cotAlpha","cotBeta","p_calc1","flpNO","y-local","z-global","pt","hit_time","PID"]
+# ['x-entry', 'y-entry', 'z-entry', 'n_x', 'n_y', 'n_z', 'number_eh_pairs',
+#        'y-local', 'z-global', 'pt', 'hit_time', 'PID', 'cotAlpha', 'cotBeta',
+#        'y-midplane', 'x-midplane', 'adjusted_hit_time',
+#        'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian',
+#        'source', 'eta', 'R', 'q', 'm', 'scalePion', 'p_calc1', 'p_calc2',
+#        'p_calc3', 'xSize', 'ySize', 'nPix']
+recalcStrs = ["", "", "(recalculated)", "", "", "", "", "", ""]
+def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,recalcStrs=recalcStrs,
+                     xlabels = ["cot(α)", "cot(β)", "p [GeV/c]", "NO", "y-local [μm]", "z-global [mm]", "pT [GeV/c]", "raw hit time [s]", "PID"],
+                     PLOT_DIR="./plots",interactivePlots=False):
+    assert len(trackHeader) == len(parquetTrackKeys)
+    assert len(trackHeader) == len(xlabels)
+    assert len(trackHeader) == len(recalcStrs)
+    assert len(trackHeader) == 9
+    binsBib = 30
+    binsSig = 30
+    fig, ax = plt.subplots(ncols=2, nrows=8, figsize=(10,20))
+    
+    # subplotsList = [[921,922],[923,924],[925,926],[927,928],[929,ax[4,1]],[ax[5,0],ax[5,1]],[ax[6,0],ax[6,1]],
+    #                 [ax[15],ax[16]],[ax[17],ax[18]]]
+    # subplotsList = [[921,922],[923,924],[925,926],[927,928],[929,ax[4,1].get_subplotspec()],[plt.GridSpec(9,2)[5,0],plt.GridSpec(9,2)[5,1]],[plt.GridSpec(9,2)[6,0],plt.GridSpec(9,2)[6,1]],
+    #                 [plt.GridSpec(9,2)[7,0],plt.GridSpec(9,2)[7,1]],[plt.GridSpec(9,2)[8,0],plt.GridSpec(9,2)[8,1]]]
+    # subplotsList = [[821,822],[823,824],[825,826],[],[827,828],[829,plt.GridSpec(8,2)[4,1]],[plt.GridSpec(8,2)[5,0],plt.GridSpec(8,2)[5,1]],[plt.GridSpec(8,2)[6,0],plt.GridSpec(8,2)[6,1]],
+    #                 [plt.GridSpec(8,2)[7,0],plt.GridSpec(8,2)[7,1]]]
+    subplotsList = [[821,822],[823,824],[825,826],[],[827,828],[829,ax[4,1].get_subplotspec()],[ax[5,0].get_subplotspec(),ax[5,1].get_subplotspec()],[ax[6,0].get_subplotspec(),ax[6,1].get_subplotspec()],
+                    [ax[7,0].get_subplotspec(),ax[7,1].get_subplotspec()]]
+    assert len(subplotsList) ==9
+    for idx, key in enumerate(trackHeader):
+        if key == "flp":
+            continue
+        if key == "hit_pdg":
+            binsBib = 'auto'
+            binsBib = np.linspace(-13,13,26)
+        else:
+            binsBib=30
+        plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,keyTruth=parquetTrackKeys[idx],binsBib=binsBib, binsSig=binsSig,recalcStrParq=recalcStrs[idx],PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=subplotsList[idx],xlabel = xlabels[idx])
+    closePlot(PLOT_DIR, interactivePlots, "TrackParquet_allVars.png")
+    # plt.hist(truthBib['PID'])
+    # closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_parq.png")
+    
+    # plt.hist(tracksBib['hit_pdg'])
+    # closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_track.png")
+
+def plotBetaBloch(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False):
+    mask = truthSig["p_calc2"] <100
+    truthSig = truthSig[mask]
+    # plt.hist(truthSig["p_calc2"])
+    # plt.show()
+    plt.figure(figsize=(7,10))
+    plt.subplot(411)
+    plotHistoBibSig(truthBib,truthSig,"betaGamma",pltStandalone=False,title="Beta Gamma Distribution",xlabel='βγ',yscale='log')
+    plt.subplot(412)
+    plotHistoBibSig(truthBib,truthSig,"pathLength",pltStandalone=False,title="Path Length through sensor Distribution",xlabel='Path length [μm]',yscale='log')
+    plt.subplot(413)
+    plotHistoBibSig(truthBib,truthSig,"EHperMicron",pltStandalone=False,title="Charge deposited per micron Distribution",xlabel='EH pairs/path [#/μm]',yscale='log')
+    plt.subplot(414)
+    plotAvsB(truthSig,truthBib,keyX="betaGamma",keyY="EHperMicron",xlabel="βγ",ylabel='EH pairs/path [#/μm]',title="beta block curve?",alpha=0.7)
+    plt.yscale('log')
+    closePlot(PLOT_DIR, interactivePlots, "BetaBlochCurve.png")
+    

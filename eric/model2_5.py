@@ -175,7 +175,6 @@ class Model2_5(Model2):
             # Quantizers
             weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
             z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
-            activation_quantizer = quantized_relu(8, 0)
 
             # Input layers
             x_profile_input = Input(shape=(21,), name="x_profile")
@@ -192,7 +191,7 @@ class Model2_5(Model2):
                 bias_quantizer=weight_quantizer,
                 name="other_dense"
             )(other_features)
-            other_dense = QActivation(activation=activation_quantizer, name="other_activation")(other_dense)
+            other_dense = QActivation("quantized_relu(8,0)", name="other_activation")(other_dense)
 
             # z_global branch
             z_dense = QDense(
@@ -201,7 +200,7 @@ class Model2_5(Model2):
                 bias_quantizer=z_weight_quantizer,
                 name="z_global_dense"
             )(z_global_input)
-            z_dense = QActivation(activation=activation_quantizer, name="z_activation")(z_dense)
+            z_dense = QActivation("quantized_relu(8,0)", name="z_activation")(z_dense)
 
             # Merge both branches
             merged = Concatenate(name="merged_features")([other_dense, z_dense])
@@ -213,7 +212,7 @@ class Model2_5(Model2):
                 bias_quantizer=weight_quantizer,
                 name="dense2"
             )(merged)
-            hidden = QActivation(activation=activation_quantizer, name="dense2_activation")(hidden)
+            hidden = QActivation("quantized_relu(8,0)", name="dense2_activation")(hidden)
             hidden = Dropout(self.dropout_rate, name="dropout1")(hidden)
             
             hidden = QDense(
@@ -222,7 +221,7 @@ class Model2_5(Model2):
                 bias_quantizer=weight_quantizer,
                 name="dense3"
             )(hidden)
-            hidden = QActivation(activation=activation_quantizer, name="dense3_activation")(hidden)
+            hidden = QActivation("quantized_relu(8,0)", name="dense3_activation")(hidden)
 
             # Output layer
             output_dense = QDense(
@@ -257,17 +256,17 @@ class Model2_5(Model2):
 
         # Hyperparameter search space with progressive constraints
         # First layer sizes
-        spatial_units = hp.Int('spatial_units', min_value=32, max_value=192, step=32)
-        z_global_units = hp.Int('z_global_units', min_value=4, max_value=32, step=8)
+        spatial_units = hp.Int('spatial_units', min_value=16, max_value=64, step=4)
+        z_global_units = hp.Int('z_global_units', min_value=2, max_value=16, step=2)
         
         # Calculate max size for dense2 (should not exceed concatenated size)
         concat_size = spatial_units + z_global_units
         dense2_max = min(256, concat_size)
-        dense2_units = hp.Int('dense2_units', min_value=32, max_value=dense2_max, step=16)
+        dense2_units = hp.Int('dense2_units', min_value=4, max_value=dense2_max, step=16)
         
         # Calculate max size for dense3 (should not exceed dense2)
         dense3_max = min(128, dense2_units)
-        dense3_units = hp.Int('dense3_units', min_value=16, max_value=dense3_max, step=8)
+        dense3_units = hp.Int('dense3_units', min_value=2, max_value=dense3_max, step=2)
         
         dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.05)
         learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
@@ -275,7 +274,6 @@ class Model2_5(Model2):
         # Quantizers
         weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
         z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
-        activation_quantizer = quantized_relu(8, 0)
 
         # Input layers
         x_profile_input = Input(shape=(21,), name="x_profile")
@@ -292,7 +290,7 @@ class Model2_5(Model2):
             bias_quantizer=weight_quantizer,
             name="other_dense"
         )(other_features)
-        other_dense = QActivation(activation=activation_quantizer, name="other_activation")(other_dense)
+        other_dense = QActivation("quantized_relu(8,0)", name="other_activation")(other_dense)
 
         # z_global branch
         z_dense = QDense(
@@ -301,7 +299,7 @@ class Model2_5(Model2):
             bias_quantizer=z_weight_quantizer,
             name="z_global_dense"
         )(z_global_input)
-        z_dense = QActivation(activation=activation_quantizer, name="z_activation")(z_dense)
+        z_dense = QActivation("quantized_relu(8,0)", name="z_activation")(z_dense)
 
         # Merge both branches
         merged = Concatenate(name="merged_features")([other_dense, z_dense])
@@ -313,7 +311,7 @@ class Model2_5(Model2):
             bias_quantizer=weight_quantizer,
             name="dense2"
         )(merged)
-        hidden = QActivation(activation=activation_quantizer, name="dense2_activation")(hidden)
+        hidden = QActivation("quantized_relu(8,0)", name="dense2_activation")(hidden)
         hidden = Dropout(dropout_rate, name="dropout1")(hidden)
         
         hidden = QDense(
@@ -322,7 +320,7 @@ class Model2_5(Model2):
             bias_quantizer=weight_quantizer,
             name="dense3"
         )(hidden)
-        hidden = QActivation(activation=activation_quantizer, name="dense3_activation")(hidden)
+        hidden = QActivation("quantized_relu(8,0)", name="dense3_activation")(hidden)
 
         # Output layer
         output_dense = QDense(
