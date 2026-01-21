@@ -151,13 +151,13 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
     static int fileind, filebase, fileoff, runsize, irun, ievent, frun, nskip, procid, new_drde, ehole;
     static float rvec[4], pimom, xoffset, yoffset, lenxmin, lenxmax, deltaxlen, lenymin, lenymax, deltaylen, locdir[3], cotalpha, cotbeta;
     static float clusxlen, clusylen;
-    static char outfile[500], seedfile[500];
+    static char track_list[500], outfile[500], seedfile[500], logfile[500];
     static double alpha;
     float scale = 1;
 
     FILE *isfp, *iifp, *ofp, *icfp;
 
-    char track_list[500] = "track_list.txt";
+    /*char track_list[500] = "track_list.txt";*/
     
     /* If no arguments, quit */
 	
@@ -165,18 +165,9 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
       printf("Need at least one argument to specify run \n");
       return 0;
     }
-	
-    /* A single argument is a first run number  */
-    
-    if(argc == 2) {
-      sscanf(argv[1],"%d", &frun);
-      if(frun < 1 || frun > TEMPMAX) {printf("frun %d is illegal, quit \n", frun); return 0;}
-      runsize = 30000;
-      printf("Skipping %d blocks of runsize %d \n", frun-1, runsize);
-    }
 
-    /* 2 arguments = first run number, second track list */
-    if(argc == 5) {
+    /* 6 arguments = run number, track list, output file, seed file, log file*/
+    if(argc == 6) {
       sscanf(argv[1],"%d", &frun);
       if(frun < 1 || frun > TEMPMAX) {printf("frun %d is illegal, quit \n", frun); return 0;}
       runsize = 30000;
@@ -184,45 +175,12 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
       sscanf(argv[2],"%s", &track_list);
       sscanf(argv[3],"%s", &outfile);
       sscanf(argv[4],"%s", &seedfile);
+      sscanf(argv[5],"%s", &logfile);
       printf("Track list file: %s \n", track_list);
     }
-    
-    /* /\* If two arguments, second could be a number of runs or a fork instruction *\/ */
-	
-    /* if(argc == 3) { */
-    /*   sscanf(argv[1],"%d", &frun); */
-    /*   if(frun < 1 || frun > TEMPMAX) {printf("frun %d is illegal, quit \n", frun); return 0;} */
-    /*   if(*argv[2] == 'f') {runsize = 30000;} */
-    /*   else { */
-    /* 	sscanf(argv[2],"%d", &runsize); */
-    /* 	if(runsize < 1 || runsize > NMUON) {printf("runsize %d is illegal, quit \n", runsize); return 0;} */
-    /*   }	 */
-    /*   printf("Skipping %d blocks of runsize %d \n", frun-1, runsize); */
-    /*   if(*argv[2] == 'f') { */
-    /* 	procid = fork(); */
-    /* 	if(procid) { */
-    /* 	  printf("Forking process, id = %d\n", procid); */
-    /* 	  return 0;  */
-    /* 	}			 */
-    /*   } */
-    /* } */
-	
-    /* /\* If three arguments, retrieve first run, number of runs, and possible fork command *\/ */
-    
-    /* if(argc == 4) { */
-    /*   sscanf(argv[1],"%d", &frun); */
-    /*   if(frun < 1 || frun > TEMPMAX) {printf("frun %d is illegal, quit \n", frun); return 0;} */
-    /*   sscanf(argv[2],"%d", &runsize); */
-    /*   if(runsize < 1 || runsize > NMUON) {printf("runsize %d is illegal, quit \n", runsize); return 0;} */
-    /*   printf("Skipping %d blocks of runsize %d \n", frun-1, runsize); */
-    /*   if(*argv[3] == 'f') { */
-    /* 	procid = fork(); */
-    /* 	if(procid) { */
-    /* 	  printf("Forking process, id = %d\n", procid); */
-    /* 	  return 0;  */
-    /* 	}			 */
-    /*   } */
-    /* } */
+    else{
+      printf("Failing to parse input arguments, %d arguments found\n", argc);
+    }
 	
     /*  Define the detector parameters from the global initialization file */
 
@@ -237,7 +195,7 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
     /*  read track list */
     icfp = fopen(track_list, "r");
     if (icfp==NULL) {
-      printf("no track_list.txt file found\n");
+      printf("Track list file not found: %s\n", &track_list);
       return 0;
     }
 	
@@ -336,25 +294,32 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
       ranlux_(rvec,&c__4);
       cotbeta = cotbtrack[ievent];	
       if(fabsf(cotbeta) > 10.) goto incr;
+
       cotalpha = cotatrack[ievent];
       if(fabsf(cotalpha) > 10.) goto incr;
+
+      /* Get dir_z first */
       locdir[2] = 1./sqrt((double)(1.+cotbeta*cotbeta+cotalpha*cotalpha));
-	/* track travels in the E-field direction in the unflipped coordinate system */
+
+	    /* track travels in the E-field direction in the unflipped coordinate system */
       if(flipped[ievent] == 0) locdir[2] = -locdir[2];
-      locdir[0] = cotalpha*locdir[2];
-      locdir[1] = cotbeta*locdir[2];
+
+      locdir[0] = cotalpha*locdir[2]; /* dir_x = dir_z * cot(alpha) */
+      locdir[1] = cotbeta*locdir[2];  /* dir_y = dir_z * cot(beta) */
 			   
       /*  Calculate the offsets from the detector center to its front face */
       
       xoffset = locdir[0]/locdir[2] * thick / 2.;
       yoffset = locdir[1]/locdir[2] * thick / 2.;
       
+      /* The entry point will depend on the choice of coordinates (z axis direction) */
       if(locdir[2] < 0.) {
 	      vect[2] = thick;
       } else {
 	      vect[2] = 0.;
       }
 
+      /* PixelAV was designed for pions, so for other particles we scale the momentum bu the ration of pion mass to particle mass*/
       if (PID[ievent]==11) {
         scale = 139.57/0.511;
       }
@@ -374,9 +339,9 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
       //printf("\n\n vect: %f, %f, %f, %f, %f, %f \n\n", vect[0], vect[1], vect[2], vect[3], vect[4], vect[5]);
 
       /*  Set Bfield z-direction for this event */
-      
       bfield.f[2] = bfield_z;
       if(cotalpha < 0.) {bfield.f[2] = -bfield_z;}
+      
       //printf("\n\n bfield: (%f, %f, %f)\n\n", bfield.f[0], bfield.f[1], bfield.f[2]);
       
       /*  Propagate the track and make e-h pairs */
@@ -415,7 +380,13 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
 	  }
 	}    
 	fclose(ofp);      
-      } 
+} 
+else{
+  ofp = fopen(logfile, "a");
+  fprintf(ofp,"NehBig event %4d track  ",ievent);
+  fprintf(ofp,"%f %f %f %d %f %f %f %f %f \n", cotatrack[ievent], cotbtrack[ievent], ppiontrack[ievent], flipped[ievent], ylocal[ievent], zglobal[ievent], pttrack[ievent], hittime[ievent], PID0[ievent]);
+  fclose(ofp);
+}
       
     incr: ievent += 1;
       
@@ -458,7 +429,7 @@ static int Nscale = 1;  /* This doesn't cause additional fluctuations (we alread
     
     printf("End on day %d at %02d:%02d:%02d\n", yday, hour, min, sec);
     
-    
+    return 0;
 } /* MAIN__ */
 
 #include "ppixelav2.c"

@@ -2477,7 +2477,7 @@ double rutherford(float e, float *etar)
 	
   ifp = fopen("silvaco25x25x50_final_efield.out", "r"); /*silvaco25x25x50_final_efield.out*/
   if (ifp==NULL) {
-    printf("no ppixel2.init initialization file found/n");
+    printf("no initialization file found/n");
     return 0;
   }
   

@@ -10,45 +10,45 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
 matplotlib.rcParams["figure.dpi"] = 150
 from particle import PDGID
+from pathlib import Path
 import sys
-sys.path.append("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots/")
+repodir = Path(__file__).resolve().parent.parent
+sys.path.append(f"{repodir}/daniel/validationPlots/")
 from plotUtils import *
 import pickle
 
-raise ValueError("This is old code, please use runPlots2 instead")
+
+data_main_dir = f"{repodir}/Data_Files/Data_Set_20260114_133722"
+
 
 flp = 0
 # trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]
-dataDir_mm = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mm/"
-dataDir_mp = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mp/"
-dataDir_sig = "/local/d1/smartpixML/bigData/Simulation_Output_Signal/"
-dataDir_all = "/local/d1/smartpixML/bigData/allData/"
-dataDir_all = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Parquet_Files"
+# dataDir_mp = "/local/d1/smartpixML/bigData/SimOutput_0730_bigPPt_mp/"
+dataDir_sig = f"{data_main_dir}/Parquet_Files"
+#dataDir_all = "/local/d1/smartpixML/bigData/allData/"
 
-skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
+#skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] to 1768
 
-trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
-trackDirBib_mp = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/'
-trackDirSig = '/local/d1/smartpixML/bigData/tracklists/signal_tracklists'
-trackDirBib_mm = '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/Dataset_1215To0108/Track_Lists'
-trackDirBib_mp = None
-trackDirSig = None
+# trackDirBib_mm = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mm/BIB_tracklists/'
+# trackDirBib_mp = '/local/d1/smartpixML/reGenBIB/produceSmartPixMuC/Tracklists0730_mp/BIB_tracklists/'
+trackDirSig = f"{data_main_dir}/Track_Lists"
 
 processRecon = True;
 
-interactivePlots=False;
-PLOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plots")
+interactivePlots=True;
+PLOT_DIR = f"{data_main_dir}/plots/"
 os.makedirs(PLOT_DIR, exist_ok=True)
 savedPklFromParquet = False;
 
 processTracks = True;
-if (not processRecon) and (not savedPklFromParquet):
-    raise ValueError("If reprocessing the parquets, must also do processRecon=True")
 
 print(f"loading data, Currently loading settings: \nprocessRecon: {processRecon}\nsavedPklFromParquet: {savedPklFromParquet}\ninteractivePlots: {interactivePlots}")
 # Dataset with all the stuff
 if not savedPklFromParquet:
-    truthDF, reconDF = load_parquet_pairs(dataDir_all, skip_range=skip_indices)
+    truthDF, reconDF = load_parquet_pairs(dataDir_sig)
+    # truthDF2, reconDF2 = load_parquet_pairs(dataDir_mm)
+    # truthDF = pd.concat([truthDF,truthDF2])
+    # reconDF = pd.concat([reconDF,reconDF2])
     truthDF = genEtaAlphaBetaRq(truthDF)
     truthDF.to_pickle("dfOfTruth.pkl")
     if processRecon:
@@ -89,7 +89,7 @@ print("Finished loading data [not counting tracks], now plotting")
 
 if processTracks:
     print("Start loading track data")
-    tracksBib, tracksSig, tracksBib_mp,tracksBib_mm=loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig)
+    tracksBib, tracksSig, tracksBib_mp,trackDirBib_mm=loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig)
     tracksBib = calcNxyzTrack(tracksBib)
     tracksSig = calcNxyzTrack(tracksSig)
     print("finished loading track data")
