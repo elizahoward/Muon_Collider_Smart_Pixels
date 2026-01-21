@@ -88,9 +88,7 @@ python ericHLS/analyze_and_select_pareto.py \
 # Creates: model2_5_pareto_hls_ready/ (HLS-ready!)
 
 # Step 2: HLS synthesis
-python ericHLS/parallel_hls_synthesis.py \
-    --input_dir model2_5_pareto_hls_ready \
-    --num_workers 4
+
 ```
 
 **Advantages of Option B**:
@@ -413,6 +411,7 @@ python ericHLS/parallel_hls_synthesis.py \
 ---
 
 **End of Workflow Summary**
+
 
 
 
