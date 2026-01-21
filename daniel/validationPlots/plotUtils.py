@@ -684,6 +684,12 @@ def genEtaAlphaBetaRq(truthDF):
 
         truthDF['betaGamma'] = truthDF['p_calc2'] / truthDF['m'] * 1000 #conversion from MeV to GeV for mass
         #TODO: Decide which p calculation to use
+    if 'pathLength' not in truthDF.columns:
+        #TODO double check thickness
+        thick = 50.0 #um I think
+        truthDF['pathLength'] = thick * np.sqrt( truthDF['n_x']* truthDF['n_x'] + truthDF['n_y']* truthDF['n_y'] + truthDF['n_z']* truthDF['n_z']) / truthDF['n_y']
+        truthDF['EHperMicron'] = truthDF['number_eh_pairs'] / np.abs(truthDF['pathLength'])
+
 
     return truthDF
 
@@ -1178,8 +1184,26 @@ def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHe
             binsBib=30
         plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,keyTruth=parquetTrackKeys[idx],binsBib=binsBib, binsSig=binsSig,recalcStrParq=recalcStrs[idx],PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=subplotsList[idx],xlabel = xlabels[idx])
     closePlot(PLOT_DIR, interactivePlots, "TrackParquet_allVars.png")
-    plt.hist(truthBib['PID'])
-    closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_parq.png")
+    # plt.hist(truthBib['PID'])
+    # closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_parq.png")
     
-    plt.hist(tracksBib['hit_pdg'])
-    closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_track.png")
+    # plt.hist(tracksBib['hit_pdg'])
+    # closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_track.png")
+
+def plotBetaBloch(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False):
+    mask = truthSig["p_calc2"] <100
+    truthSig = truthSig[mask]
+    # plt.hist(truthSig["p_calc2"])
+    # plt.show()
+    plt.figure(figsize=(7,10))
+    plt.subplot(411)
+    plotHistoBibSig(truthBib,truthSig,"betaGamma",pltStandalone=False,title="Beta Gamma Distribution",xlabel='βγ',yscale='log')
+    plt.subplot(412)
+    plotHistoBibSig(truthBib,truthSig,"pathLength",pltStandalone=False,title="Path Length through sensor Distribution",xlabel='Path length [μm]',yscale='log')
+    plt.subplot(413)
+    plotHistoBibSig(truthBib,truthSig,"EHperMicron",pltStandalone=False,title="Charge deposited per micron Distribution",xlabel='EH pairs/path [#/μm]',yscale='log')
+    plt.subplot(414)
+    plotAvsB(truthSig,truthBib,keyX="betaGamma",keyY="EHperMicron",xlabel="βγ",ylabel='EH pairs/path [#/μm]',title="beta block curve?",alpha=0.7)
+    plt.yscale('log')
+    closePlot(PLOT_DIR, interactivePlots, "BetaBlochCurve.png")
+    
