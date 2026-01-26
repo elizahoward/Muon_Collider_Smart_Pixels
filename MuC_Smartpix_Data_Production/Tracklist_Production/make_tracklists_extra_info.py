@@ -10,7 +10,11 @@ from plothelper import *
 # setup plotter
 plt = PlotHelper()
 
-sensorAngles = np.arange(-np.pi,np.pi+2*np.pi/8,np.pi/8)
+# Sensor angles ranging from -pi-pi/8 to pi+pi/8 and the corresponding module IDs
+# Where the module ID is a number from 1 to 16 where modules are counted starting from the module
+# on the positive x axis counting clockwise
+sensorAngles = np.arange(-np.pi-np.pi/8,np.pi+2*np.pi/8,np.pi/8)
+moduleIDs = np.concatenate((np.arange(8,17,1), np.arange(1,11,1)))
 
 def getYlocalAndGamma(x,y):
     # Get exact angle gamma of the hit position
@@ -20,7 +24,7 @@ def getYlocalAndGamma(x,y):
     diff = np.abs(sensorAngles-gammaP)
     index1 = np.argmin(diff)
     gamma1=sensorAngles[index1]
-    diff[index1]=3*np.pi
+    diff[index1]=3*np.pi # reassign the previous min to something much larger than the other values
     index2 = np.argmin(diff)
     gamma2=sensorAngles[index2]
 
@@ -36,7 +40,7 @@ def getYlocalAndGamma(x,y):
     diff1=abs(x1-xTrue)
     diff2=abs(x2-xTrue)
     
-    # If both x1 and x2 are really close to the ex
+    # If both x1 and x2 are really close to the correct value
     if diff1 < 0.5 and diff2 < 0.5:
         if y1>8.5 or y1<-4.5:
             index=index2
@@ -53,17 +57,16 @@ def getYlocalAndGamma(x,y):
     else:
         yentry=y2
     
-    ylocal=-round(yentry/25e-3)*25e-3
+    ylocal=round(yentry/25e-3)*25e-3
     # at some point, add limits to possible ROIs
 
-    if index==0:
-        index=16
-    if index==17:
-        index=1
-    
     gamma=sensorAngles[index]
-
-    return ylocal, gamma
+    moduleID=moduleIDs[index]
+    # Shift range of gamma to 0 to 2 pi
+    if gamma<0:
+        gamma+=2*np.pi
+    
+    return ylocal, gamma, moduleID
 
 # user options
 parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -114,7 +117,7 @@ ROOT.gROOT.SetBatch()
 #print(f"Getting tracks from file: {ops.input_file}\n")
 #print(f"Allowed PIDs: {ops.allowedPIDS}\n")
 
-tracks = [['cota', 'cotb', 'p', 'flp', 'ylocal', 'zglobal', 'pt', 't', 'hit_pdg', 'hit_x', 'hit_y', 'hit_z', 'prodx', 'prody', 'prodz', 'gamma', 'phi', 'theta']]
+tracks = [['cota', 'cotb', 'p', 'flp', 'ylocal', 'zglobal', 'pt', 't', 'hit_pdg', 'hit_x', 'hit_y', 'hit_z', 'prodx', 'prody', 'prodz', 'gamma', 'phi', 'theta', "moduleID"]]
 track_count=0
 break_loop=False
 count = 0
@@ -244,7 +247,7 @@ for file_path in file_list:
                 plt.plot1D("hit_theta"    ,";cotb;hits" , theta, 100, -10,10)
                 plt.plot1D("hit_t"    ,";t;hits" , t, 100, -1,10)
 
-            ylocal, gamma0 = getYlocalAndGamma(hit_x,hit_y)
+            ylocal, gamma0, moduleID = getYlocalAndGamma(hit_x,hit_y)
             zglobal = round(hit_z/25e-3)*25e-3 # round to nearest pixel
             
             # Define unit vector of track at tracker edge with respect to barrel
@@ -288,7 +291,7 @@ for file_path in file_list:
             if round(p, ops.float_precision)==0 or round(pt, ops.float_precision)==0:
                 continue
 
-            track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg, hit_x, hit_y, hit_z, prodx, prody, prodz, gamma0, phi, theta]
+            track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg, hit_x, hit_y, hit_z, prodx, prody, prodz, gamma0, phi, theta, moduleID]
             tracks.append(track)
             track_count+=1
 
