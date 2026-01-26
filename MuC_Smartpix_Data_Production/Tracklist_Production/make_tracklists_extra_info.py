@@ -15,6 +15,7 @@ plt = PlotHelper()
 # on the positive x axis counting clockwise
 sensorAngles = np.arange(-np.pi-np.pi/8,np.pi+2*np.pi/8,np.pi/8)
 moduleIDs = np.concatenate((np.arange(8,17,1), np.arange(1,11,1)))
+# CHECK THAT THIS IS CORRECT!
 
 def getYlocalAndGamma(x,y):
     # Get exact angle gamma of the hit position
