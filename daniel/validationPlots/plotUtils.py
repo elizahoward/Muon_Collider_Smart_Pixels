@@ -685,9 +685,8 @@ def genEtaAlphaBetaRq(truthDF):
         truthDF['betaGamma'] = truthDF['p_calc2'] / truthDF['m'] * 1000 #conversion from MeV to GeV for mass
         #TODO: Decide which p calculation to use
     if 'pathLength' not in truthDF.columns:
-        #TODO double check thickness
         thick = 50.0 #um I think
-        truthDF['pathLength'] = thick * np.sqrt( truthDF['n_x']* truthDF['n_x'] + truthDF['n_y']* truthDF['n_y'] + truthDF['n_z']* truthDF['n_z']) / truthDF['n_y']
+        truthDF['pathLength'] = thick * np.sqrt( truthDF['n_x']* truthDF['n_x'] + truthDF['n_y']* truthDF['n_y'] + truthDF['n_z']* truthDF['n_z']) / np.abs(truthDF['n_z'])
         truthDF['EHperMicron'] = truthDF['number_eh_pairs'] / np.abs(truthDF['pathLength'])
 
 
