@@ -15,4 +15,4 @@ REPO_PATH=$(pwd)
 echo "export PYTHONPATH=$REPO_PATH" >> env/bin/activate
 #~/miniconda3/envs/env/bin/activate
 
-source env/bin/activates
+source env/bin/activate

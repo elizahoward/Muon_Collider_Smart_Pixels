@@ -18,13 +18,10 @@ Output directory structure:
     output_dir/
     ├── model_trial_XXX.h5 (selected Pareto models)
     ├── complexity_vs_accuracy_parameters.png
-    ├── complexity_vs_accuracy_nodes.png
     ├── pareto_front_parameters_combined.png
-    ├── pareto_front_nodes_combined.png
     ├── pareto_optimal_models_parameters_primary.csv
     ├── pareto_optimal_models_parameters_secondary.csv
     ├── pareto_optimal_models_parameters_combined.csv
-    ├── pareto_optimal_models_parameters.json
     ├── hyperparameter_complexity_summary.csv
     ├── hyperparameter_detailed_results.csv
     └── analysis_summary.json
@@ -47,61 +44,88 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from datetime import datetime
 
-# Import TensorFlow for H5 loading (optional)
+# Import TensorFlow for H5 loading
 try:
     import tensorflow as tf
-    from tensorflow import keras
+    from tensorflow.keras.models import load_model
     TF_AVAILABLE = True
 except ImportError:
     TF_AVAILABLE = False
+    print("Warning: TensorFlow not available")
+
+# Import QKeras for quantized layers
+try:
+    from qkeras import QDense, QActivation
+    from qkeras.quantizers import quantized_bits, quantized_relu, quantized_tanh
+    from qkeras.utils import _add_supported_quantized_objects
+    QKERAS_AVAILABLE = True
+except ImportError:
+    QKERAS_AVAILABLE = False
+    print("Warning: QKeras not available")
+
+
+def get_custom_objects():
+    """Get custom objects dictionary for loading QKeras models."""
+    if not QKERAS_AVAILABLE:
+        return {}
+    
+    co = {}
+    _add_supported_quantized_objects(co)
+    return co
 
 
 # ============================================================================
 # COMPLEXITY ANALYSIS FUNCTIONS
 # ============================================================================
 
-def calculate_model2_5_complexity(hyperparams):
-    """Calculate complexity for Model2.5 architecture."""
-    spatial_units = hyperparams.get('spatial_units', 0)
-    z_global_units = hyperparams.get('z_global_units', 0)
-    dense2_units = hyperparams.get('dense2_units', 0)
-    dense3_units = hyperparams.get('dense3_units', 0)
+def get_model_parameters_from_h5(model_file):
+    """
+    Load H5 model and extract actual parameter count.
     
-    total_nodes = spatial_units + z_global_units + dense2_units + dense3_units + 1
+    Args:
+        model_file: Path to the H5 model file
+        
+    Returns:
+        int: total_params (or None if loading failed)
+    """
+    if not TF_AVAILABLE:
+        print(f"  Error: TensorFlow not available, cannot load model")
+        return None
     
-    params_spatial = (35 * spatial_units) + spatial_units
-    params_z_global = (1 * z_global_units) + z_global_units
-    params_dense2 = ((spatial_units + z_global_units) * dense2_units) + dense2_units
-    params_dense3 = (dense2_units * dense3_units) + dense3_units
-    params_output = (dense3_units * 1) + 1
-    
-    total_params = params_spatial + params_z_global + params_dense2 + params_dense3 + params_output
-    
-    return total_nodes, total_params
-
-
-def detect_model_type(hyperparams):
-    """Detect model type from hyperparameters."""
-    if 'conv_filters' in hyperparams:
-        return 'model3'
-    elif 'spatial_units' in hyperparams:
-        return 'model2_5'
-    elif 'xz_units' in hyperparams:
-        return 'model2'
-    else:
-        raise ValueError(f"Cannot detect model type from hyperparameters: {hyperparams.keys()}")
+    try:
+        # Load model without compilation for speed
+        custom_objects = get_custom_objects()
+        model = load_model(model_file, custom_objects=custom_objects, compile=False)
+        
+        # Get actual parameter count
+        trainable_count = np.sum([tf.keras.backend.count_params(w) for w in model.trainable_weights])
+        non_trainable_count = np.sum([tf.keras.backend.count_params(w) for w in model.non_trainable_weights])
+        total_params = int(trainable_count + non_trainable_count)
+        
+        # Clean up
+        del model
+        tf.keras.backend.clear_session()
+        
+        return total_params
+        
+    except Exception as e:
+        print(f"  Warning: Could not load model {model_file}: {e}")
+        return None
 
 
 def parse_flat_format_trial(search_dir, trial_id):
     """Parse trial from flat directory format."""
-    trial_id_str = f"{trial_id:03d}"
-    
-    hyperparam_file = os.path.join(search_dir, f'hyperparams_trial_{trial_id_str}.json')
-    if not os.path.exists(hyperparam_file):
-        return None
-    
-    model_file = os.path.join(search_dir, f'model_trial_{trial_id_str}.h5')
-    if not os.path.exists(model_file):
+    # Auto-detect the naming format by checking what files exist
+    # Try: trial_id as-is, then with zero-padding (1, 2, 3 digits)
+    for format_str in [str(trial_id), f"{trial_id:01d}", f"{trial_id:02d}", f"{trial_id:03d}"]:
+        hyperparam_file = os.path.join(search_dir, f'hyperparams_trial_{format_str}.json')
+        model_file = os.path.join(search_dir, f'model_trial_{format_str}.h5')
+        
+        if os.path.exists(hyperparam_file) and os.path.exists(model_file):
+            trial_id_str = format_str
+            break
+    else:
+        # No matching files found
         return None
     
     try:
@@ -168,33 +192,27 @@ def analyze_complexity(input_dir, min_accuracy=0.55):
             pass
     
     results = []
-    detected_model_type = None
-    complexity_func = None
     
     for trial_id in sorted(trial_ids):
         trial_result = parse_flat_format_trial(input_dir, trial_id)
         
         if trial_result:
-            # Auto-detect model type from first trial
-            if complexity_func is None:
-                detected_model_type = detect_model_type(trial_result['hyperparams'])
-                if detected_model_type == 'model2_5':
-                    complexity_func = calculate_model2_5_complexity
-                    print(f"  Auto-detected model type: MODEL2.5")
-                else:
-                    raise ValueError(f"Unsupported model type: {detected_model_type}")
+            # Load model and extract actual parameters
+            print(f"  Loading trial {trial_result['trial_id']}...", end=' ')
+            params = get_model_parameters_from_h5(trial_result['model_file'])
             
-            nodes, params = complexity_func(trial_result['hyperparams'])
-            
-            results.append({
-                'model': os.path.basename(input_dir),
-                'trial_id': trial_result['trial_id'],
-                'nodes': nodes,
-                'parameters': params,
-                'val_accuracy': trial_result['val_accuracy'],
-                'hyperparams': trial_result['hyperparams'],
-                'model_file': trial_result['model_file']
-            })
+            if params is not None:
+                print(f"✓ ({params} params)")
+                results.append({
+                    'model': os.path.basename(input_dir),
+                    'trial_id': trial_result['trial_id'],
+                    'parameters': params,
+                    'val_accuracy': trial_result['val_accuracy'],
+                    'hyperparams': trial_result['hyperparams'],
+                    'model_file': trial_result['model_file']
+                })
+            else:
+                print(f"✗ (failed to load)")
     
     df = pd.DataFrame(results)
     
@@ -207,7 +225,6 @@ def analyze_complexity(input_dir, min_accuracy=0.55):
         if excluded_count > 0:
             print(f"  Excluded {excluded_count} failed models (accuracy < {min_accuracy})")
         print(f"  Valid trials after filtering: {len(df_filtered)}")
-        print(f"  Nodes range: {df_filtered['nodes'].min():.0f} - {df_filtered['nodes'].max():.0f}")
         print(f"  Parameters range: {df_filtered['parameters'].min():.0f} - {df_filtered['parameters'].max():.0f}")
         print(f"  Accuracy range: {df_filtered['val_accuracy'].min():.4f} - {df_filtered['val_accuracy'].max():.4f}")
         
@@ -463,7 +480,7 @@ def save_results(df, pareto_df_params, pareto_df_secondary_params, output_dir):
     
     # Save complexity analysis CSVs
     summary_csv = os.path.join(output_dir, 'hyperparameter_complexity_summary.csv')
-    csv_df = df[['model', 'trial_id', 'nodes', 'parameters', 'val_accuracy']].copy()
+    csv_df = df[['model', 'trial_id', 'parameters', 'val_accuracy']].copy()
     csv_df = csv_df.sort_values('val_accuracy', ascending=False)
     csv_df.to_csv(summary_csv, index=False)
     print(f"\n✓ Complexity summary: {summary_csv}")
@@ -474,7 +491,6 @@ def save_results(df, pareto_df_params, pareto_df_secondary_params, output_dir):
         detailed_row = {
             'model': row['model'],
             'trial_id': row['trial_id'],
-            'nodes': row['nodes'],
             'parameters': row['parameters'],
             'val_accuracy': row['val_accuracy']
         }
@@ -517,11 +533,6 @@ def save_results(df, pareto_df_params, pareto_df_secondary_params, output_dir):
             'min': int(df['parameters'].min()),
             'max': int(df['parameters'].max()),
             'mean': float(df['parameters'].mean())
-        },
-        'nodes_range': {
-            'min': int(df['nodes'].min()),
-            'max': int(df['nodes'].max()),
-            'mean': float(df['nodes'].mean())
         }
     }
     
@@ -605,7 +616,7 @@ Examples:
         print("\nError: No valid trials found!")
         sys.exit(1)
     
-    # Step 2: Generate complexity plots (parameters only)
+    # Step 2: Generate complexity plots
     print("\n" + "=" * 80)
     print("STEP 2: GENERATING PLOTS")
     print("=" * 80)
@@ -613,17 +624,13 @@ Examples:
     print("\nCreating complexity vs accuracy plot...")
     plot_complexity_vs_accuracy(df, args.output_dir, model_name, 'parameters')
     
-    # Select Pareto models for parameters
+    # Select Pareto models
     print("\n" + "=" * 80)
-    print("PARETO SELECTION: PARAMETERS")
+    print("PARETO SELECTION")
     print("=" * 80)
     pareto_df_params, pareto_df_secondary_params = select_pareto_models(df, 'parameters')
     
-    # Set nodes selections to None (not used)
-    pareto_df_nodes = None
-    pareto_df_secondary_nodes = None
-    
-    # Generate Pareto front plot (parameters only)
+    # Generate Pareto front plot
     print("\nCreating Pareto front plot...")
     plot_pareto_front(df, pareto_df_params, pareto_df_secondary_params, 
                      args.output_dir, model_name, 'parameters')
@@ -657,7 +664,7 @@ Examples:
     print(f"\nOutput directory: {args.output_dir}")
     print(f"\nContents:")
     print(f"  - {len(all_pareto_df)} H5 model files (Pareto optimal)")
-    print(f"  - 2 plots (complexity analysis + Pareto front)")
+    print(f"  - 2 plots (complexity vs accuracy + Pareto front)")
     print(f"  - Multiple CSV files with results")
     print(f"  - JSON summary file")
     print(f"\nReady for HLS synthesis! Run:")
