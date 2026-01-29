@@ -10,7 +10,7 @@ from plothelper import *
 # setup plotter
 plt = PlotHelper()
 
-sensorAngles = np.arange(-np.pi,np.pi+2*np.pi/8,np.pi/8)
+sensorAngles = np.arange(-np.pi-np.pi/8,np.pi+2*np.pi/8,np.pi/8)
 
 def getYlocalAndGamma(x,y):
     # Get exact angle gamma of the hit position
@@ -56,13 +56,11 @@ def getYlocalAndGamma(x,y):
     ylocal=-round(yentry/25e-3)*25e-3
     # at some point, add limits to possible ROIs
 
-    if index==0:
-        index=16
-    if index==17:
-        index=1
-    
     gamma=sensorAngles[index]
-
+    # Shift range of gamma to 0 to 2 pi
+    if gamma<0:
+        gamma+=2*np.pi
+    
     return ylocal, gamma
 
 # user options
