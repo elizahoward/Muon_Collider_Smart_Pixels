@@ -25,12 +25,12 @@ def plotHits(sig,uniqueGammas,pltStandalone=True,pltShow=True,alpha = 1):
         ax = plt.gca()
     colorsList = ["r","b","g","c","m","y","aquamarine","fuchsia",
                 "sienna","deepskyblue","springgreen","royalblue",
-                "darkorange","indigo","navy","chartreuse"]
+                "darkorange","indigo","maroon","chartreuse"]
     # colorsList = ["r","darkorange","y","greenyellow","springgreen","g","aquamarine","c","deepskyblue","royalblue","b","navy","indigo","m","fuchsia",
     #             "sienna"]
     # uniqueGammas = np.unique(sig['gamma'])
-    colors = sig['gamma'].apply(lambda gamma: colorsList[list(uniqueGammas).index(gamma)])
-    # colors = sig['moduleID'].apply(lambda ID: colorsList[list(np.arange(1,17,1)).index(ID)])
+    # colors = sig['gamma'].apply(lambda gamma: colorsList[list(uniqueGammas).index(gamma)])
+    colors = sig['moduleID'].apply(lambda ID: colorsList[list(np.arange(1,17,1)).index(ID)])
     ax.scatter(sig['hit_x'],sig["hit_y"],s=1, c=colors, label="Signal hits",alpha = alpha)
     plt.gca().set_aspect('equal')
     circle=plt.Circle((0,0), 30, fill=0, color='k', label="Barrel")
