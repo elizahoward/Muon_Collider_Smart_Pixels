@@ -167,19 +167,13 @@ class Model1(SmartPixModel):
         )
 
 
-    def makeUnquatizedModelHyperParameterTuning2(self):
+    def makeUnquatizedModelHyperParameterTuning5(self):
         def model_builder(hp):
             # ── B) Architecture hyperparams ──────────────────────────────────────────
             # separately tune rows and cols
 
-            row1nodes      = hp.Int("1",   1, 8, step=1)
-            row2nodes      = 16
-            row3nodes      = 15
-            row4nodes      = 26
-            row5nodes      = 12
-
-
-
+            rownodes      = hp.Int("1",   2, 11, step=1)
+        
             input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
@@ -193,11 +187,11 @@ class Model1(SmartPixModel):
             ## here i will add the layers 
 
             # layer 1
-            x = tf.keras.layers.Dense(row1nodes,activation='relu')(inputs)
-            x = tf.keras.layers.Dense(row2nodes, activation='relu')(x)
-            x = tf.keras.layers.Dense(row3nodes, activation='relu')(x)
-            x = tf.keras.layers.Dense(row4nodes, activation='relu')(x)
-            x = tf.keras.layers.Dense(row5nodes, activation='relu')(x)
+            x = tf.keras.layers.Dense(rownodes,activation='relu')(inputs)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             output = tf.keras.layers.Dense(1,activation='sigmoid')(x)
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
@@ -215,7 +209,164 @@ class Model1(SmartPixModel):
         objective           = "val_binary_accuracy",
         max_trials          = 120,
         executions_per_trial = 2,
-        project_name        = "hp_search_1_8"
+        project_name        = "hp_search_5rows"
+        )
+
+        tuner.search(
+            self.training_generator,
+            validation_data = self.validation_generator,
+            epochs          = 110,
+            callbacks       = [
+                EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            ]
+        )
+
+    def makeUnquatizedModelHyperParameterTuning4(self):
+        def model_builder(hp):
+            # ── B) Architecture hyperparams ──────────────────────────────────────────
+            # separately tune rows and cols
+
+            rownodes      = hp.Int("1",   2, 11, step=1)
+        
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+            input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+
+            ## concatenate the inputs into one layer
+            inputList = [input1, input2, input3, input4]
+            inputs = tf.keras.layers.Concatenate()(inputList)
+
+
+            ## here i will add the layers 
+
+            # layer 1
+            x = tf.keras.layers.Dense(rownodes,activation='relu')(inputs)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            output = tf.keras.layers.Dense(1,activation='sigmoid')(x)
+
+            model = tf.keras.Model(inputs=inputList, outputs=output)
+
+            model.compile(
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly  = True 
+            )
+            return model
+
+        tuner = kt.RandomSearch(
+        model_builder, 
+        objective           = "val_binary_accuracy",
+        max_trials          = 120,
+        executions_per_trial = 2,
+        project_name        = "hp_search_4rows"
+        )
+
+        tuner.search(
+            self.training_generator,
+            validation_data = self.validation_generator,
+            epochs          = 110,
+            callbacks       = [
+                EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            ]
+        )
+
+
+    def makeUnquatizedModelHyperParameterTuning3(self):
+        def model_builder(hp):
+            # ── B) Architecture hyperparams ──────────────────────────────────────────
+            # separately tune rows and cols
+
+            rownodes      = hp.Int("1",   2, 11, step=1)
+        
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+            input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+
+            ## concatenate the inputs into one layer
+            inputList = [input1, input2, input3, input4]
+            inputs = tf.keras.layers.Concatenate()(inputList)
+
+
+            ## here i will add the layers 
+
+            # layer 1
+            x = tf.keras.layers.Dense(rownodes,activation='relu')(inputs)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            output = tf.keras.layers.Dense(1,activation='sigmoid')(x)
+
+            model = tf.keras.Model(inputs=inputList, outputs=output)
+
+            model.compile(
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly  = True 
+            )
+            return model
+
+        tuner = kt.RandomSearch(
+        model_builder, 
+        objective           = "val_binary_accuracy",
+        max_trials          = 120,
+        executions_per_trial = 2,
+        project_name        = "hp_search_3rows"
+        )
+
+        tuner.search(
+            self.training_generator,
+            validation_data = self.validation_generator,
+            epochs          = 110,
+            callbacks       = [
+                EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            ]
+        )
+
+    def makeUnquatizedModelHyperParameterTuning2(self):
+        def model_builder(hp):
+            # ── B) Architecture hyperparams ──────────────────────────────────────────
+            # separately tune rows and cols
+
+            rownodes      = hp.Int("1",   2, 11, step=1)
+        
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+            input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+
+            ## concatenate the inputs into one layer
+            inputList = [input1, input2, input3, input4]
+            inputs = tf.keras.layers.Concatenate()(inputList)
+
+
+            ## here i will add the layers 
+
+            # layer 1
+            x = tf.keras.layers.Dense(rownodes,activation='relu')(inputs)
+            x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+            output = tf.keras.layers.Dense(1,activation='sigmoid')(x)
+
+            model = tf.keras.Model(inputs=inputList, outputs=output)
+
+            model.compile(
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly  = True 
+            )
+            return model
+
+        tuner = kt.RandomSearch(
+        model_builder, 
+        objective           = "val_binary_accuracy",
+        max_trials          = 120,
+        executions_per_trial = 2,
+        project_name        = "hp_search_2rows"
         )
 
         tuner.search(
@@ -229,9 +380,6 @@ class Model1(SmartPixModel):
 
 
         
-     
-
-
     def makeQuantizedModel(self):
         for total_bits, int_bits in self.bit_configs:
             config_name = f"quantized_{total_bits}w{int_bits}i"
@@ -343,10 +491,12 @@ class Model1(SmartPixModel):
     """
     
 
-   
 def main():
     m1 = Model1()
     m1.loadTfRecords()  # must set self.training_generator and self.validation_generator
+    m1.makeUnquatizedModelHyperParameterTuning5()
+    m1.makeUnquatizedModelHyperParameterTuning4()
+    m1.makeUnquatizedModelHyperParameterTuning3()
     m1.makeUnquatizedModelHyperParameterTuning2()
 
 if __name__ == "__main__":
