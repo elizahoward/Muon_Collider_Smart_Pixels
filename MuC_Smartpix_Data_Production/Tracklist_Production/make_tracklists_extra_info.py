@@ -1,3 +1,8 @@
+"""
+source /cvmfs/muoncollider.cern.ch/release/2.8-patch2/setup.sh
+python3 MuC_Smartpix_Data_Production/Tracklist_Production/make_tracklists_extra_info.py -sig -i /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_flp_0/Detector_Sim/signal_detsim.slcio -odir /local/d1/smartpixML/2026Datasets//Data_Files/Data_Set_flp_0/Track_Lists -t 10000 -b 10000
+"""
+
 import numpy as np
 import pyLCIO
 import ROOT
@@ -118,7 +123,7 @@ ROOT.gROOT.SetBatch()
 #print(f"Getting tracks from file: {ops.input_file}\n")
 #print(f"Allowed PIDs: {ops.allowedPIDS}\n")
 
-tracks = [['cota', 'cotb', 'p', 'flp', 'ylocal', 'zglobal', 'pt', 't', 'hit_pdg', 'hit_x', 'hit_y', 'hit_z', 'prodx', 'prody', 'prodz', 'gamma', 'phi', 'theta', "moduleID"]]
+tracks = [['cota', 'cotb', 'p', 'flp', 'ylocal', 'zglobal', 'pt', 't', 'hit_pdg', 'hit_x', 'hit_y', 'hit_z', 'prodx', 'prody', 'prodz', 'gamma', 'phi', 'theta', "moduleID", 'px', 'py', 'pz']]
 track_count=0
 break_loop=False
 count = 0
@@ -190,9 +195,6 @@ for file_path in file_list:
                 mcp_tlv = ROOT.TLorentzVector()
                 mcp_tlv.SetPxPyPzE(mcp_p[0], mcp_p[1], mcp_p[2], mcp.getEnergy())
 
-                p = mcp_tlv.P()
-                pt = mcp_tlv.Pt()
-
                 # momentum at hit
                 hit_p = hit.getMomentum()
                 hit_tlv = ROOT.TLorentzVector()
@@ -208,8 +210,6 @@ for file_path in file_list:
 
                 hit_pdg=11 #random.choice(11,-11)?
 
-                p = hit_tlv.P()
-                pt = hit_tlv.Pt()
                 if True:
                     p1Calc = np.sqrt(hit_p[2]*hit_p[2]+hit_tlv.Pt()*hit_tlv.Pt())
                     if np.abs(p1Calc/hit_tlv.P() -1)>0.000001:
@@ -248,6 +248,9 @@ for file_path in file_list:
                 plt.plot1D("hit_theta"    ,";cotb;hits" , theta, 100, -10,10)
                 plt.plot1D("hit_t"    ,";t;hits" , t, 100, -1,10)
 
+            p = hit_tlv.P()
+            pt = hit_tlv.Pt()
+            
             ylocal, gamma0, moduleID = getYlocalAndGamma(hit_x,hit_y)
             zglobal = round(hit_z/25e-3)*25e-3 # round to nearest pixel
             
@@ -292,7 +295,7 @@ for file_path in file_list:
             if round(p, ops.float_precision)==0 or round(pt, ops.float_precision)==0:
                 continue
 
-            track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg, hit_x, hit_y, hit_z, prodx, prody, prodz, gamma0, phi, theta, moduleID]
+            track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg, hit_x, hit_y, hit_z, prodx, prody, prodz, gamma0, phi, theta, moduleID, hit_p[0], hit_p[1], hit_p[2]]
             tracks.append(track)
             track_count+=1
 
