@@ -63,7 +63,7 @@ def getYlocalAndGamma(x,y):
     else:
         yentry=y2
     
-    ylocal=round(yentry/25e-3)*25e-3
+    ylocal=-round(yentry/25e-3)*25e-3
     # at some point, add limits to possible ROIs
 
     gamma=sensorAngles[index]
