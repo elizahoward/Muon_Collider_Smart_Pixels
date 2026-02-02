@@ -141,6 +141,7 @@ class SmartpixPlotter():
             #Eliza's plots (the unique ones)
             plotCotACotBZY(self.truthBib,self.truthSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotBetaBloch(self.truthBib,self.truthSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
+            plotAllMomentum(self.truthBib,self.truthSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotRadius(self.truthBib,self.truthSig,PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotYprofileYlocalRange(self.avgClustDictBib,titleBibSig="Bib",PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
             plotYprofileYlocalRange(self.avgClustDictSig,titleBibSig="Signal",PLOT_DIR=self.PLOT_DIR,interactivePlots=self.interactivePlots)
