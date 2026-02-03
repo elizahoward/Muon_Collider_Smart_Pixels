@@ -30,6 +30,7 @@ def load_parquet_pairs(directory, skip_range=None):
 
     for file in os.listdir(directory):
         if skip_range and any(f"{i}" in file for i in skip_range):
+            print("skipping", file)
             continue
         if "labels" in file:
             filepath = os.path.join(directory, file)
@@ -682,12 +683,11 @@ def genEtaAlphaBetaRq(truthDF):
         truthDF['p_calc2'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
         truthDF['p_calc3'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
 
-        truthDF['betaGamma'] = truthDF['p_calc2'] / truthDF['m'] * 1000 #conversion from MeV to GeV for mass
+        truthDF['betaGamma'] = truthDF['p_calc1'] / truthDF['m'] * 1000 #conversion from MeV to GeV for mass
         #TODO: Decide which p calculation to use
     if 'pathLength' not in truthDF.columns:
-        #TODO double check thickness
         thick = 50.0 #um I think
-        truthDF['pathLength'] = thick * np.sqrt( truthDF['n_x']* truthDF['n_x'] + truthDF['n_y']* truthDF['n_y'] + truthDF['n_z']* truthDF['n_z']) / truthDF['n_y']
+        truthDF['pathLength'] = thick * np.sqrt( truthDF['n_x']* truthDF['n_x'] + truthDF['n_y']* truthDF['n_y'] + truthDF['n_z']* truthDF['n_z']) / np.abs(truthDF['n_z'])
         truthDF['EHperMicron'] = truthDF['number_eh_pairs'] / np.abs(truthDF['pathLength'])
 
 
@@ -1192,18 +1192,33 @@ def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHe
 
 def plotBetaBloch(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False):
     mask = truthSig["p_calc2"] <100
-    truthSig = truthSig[mask]
+    # truthSig = truthSig[mask]
     # plt.hist(truthSig["p_calc2"])
     # plt.show()
     plt.figure(figsize=(7,10))
-    plt.subplot(411)
+    plt.subplot(511)
     plotHistoBibSig(truthBib,truthSig,"betaGamma",pltStandalone=False,title="Beta Gamma Distribution",xlabel='βγ',yscale='log')
-    plt.subplot(412)
+    plt.subplot(512)
     plotHistoBibSig(truthBib,truthSig,"pathLength",pltStandalone=False,title="Path Length through sensor Distribution",xlabel='Path length [μm]',yscale='log')
-    plt.subplot(413)
+    plt.subplot(513)
     plotHistoBibSig(truthBib,truthSig,"EHperMicron",pltStandalone=False,title="Charge deposited per micron Distribution",xlabel='EH pairs/path [#/μm]',yscale='log')
-    plt.subplot(414)
+    plt.subplot(514)
     plotAvsB(truthSig,truthBib,keyX="betaGamma",keyY="EHperMicron",xlabel="βγ",ylabel='EH pairs/path [#/μm]',title="beta block curve?",alpha=0.7)
     plt.yscale('log')
+    plt.subplot(515)
+    plotAvsB(truthSig,truthBib,keyX="betaGamma",keyY="EHperMicron",xlabel="βγ",ylabel='EH pairs/path [#/μm]',title="beta block curve?",alpha=1)
+    plt.yscale('log')
+    plt.xlim([0,1000])
+    plt.ylim([0,200])
     closePlot(PLOT_DIR, interactivePlots, "BetaBlochCurve.png")
     
+def plotAllMomentum(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False):
+    plt.figure(figsize=(5,10))
+    plt.subplot(411)
+    plotHistoBibSig(truthBib,truthSig,key="p_calc1",pltStandalone=False,title="Momentum 1st calculation",xlabel="p_calc1")
+    plt.subplot(412)
+    plotHistoBibSig(truthBib,truthSig,key="p_calc2",pltStandalone=False,title="Momentum 1st calculation",xlabel="p_calc2",yscale='log')
+    plt.subplot(413)
+    plotHisto(truthSig["p_calc1"]-truthSig["p_calc2"],pltStandalone=False,xlabel="difference between p calculations")
+    plt.yscale('log')
+    closePlot(PLOT_DIR,interactivePlots,"momentum in parquets.png")
