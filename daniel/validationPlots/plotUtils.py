@@ -113,7 +113,7 @@ def prepHistBins(arrs,binCount,spacing='linear',doPrint=False,arrNames=["BIB   "
     if spacing =='linear':
         bins = np.linspace(binMin,binMax,binCount)
     elif spacing =='log':
-        bins = np.logspace(binMin,binMax,binCount)
+        bins = np.logspace(np.log10(binMin),np.log10(binMax),binCount)
     else:
         raise NotImplementedError("bin spacing must linear or log")
     if (bins is None) or np.any(np.isnan(bins)):
@@ -520,29 +520,38 @@ def getEricsMasks(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
 
 #This should not be called directly!
 #Only use this inside other functions that e.g. use this and deal with figsize/subplot outside
-def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title):
+def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False):
     if not( keyX in truthDF.columns ):
         raise Exception(f"{keyX} not present in truthbib or truthsig dataframes")
     if not( keyY in truthDF.columns ):
         raise Exception(f"{keyY} not present in truthbib or truthsig dataframes")
-    plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title)
+    plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = logColor)
 
-def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title):
-    counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],bins=[binsX,binsY],cmap=cmap)
+def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False):
+    if logColor:
+        counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],norm=colors.LogNorm(),bins=[binsX,binsY],cmap=cmap)
+    else:
+        counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],bins=[binsX,binsY],cmap=cmap)
     plt.colorbar(im,ax=plt.gca())
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     # ax[0].tick_params(axis='both', which='major',)
 
-def plot1by2BibSig2dHisto(truthBib, truthSig,keyX, keyY,mask_bib,mask_sig,binsX,binsY,cmap,xlabel,ylabel,title,PLOT_DIR="./plots",interactivePlots=False):
+def plot1by2BibSig2dHisto(truthBib, truthSig,keyX, keyY,mask_bib,mask_sig,binsX,binsY,cmap,xlabel,ylabel,title,                          
+                          PLOT_DIR="./plots",interactivePlots=False,
+                          yscale = 'linear',xscale = 'linear',logColor = False,):
     # fig, ax = plt.subplots(1, 2, figsize=(14, 6))
     fig, ax = plt.subplots(1, 2, figsize=(10, 4))
     plt.subplot(121)
-    plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB")
+    plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB",logColor=logColor)
+    plt.xscale(xscale)
+    plt.yscale(yscale)
 
     plt.subplot(122)
-    plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal")
+    plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal",logColor=logColor)
+    plt.xscale(xscale)
+    plt.yscale(yscale)
     
     closePlot(PLOT_DIR, interactivePlots,  f"{title}.png")
 
@@ -673,15 +682,22 @@ def genEtaAlphaBetaRq(truthDF):
     # if 'q' not in truthDF.columns:
     if True:
         truthDF['q'] = truthDF['PID'].apply(lambda pid: PDGID(int(pid)).charge if pd.notnull(pid) else np.nan)
-    if 'scalePion' not in truthDF.columns:
+    # if 'scalePion' not in truthDF.columns:
+    if True:
         #relative masses of pion and muon/electron, comes from pixelav https://github.com/elizahoward/pixelav/blob/30d7585448f87bcdf10f7f066005a04e4bd34a52/ppixelav2_list_trkpy_n_2f_custom.c#L358
         truthDF['m'] = truthDF['PID'].apply(lambda pid: 105.7 if abs(int(pid))==13 else 0.511 if abs(int(pid))==11 else np.nan) #MeV
         truthDF['scalePion'] = 139.57/truthDF['m']
         truthDF['p_calc1'] = np.sqrt(truthDF['n_x']*truthDF['n_x'] + truthDF['n_y']*truthDF['n_y'] +truthDF['n_z']*truthDF['n_z'])
         truthDF['p_calc1'] = truthDF['p_calc1'] / truthDF['scalePion']
 
-        truthDF['p_calc2'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
-        truthDF['p_calc3'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
+        # truthDF['p_calc2'] = truthDF['pt']*np.sqrt(1+ 1/ (truthDF['cotAlpha']*truthDF['cotAlpha'] + truthDF['cotBeta']*truthDF['cotBeta']) )
+        #I think this may be wrong axis, swapping x with z
+        z = 1./np.sqrt((1.+truthDF["cotBeta"]*truthDF["cotBeta"]+truthDF["cotAlpha"]*truthDF["cotAlpha"]))
+        x = z*truthDF["cotAlpha"]
+        y = z*truthDF["cotBeta"]
+        truthDF['p_calc2'] = truthDF["pt"] / np.sqrt((z**2 +y**2)/(x**2 +y**2 +z**2 ))
+
+        truthDF['p_calc3'] = truthDF['pt']*np.sqrt( (truthDF['n_x']*truthDF['n_x'] + truthDF['n_y']*truthDF['n_y'] +truthDF['n_z']*truthDF['n_z']) / ( truthDF['n_y']*truthDF['n_y'] +truthDF['n_z']*truthDF['n_z']) )
 
         truthDF['betaGamma'] = truthDF['p_calc1'] / truthDF['m'] * 1000 #conversion from MeV to GeV for mass
         #TODO: Decide which p calculation to use
@@ -1190,8 +1206,33 @@ def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHe
     # plt.hist(tracksBib['hit_pdg'])
     # closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_track.png")
 
+def calcAvgEHperMicron(truthDF, binsBetaGamma):
+    avgEHperMicron = [0 for i in range(len(binsBetaGamma))]
+    for idx in range(len(binsBetaGamma)-1):
+        binMask = np.logical_and((truthDF["betaGamma"] > binsBetaGamma[idx])  ,  (truthDF["betaGamma"] < binsBetaGamma[idx+1]))
+        avgEHperMicron[idx] = np.mean(truthDF["EHperMicron"][binMask])
+    return avgEHperMicron
+
 def plotBetaBloch(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False):
-    mask = truthSig["p_calc2"] <100
+
+    maskBib = truthBib["p_calc2"] == truthBib["p_calc2"] #should be all
+    maskSig = truthSig["p_calc2"] == truthSig["p_calc2"] #should be all
+    binCount = 120
+    binsBetaGamma = prepHistBins([truthBib["betaGamma"],truthSig["betaGamma"]],binCount,spacing='log',doPrint=True)
+    # print(binsBetaGamma)
+    binsEHperMicron = prepHistBins([truthBib["EHperMicron"],truthSig["EHperMicron"]],binCount,spacing='log',doPrint=True)
+
+    avgEHperMicronBib = calcAvgEHperMicron(truthBib,binsBetaGamma)
+    avgEHperMicronSig = calcAvgEHperMicron(truthSig,binsBetaGamma)
+
+    plt.plot(binsBetaGamma,avgEHperMicronBib,label="BIB")
+    plt.plot(binsBetaGamma,avgEHperMicronSig,label="Signal")
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.legend()
+    closePlot(PLOT_DIR, interactivePlots,"Beta blcoh 3.png")
+
+    # mask = truthSig["p_calc2"] <100
     # truthSig = truthSig[mask]
     # plt.hist(truthSig["p_calc2"])
     # plt.show()
@@ -1204,21 +1245,49 @@ def plotBetaBloch(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False)
     plotHistoBibSig(truthBib,truthSig,"EHperMicron",pltStandalone=False,title="Charge deposited per micron Distribution",xlabel='EH pairs/path [#/μm]',yscale='log')
     plt.subplot(514)
     plotAvsB(truthSig,truthBib,keyX="betaGamma",keyY="EHperMicron",xlabel="βγ",ylabel='EH pairs/path [#/μm]',title="beta block curve?",alpha=0.7)
+    plt.plot(binsBetaGamma,avgEHperMicronBib,label="BIB")
+    plt.plot(binsBetaGamma,avgEHperMicronSig,label="Signal")
     plt.yscale('log')
+    plt.xscale('log')
     plt.subplot(515)
     plotAvsB(truthSig,truthBib,keyX="betaGamma",keyY="EHperMicron",xlabel="βγ",ylabel='EH pairs/path [#/μm]',title="beta block curve?",alpha=1)
+    # plot2dHistFromTruth(truthSig,"betaGamma","EHperMicron",mask,)
     plt.yscale('log')
+    plt.xscale('log')
     plt.xlim([0,1000])
     plt.ylim([0,200])
     closePlot(PLOT_DIR, interactivePlots, "BetaBlochCurve.png")
+
+
+    
+    # print(binsEHperMicron)
+
+    plot1by2BibSig2dHisto(truthBib,truthSig,'betaGamma', 'EHperMicron',maskBib,maskSig,binsBetaGamma,binsEHperMicron,
+                          "jet",'βγ [mm]','EH pairs/path [#/μm]', "BetaBlochCurve2",
+                          yscale='log',xscale='log',logColor=True,
+                          PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
     
 def plotAllMomentum(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False):
     plt.figure(figsize=(5,10))
-    plt.subplot(411)
-    plotHistoBibSig(truthBib,truthSig,key="p_calc1",pltStandalone=False,title="Momentum 1st calculation",xlabel="p_calc1")
-    plt.subplot(412)
-    plotHistoBibSig(truthBib,truthSig,key="p_calc2",pltStandalone=False,title="Momentum 1st calculation",xlabel="p_calc2",yscale='log')
-    plt.subplot(413)
-    plotHisto(truthSig["p_calc1"]-truthSig["p_calc2"],pltStandalone=False,xlabel="difference between p calculations")
+    plt.subplot(611)
+    plotHistoBibSig(truthBib,truthSig,key="p_calc1",pltStandalone=False,title="Momentum 1st calculation (parquet)",xlabel="p_calc1 (GeV)",yscale='log')
+    plt.subplot(612)
+    plotHistoBibSig(truthBib,truthSig,key="p_calc2",pltStandalone=False,title="Momentum 2nd calculation (parquet)",xlabel="p_calc2 (GeV)",yscale='log')    
+    plt.subplot(613)
+    plotHistoBibSig(truthBib,truthSig,key="p_calc3",pltStandalone=False,title="Momentum 3rd calculation (parquet)",xlabel="p_calc3 (GeV)",yscale='log')
+    plt.subplot(614)
+    plotManyHisto([truthSig["p_calc1"],truthSig["p_calc2"],truthSig["p_calc3"]],pltStandalone=False,pltLabels=["p calc 1","p calc 2","p calc 3"]
+                  ,title="Momentum calculations for Signal (parquet)",xlabel="Momentum (GeV)",yscale='log',alphas=[0.7,0.7,0.7])
+    # # plt.hist(truthSig["p_calc1"],label="p calc 1",alpha=0.5)
+    # # plt.hist(truthSig["p_calc2"],label="p calc 2",alpha=0.5)
+    # # plt.legend()
+    # # plt.yscale('log')
+    # # plt.xlim([0,100])
+    plt.subplot(615)
+    plotHisto(truthSig["p_calc3"]-truthSig["p_calc2"],bins='auto',pltStandalone=False,xlabel="difference in momentum (GeV)",title="Difference between Signal p calc 3 and 2 calculations",showNums=False)
     plt.yscale('log')
+    plt.subplot(616)
+    # plotHisto(truthSig["p_calc1"]-truthSig["p_calc3"],bins='auto',pltStandalone=False,xlabel="difference in momentum (GeV)",title="Difference between Signal p calc 1 and 3 calculations",showNums=False)
+    # plt.yscale('log')
+
     closePlot(PLOT_DIR,interactivePlots,"momentum in parquets.png")
