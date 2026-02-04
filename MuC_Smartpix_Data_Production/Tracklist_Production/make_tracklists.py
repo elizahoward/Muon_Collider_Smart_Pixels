@@ -6,6 +6,7 @@ import argparse
 import os
 import random
 from plothelper import *
+from datetime import datetime
 
 # setup plotter
 plt = PlotHelper()
@@ -117,7 +118,7 @@ tracks=[]
 track_count=0
 break_loop=False
 count = 0
-fileCountStart = 0
+fileCountStart = 440
 fileCountLimit = 1000
 for file_path in file_list:
     if break_loop:
@@ -125,8 +126,9 @@ for file_path in file_list:
     count +=1
     if count<fileCountStart:
         continue
-    print("count", count)
+    print("count", count, " ", datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     if count>fileCountLimit:
+        print("count>fileCountLimit, so breaking")
         break
     # Get the full path to the file
     if not file_path.endswith(".slcio"):
