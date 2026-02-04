@@ -525,7 +525,8 @@ def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,yl
         raise Exception(f"{keyX} not present in truthbib or truthsig dataframes")
     if not( keyY in truthDF.columns ):
         raise Exception(f"{keyY} not present in truthbib or truthsig dataframes")
-    plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = logColor)
+    counts, xedges, yedges, im = plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = logColor)
+    return counts, xedges, yedges, im
 
 def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False):
     if logColor:
@@ -536,24 +537,27 @@ def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColo
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
+    return counts, xedges, yedges, im
     # ax[0].tick_params(axis='both', which='major',)
 
 def plot1by2BibSig2dHisto(truthBib, truthSig,keyX, keyY,mask_bib,mask_sig,binsX,binsY,cmap,xlabel,ylabel,title,                          
                           PLOT_DIR="./plots",interactivePlots=False,
-                          yscale = 'linear',xscale = 'linear',logColor = False,):
+                          yscale = 'linear',xscale = 'linear',logColor = False,closePlt = True):
     # fig, ax = plt.subplots(1, 2, figsize=(14, 6))
-    fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+    # fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+    plt.figure(figsize = (10,4))
     plt.subplot(121)
-    plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB",logColor=logColor)
+    countsBIB, xedgesBIB, yedgesBIB, im = plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB",logColor=logColor)
     plt.xscale(xscale)
     plt.yscale(yscale)
 
     plt.subplot(122)
-    plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal",logColor=logColor)
+    countsSig, xedgesSig, yedgesSig, im = plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal",logColor=logColor)
     plt.xscale(xscale)
     plt.yscale(yscale)
-    
-    closePlot(PLOT_DIR, interactivePlots,  f"{title}.png")
+    if closePlt:
+        closePlot(PLOT_DIR, interactivePlots,  f"{title}.png")
+    return countsBIB, xedgesBIB, yedgesBIB,countsSig, xedgesSig, yedgesSig,
 
 def plot2by2BibSig2dHisto(truthBib, truthSig,keyX1, keyY1,keyX2, keyY2,mask_bib,mask_sig,binsX1,binsY1,binsX2,binsY2,cmap,xlabel1,ylabel1,xlabel2,ylabel2,title,PLOT_DIR="./plots",interactivePlots=False):
     # fig, ax = plt.subplots(2, 2, figsize=(20, 16))
@@ -1208,10 +1212,14 @@ def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHe
 
 def calcAvgEHperMicron(truthDF, binsBetaGamma):
     avgEHperMicron = [0 for i in range(len(binsBetaGamma))]
+    stdEHperMicron = [0 for i in range(len(binsBetaGamma))]
+    errEHperMicron = [0 for i in range(len(binsBetaGamma))]
     for idx in range(len(binsBetaGamma)-1):
         binMask = np.logical_and((truthDF["betaGamma"] > binsBetaGamma[idx])  ,  (truthDF["betaGamma"] < binsBetaGamma[idx+1]))
         avgEHperMicron[idx] = np.mean(truthDF["EHperMicron"][binMask])
-    return avgEHperMicron
+        stdEHperMicron[idx] = np.std(truthDF["EHperMicron"][binMask])
+        errEHperMicron[idx] = np.std(truthDF["EHperMicron"][binMask])
+    return avgEHperMicron, stdEHperMicron, errEHperMicron
 
 def plotBetaBloch(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False):
 
@@ -1222,15 +1230,19 @@ def plotBetaBloch(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False)
     # print(binsBetaGamma)
     binsEHperMicron = prepHistBins([truthBib["EHperMicron"],truthSig["EHperMicron"]],binCount,spacing='log',doPrint=True)
 
-    avgEHperMicronBib = calcAvgEHperMicron(truthBib,binsBetaGamma)
-    avgEHperMicronSig = calcAvgEHperMicron(truthSig,binsBetaGamma)
+    avgEHperMicronBib, stdEHperMicronBib, errEHperMicronBib = calcAvgEHperMicron(truthBib,binsBetaGamma)
+    avgEHperMicronSig, stdEHperMicronSig, errEHperMicronSig = calcAvgEHperMicron(truthSig,binsBetaGamma)
 
-    plt.plot(binsBetaGamma,avgEHperMicronBib,label="BIB")
-    plt.plot(binsBetaGamma,avgEHperMicronSig,label="Signal")
-    plt.yscale('log')
+    plt.plot(binsBetaGamma,avgEHperMicronSig,'o',label="Signal")
+    plt.errorbar(binsBetaGamma,avgEHperMicronSig,yerr=stdEHperMicronSig,color='blue',label="Signal",elinewidth=0.7,ecolor="cyan")
+    plt.plot(binsBetaGamma,avgEHperMicronBib,'o',label="BIB")
+    plt.errorbar(binsBetaGamma,avgEHperMicronBib,yerr=stdEHperMicronBib,color='red',label="BIB",elinewidth=0.7,ecolor="magenta") 
+    plt.yscale('log') #makes the errorbar assymetric
     plt.xscale('log')
+    plt.xlabel("βγ")
+    plt.ylabel('EH pairs/path [#/μm]')
     plt.legend()
-    closePlot(PLOT_DIR, interactivePlots,"Beta blcoh 3.png")
+    closePlot(PLOT_DIR, interactivePlots,"BetaBloch3.png")
 
     # mask = truthSig["p_calc2"] <100
     # truthSig = truthSig[mask]
@@ -1262,10 +1274,28 @@ def plotBetaBloch(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False)
     
     # print(binsEHperMicron)
 
-    plot1by2BibSig2dHisto(truthBib,truthSig,'betaGamma', 'EHperMicron',maskBib,maskSig,binsBetaGamma,binsEHperMicron,
+    countsBib, xedgesBib, yedgesBib,countsSig, xedgesSig, yedgesSig, = plot1by2BibSig2dHisto(truthBib,truthSig,'betaGamma', 'EHperMicron',maskBib,maskSig,binsBetaGamma,binsEHperMicron,
                           "jet",'βγ [mm]','EH pairs/path [#/μm]', "BetaBlochCurve2",
                           yscale='log',xscale='log',logColor=True,
-                          PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
+                          PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,closePlt=False)
+    MPVSig = [binsEHperMicron[i] for i in np.argmax(countsSig,axis=1)] 
+    MPVBib = [binsEHperMicron[i] for i in np.argmax(countsBib,axis=1)] 
+    plt.gcf().axes[2].errorbar(binsBetaGamma,avgEHperMicronSig,yerr=stdEHperMicronSig,color='k',label="μ ± σ [std] (Signal)",elinewidth=0.7,ecolor="grey")   
+    plt.gcf().axes[2].plot(binsBetaGamma[:-1],MPVSig,label="MPV?? [max of histo]")
+    plt.legend() 
+    plt.gcf().axes[0].errorbar(binsBetaGamma,avgEHperMicronBib,yerr=stdEHperMicronBib,color='k',label="μ ± σ [std] (BIB)",elinewidth=0.7,ecolor="grey")    
+    plt.gcf().axes[0].plot(binsBetaGamma[:-1],MPVBib,label="MPV?? [max of histo]")
+    plt.gcf().axes[0].legend()
+    print("length of stuff")
+    print(len(binsBetaGamma))
+    print(len(np.max(countsBib,axis=1)))
+    print(len(np.max(countsBib,axis=0)))
+    print(len(np.max(countsSig,axis=1)))
+    print(len(np.max(countsSig,axis=0)))
+    # plt.plot(binsBetaGamma,avgEHperMicronBib,label="BIB")
+    # plt.plot(binsBetaGamma,avgEHperMicronSig,label="Signal")
+    closePlot(PLOT_DIR, interactivePlots, "BetaBlochCurve2.png")
+    
     
 def plotAllMomentum(truthBib, truthSig, PLOT_DIR="./plots",interactivePlots=False):
     plt.figure(figsize=(5,10))
