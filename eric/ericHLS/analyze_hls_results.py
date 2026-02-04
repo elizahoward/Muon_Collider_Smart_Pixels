@@ -378,6 +378,18 @@ def plot_resource_utilization(df, output_path, fpga_constraints):
             label=f'{name}\n({max_luts:,} LUTs × {max_ffs:,} FFs)'
         )
         ax.add_patch(rect)
+        
+        # Add 80% utilization lines for each FPGA
+        lut_80 = max_luts * 0.8
+        ff_80 = max_ffs * 0.8
+        
+        # Vertical line at 80% LUT
+        ax.axvline(x=lut_80, color=color, linestyle='--', linewidth=1.5, alpha=0.6,
+                   label=f'{name} 80% LUT ({lut_80:,.0f})')
+        
+        # Horizontal line at 80% FF
+        ax.axhline(y=ff_80, color=color, linestyle='--', linewidth=1.5, alpha=0.6,
+                   label=f'{name} 80% FF ({ff_80:,.0f})')
     
     # Color points by validation accuracy if available
     if 'val_accuracy' in df.columns and df['val_accuracy'].notna().any():
@@ -509,8 +521,8 @@ Examples:
     python analyze_hls_results.py \\
         --results_dir ./hls_outputs \\
         --plot \\
-        --pink-luts 10000 --pink-ffs 20000 \\
-        --xilinx-luts 53200 --xilinx-ffs 106400
+        --pink-luts 53200 --pink-ffs 106400 \\
+        --xilinx-luts 215360 --xilinx-ffs 430720
         """
     )
     
@@ -544,29 +556,29 @@ Examples:
     parser.add_argument(
         '--pink-luts',
         type=int,
-        default=10000,
-        help='Maximum LUTs for Pink Board (default: 10000)'
+        default=53200,
+        help='Maximum LUTs for Pink Board PYNQ-Z1/Z2 (default: 53200)'
     )
     
     parser.add_argument(
         '--pink-ffs',
         type=int,
-        default=20000,
-        help='Maximum FFs for Pink Board (default: 20000)'
+        default=106400,
+        help='Maximum FFs for Pink Board PYNQ-Z1/Z2 (default: 106400)'
     )
     
     parser.add_argument(
         '--xilinx-luts',
         type=int,
-        default=53200,
-        help='Maximum LUTs for Xilinx FPGA (default: 53200)'
+        default=215360,
+        help='Maximum LUTs for Xilinx XC7A200T FPGA (default: 215360)'
     )
     
     parser.add_argument(
         '--xilinx-ffs',
         type=int,
-        default=106400,
-        help='Maximum FFs for Xilinx FPGA (default: 106400)'
+        default=430720,
+        help='Maximum FFs for Xilinx XC7A200T FPGA (default: 430720)'
     )
     
     args = parser.parse_args()
@@ -612,8 +624,8 @@ Examples:
     # Generate plot if requested
     if args.plot:
         fpga_constraints = [
-            ("Pink Board", args.pink_luts, args.pink_ffs, "pink"),
-            ("Xilinx Zynq xc7z020", args.xilinx_luts, args.xilinx_ffs, "lightblue")
+            ("PYNQ-Z1/Z2 (Zynq-7020)", args.pink_luts, args.pink_ffs, "pink"),
+            ("XC7A200T", args.xilinx_luts, args.xilinx_ffs, "lightblue")
         ]
         plot_resource_utilization(df, plot_output_path, fpga_constraints)
     

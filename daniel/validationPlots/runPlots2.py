@@ -21,7 +21,7 @@ from pathlib import Path
 
 
 def main(parquetDir_all,               
-            #  skip_indices = list(range(1730 - 124+87, 1769)),
+            #skip_indices = list(range(1730 - 124+87, 1769)),
             trackDirBib_mm,
             trackDirBib_mp,
             trackDirSig,
@@ -43,7 +43,7 @@ def main(parquetDir_all,
                     #  parquetDir_mp = parquetDir_mp ,
                     #  parquetDir_sig = parquetDir_sig ,
                     parquetDir_all = parquetDir_all ,
-                    skip_indices = list(range(1730 - 124+87, 1769)),
+                    skip_indices = None,#list(range(1730 - 124+87, 1769)),
                     trackDirBib_mm = trackDirBib_mm,
                     trackDirBib_mp = trackDirBib_mp,
                     trackDirSig = trackDirSig,

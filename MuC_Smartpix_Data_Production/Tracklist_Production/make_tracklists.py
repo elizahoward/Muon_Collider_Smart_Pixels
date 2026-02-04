@@ -255,10 +255,18 @@ for file_path in file_list:
             # Skip tracks with momentum 0
             if round(p, ops.float_precision)==0 or round(pt, ops.float_precision)==0:
                 continue
-
-            track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg]
-            tracks.append(track)
-            track_count+=1
+            
+            if np.abs(p) < 0.00005:  
+                print("bad momentum!!")
+                continue; #added because pixelav can't handle these.
+            elif np.abs(pt) < 0.00005: 
+                print("bad pt momentum!!")
+                continue; #added because pixelav can't handle these.
+            else:
+            
+                track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg]
+                tracks.append(track)
+                track_count+=1
 
 binsize = ops.bin_size
 float_precision = ops.float_precision
