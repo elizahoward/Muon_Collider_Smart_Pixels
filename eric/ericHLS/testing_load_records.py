@@ -200,9 +200,48 @@ def main():
     print(f"✓ ROC curve saved to: {output_path}")
     plt.close()
     
-    # Step 6: Compute background rejection
+    # Step 6: Compute background rejection at fixed thresholds
     print("\n" + "-" * 80)
-    print("STEP 6: Computing background rejection...")
+    print("STEP 6: Computing signal efficiency and background rejection at fixed thresholds...")
+    print("-" * 80)
+    
+    def sig_eff_and_bkg_rej(y_true, y_score, thr):
+        """
+        Compute signal efficiency and background rejection at a given threshold.
+        
+        Args:
+            y_true: True labels (0 for background, 1 for signal)
+            y_score: Predicted scores/probabilities
+            thr: Threshold value
+            
+        Returns:
+            eff_sig: Signal efficiency (TPR)
+            bkg_rej: Background rejection (1/FPR)
+        """
+        y_hat = (y_score >= thr).astype(int)
+        sig = (y_true == 1)
+        bkg = (y_true == 0)
+        
+        tp = np.sum(y_hat[sig] == 1)
+        fp = np.sum(y_hat[bkg] == 1)
+        
+        eff_sig = tp / max(np.sum(sig), 1)
+        fpr = fp / max(np.sum(bkg), 1)
+        bkg_rej = np.inf if fpr == 0 else 1.0 / fpr
+        return eff_sig, bkg_rej
+    
+    print("\nThreshold | Signal Efficiency | Background Rejection")
+    print("-" * 60)
+    for thr in [0.3, 0.5, 0.7, 0.9]:
+        eff, rej = sig_eff_and_bkg_rej(y_true, y_pred, thr)
+        if np.isinf(rej):
+            print(f"  {thr:.1f}     |      {eff:.4f}       |       ∞ (perfect)")
+        else:
+            print(f"  {thr:.1f}     |      {eff:.4f}       |       {rej:.2f}")
+    
+    # Also compute background rejection at fixed signal efficiencies (from ROC curve)
+    print("\n" + "-" * 80)
+    print("STEP 7: Computing background rejection at fixed signal efficiencies...")
     print("-" * 80)
     
     for sig_eff in [0.90, 0.95, 0.99]:
