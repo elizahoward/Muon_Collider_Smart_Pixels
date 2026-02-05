@@ -78,6 +78,7 @@ def generate_signal():
     signal_detetor_sim = f"{output_dir_detsim}/signal_detsim.slcio"
 
     # Particle gun
+    # https://github.com/MuonColliderSoft/mucoll-benchmarks/blob/main/generation/pgun/pgun_lcio.py
     run_particle_gun = ["python3", f"{ops.benchmark_dir}/generation/pgun/pgun_lcio.py", 
                             "-s", "12345", 
                             "-e", f"{int(ops.track_total*1.115)}", 
@@ -89,6 +90,7 @@ def generate_signal():
                             "--", signal_particle_gun]
 
     # Run Detector Simulation
+    # https://github.com/MuonColliderSoft/mucoll-benchmarks/blob/main/simulation/ilcsoft/steer_baseline.py
     run_detsim = ["ddsim", "--steeringFile", f"{ops.benchmark_dir}/simulation/ilcsoft/steer_baseline.py",
                     "--inputFile", signal_particle_gun,
                     "--outputFile", signal_detetor_sim]
