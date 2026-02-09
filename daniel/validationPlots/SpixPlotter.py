@@ -119,6 +119,9 @@ class SmartpixPlotter():
             print("process Tracks is set to false, so not loading tracklists")
             # return
         print("Start loading track data")
+        print(self.trackDirBib_mm)
+        print(self.trackDirBib_mp)
+        print(self.trackDirSig)
         self.tracksBib, self.tracksSig, self.tracksBib_mp,self.tracksBib_mm=loadAllTracks(trackDirBib_mm=self.trackDirBib_mm,trackDirBib_mp=self.trackDirBib_mp,trackDirSig=self.trackDirSig, useBibSigIndic=(not self.processOldTracks))
         self.tracksBib = calcNxyzTrack(self.tracksBib)
         self.tracksSig = calcNxyzTrack(self.tracksSig)
