@@ -1,23 +1,9 @@
 #!/usr/bin/env python3
 """
-Add ROC Analysis to Pareto-Selected Models
+Add ROC Analysis to Pareto-Selected Models (using simple TFRecord loading)
 
-This script adds ROC performance analysis to models that have already been 
-processed by analyze_and_select_pareto.py. It evaluates each H5 model and adds:
-- Individual ROC curve plot for each model (PNG)
-- ROC curve data (CSV with FPR, TPR, thresholds)
-- Combined ROC comparison plot
-- Background rejection vs Parameters plot
-- Updated analysis summary with ROC metrics
-
-This is designed to RUN IN THE SAME DIRECTORY that analyze_and_select_pareto.py 
-created, adding ROC information without duplicating model files.
-
-Usage:
-    python evaluate_and_select_by_roc.py \\
-        --input_dir <pareto_output_dir> \\
-        --data_dir <tfrecord_dir> \\
-        --signal_efficiency 0.95
+This script combines the functionality of evaluate_and_select_by_roc.py with
+the simpler TFRecord loading approach from simple_predict_roc.py.
 
 Author: Eric
 Date: February 2026
@@ -42,7 +28,6 @@ sys.path.append('/local/d1/smartpixML/filtering_models/shuffling_data/')
 # Import TensorFlow
 try:
     import tensorflow as tf
-    # Enable eager execution for QKeras compatibility
     tf.config.run_functions_eagerly(True)
     from tensorflow.keras.models import load_model
     TF_AVAILABLE = True
@@ -53,78 +38,111 @@ except ImportError:
 
 # Import QKeras
 try:
-    from qkeras import QDense, QActivation
-    from qkeras.quantizers import quantized_bits, quantized_relu, quantized_tanh
     from qkeras.utils import _add_supported_quantized_objects
     QKERAS_AVAILABLE = True
 except ImportError:
     QKERAS_AVAILABLE = False
     print("Warning: QKeras not available")
 
-# Import data generator
-try:
-    import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
-    DATA_GEN_AVAILABLE = True
-except ImportError:
-    DATA_GEN_AVAILABLE = False
-    print("Error: Data generator not available")
-    sys.exit(1)
+
+def _parse_tfrecord_fn(example):
+    """Parse a single TFRecord example."""
+    feature_description = {
+        'y': tf.io.FixedLenFeature([], tf.string),
+        'x_profile': tf.io.FixedLenFeature([], tf.string),
+        'z_global': tf.io.FixedLenFeature([], tf.string),
+        'y_profile': tf.io.FixedLenFeature([], tf.string),
+        'y_local': tf.io.FixedLenFeature([], tf.string),
+    }
+
+    example = tf.io.parse_single_example(example, feature_description)
+    y = tf.io.parse_tensor(example['y'], out_type=tf.float32)
+    X = {
+        'x_profile': tf.io.parse_tensor(example['x_profile'], out_type=tf.float32),
+        'z_global': tf.io.parse_tensor(example['z_global'], out_type=tf.float32),
+        'y_profile': tf.io.parse_tensor(example['y_profile'], out_type=tf.float32),
+        'y_local': tf.io.parse_tensor(example['y_local'], out_type=tf.float32),
+    }
+    return X, y
+
+
+def build_tfrecord_dataset(tfrecord_dir):
+    """Build TensorFlow dataset from TFRecord files."""
+    pattern = os.path.join(tfrecord_dir, "*.tfrecord")
+    files = tf.data.Dataset.list_files(pattern, shuffle=False)
+    ds = files.interleave(
+        tf.data.TFRecordDataset,
+        num_parallel_calls=tf.data.AUTOTUNE
+    )
+    ds = ds.map(_parse_tfrecord_fn, num_parallel_calls=tf.data.AUTOTUNE)
+    ds = ds.prefetch(tf.data.AUTOTUNE)
+    return ds
 
 
 def get_custom_objects():
     """Get custom objects dictionary for loading QKeras models."""
     if not QKERAS_AVAILABLE:
         return {}
-    
     co = {}
     _add_supported_quantized_objects(co)
     return co
 
 
-def load_validation_data(data_dir, batch_size=16384):
+def compute_background_rejection_direct(y_true, y_score, signal_efficiency=0.95):
     """
-    Load validation data using the data generator.
-    
+    Compute background rejection at a fixed signal efficiency directly from scores.
+
+    This does not use ROC interpolation. It selects a threshold from signal scores
+    and then evaluates FPR on background scores at that threshold.
+
     Args:
-        data_dir: Path to TFRecord folder
-        batch_size: Batch size for data loading
-    
+        y_true: True labels (0=background, 1=signal)
+        y_score: Predicted scores
+        signal_efficiency: Target signal efficiency (default: 0.95)
+
     Returns:
-        validation_generator
+        dict with threshold, achieved_signal_efficiency, fpr, and background_rejection
     """
-    val_dir = os.path.join(data_dir, "tfrecords_validation/")
-    
-    if not os.path.exists(val_dir):
-        raise ValueError(f"Validation directory not found: {val_dir}")
-    
-    print(f"Loading validation data from: {val_dir}")
-    
-    # Model2.5 uses x_profile, z_global, y_profile, y_local features
-    x_feature_description = ['x_profile', 'z_global', 'y_profile', 'y_local']
-    
-    validation_generator = ODG2.OptimizedDataGeneratorDataShuffledBigData(
-        load_records=True,
-        tf_records_dir=val_dir,
-        x_feature_description=x_feature_description,
-        batch_size=batch_size
-    )
-    
-    print(f"Validation batches: {len(validation_generator)}")
-    
-    return validation_generator
+    y_true = np.asarray(y_true).ravel()
+    y_score = np.asarray(y_score).ravel()
+
+    sig_scores = y_score[y_true == 1]
+    bkg_scores = y_score[y_true == 0]
+
+    if len(sig_scores) == 0 or len(bkg_scores) == 0:
+        return {
+            'threshold_at_target': np.nan,
+            'achieved_signal_efficiency': np.nan,
+            'fpr_at_target': np.nan,
+            'background_rejection': np.nan
+        }
+
+    # Choose threshold so approximately `signal_efficiency` of signal passes.
+    threshold = np.quantile(sig_scores, 1.0 - signal_efficiency)
+
+    achieved_sig_eff = float(np.mean(sig_scores >= threshold))
+    fpr_at_target = float(np.mean(bkg_scores >= threshold))
+    background_rejection = 1.0 - fpr_at_target
+
+    return {
+        'threshold_at_target': float(threshold),
+        'achieved_signal_efficiency': achieved_sig_eff,
+        'fpr_at_target': fpr_at_target,
+        'background_rejection': float(background_rejection)
+    }
 
 
-def evaluate_model_roc(model_file, validation_generator, roc_dir):
+def evaluate_model_roc(model_file, validation_dataset, roc_dir, signal_efficiency):
     """
     Evaluate a single model and compute ROC metrics.
     
     Args:
         model_file: Path to H5 model file
-        validation_generator: Data generator for validation set
+        validation_dataset: TensorFlow dataset for validation
         roc_dir: Directory to save ROC plots and CSVs
         
     Returns:
-        dict with metrics: fpr, tpr, auc, background_rejection, parameters, etc.
+        dict with metrics: fpr, tpr, auc, fixed-point background rejection, parameters, etc.
     """
     model_name = Path(model_file).stem
     print(f"\nEvaluating {model_name}...")
@@ -146,23 +164,13 @@ def evaluate_model_roc(model_file, validation_generator, roc_dir):
     
     # Predict on validation set
     print(f"  Running inference...")
-    y_true_all = []
-    y_pred_all = []
+    y_pred = model.predict(validation_dataset, verbose=0).ravel()
     
-    for batch_idx in range(len(validation_generator)):
-        X_batch, y_batch = validation_generator[batch_idx]
-        
-        # Run prediction
-        y_pred_batch = model.predict(X_batch, verbose=0)
-        
-        y_true_all.append(y_batch)
-        y_pred_all.append(y_pred_batch)
-        
-        if (batch_idx + 1) % 10 == 0:
-            print(f"    Processed {batch_idx + 1}/{len(validation_generator)} batches")
-    
-    y_true = np.concatenate(y_true_all, axis=0).flatten()
-    y_pred = np.concatenate(y_pred_all, axis=0).flatten()
+    # Get true labels
+    y_true = np.concatenate(
+        [y.numpy().ravel() for _, y in validation_dataset],
+        axis=0
+    )
     
     print(f"  ✓ Inference complete: {len(y_true)} samples")
     
@@ -190,6 +198,10 @@ def evaluate_model_roc(model_file, validation_generator, roc_dir):
     roc_df.to_csv(csv_path, index=False)
     print(f"  ✓ ROC data saved: {os.path.basename(csv_path)}")
     
+    fixed_point_metrics = compute_background_rejection_direct(
+        y_true, y_pred, signal_efficiency=signal_efficiency
+    )
+
     return {
         'model_name': model_name,
         'model_file': model_file,
@@ -197,7 +209,11 @@ def evaluate_model_roc(model_file, validation_generator, roc_dir):
         'fpr': fpr,
         'tpr': tpr,
         'thresholds': thresholds,
-        'auc': roc_auc
+        'auc': roc_auc,
+        'threshold_at_target': fixed_point_metrics['threshold_at_target'],
+        'achieved_signal_efficiency': fixed_point_metrics['achieved_signal_efficiency'],
+        'fpr_at_target': fixed_point_metrics['fpr_at_target'],
+        'background_rejection': fixed_point_metrics['background_rejection']
     }
 
 
@@ -220,36 +236,6 @@ def plot_single_roc(fpr, tpr, roc_auc, model_name, output_path):
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
-
-
-def compute_background_rejection(fpr, tpr, signal_efficiency=0.95):
-    """
-    Compute background rejection at specified signal efficiency.
-    
-    Args:
-        fpr: False positive rate array
-        tpr: True positive rate array (signal efficiency)
-        signal_efficiency: Target signal efficiency (default: 0.95)
-        
-    Returns:
-        background_rejection: 1/fpr at target signal efficiency
-    """
-    # Find the index where TPR >= signal_efficiency
-    idx = np.where(tpr >= signal_efficiency)[0]
-    
-    if len(idx) == 0:
-        return 0.0  # Model doesn't reach target signal efficiency
-    
-    # Use the first point that reaches or exceeds target
-    idx = idx[0]
-    fpr_at_target = fpr[idx]
-    
-    if fpr_at_target == 0:
-        return np.inf  # Perfect rejection
-    
-    background_rejection = 1.0 / fpr_at_target
-    
-    return background_rejection
 
 
 def plot_combined_roc(results_df, output_path):
@@ -317,7 +303,7 @@ def plot_background_rejection_vs_parameters(results_df, output_path, signal_effi
     stats_text = (
         f"Models evaluated: {len(results_df)}\n"
         f"Signal efficiency: {signal_efficiency:.0%}\n"
-        f"Bkg rejection range: {results_df['background_rejection'].min():.1f} - {results_df['background_rejection'].max():.1f}\n"
+        f"Bkg rejection range: {results_df['background_rejection'].min():.4f} - {results_df['background_rejection'].max():.4f}\n"
         f"Parameters range: {results_df['parameters'].min():,} - {results_df['parameters'].max():,}\n"
         f"AUC range: {results_df['auc'].min():.4f} - {results_df['auc'].max():.4f}"
     )
@@ -334,33 +320,14 @@ def plot_background_rejection_vs_parameters(results_df, output_path, signal_effi
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Add ROC analysis to Pareto-selected models',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Add ROC analysis to existing Pareto output directory
-  python evaluate_and_select_by_roc.py \\
-      --input_dir ../model2_5_pareto_hls_ready_2026 \\
-      --data_dir /local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try3_eric/filtering_records16384_data_shuffled_single_bigData \\
-      --signal_efficiency 0.95
-
-  # Use different signal efficiency
-  python evaluate_and_select_by_roc.py \\
-      --input_dir ../model2_5_pareto_hls_ready_2026 \\
-      --data_dir <tfrecord_dir> \\
-      --signal_efficiency 0.90
-
-NOTE: This script is designed to ADD ROC information to an existing directory
-      created by analyze_and_select_pareto.py. It will NOT copy model files,
-      but will add ROC plots and metrics to the same directory.
-        """
+        description='Add ROC analysis to Pareto-selected models (simple version)'
     )
     
     parser.add_argument(
         '--input_dir',
         type=str,
         required=True,
-        help='Directory containing Pareto-selected H5 models (output from analyze_and_select_pareto.py)'
+        help='Directory containing Pareto-selected H5 models'
     )
     
     parser.add_argument(
@@ -375,13 +342,6 @@ NOTE: This script is designed to ADD ROC information to an existing directory
         type=float,
         default=0.95,
         help='Target signal efficiency for background rejection calculation (default: 0.95)'
-    )
-    
-    parser.add_argument(
-        '--batch_size',
-        type=int,
-        default=16384,
-        help='Batch size for data loading (default: 16384)'
     )
     
     args = parser.parse_args()
@@ -400,7 +360,7 @@ NOTE: This script is designed to ADD ROC information to an existing directory
     os.makedirs(roc_dir, exist_ok=True)
     
     print("\n" + "=" * 80)
-    print("ROC ANALYSIS FOR PARETO-SELECTED MODELS")
+    print("ROC ANALYSIS FOR PARETO-SELECTED MODELS (SIMPLE VERSION)")
     print("=" * 80)
     print(f"\nInput directory: {args.input_dir}")
     print(f"ROC output directory: {roc_dir}")
@@ -414,7 +374,6 @@ NOTE: This script is designed to ADD ROC information to an existing directory
     
     if not h5_files:
         print(f"\nError: No H5 model files found in {args.input_dir}")
-        print("Make sure you run analyze_and_select_pareto.py first!")
         sys.exit(1)
     
     print(f"\nFound {len(h5_files)} Pareto-selected models to evaluate")
@@ -423,7 +382,15 @@ NOTE: This script is designed to ADD ROC information to an existing directory
     print("\n" + "=" * 80)
     print("LOADING VALIDATION DATA")
     print("=" * 80)
-    validation_generator = load_validation_data(args.data_dir, args.batch_size)
+    val_dir = os.path.join(args.data_dir, "tfrecords_validation/")
+    
+    if not os.path.exists(val_dir):
+        print(f"Error: Validation directory not found: {val_dir}")
+        sys.exit(1)
+    
+    print(f"Loading validation data from: {val_dir}")
+    validation_dataset = build_tfrecord_dataset(val_dir)
+    print("✓ Validation dataset loaded")
     
     # Evaluate all models
     print("\n" + "=" * 80)
@@ -432,13 +399,19 @@ NOTE: This script is designed to ADD ROC information to an existing directory
     
     results = []
     for model_file in h5_files:
-        result = evaluate_model_roc(model_file, validation_generator, roc_dir)
+        result = evaluate_model_roc(
+            model_file,
+            validation_dataset,
+            roc_dir,
+            signal_efficiency=args.signal_efficiency
+        )
         if result is not None:
-            # Compute background rejection
-            bg_rej = compute_background_rejection(result['fpr'], result['tpr'], 
-                                                 args.signal_efficiency)
-            result['background_rejection'] = bg_rej
-            print(f"  Background rejection @ {args.signal_efficiency:.0%}: {bg_rej:.2f}")
+            print(
+                f"  Background rejection @ {args.signal_efficiency:.0%}: "
+                f"{result['background_rejection']:.4f} "
+                f"(FPR={result['fpr_at_target']:.4f}, "
+                f"Achieved SigEff={result['achieved_signal_efficiency']:.4f})"
+            )
             results.append(result)
     
     if not results:
@@ -449,7 +422,17 @@ NOTE: This script is designed to ADD ROC information to an existing directory
     results_df = pd.DataFrame(results)
     
     # Save ROC metrics summary
-    summary_csv = results_df[['model_name', 'parameters', 'auc', 'background_rejection']].copy()
+    summary_csv = results_df[
+        [
+            'model_name',
+            'parameters',
+            'auc',
+            'background_rejection',
+            'fpr_at_target',
+            'achieved_signal_efficiency',
+            'threshold_at_target'
+        ]
+    ].copy()
     summary_csv_path = os.path.join(args.input_dir, 'roc_metrics_summary.csv')
     summary_csv.to_csv(summary_csv_path, index=False)
     print(f"\n✓ ROC metrics summary saved: {os.path.basename(summary_csv_path)}")
@@ -514,7 +497,7 @@ NOTE: This script is designed to ADD ROC information to an existing directory
     print("=" * 80)
     print(f"Models evaluated: {len(results_df)}")
     print(f"AUC range: {results_df['auc'].min():.4f} - {results_df['auc'].max():.4f}")
-    print(f"Background rejection @ {args.signal_efficiency:.0%}: {results_df['background_rejection'].min():.2f} - {results_df['background_rejection'].max():.2f}")
+    print(f"Background rejection @ {args.signal_efficiency:.0%}: {results_df['background_rejection'].min():.4f} - {results_df['background_rejection'].max():.4f}")
     print(f"Parameter range: {results_df['parameters'].min():,} - {results_df['parameters'].max():,}")
     print("\n" + "=" * 80)
 

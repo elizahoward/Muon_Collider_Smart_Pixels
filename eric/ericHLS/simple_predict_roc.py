@@ -122,8 +122,8 @@ def main():
         axis=0
     )
     
-    # Compute ROC
-    fpr, tpr, thresholds = roc_curve(y_true, y_score)
+    # Compute ROC using all threshold points for finer ROC traces.
+    fpr, tpr, thresholds = roc_curve(y_true, y_score, drop_intermediate=False)
     roc_auc = auc(fpr, tpr)
     
     print(f"AUC: {roc_auc:.4f}")
