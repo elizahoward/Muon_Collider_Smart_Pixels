@@ -1,21 +1,3 @@
-"""
-from OptimizedDataGenerator4 import *
-import matplotlib.pyplot as plt
-import numpy as np
-import tensorflow as tf
-import keras_tuner as kt
-noGPU=False
-if noGPU:
-    tf.config.set_visible_devices([], 'GPU')
-
-print("\nHIIIIIIIIIIIIIIIIII\n")
-
-print(tf.config.experimental.list_physical_devices())
-print(tf.test.is_built_with_cuda())
-print(tf.test.is_built_with_gpu_support())
-print(tf.test.is_gpu_available())
-"""
-
 from abc import ABC, abstractmethod
 # import all the necessary libraries
 import tensorflow as tf
@@ -32,57 +14,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
-import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
 import pandas as pd
 from datetime import datetime
 sys.path.append("../ryan")
-import OptimizedDataGenerator4 as ODG
-
-
-sys.path.append(str(Path.cwd().parents[0]))
-
-from MuC_Smartpix_ML.Model_Classes import SmartPixModel
-print(SmartPixModel)
-
-"""
-from OptimizedDataGenerator4 import *
-import matplotlib.pyplot as plt
-import numpy as np
-import tensorflow as tf
-import keras_tuner as kt
-noGPU=False
-if noGPU:
-    tf.config.set_visible_devices([], 'GPU')
-
-print("\nHIIIIIIIIIIIIIIIIII\n")
-
-print(tf.config.experimental.list_physical_devices())
-print(tf.test.is_built_with_cuda())
-print(tf.test.is_built_with_gpu_support())
-print(tf.test.is_gpu_available())
-"""
-
-from abc import ABC, abstractmethod
-# import all the necessary libraries
-import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.optimizers.schedules import PolynomialDecay, ExponentialDecay, CosineDecay
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-import keras_tuner as kt
-from sklearn.metrics import roc_curve, auc
-from pathlib import Path
-import os
-import numpy as np
-import matplotlib.pyplot as plt
-import sys
-sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
-import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
-import pandas as pd
-from datetime import datetime
-sys.path.append("../ryan")
-import OptimizedDataGenerator4 as ODG
 
 
 sys.path.append(str(Path.cwd().parents[0]))
@@ -532,6 +466,8 @@ def main():
 
     m1.makeUnquantizedModel()
     m1.trainModel()
+    m1.evaluate()
+    m1.plotModel()
 
 if __name__ == "__main__":
     main()
