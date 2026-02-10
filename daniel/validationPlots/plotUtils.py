@@ -1015,6 +1015,7 @@ trackDirSig = '/local/d1/smartpixML/bigData/tracklists/signal_tracklists'
 #I think these are newest 
 trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]
 def loadTrackData(directory, trackHeader = trackHeader, bibSigIndic="_"):
+    # print(directory, bibSigIndic)
     tracks = [
         pd.read_csv(os.path.join(directory, file), sep=' ', header=None, names=trackHeader)
         for file in os.listdir(directory) if ((("_tracklist" in file) or ("_tracks" in file)) and (bibSigIndic in file))
@@ -1025,6 +1026,10 @@ def loadTrackData(directory, trackHeader = trackHeader, bibSigIndic="_"):
         print("Warning!!!!\n")
         return pd.DataFrame(columns=trackHeader)
     else:
+        # files = [file for file in os.listdir(directory) if ((("_tracklist" in file) or ("_tracks" in file)) and (bibSigIndic in file))]
+        # print(len(tracks))
+        # print(files[1])
+        # print(tracks[1])
         return pd.concat(tracks)
 # def load_log_data(directory,log_header=logHeader):
 #     return pd.concat([
@@ -1032,7 +1037,7 @@ def loadTrackData(directory, trackHeader = trackHeader, bibSigIndic="_"):
 #         for file in os.listdir(directory) if "_log" in file
 #     ])
 #can also pass in None for the directories
-def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig,useBibSigIndic=True):
+def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,trackDirSig=trackDirSig,useBibSigIndic=True,doPrint =True):
     if useBibSigIndic:
         tracksBib_mm = loadTrackData(trackDirBib_mm,bibSigIndic="bib_mm")  if trackDirBib_mm else pd.DataFrame(columns=trackHeader)
         tracksBib_mp = loadTrackData(trackDirBib_mp,bibSigIndic="bib_mp")  if trackDirBib_mp else pd.DataFrame(columns=trackHeader)
@@ -1042,6 +1047,8 @@ def loadAllTracks(trackDirBib_mm=trackDirBib_mm,trackDirBib_mp=trackDirBib_mp,tr
         tracksBib_mp = loadTrackData(trackDirBib_mp)  if trackDirBib_mp else pd.DataFrame(columns=trackHeader)
         tracksSig = loadTrackData(trackDirSig) if trackDirSig else pd.DataFrame(columns=trackHeader)
     tracksBib = pd.concat([tracksBib_mm,tracksBib_mp])
+    if doPrint:
+        print(f"Loaded tracks with counting of \n bib mm: {len(tracksBib_mm)} \n bib mp: {len(tracksBib_mp)}  \n bib total: {len(tracksBib)} \n Signal: {len(tracksSig)} ")
     return tracksBib, tracksSig, tracksBib_mp,tracksBib_mm
 
 def plotTrackPPt(tracksBib, tracksSig,binsBib=30,binsSig=30,yscale='log',PLOT_DIR="./plots",interactivePlots=False):

@@ -44,6 +44,52 @@ sys.path.append(str(Path.cwd().parents[0]))
 from MuC_Smartpix_ML.Model_Classes import SmartPixModel
 print(SmartPixModel)
 
+"""
+from OptimizedDataGenerator4 import *
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+import keras_tuner as kt
+noGPU=False
+if noGPU:
+    tf.config.set_visible_devices([], 'GPU')
+
+print("\nHIIIIIIIIIIIIIIIIII\n")
+
+print(tf.config.experimental.list_physical_devices())
+print(tf.test.is_built_with_cuda())
+print(tf.test.is_built_with_gpu_support())
+print(tf.test.is_gpu_available())
+"""
+
+from abc import ABC, abstractmethod
+# import all the necessary libraries
+import tensorflow as tf
+from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers.schedules import PolynomialDecay, ExponentialDecay, CosineDecay
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+import keras_tuner as kt
+from sklearn.metrics import roc_curve, auc
+from pathlib import Path
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import sys
+sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
+import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
+import pandas as pd
+from datetime import datetime
+sys.path.append("../ryan")
+import OptimizedDataGenerator4 as ODG
+
+
+sys.path.append(str(Path.cwd().parents[0]))
+
+from MuC_Smartpix_ML.Model_Classes import SmartPixModel
+print(SmartPixModel)
+
 class Model1(SmartPixModel):
     def __init__(self,
             tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
@@ -96,12 +142,9 @@ class Model1(SmartPixModel):
 
         ## here i will add the layers 
 
-        stack1 = tf.keras.layers.Dense(17,activation='relu')(inputs)
-        stack2 = tf.keras.layers.Dense(20, activation='relu')(stack1)
-        stack3 = tf.keras.layers.Dense(9, activation='relu')(stack2)
-        stack4 = tf.keras.layers.Dense(16, activation='relu')(stack3)
-        stack5 = tf.keras.layers.Dense(18, activation='relu')(stack4)
-        output = tf.keras.layers.Dense(1,activation='sigmoid')(stack5)
+        stack1 = tf.keras.layers.Dense(2,activation='relu')(inputs)
+        stack2 = tf.keras.layers.Dense(2,activation='relu')(stack1)
+        output = tf.keras.layers.Dense(1,activation='sigmoid')(stack2)
 
         self.models["Unquantized"] = tf.keras.Model(inputs=inputList, outputs=output)
 
@@ -133,9 +176,6 @@ class Model1(SmartPixModel):
 
             # layer 1
             x = tf.keras.layers.Dense(row1nodes,activation='relu')(inputs)
-            x = tf.keras.layers.Dense(row2nodes, activation='relu')(x)
-            x = tf.keras.layers.Dense(row3nodes, activation='relu')(x)
-            x = tf.keras.layers.Dense(row4nodes, activation='relu')(x)
             x = tf.keras.layers.Dense(row5nodes, activation='relu')(x)
             output = tf.keras.layers.Dense(1,activation='sigmoid')(x)
 
@@ -484,20 +524,17 @@ class Model1(SmartPixModel):
         config_name = f"quantized_{total_bits}w{int_bits}i"
         self.models[config_name] = tf.keras.Model(inputs=[input1, input2, input3, input4], outputs=out)
 
-    """
-    @abstractmethod
-    def runHyperparameterTuning(self):
-        raise NotImplementedError("Subclasses should implement this method.")
-    """
-    
 
 def main():
-    m1 = Model1()
-    m1.loadTfRecords()  # must set self.training_generator and self.validation_generator
-    m1.makeUnquatizedModelHyperParameterTuning5()
-    m1.makeUnquatizedModelHyperParameterTuning4()
-    m1.makeUnquatizedModelHyperParameterTuning3()
-    m1.makeUnquatizedModelHyperParameterTuning2()
+    m1 = Model1()                 # your subclass
+
+    m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
+
+    m1.makeUnquantizedModel()
+    m1.trainModel()
 
 if __name__ == "__main__":
     main()
+
+        
+        
