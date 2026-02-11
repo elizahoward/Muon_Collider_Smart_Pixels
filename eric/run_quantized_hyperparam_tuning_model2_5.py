@@ -3,9 +3,11 @@ Quick script to run quantized hyperparameter tuning on Model2.5
 
 Parameters:
 - 4-bit quantization (0 integer bits)
-- 20 epochs per trial
+- 15 epochs per trial
 - 1 execution per trial
-- 150 max trials
+- 5 max trials
+- Objective: weighted background rejection
+  weighted = 0.3*BR95 + 0.6*BR98 + 0.1*BR99
 - Progressive layer sizes: dense2_units <= (spatial_units + z_global_units)
                           dense3_units <= dense2_units
 
@@ -28,16 +30,17 @@ def main():
     print("\nConfiguration:")
     print("  - Quantization: 4-bit fractional, 0 integer bits")
     print("  - z_global: 4-bit (matches spatial features)")
-    print("  - Epochs per trial: 20")
+    print("  - Epochs per trial: 15")
     print("  - Executions per trial: 1")
-    print("  - Max trials: 150")
+    print("  - Max trials: 5")
+    print("  - Objective: 0.3*BR95 + 0.6*BR98 + 0.1*BR99")
     print("  - Progressive layer constraint: Each layer <= previous layer")
     print("="*70)
     print()
     
     # Initialize Model2.5
     model25 = Model2_5(
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try3_eric/filtering_records16384_data_shuffled_single_bigData",
+        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
         dense_units=128,        # Will be overridden by hyperparameter search
         z_global_units=32,      # Will be overridden by hyperparameter search
         dense2_units=128,       # Will be overridden by hyperparameter search
@@ -57,9 +60,11 @@ def main():
     
     results = model25.runQuantizedHyperparameterTuning(
         bit_configs=bit_configs,
-        max_trials=2,
+        max_trials=8,
         executions_per_trial=1,
-        numEpochs=15
+        numEpochs=15,
+        use_weighted_bkg_rej=True,
+        bkg_rej_weights={0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
     )
     
     # Print results summary

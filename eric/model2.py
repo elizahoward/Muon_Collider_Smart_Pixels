@@ -64,7 +64,7 @@ class Model2(SmartPixModel):
     """
     
     def __init__(self,
-                 tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,
@@ -612,7 +612,15 @@ class Model2(SmartPixModel):
             'layer_structure': layer_structure
         }
     
-    def runQuantizedHyperparameterTuning(self, bit_configs=None, max_trials=50, executions_per_trial=2, numEpochs=30):
+    def runQuantizedHyperparameterTuning(
+        self,
+        bit_configs=None,
+        max_trials=50,
+        executions_per_trial=2,
+        numEpochs=30,
+        use_weighted_bkg_rej=False,
+        bkg_rej_weights=None
+    ):
         """
         Run hyperparameter tuning for quantized Model2 with specified bit configurations.
         
@@ -622,6 +630,11 @@ class Model2(SmartPixModel):
             max_trials: Maximum number of trials for hyperparameter search
             executions_per_trial: Number of executions per trial
             numEpochs: Number of epochs for training
+            use_weighted_bkg_rej: If True, optimize weighted background rejection
+                objective computed on validation data:
+                val_weighted_bkg_rej = w95*BR95 + w98*BR98 + w99*BR99
+            bkg_rej_weights: Optional dict for BR weights, defaults to:
+                {0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
             
         Returns:
             Dictionary mapping config_name to (best_model, results, tuner)
@@ -631,8 +644,34 @@ class Model2(SmartPixModel):
         
         if bit_configs is None:
             bit_configs = self.bit_configs
+
+        if bkg_rej_weights is None:
+            bkg_rej_weights = {0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
+
+        def _bkg_rej_at_eff(y_true, y_score, target_eff):
+            """Compute background rejection (1 - FPR) at fixed signal efficiency."""
+            y_true = np.asarray(y_true).ravel()
+            y_score = np.asarray(y_score).ravel()
+
+            sig_scores = y_score[y_true == 1]
+            bkg_scores = y_score[y_true == 0]
+
+            if len(sig_scores) == 0 or len(bkg_scores) == 0:
+                return np.nan
+
+            threshold = np.quantile(sig_scores, 1.0 - target_eff)
+            fpr = float(np.mean(bkg_scores >= threshold))
+            return 1.0 - fpr
         
         print(f"Starting quantized hyperparameter tuning for Model2 with {len(bit_configs)} bit configurations...")
+        if use_weighted_bkg_rej:
+            print("Objective: val_weighted_bkg_rej")
+            print(
+                "  Weights: "
+                f"BR95={bkg_rej_weights.get(0.95, 0.0):.3f}, "
+                f"BR98={bkg_rej_weights.get(0.98, 0.0):.3f}, "
+                f"BR99={bkg_rej_weights.get(0.99, 0.0):.3f}"
+            )
         
         # Load data if not already loaded
         if self.training_generator is None:
@@ -650,11 +689,17 @@ class Model2(SmartPixModel):
             # Create a wrapper function that captures weight_bits and int_bits
             def model_builder(hp):
                 return self.makeQuantizedModelHyperParameterTuning(hp, weight_bits, int_bits)
+
+            tuner_objective = (
+                kt.Objective("val_weighted_bkg_rej", direction="max")
+                if use_weighted_bkg_rej else "val_binary_accuracy"
+            )
+            objective_name = "val_weighted_bkg_rej" if use_weighted_bkg_rej else "val_binary_accuracy"
             
             # Create tuner with unique project name
             tuner = kt.RandomSearch(
                 model_builder,
-                objective="val_binary_accuracy",
+                objective=tuner_objective,
                 max_trials=max_trials,
                 executions_per_trial=executions_per_trial,
                 project_name=f"model2_quantized_{weight_bits}w{int_bits}i_hyperparameter_search",
@@ -703,7 +748,7 @@ class Model2(SmartPixModel):
                                 self.saved_trials.add(trial.trial_id)
                                 
                                 print(f"\n✓ Trial {trial.trial_id} completed and saved to {model_filename}")
-                                print(f"  Validation accuracy: {trial.score:.4f}")
+                                print(f"  {objective_name}: {trial.score:.4f}")
                                 print(f"  Hyperparameters: {hyperparams_dict}\n")
                                 
                             except Exception as e:
@@ -711,6 +756,47 @@ class Model2(SmartPixModel):
                     except Exception as e:
                         # Don't fail training if saving fails
                         pass
+
+            class WeightedBackgroundRejectionCallback(tf.keras.callbacks.Callback):
+                """Compute weighted BR objective at each epoch and inject into Keras logs."""
+
+                def __init__(self, validation_generator, weight_map):
+                    super().__init__()
+                    self.validation_generator = validation_generator
+                    self.weight_map = weight_map
+                    self.y_true = np.concatenate(
+                        [np.asarray(y).ravel() for _, y in validation_generator],
+                        axis=0
+                    )
+
+                def on_epoch_end(self, epoch, logs=None):
+                    if logs is None:
+                        logs = {}
+                    y_pred = self.model.predict(self.validation_generator, verbose=0).ravel()
+
+                    # Guard against rare length mismatch
+                    n = min(len(self.y_true), len(y_pred))
+                    y_true_local = self.y_true[:n]
+                    y_pred_local = y_pred[:n]
+
+                    br95 = _bkg_rej_at_eff(y_true_local, y_pred_local, 0.95)
+                    br98 = _bkg_rej_at_eff(y_true_local, y_pred_local, 0.98)
+                    br99 = _bkg_rej_at_eff(y_true_local, y_pred_local, 0.99)
+
+                    weighted = (
+                        self.weight_map.get(0.95, 0.0) * br95 +
+                        self.weight_map.get(0.98, 0.0) * br98 +
+                        self.weight_map.get(0.99, 0.0) * br99
+                    )
+
+                    logs['val_bkg_rej_95'] = float(br95)
+                    logs['val_bkg_rej_98'] = float(br98)
+                    logs['val_bkg_rej_99'] = float(br99)
+                    logs['val_weighted_bkg_rej'] = float(weighted)
+                    print(
+                        f"\n  [Weighted BR] BR95={br95:.4f}, BR98={br98:.4f}, "
+                        f"BR99={br99:.4f}, weighted={weighted:.4f}"
+                    )
             
             # Create callbacks
             save_callback = SaveModelAfterTrial(tuner, config_dir, config_name)
@@ -722,6 +808,8 @@ class Model2(SmartPixModel):
                 ),
                 save_callback
             ]
+            if use_weighted_bkg_rej:
+                callbacks.insert(0, WeightedBackgroundRejectionCallback(self.validation_generator, bkg_rej_weights))
             
             # Run search
             print(f"Running hyperparameter search for {config_name}...")
@@ -746,7 +834,7 @@ class Model2(SmartPixModel):
                 if trial.status == 'COMPLETED' and trial.score is not None:
                     completed_trials.append(trial)
             
-            # Sort by score (best first, since objective is 'val_binary_accuracy' which should be maximized)
+            # Sort by objective score (best first, objective is maximized)
             completed_trials.sort(key=lambda t: t.score, reverse=True)
             
             all_models = []
@@ -777,6 +865,115 @@ class Model2(SmartPixModel):
             
             # Note: Models have already been saved during training by the SaveModelAfterTrial callback
             # This section now only creates the summary files
+
+            # Generate ROC artifacts for each saved trial model in this configuration.
+            print(f"\nGenerating ROC artifacts for {config_name} models...")
+            roc_dir = os.path.join(config_dir, "roc_analysis")
+            os.makedirs(roc_dir, exist_ok=True)
+
+            y_true_all = np.concatenate(
+                [np.asarray(y).ravel() for _, y in self.validation_generator],
+                axis=0
+            )
+
+            roc_rows = []
+            for idx, model in enumerate(all_models):
+                trial = completed_trials[idx]
+                trial_id = trial.trial_id
+                model_stem = f"model_trial_{trial_id}"
+
+                try:
+                    y_pred_all = model.predict(self.validation_generator, verbose=0).ravel()
+
+                    # Guard against any accidental length mismatch.
+                    n = min(len(y_true_all), len(y_pred_all))
+                    y_true = y_true_all[:n]
+                    y_pred = y_pred_all[:n]
+
+                    fpr, tpr, thresholds = roc_curve(y_true, y_pred, drop_intermediate=False)
+                    roc_auc = auc(fpr, tpr)
+
+                    # Save per-trial ROC curve data.
+                    roc_csv_path = os.path.join(roc_dir, f"{model_stem}_roc_data.csv")
+                    pd.DataFrame({
+                        'fpr': fpr,
+                        'tpr': tpr,
+                        'thresholds': thresholds
+                    }).to_csv(roc_csv_path, index=False)
+
+                    # Save per-trial ROC curve plot.
+                    roc_plot_path = os.path.join(roc_dir, f"{model_stem}_roc.png")
+                    fig, ax = plt.subplots(figsize=(8, 6))
+                    ax.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC (AUC={roc_auc:.4f})')
+                    ax.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--', label='Random')
+                    ax.set_xlim([0.0, 1.0])
+                    ax.set_ylim([0.0, 1.05])
+                    ax.set_xlabel('False Positive Rate (Background Efficiency)', fontsize=12)
+                    ax.set_ylabel('True Positive Rate (Signal Efficiency)', fontsize=12)
+                    ax.set_title(f'ROC Curve: {model_stem}', fontsize=14, fontweight='bold')
+                    ax.legend(loc="lower right")
+                    ax.grid(True, alpha=0.3)
+                    plt.tight_layout()
+                    plt.savefig(roc_plot_path, dpi=300, bbox_inches='tight')
+                    plt.close(fig)
+
+                    br95 = _bkg_rej_at_eff(y_true, y_pred, 0.95)
+                    br98 = _bkg_rej_at_eff(y_true, y_pred, 0.98)
+                    br99 = _bkg_rej_at_eff(y_true, y_pred, 0.99)
+                    weighted_br = (
+                        bkg_rej_weights.get(0.95, 0.0) * br95 +
+                        bkg_rej_weights.get(0.98, 0.0) * br98 +
+                        bkg_rej_weights.get(0.99, 0.0) * br99
+                    )
+
+                    roc_rows.append({
+                        'trial_id': trial_id,
+                        'model_name': model_stem,
+                        'auc': float(roc_auc),
+                        'bkg_rej_95': float(br95),
+                        'bkg_rej_98': float(br98),
+                        'bkg_rej_99': float(br99),
+                        'weighted_bkg_rej': float(weighted_br),
+                        'roc_csv': os.path.join("roc_analysis", f"{model_stem}_roc_data.csv"),
+                        'roc_plot': os.path.join("roc_analysis", f"{model_stem}_roc.png")
+                    })
+                    print(f"  ✓ ROC saved for trial {trial_id} (AUC={roc_auc:.4f})")
+                except Exception as e:
+                    print(f"  ⚠ Failed ROC generation for trial {trial_id}: {str(e)}")
+
+            roc_summary_file = None
+            if roc_rows:
+                roc_metrics_df = pd.DataFrame(roc_rows).sort_values('weighted_bkg_rej', ascending=False)
+                roc_summary_file = os.path.join(config_dir, "roc_metrics_summary.csv")
+                roc_metrics_df.to_csv(roc_summary_file, index=False)
+                print(f"✓ Saved ROC metrics summary to: {roc_summary_file}")
+
+                # Combined ROC plot for quick comparison across all saved trials.
+                combined_roc_path = os.path.join(config_dir, "roc_combined_all_models.png")
+                fig, ax = plt.subplots(figsize=(12, 9))
+                colors = plt.cm.tab20(np.linspace(0, 1, len(roc_rows)))
+                for cidx, row in enumerate(roc_rows):
+                    roc_data = pd.read_csv(os.path.join(config_dir, row['roc_csv']))
+                    ax.plot(
+                        roc_data['fpr'].values,
+                        roc_data['tpr'].values,
+                        lw=2,
+                        alpha=0.8,
+                        color=colors[cidx],
+                        label=f"Trial {row['trial_id']} (AUC={row['auc']:.3f})"
+                    )
+                ax.plot([0, 1], [0, 1], color='black', lw=2, linestyle='--', alpha=0.3, label='Random')
+                ax.set_xlim([0.0, 1.0])
+                ax.set_ylim([0.0, 1.05])
+                ax.set_xlabel('False Positive Rate (Background Efficiency)', fontsize=14, fontweight='bold')
+                ax.set_ylabel('True Positive Rate (Signal Efficiency)', fontsize=14, fontweight='bold')
+                ax.set_title(f'ROC Curves: {config_name} trials', fontsize=16, fontweight='bold')
+                ax.legend(loc="lower right", fontsize=9, ncol=2)
+                ax.grid(True, alpha=0.3)
+                plt.tight_layout()
+                plt.savefig(combined_roc_path, dpi=300, bbox_inches='tight')
+                plt.close(fig)
+                print(f"✓ Saved combined ROC plot to: {combined_roc_path}")
             
             # Collect list of model and hyperparameter files that were saved during training
             model_files = []
@@ -809,6 +1006,7 @@ class Model2(SmartPixModel):
             # Also save a summary JSON with all trials (enriched with metadata)
             summary_filename = os.path.join(config_dir, "trials_summary.json")
             trials_summary = []
+            roc_by_trial_id = {row['trial_id']: row for row in roc_rows}
             for idx, hyperparams in enumerate(all_hyperparameters):
                 trial = completed_trials[idx]
                 trial_id = trial.trial_id
@@ -820,12 +1018,28 @@ class Model2(SmartPixModel):
                     'model_file': f"model_trial_{trial_id}.h5",
                     'hyperparams_file': f"hyperparams_trial_{trial_id}.json",
                     'hyperparameters': hyperparams.values,
-                    'is_best': (idx == 0)
+                    'is_best': (idx == 0),
+                    'objective_name': objective_name
                 }
                 
-                # Add validation accuracy
+                # Add objective score
                 if trial.score is not None:
-                    trial_info['val_accuracy'] = float(trial.score)
+                    trial_info['objective_score'] = float(trial.score)
+                    if use_weighted_bkg_rej:
+                        trial_info['val_weighted_bkg_rej'] = float(trial.score)
+                    else:
+                        trial_info['val_accuracy'] = float(trial.score)
+
+                if trial_id in roc_by_trial_id:
+                    trial_info['roc'] = {
+                        'auc': roc_by_trial_id[trial_id]['auc'],
+                        'bkg_rej_95': roc_by_trial_id[trial_id]['bkg_rej_95'],
+                        'bkg_rej_98': roc_by_trial_id[trial_id]['bkg_rej_98'],
+                        'bkg_rej_99': roc_by_trial_id[trial_id]['bkg_rej_99'],
+                        'weighted_bkg_rej': roc_by_trial_id[trial_id]['weighted_bkg_rej'],
+                        'roc_csv': roc_by_trial_id[trial_id]['roc_csv'],
+                        'roc_plot': roc_by_trial_id[trial_id]['roc_plot']
+                    }
                 
                 # Skip metrics as they're not JSON serializable (MetricsTracker object)
                 # The validation accuracy is already captured above
@@ -855,6 +1069,7 @@ class Model2(SmartPixModel):
                 'model_files': model_files,
                 'hyperparams_files': hyperparams_files,
                 'summary_file': summary_filename,
+                'roc_summary_file': roc_summary_file,
                 'num_trials': num_trials
             }
         
@@ -882,7 +1097,8 @@ def main():
     # Initialize Model2
     model2 = Model2(
         # tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled/filtering_records2048_data_shuffled_all",
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try3_eric/filtering_records16384_data_shuffled_single_bigData",
+        #tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try3_eric/filtering_records16384_data_shuffled_single_bigData",
+        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
         xz_units=32,
         yl_units=32,
         merged_units_1=128,
