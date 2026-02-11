@@ -532,9 +532,25 @@ class Model1(SmartPixModel):
 
 
 def main():
+    """
     m1 = Model1()                 # your subclass
     m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
     m1.makeUnquatizedModelHyperParameterTuning2()
+    """
+    m1 = Model1()
+    m1.loadTfRecords()
+
+    m1.models["Unquantized"] = tf.keras.models.load_model("Model1_best.h5", compile=False)
+
+    # if your evaluate() calls model.evaluate internally, make sure it’s compiled
+    m1.models["Unquantized"].compile(
+        optimizer="adam",
+        loss="binary_crossentropy",
+        metrics=["binary_accuracy"],
+    )
+
+    m1.evaluate()   # whatever your SmartPixModel.evaluate() does
+
 
 if __name__ == "__main__":
     main()
