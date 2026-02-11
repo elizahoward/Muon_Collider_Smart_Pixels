@@ -1,21 +1,3 @@
-"""
-from OptimizedDataGenerator4 import *
-import matplotlib.pyplot as plt
-import numpy as np
-import tensorflow as tf
-import keras_tuner as kt
-noGPU=False
-if noGPU:
-    tf.config.set_visible_devices([], 'GPU')
-
-print("\nHIIIIIIIIIIIIIIIIII\n")
-
-print(tf.config.experimental.list_physical_devices())
-print(tf.test.is_built_with_cuda())
-print(tf.test.is_built_with_gpu_support())
-print(tf.test.is_gpu_available())
-"""
-
 from abc import ABC, abstractmethod
 # import all the necessary libraries
 import tensorflow as tf
@@ -32,11 +14,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
-import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
 import pandas as pd
 from datetime import datetime
 sys.path.append("../ryan")
-import OptimizedDataGenerator4 as ODG
+import json
+from datetime import datetime
+import keras_tuner as kt
 
 
 sys.path.append(str(Path.cwd().parents[0]))
@@ -44,51 +27,61 @@ sys.path.append(str(Path.cwd().parents[0]))
 from MuC_Smartpix_ML.Model_Classes import SmartPixModel
 print(SmartPixModel)
 
-"""
-from OptimizedDataGenerator4 import *
-import matplotlib.pyplot as plt
-import numpy as np
-import tensorflow as tf
-import keras_tuner as kt
-noGPU=False
-if noGPU:
-    tf.config.set_visible_devices([], 'GPU')
 
-print("\nHIIIIIIIIIIIIIIIIII\n")
+class SaveModelRandomSearch(kt.RandomSearch):
+    def __init__(self, *args, save_dir=None, objective_name="val_binary_accuracy", **kwargs):
+        super().__init__(*args, **kwargs)
+        if save_dir is None:
+            raise ValueError("save_dir must be provided")
+        self.save_dir = save_dir
+        self.objective_name = objective_name
+        os.makedirs(self.save_dir, exist_ok=True)
 
-print(tf.config.experimental.list_physical_devices())
-print(tf.test.is_built_with_cuda())
-print(tf.test.is_built_with_gpu_support())
-print(tf.test.is_gpu_available())
-"""
+    def run_trial(self, trial, *args, **kwargs):
+        # Run the normal training for this trial
+        history = super().run_trial(trial, *args, **kwargs)
 
-from abc import ABC, abstractmethod
-# import all the necessary libraries
-import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.optimizers.schedules import PolynomialDecay, ExponentialDecay, CosineDecay
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-import keras_tuner as kt
-from sklearn.metrics import roc_curve, auc
-from pathlib import Path
-import os
-import numpy as np
-import matplotlib.pyplot as plt
-import sys
-sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
-import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
-import pandas as pd
-from datetime import datetime
-sys.path.append("../ryan")
-import OptimizedDataGenerator4 as ODG
+        # Only save if trial completed successfully
+        try:
+            t = self.oracle.get_trial(trial.trial_id)
+            if t.status != "COMPLETED":
+                return history
+        except Exception:
+            # If we can't query status, still try saving best-effort
+            pass
 
+        # Load the best model for THIS trial (best epoch due to EarlyStopping restore_best_weights)
+        try:
+            model = self.load_model(trial)
+        except Exception:
+            # Fallback: sometimes load_model can fail; try building from hp (rarely needed)
+            model = self.hypermodel.build(trial.hyperparameters)
 
-sys.path.append(str(Path.cwd().parents[0]))
+        # Save model as .h5
+        model_path = os.path.join(self.save_dir, f"model_trial_{trial.trial_id}.h5")
+        model.save(model_path)
 
-from MuC_Smartpix_ML.Model_Classes import SmartPixModel
-print(SmartPixModel)
+        # Save hyperparameters
+        hp_path = os.path.join(self.save_dir, f"hyperparams_trial_{trial.trial_id}.json")
+        with open(hp_path, "w") as f:
+            json.dump(trial.hyperparameters.values, f, indent=4)
+
+        # Save trial score (nice for quick inspection)
+        score_path = os.path.join(self.save_dir, f"score_trial_{trial.trial_id}.json")
+        score_payload = {
+            "trial_id": trial.trial_id,
+            "score": getattr(trial, "score", None),
+            "objective": self.objective_name,
+        }
+        with open(score_path, "w") as f:
+            json.dump(score_payload, f, indent=4)
+
+        print(f"\n✓ Saved trial {trial.trial_id}: {model_path}")
+        print(f"  {self.objective_name}: {getattr(trial, 'score', None)}")
+        print(f"  HP: {trial.hyperparameters.values}\n")
+
+        return history
+
 
 class Model1(SmartPixModel):
     def __init__(self,
@@ -123,7 +116,9 @@ class Model1(SmartPixModel):
         self.end_lr = end_lr
         self.power = power
         return
-     
+ 
+
+
     def makeUnquantizedModel(self):
         ## here i will be making a 4-layer neural network 
         ## Model 1: z-global, x size, y size, y local
@@ -401,22 +396,33 @@ class Model1(SmartPixModel):
             )
             return model
 
-        tuner = kt.RandomSearch(
-        model_builder, 
-        objective           = "val_binary_accuracy",
-        max_trials          = 120,
-        executions_per_trial = 2,
-        project_name        = "hp_search_2rows"
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_dir = f"{self.modelName.lower()}_unquantized_hp2rows_results_{timestamp}"
+        os.makedirs(save_dir, exist_ok=True)
+        print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
+
+        tuner = SaveModelRandomSearch(
+            hypermodel=model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_2rows_matching",
+            directory="./hyperparameter_tuning",   # tuner logs go here
+            save_dir=save_dir,                     # YOUR .h5 files go here
+            objective_name="val_binary_accuracy"
         )
 
         tuner.search(
             self.training_generator,
-            validation_data = self.validation_generator,
-            epochs          = 110,
-            callbacks       = [
+            validation_data=self.validation_generator,
+            epochs=110,
+            callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-            ]
+            ],
         )
+
+        return tuner, save_dir
+
 
 
         
@@ -527,14 +533,10 @@ class Model1(SmartPixModel):
 
 def main():
     m1 = Model1()                 # your subclass
-
     m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
-
-    m1.makeUnquantizedModel()
-    m1.trainModel()
+    m1.makeUnquatizedModelHyperParameterTuning2()
 
 if __name__ == "__main__":
     main()
 
-        
         
