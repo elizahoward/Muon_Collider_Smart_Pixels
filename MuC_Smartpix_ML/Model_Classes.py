@@ -17,8 +17,7 @@ sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO u
 import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
 import pandas as pd
 from datetime import datetime
-sys.path.append("../ryan")
-import OptimizedDataGenerator4 as ODG
+##import OptimizedDataGenerator4 as ODG
 
 
 class WarmupThenDecay(tf.keras.optimizers.schedules.LearningRateSchedule):

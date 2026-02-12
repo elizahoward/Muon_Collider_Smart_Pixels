@@ -16,7 +16,6 @@ import sys
 sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
 import pandas as pd
 from datetime import datetime
-sys.path.append("../ryan")
 import json
 from datetime import datetime
 import keras_tuner as kt
