@@ -98,7 +98,8 @@ class SaveModelRandomSearch(kt.RandomSearch):
 
 class Model1(SmartPixModel):
     def __init__(self,
-            tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+            tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+            # tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
             nBits: list = None, # just for fractional bits, integer bits
                                 ## number of bits is the number of bits for each quantized model and then
                                 ## run training should make one model for each bit size

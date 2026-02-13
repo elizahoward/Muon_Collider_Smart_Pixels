@@ -63,7 +63,8 @@ class Model3(SmartPixModel):
     """
     
     def __init__(self,
-                 tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+                #  tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,
@@ -142,6 +143,7 @@ class Model3(SmartPixModel):
     
     def loadTfRecords(self):
         """Load TFRecords using OptimizedDataGenerator4 for Model3 features."""
+        raise NotImplementedError("Eric, please use inheritance!!")
         trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
         valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
         

@@ -30,8 +30,9 @@ if doModel1:
     
     # Initialize Model1
     model1 = Model1(
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
-        # tfRecordFolder = "../ryan/tf_records1000Daniel",
+        # tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+        tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+            # tfRecordFolder = "../ryan/tf_records1000Daniel",
         initial_lr=1e-3, 
         end_lr=1e-4,
         power=2,
@@ -49,7 +50,8 @@ if doModel2:
     
     # Initialize Model2
     model2 = Model2(
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+        # tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+        tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
         xz_units=8,
         yl_units=8,
         merged_units_1=64,
@@ -73,7 +75,8 @@ if doModel3:
     
     # Initialize Model3
     model3 = Model3(
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+        tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+        # tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
         # xz_units=8,
         # yl_units=8,
         # merged_units_1=64,
