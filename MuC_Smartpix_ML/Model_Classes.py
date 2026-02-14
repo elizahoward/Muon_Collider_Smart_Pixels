@@ -13,7 +13,13 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+<<<<<<< HEAD
 sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
+=======
+# sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
+sys.path.append("../MuC_Smartpix_Data_Production/tfRecords")
+import OptimizedDataGenerator4_data_shuffled_bigData_NewFormat as ODG2
+>>>>>>> db7868cc7615cf6f08f5e3d4ae43d0cf9a1a26d3
 import pandas as pd
 from datetime import datetime
 import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
@@ -161,8 +167,9 @@ class GradientMonitor(Callback):
                 pass
 
 class SmartPixModel(ABC):
-    def __init__(self,
-            tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+    def __init__(self,                 
+            # tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+            tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
             nBits: list = None, # just for fractional bits, integer bits 
             loadModel: bool = False,
             modelPath: str = None, # Only include if you are loading a model
@@ -356,7 +363,7 @@ class SmartPixModel(ABC):
     #dataset
     def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
                    save_best=True, early_stopping_patience=20,
-                   run_eagerly = False, config_name = "Unquantized", clipnorm=None):
+                   run_eagerly = False, config_name = "unquantized", clipnorm=None):
         """
         Train the {self.modelName}.
         
@@ -735,6 +742,7 @@ class SmartPixModel(ABC):
             print(f"3b. Building {weight_bits}-bit quantized model...")
             # self.buildModel("quantized", bit_configs=[(weight_bits, int_bits)])
             self.buildModel("quantized")
+            print(self.models)
 
             
             # Warm-start: Copy weights from unquantized model to quantized model

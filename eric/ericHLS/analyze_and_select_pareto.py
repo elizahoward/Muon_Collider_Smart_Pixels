@@ -134,6 +134,7 @@ def parse_flat_format_trial(search_dir, trial_id):
         
         summary_file = os.path.join(search_dir, 'trials_summary.json')
         val_accuracy = None
+        metric_name = 'val_accuracy'
         
         if os.path.exists(summary_file):
             try:
@@ -142,7 +143,19 @@ def parse_flat_format_trial(search_dir, trial_id):
                 
                 for trial in summary_data:
                     if trial.get('trial_id') == trial_id or trial.get('trial_id') == trial_id_str:
-                        val_accuracy = trial.get('val_accuracy') or trial.get('validation_accuracy') or trial.get('score')
+                        # Check which metric is available and track the name
+                        if trial.get('val_accuracy'):
+                            val_accuracy = trial.get('val_accuracy')
+                            metric_name = 'val_accuracy'
+                        elif trial.get('validation_accuracy'):
+                            val_accuracy = trial.get('validation_accuracy')
+                            metric_name = 'validation_accuracy'
+                        elif trial.get('score'):
+                            val_accuracy = trial.get('score')
+                            metric_name = 'score'
+                        elif trial.get('val_weighted_bkg_rej'):
+                            val_accuracy = trial.get('val_weighted_bkg_rej')
+                            metric_name = 'val_weighted_bkg_rej'
                         break
             except Exception:
                 pass
@@ -152,6 +165,7 @@ def parse_flat_format_trial(search_dir, trial_id):
                 'trial_id': trial_id_str,
                 'hyperparams': hyperparams,
                 'val_accuracy': val_accuracy,
+                'metric_name': metric_name,
                 'status': 'COMPLETED',
                 'model_file': model_file
             }
@@ -167,7 +181,7 @@ def analyze_complexity(input_dir, min_accuracy=0.55):
     Analyze model complexity from hyperparameter results.
     
     Returns:
-        DataFrame with trial results including nodes, parameters, and accuracy
+        Tuple of (DataFrame with trial results, metric_name used)
     """
     print("\n" + "=" * 80)
     print("STEP 1: COMPLEXITY ANALYSIS")
@@ -192,11 +206,16 @@ def analyze_complexity(input_dir, min_accuracy=0.55):
             pass
     
     results = []
+    metric_name = 'val_accuracy'  # Default
     
     for trial_id in sorted(trial_ids):
         trial_result = parse_flat_format_trial(input_dir, trial_id)
         
         if trial_result:
+            # Track the metric name from the first valid trial
+            if len(results) == 0:
+                metric_name = trial_result.get('metric_name', 'val_accuracy')
+            
             # Load model and extract actual parameters
             print(f"  Loading trial {trial_result['trial_id']}...", end=' ')
             params = get_model_parameters_from_h5(trial_result['model_file'])
@@ -208,6 +227,7 @@ def analyze_complexity(input_dir, min_accuracy=0.55):
                     'trial_id': trial_result['trial_id'],
                     'parameters': params,
                     'val_accuracy': trial_result['val_accuracy'],
+                    'metric_name': trial_result.get('metric_name', 'val_accuracy'),
                     'hyperparams': trial_result['hyperparams'],
                     'model_file': trial_result['model_file']
                 })
@@ -221,16 +241,25 @@ def analyze_complexity(input_dir, min_accuracy=0.55):
         df_filtered = df[df['val_accuracy'] >= min_accuracy].copy()
         excluded_count = total_trials - len(df_filtered)
         
-        print(f"\n  Completed trials: {total_trials}")
+        # Get friendly metric name
+        metric_display = {
+            'val_accuracy': 'Validation Accuracy',
+            'validation_accuracy': 'Validation Accuracy',
+            'score': 'Score',
+            'val_weighted_bkg_rej': 'Weighted Background Rejection'
+        }.get(metric_name, metric_name)
+        
+        print(f"\n  Metric used: {metric_display}")
+        print(f"  Completed trials: {total_trials}")
         if excluded_count > 0:
-            print(f"  Excluded {excluded_count} failed models (accuracy < {min_accuracy})")
+            print(f"  Excluded {excluded_count} failed models (metric < {min_accuracy})")
         print(f"  Valid trials after filtering: {len(df_filtered)}")
         print(f"  Parameters range: {df_filtered['parameters'].min():.0f} - {df_filtered['parameters'].max():.0f}")
-        print(f"  Accuracy range: {df_filtered['val_accuracy'].min():.4f} - {df_filtered['val_accuracy'].max():.4f}")
+        print(f"  Metric range: {df_filtered['val_accuracy'].min():.4f} - {df_filtered['val_accuracy'].max():.4f}")
         
-        return df_filtered
+        return df_filtered, metric_name
     
-    return df
+    return df, metric_name
 
 
 # ============================================================================
@@ -318,27 +347,36 @@ def select_pareto_models(df, complexity_metric='parameters'):
 # PLOTTING FUNCTIONS
 # ============================================================================
 
-def plot_complexity_vs_accuracy(df, output_dir, model_name, complexity_metric='parameters'):
+def plot_complexity_vs_accuracy(df, output_dir, model_name, complexity_metric='parameters', metric_name='val_accuracy'):
     """Create scatter plot of complexity vs accuracy."""
     fig, ax = plt.subplots(figsize=(10, 7))
     ax.scatter(df[complexity_metric], df['val_accuracy'], 
                alpha=0.6, s=80, c='blue', edgecolors='black', linewidth=0.5)
     
-    metric_label = 'Number of Parameters' if complexity_metric == 'parameters' else 'Number of Nodes'
-    ax.set_xlabel(metric_label, fontsize=14)
-    ax.set_ylabel('Validation Accuracy', fontsize=14)
-    ax.set_title(f'{model_name}: {metric_label} vs Validation Accuracy', 
+    complexity_label = 'Number of Parameters' if complexity_metric == 'parameters' else 'Number of Nodes'
+    
+    # Get friendly metric name for Y-axis
+    metric_display = {
+        'val_accuracy': 'Validation Accuracy',
+        'validation_accuracy': 'Validation Accuracy',
+        'score': 'Score',
+        'val_weighted_bkg_rej': 'Weighted Background Rejection'
+    }.get(metric_name, 'Performance Metric')
+    
+    ax.set_xlabel(complexity_label, fontsize=14)
+    ax.set_ylabel(metric_display, fontsize=14)
+    ax.set_title(f'{model_name}: {complexity_label} vs {metric_display}', 
                 fontsize=16, fontweight='bold')
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
     
-    plot_path = os.path.join(output_dir, f'complexity_vs_accuracy_{complexity_metric}.png')
+    plot_path = os.path.join(output_dir, f'complexity_vs_metric_{complexity_metric}.png')
     plt.savefig(plot_path, dpi=300, bbox_inches='tight')
     print(f"  ✓ Saved: {plot_path}")
     plt.close()
 
 
-def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, complexity_metric='parameters'):
+def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, complexity_metric='parameters', metric_name='val_accuracy'):
     """Create Pareto front visualization."""
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -392,29 +430,39 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
                        zorder=4)
     
     # Labels and title
-    metric_label = 'Number of Parameters' if complexity_metric == 'parameters' else 'Number of Nodes'
-    ax.set_xlabel(metric_label, fontsize=14, fontweight='bold')
-    ax.set_ylabel('Validation Accuracy', fontsize=14, fontweight='bold')
-    ax.set_title(f'{model_name}: Pareto Front - {metric_label} vs Accuracy (Two-Tier)', 
+    complexity_label = 'Number of Parameters' if complexity_metric == 'parameters' else 'Number of Nodes'
+    
+    # Get friendly metric name for Y-axis
+    metric_display = {
+        'val_accuracy': 'Validation Accuracy',
+        'validation_accuracy': 'Validation Accuracy',
+        'score': 'Score',
+        'val_weighted_bkg_rej': 'Weighted Background Rejection'
+    }.get(metric_name, 'Performance Metric')
+    
+    ax.set_xlabel(complexity_label, fontsize=14, fontweight='bold')
+    ax.set_ylabel(metric_display, fontsize=14, fontweight='bold')
+    ax.set_title(f'{model_name}: Pareto Front - {complexity_label} vs {metric_display} (Two-Tier)', 
                 fontsize=16, fontweight='bold', pad=20)
     
     ax.grid(True, alpha=0.3, linestyle='--')
     ax.legend(loc='lower right', fontsize=11, framealpha=0.9)
     
     # Statistics box
+    metric_short = 'Metric' if metric_name == 'val_weighted_bkg_rej' else 'Acc'
     if pareto_df_secondary is not None and not pareto_df_secondary.empty:
         stats_text = (
             f"Total models: {len(df)}\n"
             f"Primary Pareto: {len(pareto_df)} ({100*len(pareto_df)/len(df):.1f}%)\n"
             f"Secondary Pareto: {len(pareto_df_secondary)} ({100*len(pareto_df_secondary)/len(df):.1f}%)\n"
             f"Total selected: {len(pareto_df) + len(pareto_df_secondary)}\n"
-            f"Acc range: {df['val_accuracy'].min():.4f} - {df['val_accuracy'].max():.4f}"
+            f"{metric_short} range: {df['val_accuracy'].min():.4f} - {df['val_accuracy'].max():.4f}"
         )
     else:
         stats_text = (
             f"Total models: {len(df)}\n"
             f"Primary Pareto: {len(pareto_df)} ({100*len(pareto_df)/len(df):.1f}%)\n"
-            f"Acc range: {df['val_accuracy'].min():.4f} - {df['val_accuracy'].max():.4f}"
+            f"{metric_short} range: {df['val_accuracy'].min():.4f} - {df['val_accuracy'].max():.4f}"
         )
     
     ax.text(0.02, 0.98, stats_text, transform=ax.transAxes,
@@ -610,7 +658,7 @@ Examples:
     print(f"Minimum accuracy: {args.min_accuracy}")
     
     # Step 1: Analyze complexity
-    df = analyze_complexity(args.input_dir, min_accuracy=args.min_accuracy)
+    df, metric_name = analyze_complexity(args.input_dir, min_accuracy=args.min_accuracy)
     
     if df.empty:
         print("\nError: No valid trials found!")
@@ -621,8 +669,8 @@ Examples:
     print("STEP 2: GENERATING PLOTS")
     print("=" * 80)
     
-    print("\nCreating complexity vs accuracy plot...")
-    plot_complexity_vs_accuracy(df, args.output_dir, model_name, 'parameters')
+    print("\nCreating complexity vs metric plot...")
+    plot_complexity_vs_accuracy(df, args.output_dir, model_name, 'parameters', metric_name)
     
     # Select Pareto models
     print("\n" + "=" * 80)
@@ -633,7 +681,7 @@ Examples:
     # Generate Pareto front plot
     print("\nCreating Pareto front plot...")
     plot_pareto_front(df, pareto_df_params, pareto_df_secondary_params, 
-                     args.output_dir, model_name, 'parameters')
+                     args.output_dir, model_name, 'parameters', metric_name)
     
     # Use parameters-based Pareto models only
     print("\n" + "=" * 80)

@@ -33,7 +33,7 @@ def main():
     
     # Initialize Model3
     model3 = Model3(
-        tfRecordFolder="/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
         conv_filters=32,  # Will be overridden by hyperparameter search
         kernel_rows=3,
         kernel_cols=3,

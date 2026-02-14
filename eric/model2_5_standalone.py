@@ -135,6 +135,7 @@ class Model2_5_Standalone(SmartPixModel):
     # to use Model2.5-specific feature description
     def loadTfRecords(self):
         """Load TFRecords using OptimizedDataGenerator4 for Model2.5 features."""
+        raise NotImplementedError("Eric, please use inheritance!!")
         trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
         valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
         
