@@ -60,7 +60,7 @@ def main():
     
     results = model25.runQuantizedHyperparameterTuning(
         bit_configs=bit_configs,
-        max_trials=8,
+        max_trials=200,
         executions_per_trial=1,
         numEpochs=15,
         use_weighted_bkg_rej=True,
