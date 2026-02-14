@@ -2,10 +2,11 @@
 Quick script to run quantized hyperparameter tuning on Model2.5
 
 Parameters:
+- Data folder: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
 - 4-bit quantization (0 integer bits)
 - 15 epochs per trial
 - 1 execution per trial
-- 5 max trials
+- 200 max trials
 - Objective: weighted background rejection
   weighted = 0.3*BR95 + 0.6*BR98 + 0.1*BR99
 - Progressive layer sizes: dense2_units <= (spatial_units + z_global_units)
@@ -27,12 +28,17 @@ def main():
     print("="*70)
     print("Model2.5 - Quantized Hyperparameter Tuning")
     print("="*70)
+    
+    # Data folder path
+    data_folder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
+    
     print("\nConfiguration:")
+    print(f"  - Data folder: {data_folder}")
     print("  - Quantization: 4-bit fractional, 0 integer bits")
     print("  - z_global: 4-bit (matches spatial features)")
     print("  - Epochs per trial: 15")
     print("  - Executions per trial: 1")
-    print("  - Max trials: 5")
+    print("  - Max trials: 200")
     print("  - Objective: 0.3*BR95 + 0.6*BR98 + 0.1*BR99")
     print("  - Progressive layer constraint: Each layer <= previous layer")
     print("="*70)
@@ -40,7 +46,7 @@ def main():
     
     # Initialize Model2.5
     model25 = Model2_5(
-        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+        tfRecordFolder=data_folder,
         dense_units=128,        # Will be overridden by hyperparameter search
         z_global_units=32,      # Will be overridden by hyperparameter search
         dense2_units=128,       # Will be overridden by hyperparameter search

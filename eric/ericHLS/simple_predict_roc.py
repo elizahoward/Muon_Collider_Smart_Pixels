@@ -13,7 +13,7 @@ from sklearn.metrics import roc_curve, auc
 # CONFIGURATION - EDIT THESE PATHS
 # ============================================================================
 MODEL_FILE = "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model2.5_quantized_4w0i_hyperparameter_results_20260203_114608/model_trial_0.h5"
-DATA_DIR = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try3_eric/filtering_records16384_data_shuffled_single_bigData"
+DATA_DIR = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
 NUM_BATCHES = None  # None = use all batches
 # ============================================================================
 
