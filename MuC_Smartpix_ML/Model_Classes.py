@@ -13,16 +13,11 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-<<<<<<< HEAD
-sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
-=======
 # sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
 sys.path.append("../MuC_Smartpix_Data_Production/tfRecords")
 import OptimizedDataGenerator4_data_shuffled_bigData_NewFormat as ODG2
->>>>>>> db7868cc7615cf6f08f5e3d4ae43d0cf9a1a26d3
 import pandas as pd
 from datetime import datetime
-import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
 
 class WarmupThenDecay(tf.keras.optimizers.schedules.LearningRateSchedule):
     """
