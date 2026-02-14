@@ -16,7 +16,6 @@ import sys
 sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
 import pandas as pd
 from datetime import datetime
-sys.path.append("../ryan")
 import json
 from datetime import datetime
 import keras_tuner as kt
@@ -33,59 +32,74 @@ class SaveModelRandomSearch(kt.RandomSearch):
         super().__init__(*args, **kwargs)
         if save_dir is None:
             raise ValueError("save_dir must be provided")
-        self.save_dir = save_dir
+        self.save_dir = os.path.abspath(save_dir)
         self.objective_name = objective_name
         os.makedirs(self.save_dir, exist_ok=True)
+        print("✅ Saving trial artifacts to:", self.save_dir)
 
     def run_trial(self, trial, *args, **kwargs):
-        # Run the normal training for this trial
+        # Grab callbacks passed into tuner.search(...)
+        callbacks = kwargs.pop("callbacks", [])
+        callbacks = list(callbacks) if callbacks is not None else []
+
+        # Save best weights for THIS trial directly into save_dir
+        weights_path = os.path.join(self.save_dir, f"trial_{trial.trial_id}_best.weights.h5")
+        ckpt = tf.keras.callbacks.ModelCheckpoint(
+            filepath=weights_path,
+            monitor=self.objective_name,
+            mode="max",
+            save_best_only=True,
+            save_weights_only=True,
+            verbose=0,
+        )
+        callbacks.append(ckpt)
+        kwargs["callbacks"] = callbacks
+
+        # Run training for the trial
         history = super().run_trial(trial, *args, **kwargs)
 
-        # Only save if trial completed successfully
-        try:
-            t = self.oracle.get_trial(trial.trial_id)
-            if t.status != "COMPLETED":
-                return history
-        except Exception:
-            # If we can't query status, still try saving best-effort
-            pass
+        # Rebuild model, load best weights, save full model
+        model = self.hypermodel.build(trial.hyperparameters)
 
-        # Load the best model for THIS trial (best epoch due to EarlyStopping restore_best_weights)
-        try:
-            model = self.load_model(trial)
-        except Exception:
-            # Fallback: sometimes load_model can fail; try building from hp (rarely needed)
-            model = self.hypermodel.build(trial.hyperparameters)
+        if os.path.exists(weights_path):
+            model.load_weights(weights_path)
+        else:
+            print(f"⚠️ No weights checkpoint found for trial {trial.trial_id} at {weights_path}")
+            return history
 
-        # Save model as .h5
         model_path = os.path.join(self.save_dir, f"model_trial_{trial.trial_id}.h5")
         model.save(model_path)
 
-        # Save hyperparameters
+        # Save hyperparams + score
         hp_path = os.path.join(self.save_dir, f"hyperparams_trial_{trial.trial_id}.json")
         with open(hp_path, "w") as f:
             json.dump(trial.hyperparameters.values, f, indent=4)
 
-        # Save trial score (nice for quick inspection)
         score_path = os.path.join(self.save_dir, f"score_trial_{trial.trial_id}.json")
-        score_payload = {
-            "trial_id": trial.trial_id,
-            "score": getattr(trial, "score", None),
-            "objective": self.objective_name,
-        }
         with open(score_path, "w") as f:
-            json.dump(score_payload, f, indent=4)
+            json.dump(
+                {
+                    "trial_id": trial.trial_id,
+                    "score": getattr(trial, "score", None),
+                    "objective": self.objective_name,
+                },
+                f,
+                indent=4,
+            )
 
-        print(f"\n✓ Saved trial {trial.trial_id}: {model_path}")
-        print(f"  {self.objective_name}: {getattr(trial, 'score', None)}")
+        print(f"\n✓ Saved trial {trial.trial_id}")
+        print(f"  model: {model_path}")
+        print(f"  best weights: {weights_path}")
         print(f"  HP: {trial.hyperparameters.values}\n")
 
         return history
 
 
+
 class Model1(SmartPixModel):
     def __init__(self,
-            tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+            tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+            # tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
             nBits: list = None, # just for fractional bits, integer bits
                                 ## number of bits is the number of bits for each quantized model and then
                                 ## run training should make one model for each bit size
@@ -401,16 +415,31 @@ class Model1(SmartPixModel):
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
+        """
+
         tuner = SaveModelRandomSearch(
             hypermodel=model_builder,
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
             project_name="hp_search_2rows_matching",
-            directory="./hyperparameter_tuning",   # tuner logs go here
+            #directory="./hyperparameter_tuning",   # tuner logs go here
             save_dir=save_dir,                     # YOUR .h5 files go here
             objective_name="val_binary_accuracy"
         )
+        """
+        tuner = SaveModelRandomSearch(
+            hypermodel= model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_2rows_matching",
+            directory="./hyperparameter_tuning",   # keep KT logs in one place
+            overwrite=True,                        # avoid weird resume behavior
+            save_dir=save_dir,
+            objective_name="val_binary_accuracy",
+        )
+
 
         tuner.search(
             self.training_generator,
@@ -532,11 +561,13 @@ class Model1(SmartPixModel):
 
 
 def main():
+
     m1 = Model1()                 # your subclass
     m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
     m1.makeUnquatizedModelHyperParameterTuning2()
+  
+
 
 if __name__ == "__main__":
     main()
 
-        

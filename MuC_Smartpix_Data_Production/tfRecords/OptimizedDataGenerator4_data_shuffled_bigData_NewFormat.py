@@ -20,6 +20,17 @@ import matplotlib.pyplot as plt
 def QKeras_data_prep_quantizer(data, bits=4, int_bits=0, alpha=1):
     quantizer = quantized_bits(bits, int_bits, alpha=alpha)
     return quantizer(data)
+def trimEvents(labels_df,recon_df,labelsFileDF,eventsPerBiSi=1600000):
+    signalMask = labels_df["signal"] ==0
+    bibMask    = labels_df["signal"] ==1
+    signalInds = np.where(signalMask)[0][0:eventsPerBiSi] #boolean indexing didn't work properly
+    bibInds = np.where(bibMask)[0][0:eventsPerBiSi]
+    # signalInds = (truthDF[signalMask].index[0:eventsPerBiSi])
+    # bibInds = (truthDF[bibMask].index[0:eventsPerBiSi])
+    allInds = np.concatenate([bibInds,signalInds])
+    # allInds = bibInds.append(signalInds)
+    print(allInds)
+    return labels_df.iloc[allInds],recon_df.iloc[allInds],labelsFileDF.iloc[allInds]
 
 class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
     def __init__(self, 
@@ -183,6 +194,10 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
 
             labels_df = pd.concat(all_labels_df)
             recon_df = pd.concat(all_recon_df)
+            
+            eventsToTrim = len(labels_df.query("signal == 0"))
+            labels_df, recon_df, labelFileDF = trimEvents(labels_df, recon_df, labelFileDF,eventsToTrim)
+            
             # ylocal_df = pd.concat(all_ylocal_df)
             # eh_pairs = pd.concat(all_eh_pairs)
             # z_loc_df = pd.concat(all_z_loc_df)
@@ -294,6 +309,7 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
                 self.x_features['adjusted_hit_time_60ps_gaussian'] = hit_time_60                
             if 'nPix' in self.x_feature_description:
                 self.x_features['nPix'] = nPixels
+            #ADD pt, cotalpha, cotbeta, recalculated p; Add in some sort of event number
             # DATA-LEVEL SHUFFLING
             if shuffle_data:
                 print(f"Shuffling all data points (seed={random_seed})...")
@@ -412,3 +428,4 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
         self.epoch_count += 1
         if self.epoch_count == 1:
             logging.warning(f"Quantization is {self.quantize} in data generator. This may affect model performance.") 
+    

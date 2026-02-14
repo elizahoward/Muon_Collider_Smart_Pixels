@@ -71,6 +71,23 @@ def load_parquet_pairs(directory, skip_range=None):
         pd.concat(reconDFs) if reconDFs else pd.DataFrame(),
     )
 
+def trimParquetPairs(truthDF,reconDF = None,eventsPerBiSi=1600000):
+    signalMask = truthDF["source"] =="sig"
+    bibMask = np.logical_or((truthDF["source"]    =="bib_mp"), (truthDF["source"]    =="bib_mm") )
+    signalInds = np.where(signalMask)[0][0:eventsPerBiSi] #boolean indexing didn't work properly
+    bibInds = np.where(bibMask)[0][0:eventsPerBiSi]
+    # signalInds = (truthDF[signalMask].index[0:eventsPerBiSi])
+    # bibInds = (truthDF[bibMask].index[0:eventsPerBiSi])
+    allInds = np.concatenate([bibInds,signalInds])
+    # allInds = bibInds.append(signalInds)
+    print(allInds)
+    truthDF = (truthDF.iloc[allInds])
+    if reconDF is not None:
+        reconDF = (reconDF.iloc[allInds])
+        return truthDF,reconDF
+    else:
+        return truthDF
+
 def reshapeCluster(recon2d__):
     # print("I might have broken this funciton, might need to be called on each dataframe subtype")
     return recon2d__.to_numpy().reshape(recon2d__.shape[0],13,21)
