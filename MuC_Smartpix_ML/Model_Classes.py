@@ -18,8 +18,6 @@ sys.path.append("../MuC_Smartpix_Data_Production/tfRecords")
 import OptimizedDataGenerator4_data_shuffled_bigData_NewFormat as ODG2
 import pandas as pd
 from datetime import datetime
-##import OptimizedDataGenerator4 as ODG
-
 
 class WarmupThenDecay(tf.keras.optimizers.schedules.LearningRateSchedule):
     """
