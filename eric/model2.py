@@ -134,11 +134,12 @@ class Model2(SmartPixModel):
             self.models[config_name] = None
         
         
-        # Load model if requested
+        # Load model if requested 
+
         #TODO decide whether to load unquantized or which quantized model
         config_name = "Unquantized"
         if loadModel and modelPath:
-            self.loadModel(modelPath,config_name)
+            self.loadModel(modelPath,config_name)         ### !!!!!!!! Exists in Model Classes
     
     def loadTfRecords(self):
         """Load TFRecords using OptimizedDataGenerator4 for Model2 features."""

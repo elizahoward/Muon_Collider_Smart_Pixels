@@ -256,17 +256,17 @@ class Model2_5(Model2):
 
         # Hyperparameter search space with progressive constraints
         # First layer sizes
-        spatial_units = hp.Int('spatial_units', min_value=16, max_value=150, step=16)
+        spatial_units = hp.Int('spatial_units', min_value=8, max_value=64, step=8)
         z_global_units = hp.Int('z_global_units', min_value=2, max_value=16, step=2)
         
         # Calculate max size for dense2 (should not exceed concatenated size)
         concat_size = spatial_units + z_global_units
         dense2_max = min(256, concat_size)
-        dense2_units = hp.Int('dense2_units', min_value=4, max_value=dense2_max, step=8)
+        dense2_units = hp.Int('dense2_units', min_value=4, max_value=dense2_max, step=4)
         
         # Calculate max size for dense3 (should not exceed dense2)
         dense3_max = min(128, dense2_units)
-        dense3_units = hp.Int('dense3_units', min_value=4, max_value=dense3_max, step=6)
+        dense3_units = hp.Int('dense3_units', min_value=4, max_value=dense3_max, step=2)
         
         dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.05)
         learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')

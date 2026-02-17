@@ -2,10 +2,13 @@
 Quick script to run quantized hyperparameter tuning on Model3
 
 Parameters:
+- Data folder: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
 - 4-bit quantization (0 integer bits)
 - 20 epochs per trial
 - 1 execution per trial
 - 160 max trials
+- Objective: weighted background rejection
+  weighted = 0.3*BR95 + 0.6*BR98 + 0.1*BR99
 
 Author: Eric
 Date: 2024
@@ -23,17 +26,23 @@ def main():
     print("="*70)
     print("Model3 - Quantized Hyperparameter Tuning")
     print("="*70)
+    
+    # Data folder path
+    data_folder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
+    
     print("\nConfiguration:")
+    print(f"  - Data folder: {data_folder}")
     print("  - Quantization: 4-bit fractional, 0 integer bits")
     print("  - Epochs per trial: 20")
     print("  - Executions per trial: 1")
     print("  - Max trials: 160")
+    print("  - Objective: 0.3*BR95 + 0.6*BR98 + 0.1*BR99")
     print("="*70)
     print()
     
     # Initialize Model3
     model3 = Model3(
-        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+        tfRecordFolder=data_folder,
         conv_filters=32,  # Will be overridden by hyperparameter search
         kernel_rows=3,
         kernel_cols=3,
@@ -53,7 +62,9 @@ def main():
         bit_configs=bit_configs,
         max_trials=150,
         executions_per_trial=1,
-        numEpochs=23
+        numEpochs=23,
+        use_weighted_bkg_rej=True,
+        bkg_rej_weights={0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
     )
     
     # Print results summary

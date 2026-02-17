@@ -3,10 +3,10 @@ Quick script to run quantized hyperparameter tuning on Model2.5
 
 Parameters:
 - Data folder: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
-- 4-bit quantization (0 integer bits)
-- 15 epochs per trial
+- 6-bit quantization (0 integer bits)  # CHANGED from 4-bit to 6-bit
+- 16 epochs per trial
 - 1 execution per trial
-- 200 max trials
+- 150 max trials  # CHANGED from 300 to 150
 - Objective: weighted background rejection
   weighted = 0.3*BR95 + 0.6*BR98 + 0.1*BR99
 - Progressive layer sizes: dense2_units <= (spatial_units + z_global_units)
@@ -34,17 +34,37 @@ def main():
     
     print("\nConfiguration:")
     print(f"  - Data folder: {data_folder}")
-    print("  - Quantization: 4-bit fractional, 0 integer bits")
-    print("  - z_global: 4-bit (matches spatial features)")
-    print("  - Epochs per trial: 15")
+    print("  - Quantization: 6-bit fractional, 0 integer bits")  # CHANGED from 4-bit
+    print("  - z_global: 6-bit (matches spatial features)")  # CHANGED from 4-bit
+    print("  - Epochs per trial: 16")
     print("  - Executions per trial: 1")
-    print("  - Max trials: 200")
+    print("  - Max trials: 150")  # CHANGED from 300
     print("  - Objective: 0.3*BR95 + 0.6*BR98 + 0.1*BR99")
     print("  - Progressive layer constraint: Each layer <= previous layer")
     print("="*70)
     print()
     
     # Initialize Model2.5
+    # ===== ORIGINAL 4-BIT CONFIGURATION (COMMENTED OUT) =====
+    # model25 = Model2_5(
+    #     tfRecordFolder=data_folder,
+    #     dense_units=128,
+    #     z_global_units=32,
+    #     dense2_units=128,
+    #     dense3_units=64,
+    #     dropout_rate=0.1,
+    #     initial_lr=1e-3,
+    #     end_lr=1e-4,
+    #     power=2,
+    #     bit_configs=[(4, 0)],   # 4-bit quantization
+    #     z_global_weight_bits=4,
+    #     z_global_int_bits=0
+    # )
+    # bit_configs = [(4, 0)]  # 4-bit fractional, 0 integer bits
+    # max_trials = 300
+    # ===== END ORIGINAL 4-BIT CONFIGURATION =====
+    
+    # ===== NEW 6-BIT CONFIGURATION =====
     model25 = Model2_5(
         tfRecordFolder=data_folder,
         dense_units=128,        # Will be overridden by hyperparameter search
@@ -55,20 +75,19 @@ def main():
         initial_lr=1e-3,
         end_lr=1e-4,
         power=2,
-        bit_configs=[(4, 0)],   # 4-bit quantization
-        # z_global_weight_bits=8,  # Original: 8-bit z_global
-        z_global_weight_bits=4,    # Changed to 4-bit z_global
+        bit_configs=[(6, 0)],   # 6-bit quantization
+        z_global_weight_bits=6,    # 6-bit z_global
         z_global_int_bits=0
     )
     
-    # Run hyperparameter tuning on 4-bit quantization
-    bit_configs = [(4, 0)]  # 4-bit fractional, 0 integer bits
+    # Run hyperparameter tuning on 6-bit quantization
+    bit_configs = [(6, 0)]  # 6-bit fractional, 0 integer bits
     
     results = model25.runQuantizedHyperparameterTuning(
         bit_configs=bit_configs,
-        max_trials=200,
+        max_trials=150,  # CHANGED from 300 to 150
         executions_per_trial=1,
-        numEpochs=15,
+        numEpochs=16,
         use_weighted_bkg_rej=True,
         bkg_rej_weights={0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
     )
