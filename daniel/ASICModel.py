@@ -42,7 +42,7 @@ print(tf.test.is_gpu_available())
 class ModelASIC(Model_Classes.SmartPixModel):
     def __init__(self,
             # tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
-            tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+            tfRecordFolder: str = "../Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
             nBits: list = None, # just for fractional bits, integer bits 
             loadModel: bool = False,
             modelPath: str = None, # Only include if you are loading a model
@@ -77,8 +77,8 @@ class ModelASIC(Model_Classes.SmartPixModel):
         #Make a model that has multpile layers
         input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
         input2 = tf.keras.layers.Input(shape=(1,), name="y_local")
-        input3 = tf.keras.layers.Input(shape=(1,), name="nPix")
-        # input3 = tf.keras.layers.Input(shape=(21,), name="x_profile")
+        # input3 = tf.keras.layers.Input(shape=(1,), name="nPix")
+        input3 = tf.keras.layers.Input(shape=(21,), name="x_profile")
         input4 = tf.keras.layers.Input(shape=(13,), name="y_profile")
         inputList = [input1, input2,input3,input4]
         inputs = tf.keras.layers.Concatenate()(inputList)
