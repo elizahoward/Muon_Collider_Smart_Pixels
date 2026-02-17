@@ -58,7 +58,7 @@ class ModelASIC(Model_Classes.SmartPixModel):
         self.modelName = "ASIC Model" # for other models, e.g., Model 1, Model 2, etc.
         # self.models = {"Unquantized": None, "Quantized": None} # Maybe have a dictionary to store different versions of the model
         self.hyperparameterModel = None
-        self.x_feature_description: list = ['x_size','z_global','y_profile','x_profile','cluster','y_local','nPix']
+        self.x_feature_description: list = ['x_size','z_global','y_profile','x_profile','cluster','y_local','nPix',"x_local","nModule"]
         # Learning rate parameters
         self.initial_lr = initial_lr
         self.end_lr = end_lr
