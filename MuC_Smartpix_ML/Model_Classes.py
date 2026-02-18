@@ -248,20 +248,20 @@ class SmartPixModel(ABC):
         )
         raise NotImplementedError("Subclasses should implement this method.")
     
-    def buildModel(self, model_type="unquantized"):
+    def buildModel(self, model_type="Unquantized"):
         """
         Build the specified model type.
         
         Args:
-            model_type: "unquantized" or "quantized"
+            model_type: "Unquantized" or "quantized"
             bit_configs: List of bit configurations for quantized models --Actually now a class field/attribute
         """
-        if model_type == "unquantized":
+        if model_type == "Unquantized":
             return self.makeUnquantizedModel()
         elif model_type == "quantized":
             return self.makeQuantizedModel()
         else:
-            raise ValueError("model_type must be 'unquantized' or 'quantized'")
+            raise ValueError("model_type must be 'Unquantized' or 'quantized'")
     """
     config_name = Unquantized or 
     config_name = f"quantized_{total_bits}w{int_bits}i"
@@ -282,7 +282,7 @@ class SmartPixModel(ABC):
     
     def warmStartQuantizedModel(self, quantized_config_name, source_config_name="Unquantized"):
         """
-        Warm-start a quantized model by copying weights from an unquantized (or other) model.
+        Warm-start a quantized model by copying weights from an Unquantized (or other) model.
         This implements quantization-aware fine-tuning by initializing the quantized model
         with pre-trained weights.
         
@@ -358,7 +358,7 @@ class SmartPixModel(ABC):
     #dataset
     def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
                    save_best=True, early_stopping_patience=20,
-                   run_eagerly = False, config_name = "unquantized", clipnorm=None):
+                   run_eagerly = False, config_name = "Unquantized", clipnorm=None):
         """
         Train the {self.modelName}.
         
@@ -685,18 +685,18 @@ class SmartPixModel(ABC):
         
         # Test non-quantized model first
         print("\n2. Testing Non-quantized Model...")
-        print("2a. Building unquantized model...")
-        self.buildModel("unquantized")
+        print("2a. Building Unquantized model...")
+        self.buildModel("Unquantized")
         
-        print("2b. Training unquantized model...")
+        print("2b. Training Unquantized model...")
         self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
         
-        print("2c. Evaluating unquantized model...")
+        print("2c. Evaluating Unquantized model...")
         eval_results = self.evaluate()
         
         # Save non-quantized model
-        print("2d. Saving unquantized model...")
-        model_save_path = os.path.join(models_dir, f"{self.modelName}_unquantized.h5")
+        print("2d. Saving Unquantized model...")
+        model_save_path = os.path.join(models_dir, f"{self.modelName}_Unquantized.h5")
         self.saveModel(file_path = model_save_path, config_name = "Unquantized")
         print(f"Unquantized model saved to: {model_save_path}")
         
@@ -740,8 +740,8 @@ class SmartPixModel(ABC):
             print(self.models)
 
             
-            # Warm-start: Copy weights from unquantized model to quantized model
-            print(f"3c. Warm-starting {weight_bits}-bit quantized model from unquantized model...")
+            # Warm-start: Copy weights from Unquantized model to quantized model
+            print(f"3c. Warm-starting {weight_bits}-bit quantized model from Unquantized model...")
             self.warmStartQuantizedModel(config_name, source_config_name="Unquantized")
             
             print(f"3d. Training {weight_bits}-bit quantized model...")
