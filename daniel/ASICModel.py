@@ -49,7 +49,8 @@ class ModelASIC(Model_Classes.SmartPixModel):
             initial_lr: float = 1e-3,
             end_lr: float = 1e-4,
             power: int = 2,
-            bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            # bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            bit_configs = [(4,0)], #I think this is the only quantization really used, but double check based off of paper/etc.
 
             ): 
         # Do we want to specify model, modelType, bitSize, etc.
@@ -65,7 +66,7 @@ class ModelASIC(Model_Classes.SmartPixModel):
         self.power = power
 
         self.histories = {}
-        self.models = {"unquantized": None}
+        self.models = {"Unquantized": None}
         self.bit_configs = bit_configs
         for total_bits, int_bits in self.bit_configs:
             config_name = f"quantized_{total_bits}w{int_bits}i"
@@ -78,7 +79,8 @@ class ModelASIC(Model_Classes.SmartPixModel):
         input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
         input2 = tf.keras.layers.Input(shape=(1,), name="y_local")
         # input3 = tf.keras.layers.Input(shape=(1,), name="nPix")
-        input3 = tf.keras.layers.Input(shape=(21,), name="x_profile")
+        input3 = tf.keras.layers.Input(shape=(1,), name="x_size")
+        # input3 = tf.keras.layers.Input(shape=(21,), name="x_profile")
         input4 = tf.keras.layers.Input(shape=(13,), name="y_profile")
         inputList = [input1, input2,input3,input4]
         inputs = tf.keras.layers.Concatenate()(inputList)
@@ -91,7 +93,7 @@ class ModelASIC(Model_Classes.SmartPixModel):
         # model.summary()
 
         model1.compile(optimizer='adam', loss='binary_crossentropy', metrics=['binary_accuracy'])
-        self.models["unquantized"] = model1
+        self.models["Unquantized"] = model1
         # callbacks=[]
         # learningRates = [0.1,0.9,0.6,0.3,0.1,0.03,0.01,0.001,0.0001,0.00001,0.000001]
         # callbacks.append(tf.keras.callbacks.LearningRateScheduler(lambda epoch,lr : lr if epoch<5 else lr*np.exp(-0.1)))
@@ -134,42 +136,51 @@ class ModelASIC(Model_Classes.SmartPixModel):
     def makeUnquatizedModelHyperParameterTuning(hp):
         raise NotImplementedError("Subclasses should implement this method.")
     def makeQuantizedModel(self):
-            # Define inputs
-        input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
-        input2 = tf.keras.layers.Input(shape=(1,), name="y_local")
-        input3 = tf.keras.layers.Input(shape=(1,), name="x_size")
-        input4 = tf.keras.layers.Input(shape=(13,), name="y_profile")
-        inputList = [input1, input2, input3, input4]
-        inputList = [input2,input4]
-        
-        # Concatenate all inputs
-        x =  tf.keras.layers.Concatenate()(inputList)
-        # x = x_in = Input(shape, name="input1")
-        x = QDenseBatchnorm(58,
-        kernel_quantizer=quantized_bits(4,0,alpha=1),
-        bias_quantizer=quantized_bits(4,0,alpha=1),
-        name="dense1")(x)
-        x = QActivation("quantized_relu(8,0)", name="relu1")(x)
-        #Fermilab's output layer, not right for our dataset currently
-        # x = QDense(3,
-        #     kernel_quantizer=quantized_bits(4,0,alpha=1),
-        #     bias_quantizer=quantized_bits(4,0,alpha=1),
-        #     name="dense2")(x)
-        # x = QActivation("linear", name="linear")(x)
+        for weight_bits, int_bits in self.bit_configs:
+            config_name = f"quantized_{weight_bits}w{int_bits}i"
+            print(f"Building Model ASIC {config_name}...")
+                # Define inputs
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            input3 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input4 = tf.keras.layers.Input(shape=(13,), name="y_profile")
+            inputList = [input1, input2, input3, input4]
+            # inputList = [input2,input4]
+            
+            # Concatenate all inputs
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input4])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input3])
+            x=x_concat3
+            
+            weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
+            # x = x_in = Input(shape, name="input1")
+            x = QDenseBatchnorm(58,                                
+                                kernel_quantizer=weight_quantizer,
+                                bias_quantizer=weight_quantizer,
+                                name="dense1"
+                                )(x)
+            x = QActivation("quantized_relu(8,0)", name="relu1")(x)
+            #Fermilab's output layer, not right for our dataset currently
+            # x = QDense(3,
+            #     kernel_quantizer=weight_quantizer,
+            #     bias_quantizer=weight_quantizer,
+            #     name="dense2")(x)
+            # x = QActivation("linear", name="linear")(x)
 
-        #Eric's Output layer
-        x = QDense(
-            1,
-            kernel_quantizer=quantized_bits(4,0,alpha=1),
-            bias_quantizer=quantized_bits(4,0,alpha=1),
-            name="output_dense"
-        )(x)
-        output = QActivation("smooth_sigmoid", name="output")(x)
-        model = tf.keras.Model(inputs=inputList, outputs=x)
+            #Eric's Output layer
+            x = QDense(
+                1,
+                kernel_quantizer=weight_quantizer,
+                bias_quantizer=weight_quantizer,
+                name="output_dense"
+            )(x)
+            output = QActivation("smooth_sigmoid", name="output")(x)
+            model = tf.keras.Model(inputs=inputList, outputs=x)
 
-        model.summary()
-        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['binary_accuracy'])
-        self.models["Quantized"] = model
+            model.summary()
+            model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['binary_accuracy'])
+            self.models[config_name] = model
     # def trainQuantizedModel(self,numEpochs = 20):        
     #     callbacks = []
     #     self.historyQ = self.models["Quantized"].fit(x=self.training_generator,validation_data=self.validation_generator, callbacks=callbacks,epochs=numEpochs)
