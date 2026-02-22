@@ -57,7 +57,7 @@ class OptimizedDataGenerator(tf.keras.utils.Sequence):
             quantize: bool = False,
             max_workers: int = 1,
             ):
-        raise NotImplementedError("Eric, please do not use this version of ODG, use the common one from the abstract base class")
+        # raise NotImplementedError("Eric, please do not use this version of ODG, use the common one from the abstract base class")
         super().__init__() 
 
         """

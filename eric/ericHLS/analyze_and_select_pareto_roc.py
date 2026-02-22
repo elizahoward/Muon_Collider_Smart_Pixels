@@ -18,6 +18,16 @@ Workflow:
 
 Author: Eric
 Date: February 2026
+
+
+Examples:
+  # Use weighted background rejection (default)
+
+  python analyze_and_select_pareto_roc.py
+      --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815
+      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
+      --output_dir ../model2_5_pareto_roc_selected
+      --use_weighted
 """
 
 import os
@@ -560,13 +570,6 @@ Examples:
       --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData \\
       --output_dir ../model2_5_pareto_roc_selected \\
       --use_weighted
-
-  # Use single signal efficiency
-  python analyze_and_select_pareto_roc.py \\
-      --input_dir ../model2_5_results \\
-      --data_dir /path/to/tfrecords \\
-      --output_dir ../model2_5_pareto_roc \\
-      --signal_efficiency 0.95
         """
     )
     

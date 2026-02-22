@@ -60,9 +60,9 @@ def main():
     
     results = model3.runQuantizedHyperparameterTuning(
         bit_configs=bit_configs,
-        max_trials=150,
+        max_trials=2,
         executions_per_trial=1,
-        numEpochs=23,
+        numEpochs=15,
         use_weighted_bkg_rej=True,
         bkg_rej_weights={0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
     )

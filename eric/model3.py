@@ -37,7 +37,6 @@ sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/M
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/ryan/')
 
 from Model_Classes import SmartPixModel
-import OptimizedDataGenerator4 as ODG
 
 # QKeras imports for quantized models
 try:
@@ -64,7 +63,6 @@ class Model3(SmartPixModel):
     
     def __init__(self,
                  tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
-                #  tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,
@@ -140,10 +138,10 @@ class Model3(SmartPixModel):
         config_name = "Unquantized"
         if loadModel and modelPath:
             self.loadModel(modelPath, config_name)
-    
+    '''
     def loadTfRecords(self):
         """Load TFRecords using OptimizedDataGenerator4 for Model3 features."""
-        raise NotImplementedError("Eric, please use inheritance!!")
+        # raise NotImplementedError("Eric, please use inheritance!!")
         trainDir = f"{self.tfRecordFolder}/tfrecords_train/"
         valDir = f"{self.tfRecordFolder}/tfrecords_validation/"
         
@@ -180,7 +178,7 @@ class Model3(SmartPixModel):
         print(f"Validation generator length: {len(self.validation_generator)}")
         
         return self.training_generator, self.validation_generator
-    
+    '''
     def makeUnquantizedModel(self):
         """
         Build the unquantized Model3 architecture.
@@ -228,8 +226,9 @@ class Model3(SmartPixModel):
         h = Dropout(self.dropout_rate, name="dropout_1")(h)
         h = Dense(self.merged_dense_2, activation="relu", name="merged_dense2")(h)
         
-        # Output layer
-        output = Dense(1, activation="sigmoid", name="output")(h)
+        # Output layer with quantized_tanh
+        output_dense = Dense(1, name="output_dense")(h)
+        output = QActivation("quantized_tanh", name="output")(output_dense)
         
         # Create and compile model
         self.models["Unquantized"] = Model(
@@ -285,8 +284,9 @@ class Model3(SmartPixModel):
         h = Dropout(dropout_rate, name="dropout_1")(h)
         h = Dense(merged_dense_2, activation="relu", name="merged_dense2")(h)
         
-        # Output layer
-        output = Dense(1, activation="sigmoid", name="output")(h)
+        # Output layer with quantized_tanh
+        output_dense = Dense(1, name="output_dense")(h)
+        output = QActivation("quantized_tanh", name="output")(output_dense)
         
         # Create model
         model = Model(
