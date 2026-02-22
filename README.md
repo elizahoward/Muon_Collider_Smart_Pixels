@@ -18,6 +18,8 @@ mkdir mlgpu_qkeras_tar && tar -xzf /local/d1/smartpixML/conda_environments/mlgpu
 conda activate mlgpu_qkeras_tar
 ```
 
+Alternatively, if not working on the workstation, copy /local/d1/smartpixML/conda_environments/mlgpu_qkeras.tar.gz to your machine, and then use 
+`tar -xzf /path/to/mlgpu_qkeras.tar.gz -C mlgpu_qkeras_tar` in place of the corresponding line above
 
 ### Train some models and make some plots.
 

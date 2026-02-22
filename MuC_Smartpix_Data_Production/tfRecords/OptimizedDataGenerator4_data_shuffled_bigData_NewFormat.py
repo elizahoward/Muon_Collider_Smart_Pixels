@@ -29,7 +29,7 @@ def trimEvents(labels_df,recon_df,labelsFileDF,eventsPerBiSi=1600000):
     # bibInds = (truthDF[bibMask].index[0:eventsPerBiSi])
     allInds = np.concatenate([bibInds,signalInds])
     # allInds = bibInds.append(signalInds)
-    print(allInds)
+    print(allInds[1:10])
     return labels_df.iloc[allInds],recon_df.iloc[allInds],labelsFileDF.iloc[allInds]
 
 class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
@@ -67,7 +67,7 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             random.seed(random_seed)
             np.random.seed(random_seed)
         self.file_offsets = [0]
-        allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix']
+        allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule"]
         if isinstance(x_feature_description, str) and x_feature_description == "all":
             self.x_feature_description=allowed_features
         elif isinstance(x_feature_description, str):
@@ -218,6 +218,9 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             hit_time = labelFileDF['adjusted_hit_time'].values
             hit_time_30 = labelFileDF['adjusted_hit_time_30ps_gaussian'].values
             hit_time_60 = labelFileDF['adjusted_hit_time_60ps_gaussian'].values
+            nModules_raw = z_loc_df_raw/13
+            nModules_raw = nModules_raw.apply(np.floor)
+            xlocals_raw = z_loc_df_raw %13
             # Remove from type_list as well
             type_list = [t for i, t in enumerate(type_list) if i not in has_nans]
             self.dataPoints = len(labels_df_raw)
@@ -284,6 +287,10 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             z_locs = z_loc_df_raw.values/65
             eh_pairs = eh_pairs_raw.values/150000
             self.labels = labels_df_raw.values
+            nModules = nModules_raw.values / 5
+            x_locs = xlocals_raw.values / 13
+            print(z_locs)
+            print(x_locs)
             self.x_features = {}
             if 'cluster' in self.x_feature_description:
                 self.x_features['cluster'] = clusters
@@ -308,7 +315,11 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             if 'adjusted_hit_time_60ps_gaussian' in self.x_feature_description:
                 self.x_features['adjusted_hit_time_60ps_gaussian'] = hit_time_60                
             if 'nPix' in self.x_feature_description:
-                self.x_features['nPix'] = nPixels
+                self.x_features['nPix'] = nPixels                
+            if 'x_local' in self.x_feature_description:
+                self.x_features['x_local'] = x_locs                
+            if 'nModule' in self.x_feature_description:
+                self.x_features['nModule'] = nModules
             #ADD pt, cotalpha, cotbeta, recalculated p; Add in some sort of event number
             # DATA-LEVEL SHUFFLING
             if shuffle_data:

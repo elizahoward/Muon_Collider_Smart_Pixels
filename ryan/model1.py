@@ -388,15 +388,18 @@ class Model1(SmartPixModel):
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
 
-            ## concatenate the inputs into one layer
-            inputList = [input1, input2, input3, input4]
-            inputs = tf.keras.layers.Concatenate()(inputList)
+            
+
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x=x_concat3
 
 
             ## here i will add the layers 
 
             # layer 1
-            x = tf.keras.layers.Dense(rownodes,activation='relu')(inputs)
+            x = tf.keras.layers.Dense(rownodes,activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             output = tf.keras.layers.Dense(1,activation='sigmoid')(x)
 
@@ -451,7 +454,6 @@ class Model1(SmartPixModel):
         )
 
         return tuner, save_dir
-
 
 
         
@@ -565,6 +567,7 @@ def main():
 # import your Model1 class definition (wherever it lives)
 # from model1 import Model1   # <-- if your class is in model1.py
 # or paste/define Model1 once (but do NOT redefine SmartPixModel again)
+    """
 
     MODEL_PATH = "model1_unquantized_hp2rows_results_20260213_105714/model_trial_008.h5"
 
@@ -587,6 +590,12 @@ def main():
     results = m1.evaluate(config_name="Unquantized")
 
     print(results["test_accuracy"], results["roc_auc"])
+    """
+    m1 = Model1()
+    m1.loadTfRecords()
+    m1.makeUnquantizedModel()
+    m1.trainModel(early_stopping_patience=10)
+    m1.evaluate()
 
 
 if __name__ == "__main__":
