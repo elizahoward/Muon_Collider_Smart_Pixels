@@ -1,6 +1,6 @@
 """
 Model2.5 Implementation based on Model2 with a single dense fusion layer
-and an 8-bit dedicated projection for the z_global feature.
+and an 8-bit dedicated projection for the nModule_xlocal feature (concatenation of nModule and x_local).
 """
 
 from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Add, Activation
@@ -21,7 +21,7 @@ except ImportError:
 class Model2_5(Model2):
     """
     Model2.5: Single-hidden-layer variant of Model2 with dedicated 8-bit processing
-    for the z_global feature during quantized training.
+    for the nModule_xlocal feature (concatenation of nModule and x_local) during quantized training.
     """
 
     def __init__(self,
@@ -30,7 +30,7 @@ class Model2_5(Model2):
                  loadModel: bool = False,
                  modelPath: str = None,
                  dense_units: int = 128,
-                 z_global_units: int = 128,
+                 nmodule_xlocal_units: int = 128,
                  dense2_units: int = 64,
                  dense3_units: int = 32,
                  dropout_rate: float = 0.1,
@@ -38,15 +38,15 @@ class Model2_5(Model2):
                  end_lr: float = 1e-4,
                  power: int = 2,
                  bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],
-                 z_global_weight_bits: int = 8,
-                 z_global_int_bits: int = 0):
+                 nmodule_xlocal_weight_bits: int = 8,
+                 nmodule_xlocal_int_bits: int = 0):
         super().__init__(
             tfRecordFolder=tfRecordFolder,
             nBits=nBits,
             loadModel=loadModel,
             modelPath=modelPath,
             xz_units=dense_units,
-            yl_units=z_global_units,
+            yl_units=nmodule_xlocal_units,
             merged_units_1=dense2_units,
             merged_units_2=dense3_units,
             merged_units_3=32,
@@ -58,22 +58,26 @@ class Model2_5(Model2):
         )
         self.modelName = "Model2.5"
         self.dense_units = dense_units
-        self.z_global_units = z_global_units
+        self.nmodule_xlocal_units = nmodule_xlocal_units
         self.dense2_units = dense2_units
         self.dense3_units = dense3_units
-        self.z_global_weight_bits = z_global_weight_bits
-        self.z_global_int_bits = z_global_int_bits
+        self.nmodule_xlocal_weight_bits = nmodule_xlocal_weight_bits
+        self.nmodule_xlocal_int_bits = nmodule_xlocal_int_bits
+        
+        # Override feature description to use nModule and x_local instead of z_global
+        self.x_feature_description = ['x_profile', 'nModule', 'x_local', 'y_profile', 'y_local']
 
     def makeUnquantizedModel(self):
         """Build the unquantized Model2.5 architecture."""
         print("Building unquantized Model2.5...")
         print(f"  - Spatial features branch: {self.dense_units} units")
-        print(f"  - z_global branch: {self.z_global_units} units")
+        print(f"  - nModule_xlocal branch: {self.nmodule_xlocal_units} units")
         print(f"  - Merged dense layers: {self.dense2_units} -> {self.dense3_units}")
         
         # Input layers
         x_profile_input = Input(shape=(21,), name="x_profile")
-        z_global_input = Input(shape=(1,), name="z_global")
+        nmodule_input = Input(shape=(1,), name="nModule")
+        x_local_input = Input(shape=(1,), name="x_local")
         y_profile_input = Input(shape=(13,), name="y_profile")
         y_local_input = Input(shape=(1,), name="y_local")
 
@@ -82,11 +86,12 @@ class Model2_5(Model2):
         other_features = Concatenate(name="other_features")([xy_concat, y_local_input])
         other_dense = Dense(self.dense_units, activation="relu", name="other_dense")(other_features)
 
-        # z_global branch
-        z_dense = Dense(self.z_global_units, activation="relu", name="z_global_dense")(z_global_input)
+        # nModule_xlocal branch - concatenate nModule and x_local first
+        nmodule_xlocal_concat = Concatenate(name="nmodule_xlocal_concat")([nmodule_input, x_local_input])
+        nmodule_xlocal_dense = Dense(self.nmodule_xlocal_units, activation="relu", name="nmodule_xlocal_dense")(nmodule_xlocal_concat)
 
         # Merge both branches
-        merged = Concatenate(name="merged_features")([other_dense, z_dense])
+        merged = Concatenate(name="merged_features")([other_dense, nmodule_xlocal_dense])
         
         # Two more dense layers
         hidden = Dense(self.dense2_units, activation="relu", name="dense2")(merged)
@@ -97,7 +102,7 @@ class Model2_5(Model2):
         output = Dense(1, activation="tanh", name="output")(hidden)
 
         self.models["Unquantized"] = Model(
-            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+            inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
             outputs=output,
             name="model2_5_unquantized"
         )
@@ -107,24 +112,28 @@ class Model2_5(Model2):
         """Build Model2.5 for hyperparameter tuning with progressive layer constraints."""
         # Hyperparameter search space with progressive constraints
         # First layer sizes
+        # Layer 1: Sample directly
         spatial_units = hp.Int('spatial_units', min_value=32, max_value=256, step=32)
-        z_global_units = hp.Int('z_global_units', min_value=16, max_value=128, step=16)
+        nmodule_xlocal_units = hp.Int('nmodule_xlocal_units', min_value=16, max_value=128, step=16)
         
-        # Calculate max size for dense2 (should not exceed concatenated size)
-        concat_size = spatial_units + z_global_units
-        dense2_max = min(256, concat_size)
-        dense2_units = hp.Int('dense2_units', min_value=32, max_value=dense2_max, step=16)
+        # Layer 2: Use ratio of concat_size (avoids clipping bias)
+        # This ensures dense2_units <= concat_size by construction
+        concat_size = spatial_units + nmodule_xlocal_units
+        dense2_ratio = hp.Float('dense2_ratio', min_value=0.2, max_value=1.0, step=0.05)
+        dense2_units = max(32, int(concat_size * dense2_ratio / 16) * 16)  # Round to multiple of 16
         
-        # Calculate max size for dense3 (should not exceed dense2)
-        dense3_max = min(128, dense2_units)
-        dense3_units = hp.Int('dense3_units', min_value=16, max_value=dense3_max, step=8)
+        # Layer 3: Use ratio of dense2_units (avoids clipping bias)
+        # This ensures dense3_units <= dense2_units by construction
+        dense3_ratio = hp.Float('dense3_ratio', min_value=0.2, max_value=1.0, step=0.05)
+        dense3_units = max(16, int(dense2_units * dense3_ratio / 8) * 8)  # Round to multiple of 8
         
         dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.05)
         learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
         
         # Input layers
         x_profile_input = Input(shape=(21,), name="x_profile")
-        z_global_input = Input(shape=(1,), name="z_global")
+        nmodule_input = Input(shape=(1,), name="nModule")
+        x_local_input = Input(shape=(1,), name="x_local")
         y_profile_input = Input(shape=(13,), name="y_profile")
         y_local_input = Input(shape=(1,), name="y_local")
 
@@ -133,11 +142,12 @@ class Model2_5(Model2):
         other_features = Concatenate(name="other_features")([xy_concat, y_local_input])
         other_dense = Dense(spatial_units, activation="relu", name="other_dense")(other_features)
 
-        # z_global branch
-        z_dense = Dense(z_global_units, activation="relu", name="z_global_dense")(z_global_input)
+        # nModule_xlocal branch - concatenate nModule and x_local first
+        nmodule_xlocal_concat = Concatenate(name="nmodule_xlocal_concat")([nmodule_input, x_local_input])
+        nmodule_xlocal_dense = Dense(nmodule_xlocal_units, activation="relu", name="nmodule_xlocal_dense")(nmodule_xlocal_concat)
 
         # Merge both branches
-        merged = Concatenate(name="merged_features")([other_dense, z_dense])
+        merged = Concatenate(name="merged_features")([other_dense, nmodule_xlocal_dense])
         
         # Two more dense layers
         hidden = Dense(dense2_units, activation="relu", name="dense2")(merged)
@@ -148,7 +158,7 @@ class Model2_5(Model2):
         output = Dense(1, activation="tanh", name="output")(hidden)
 
         model = Model(
-            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+            inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
             outputs=output,
             name="model2_5_hyperparameter_tuning"
         )
@@ -170,15 +180,16 @@ class Model2_5(Model2):
             config_name = f"quantized_{weight_bits}w{int_bits}i"
             print(f"Building Model2.5 {config_name}...")
             print(f"  - Spatial features branch: {self.dense_units} units ({weight_bits}-bit)")
-            print(f"  - z_global branch: {self.z_global_units} units ({self.z_global_weight_bits}-bit)")
+            print(f"  - nModule_xlocal branch: {self.nmodule_xlocal_units} units ({self.nmodule_xlocal_weight_bits}-bit)")
 
             # Quantizers
             weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
-            z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
+            nmodule_xlocal_weight_quantizer = quantized_bits(self.nmodule_xlocal_weight_bits, self.nmodule_xlocal_int_bits, alpha=1.0)
 
             # Input layers
             x_profile_input = Input(shape=(21,), name="x_profile")
-            z_global_input = Input(shape=(1,), name="z_global")
+            nmodule_input = Input(shape=(1,), name="nModule")
+            x_local_input = Input(shape=(1,), name="x_local")
             y_profile_input = Input(shape=(13,), name="y_profile")
             y_local_input = Input(shape=(1,), name="y_local")
 
@@ -193,17 +204,18 @@ class Model2_5(Model2):
             )(other_features)
             other_dense = QActivation("quantized_relu(8,0)", name="other_activation")(other_dense)
 
-            # z_global branch
-            z_dense = QDense(
-                self.z_global_units,
-                kernel_quantizer=z_weight_quantizer,
-                bias_quantizer=z_weight_quantizer,
-                name="z_global_dense"
-            )(z_global_input)
-            z_dense = QActivation("quantized_relu(8,0)", name="z_activation")(z_dense)
+            # nModule_xlocal branch - concatenate nModule and x_local first
+            nmodule_xlocal_concat = Concatenate(name="nmodule_xlocal_concat")([nmodule_input, x_local_input])
+            nmodule_xlocal_dense = QDense(
+                self.nmodule_xlocal_units,
+                kernel_quantizer=nmodule_xlocal_weight_quantizer,
+                bias_quantizer=nmodule_xlocal_weight_quantizer,
+                name="nmodule_xlocal_dense"
+            )(nmodule_xlocal_concat)
+            nmodule_xlocal_dense = QActivation("quantized_relu(8,0)", name="nmodule_xlocal_activation")(nmodule_xlocal_dense)
 
             # Merge both branches
-            merged = Concatenate(name="merged_features")([other_dense, z_dense])
+            merged = Concatenate(name="merged_features")([other_dense, nmodule_xlocal_dense])
             
             # Two more dense layers
             hidden = QDense(
@@ -233,7 +245,7 @@ class Model2_5(Model2):
             output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
 
             model = Model(
-                inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+                inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
                 outputs=output,
                 name=f"model2_5_{config_name}"
             )
@@ -254,30 +266,32 @@ class Model2_5(Model2):
         if not QKERAS_AVAILABLE:
             raise ImportError("QKeras is required for quantized models")
 
-        # Hyperparameter search space with progressive constraints
-        # First layer sizes
+        # Layer 1: Sample directly
         spatial_units = hp.Int('spatial_units', min_value=8, max_value=128, step=8)
-        z_global_units = hp.Int('z_global_units', min_value=4, max_value=16, step=2)
+        nmodule_xlocal_units = hp.Int('nmodule_xlocal_units', min_value=2, max_value=12, step=2)
         
-        # Calculate max size for dense2 (should not exceed concatenated size)
-        concat_size = spatial_units + z_global_units
-        dense2_max = min(256, concat_size)
-        dense2_units = hp.Int('dense2_units', min_value=8, max_value=dense2_max, step=4)
+        # Layer 2: Use ratio of concat_size (avoids clipping bias)
+        # This ensures dense2_units <= concat_size by construction
+        concat_size = spatial_units + nmodule_xlocal_units
+        dense2_ratio = hp.Float('dense2_ratio', min_value=0.2, max_value=0.7, step=0.1)
+        dense2_units = max(4, int(concat_size * dense2_ratio / 4) * 4)  # Round to multiple of 4
         
-        # Calculate max size for dense3 (should not exceed dense2)
-        dense3_max = min(128, dense2_units)
-        dense3_units = hp.Int('dense3_units', min_value=4, max_value=dense3_max, step=2)
+        # Layer 3: Use ratio of dense2_units (avoids clipping bias)
+        # This ensures dense3_units <= dense2_units by construction
+        dense3_ratio = hp.Float('dense3_ratio', min_value=0.2, max_value=0.7, step=0.1)
+        dense3_units = max(4, int(dense2_units * dense3_ratio / 2) * 2)  # Round to multiple of 2
         
-        dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.3, step=0.05)
+        dropout_rate = hp.Float('dropout_rate', min_value=0.0, max_value=0.1, step=0.05)
         learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
 
         # Quantizers
         weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
-        z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
+        nmodule_xlocal_weight_quantizer = quantized_bits(self.nmodule_xlocal_weight_bits, self.nmodule_xlocal_int_bits, alpha=1.0)
 
         # Input layers
         x_profile_input = Input(shape=(21,), name="x_profile")
-        z_global_input = Input(shape=(1,), name="z_global")
+        nmodule_input = Input(shape=(1,), name="nModule")
+        x_local_input = Input(shape=(1,), name="x_local")
         y_profile_input = Input(shape=(13,), name="y_profile")
         y_local_input = Input(shape=(1,), name="y_local")
 
@@ -292,17 +306,18 @@ class Model2_5(Model2):
         )(other_features)
         other_dense = QActivation("quantized_relu(8,0)", name="other_activation")(other_dense)
 
-        # z_global branch
-        z_dense = QDense(
-            z_global_units,
-            kernel_quantizer=z_weight_quantizer,
-            bias_quantizer=z_weight_quantizer,
-            name="z_global_dense"
-        )(z_global_input)
-        z_dense = QActivation("quantized_relu(8,0)", name="z_activation")(z_dense)
+        # nModule_xlocal branch - concatenate nModule and x_local first
+        nmodule_xlocal_concat = Concatenate(name="nmodule_xlocal_concat")([nmodule_input, x_local_input])
+        nmodule_xlocal_dense = QDense(
+            nmodule_xlocal_units,
+            kernel_quantizer=nmodule_xlocal_weight_quantizer,
+            bias_quantizer=nmodule_xlocal_weight_quantizer,
+            name="nmodule_xlocal_dense"
+        )(nmodule_xlocal_concat)
+        nmodule_xlocal_dense = QActivation("quantized_relu(8,0)", name="nmodule_xlocal_activation")(nmodule_xlocal_dense)
 
         # Merge both branches
-        merged = Concatenate(name="merged_features")([other_dense, z_dense])
+        merged = Concatenate(name="merged_features")([other_dense, nmodule_xlocal_dense])
         
         # Two more dense layers
         hidden = QDense(
@@ -332,7 +347,7 @@ class Model2_5(Model2):
         output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
 
         model = Model(
-            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+            inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
             outputs=output,
             name=f"model2_5_quantized_{weight_bits}w{int_bits}i_hyperparameter_tuning"
         )
@@ -349,19 +364,19 @@ class Model2_5(Model2):
     def _calculate_model_parameters(self, hyperparams):
         """Calculate parameter counts for Model2.5 architecture."""
         spatial_units = hyperparams.get('spatial_units', self.dense_units)
-        z_global_units = hyperparams.get('z_global_units', self.z_global_units)
+        nmodule_xlocal_units = hyperparams.get('nmodule_xlocal_units', self.nmodule_xlocal_units)
         dense2_units = hyperparams.get('dense2_units', self.dense2_units)
         dense3_units = hyperparams.get('dense3_units', self.dense3_units)
         
         other_dim = 21 + 13 + 1  # x_profile + y_profile + y_local
-        z_dim = 1
+        nmodule_xlocal_dim = 2  # nModule + x_local
 
-        # First layer: spatial features and z_global
+        # First layer: spatial features and nModule_xlocal
         spatial_dense_params = (other_dim * spatial_units) + spatial_units  # weights + bias
-        z_dense_params = (z_dim * z_global_units) + z_global_units  # weights + bias
+        nmodule_xlocal_dense_params = (nmodule_xlocal_dim * nmodule_xlocal_units) + nmodule_xlocal_units  # weights + bias
         
-        # Second layer: concatenated (spatial_units + z_global_units) -> dense2_units
-        concat_dim = spatial_units + z_global_units
+        # Second layer: concatenated (spatial_units + nmodule_xlocal_units) -> dense2_units
+        concat_dim = spatial_units + nmodule_xlocal_units
         dense2_params = (concat_dim * dense2_units) + dense2_units
         
         # Third layer: dense2_units -> dense3_units
@@ -370,15 +385,16 @@ class Model2_5(Model2):
         # Output layer: dense3_units -> 1
         output_params = dense3_units + 1
 
-        total_params = spatial_dense_params + z_dense_params + dense2_params + dense3_params + output_params
+        total_params = spatial_dense_params + nmodule_xlocal_dense_params + dense2_params + dense3_params + output_params
 
         layer_structure = [
             {'name': 'x_profile', 'type': 'Input', 'shape': 21},
             {'name': 'y_profile', 'type': 'Input', 'shape': 13},
             {'name': 'y_local', 'type': 'Input', 'shape': 1},
-            {'name': 'z_global', 'type': 'Input', 'shape': 1},
+            {'name': 'nModule', 'type': 'Input', 'shape': 1},
+            {'name': 'x_local', 'type': 'Input', 'shape': 1},
             {'name': 'other_dense', 'type': 'Dense/QDense', 'units': spatial_units, 'parameters': spatial_dense_params},
-            {'name': 'z_global_dense', 'type': 'Dense/QDense (8-bit)', 'units': z_global_units, 'parameters': z_dense_params},
+            {'name': 'nmodule_xlocal_dense', 'type': 'Dense/QDense (8-bit)', 'units': nmodule_xlocal_units, 'parameters': nmodule_xlocal_dense_params},
             {'name': 'concatenate', 'type': 'Concatenate', 'units': concat_dim, 'parameters': 0},
             {'name': 'dense2', 'type': 'Dense/QDense', 'units': dense2_units, 'parameters': dense2_params},
             {'name': 'dense3', 'type': 'Dense/QDense', 'units': dense3_units, 'parameters': dense3_params},
@@ -401,7 +417,7 @@ def main():
     model25 = Model2_5(
         tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
         dense_units=128,
-        z_global_units=32,
+        nmodule_xlocal_units=32,
         dense2_units=128,
         dense3_units=64,
         dropout_rate=0.1,
@@ -409,9 +425,9 @@ def main():
         end_lr=1e-4,
         power=2,
         bit_configs=[(4, 0)],
-        # z_global_weight_bits=8,  # Original: 8-bit z_global
-        z_global_weight_bits=4,    # Changed to 4-bit z_global
-        z_global_int_bits=0
+        # nmodule_xlocal_weight_bits=8,  # Original: 8-bit nModule_xlocal
+        nmodule_xlocal_weight_bits=4,    # Changed to 4-bit nModule_xlocal
+        nmodule_xlocal_int_bits=0
     )
 
     results = model25.runAllStuff(numEpochs = 20)

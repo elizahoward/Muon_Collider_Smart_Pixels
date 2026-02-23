@@ -10,24 +10,37 @@ It selects Pareto optimal models based on:
 - Maximize: Background rejection at a given signal efficiency (or weighted metric)
 
 Workflow:
-1. Load hyperparameter results and H5 models
-2. Evaluate models on validation data to compute ROC metrics
-3. Select Pareto optimal models (two-tier) based on complexity vs background rejection
-4. Copy selected H5 model files to output directory
-5. Generate Pareto front plots and summary files
+1. Find H5 models in input directory
+2. Auto-detect required input features by inspecting first model (smart!)
+3. Load validation data with only the required features (efficient!)
+4. Evaluate models on validation data to compute ROC metrics
+5. Select Pareto optimal models (two-tier) based on complexity vs background rejection
+6. Copy selected H5 model files to output directory
+7. Generate Pareto front plots and summary files
+
+Key Feature:
+- Automatically detects input features from model architecture (not TFRecords)
+- Only parses features the model actually needs (saves RAM and time)
+- Works with any model architecture without code changes
 
 Author: Eric
 Date: February 2026
 
 
 Examples:
-  # Use weighted background rejection (default)
-
+  # Auto-detect features from model (default - recommended)
   python analyze_and_select_pareto_roc.py
       --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815
       --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
       --output_dir ../model2_5_pareto_roc_selected
       --use_weighted
+  
+  # Manually specify features (if needed)
+  python analyze_and_select_pareto_roc.py
+      --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815
+      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
+      --output_dir ../model2_5_pareto_roc_selected
+      --features "x_profile,nModule,x_local,y_profile,y_local"
 """
 
 import os
@@ -67,40 +80,112 @@ except ImportError:
     print("Warning: QKeras not available")
 
 
-# ============================================================================
-# TENSORFLOW DATA LOADING
-# ============================================================================
+def _detect_model_input_features(model_file):
+    """
+    Detect required input features by inspecting a model's input layers.
+    
+    Args:
+        model_file: Path to H5 model file
+    
+    Returns:
+        dict: Feature description dictionary with feature names as keys
+    """
+    try:
+        custom_objects = get_custom_objects()
+        model = load_model(model_file, custom_objects=custom_objects, compile=False)
+        
+        # Get input layer names
+        feature_names = []
+        if hasattr(model, 'input_names'):
+            feature_names = model.input_names
+        elif hasattr(model, 'input'):
+            # Handle single or multiple inputs
+            if isinstance(model.input, list):
+                feature_names = [inp.name.split(':')[0].split('/')[-1] for inp in model.input]
+            else:
+                feature_names = [model.input.name.split(':')[0].split('/')[-1]]
+        
+        # Clean up
+        del model
+        tf.keras.backend.clear_session()
+        
+        if not feature_names:
+            raise ValueError(f"Could not detect input features from model: {model_file}")
+        
+        # Build feature description (all features are serialized tensors)
+        feature_description = {name: tf.io.FixedLenFeature([], tf.string) for name in feature_names}
+        
+        # Always include 'y' for labels
+        feature_description['y'] = tf.io.FixedLenFeature([], tf.string)
+        
+        print(f"  Detected {len(feature_names)} input features from model: {sorted(feature_names)}")
+        return feature_description
+        
+    except Exception as e:
+        raise ValueError(f"Failed to detect features from model {model_file}: {e}")
 
-def _parse_tfrecord_fn(example):
-    """Parse a single TFRecord example."""
-    feature_description = {
-        'y': tf.io.FixedLenFeature([], tf.string),
-        'x_profile': tf.io.FixedLenFeature([], tf.string),
-        'z_global': tf.io.FixedLenFeature([], tf.string),
-        'y_profile': tf.io.FixedLenFeature([], tf.string),
-        'y_local': tf.io.FixedLenFeature([], tf.string),
-    }
 
-    example = tf.io.parse_single_example(example, feature_description)
-    y = tf.io.parse_tensor(example['y'], out_type=tf.float32)
-    X = {
-        'x_profile': tf.io.parse_tensor(example['x_profile'], out_type=tf.float32),
-        'z_global': tf.io.parse_tensor(example['z_global'], out_type=tf.float32),
-        'y_profile': tf.io.parse_tensor(example['y_profile'], out_type=tf.float32),
-        'y_local': tf.io.parse_tensor(example['y_local'], out_type=tf.float32),
-    }
+def _parse_tfrecord_fn(example, feature_description=None):
+    """
+    Parse a single TFRecord example.
+    
+    Args:
+        example: Raw TFRecord example
+        feature_description: Dict of feature descriptions. If None, uses default.
+    
+    Returns:
+        Tuple of (X dict, y): Input features and labels
+    """
+    if feature_description is None:
+        # Default feature description for backward compatibility
+        feature_description = {
+            'y': tf.io.FixedLenFeature([], tf.string),
+            'x_local': tf.io.FixedLenFeature([], tf.string),
+            'y_profile': tf.io.FixedLenFeature([], tf.string),
+            'y_local': tf.io.FixedLenFeature([], tf.string),
+        }
+    
+    parsed = tf.io.parse_single_example(example, feature_description)
+    
+    # Extract label (must be 'y')
+    if 'y' not in parsed:
+        raise ValueError("TFRecord must contain 'y' feature for labels")
+    
+    y = tf.io.parse_tensor(parsed['y'], out_type=tf.float32)
+    
+    # Extract all other features as input
+    X = {}
+    for feature_name, feature_value in parsed.items():
+        if feature_name != 'y':
+            X[feature_name] = tf.io.parse_tensor(feature_value, out_type=tf.float32)
+    
     return X, y
 
 
-def build_tfrecord_dataset(tfrecord_dir):
-    """Build TensorFlow dataset from TFRecord files."""
+def build_tfrecord_dataset(tfrecord_dir, feature_description=None):
+    """
+    Build TensorFlow dataset from TFRecord files.
+    
+    Args:
+        tfrecord_dir: Directory containing TFRecord files
+        feature_description: Feature description dict (required)
+    
+    Returns:
+        TensorFlow dataset
+    """
+    if feature_description is None:
+        raise ValueError("feature_description is required. Use _detect_model_input_features() to get it from a model.")
+    
+    # Create parse function with feature description
+    parse_fn = lambda ex: _parse_tfrecord_fn(ex, feature_description)
+    
     pattern = os.path.join(tfrecord_dir, "*.tfrecord")
     files = tf.data.Dataset.list_files(pattern, shuffle=False)
     ds = files.interleave(
         tf.data.TFRecordDataset,
         num_parallel_calls=tf.data.AUTOTUNE
     )
-    ds = ds.map(_parse_tfrecord_fn, num_parallel_calls=tf.data.AUTOTUNE)
+    ds = ds.map(parse_fn, num_parallel_calls=tf.data.AUTOTUNE)
     ds = ds.prefetch(tf.data.AUTOTUNE)
     return ds
 
@@ -615,6 +700,13 @@ Examples:
         help='Weights for background rejection (format: "sig_eff:weight,..." default: "0.95:0.3,0.98:0.6,0.99:0.1")'
     )
     
+    parser.add_argument(
+        '--features',
+        type=str,
+        default=None,
+        help='Comma-separated list of feature names to parse (default: auto-detect from first model)'
+    )
+    
     args = parser.parse_args()
     
     # Parse background rejection weights
@@ -627,6 +719,16 @@ Examples:
     else:
         signal_efficiencies = [args.signal_efficiency]
         bkg_rej_weights = None
+    
+    # Parse feature description if provided
+    feature_description = None
+    if args.features:
+        feature_list = [f.strip() for f in args.features.split(',')]
+        # Always include 'y' for labels
+        if 'y' not in feature_list:
+            feature_list.append('y')
+        feature_description = {name: tf.io.FixedLenFeature([], tf.string) for name in feature_list}
+        print(f"Using specified features: {sorted(feature_list)}")
     
     # Validate directories
     if not os.path.isdir(args.input_dir):
@@ -655,21 +757,7 @@ Examples:
     else:
         print(f"Metric: Background rejection @ {args.signal_efficiency:.0%} signal efficiency")
     
-    # Load validation data
-    print("\n" + "=" * 80)
-    print("LOADING VALIDATION DATA")
-    print("=" * 80)
-    val_dir = os.path.join(args.data_dir, "tfrecords_validation/")
-    
-    if not os.path.exists(val_dir):
-        print(f"Error: Validation directory not found: {val_dir}")
-        sys.exit(1)
-    
-    print(f"Loading validation data from: {val_dir}")
-    validation_dataset = build_tfrecord_dataset(val_dir)
-    print("✓ Validation dataset loaded")
-    
-    # Find all H5 files
+    # Find all H5 files first
     print("\n" + "=" * 80)
     print("FINDING MODEL FILES")
     print("=" * 80)
@@ -683,6 +771,28 @@ Examples:
         sys.exit(1)
     
     print(f"Found {len(h5_files)} models to evaluate")
+    
+    # Detect features from first model if not specified
+    if feature_description is None:
+        print("\n" + "=" * 80)
+        print("DETECTING INPUT FEATURES FROM MODEL")
+        print("=" * 80)
+        print(f"Inspecting first model: {os.path.basename(h5_files[0])}")
+        feature_description = _detect_model_input_features(h5_files[0])
+    
+    # Load validation data
+    print("\n" + "=" * 80)
+    print("LOADING VALIDATION DATA")
+    print("=" * 80)
+    val_dir = os.path.join(args.data_dir, "tfrecords_validation/")
+    
+    if not os.path.exists(val_dir):
+        print(f"Error: Validation directory not found: {val_dir}")
+        sys.exit(1)
+    
+    print(f"Loading validation data from: {val_dir}")
+    validation_dataset = build_tfrecord_dataset(val_dir, feature_description=feature_description)
+    print("✓ Validation dataset loaded")
     
     # Evaluate all models
     print("\n" + "=" * 80)

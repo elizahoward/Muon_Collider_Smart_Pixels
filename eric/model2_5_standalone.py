@@ -2,11 +2,11 @@
 Model2.5 Standalone Implementation - Inherits from SmartPixModel but independent from Model2
 
 Model2.5 is a simplified architecture with a single dense fusion layer and 
-dedicated 8-bit (or 4-bit) projection for the z_global feature.
+dedicated 8-bit (or 4-bit) projection for the nModule_xlocal feature (concatenation of nModule and x_local).
 
 Architecture:
 - Spatial features (x_profile + y_profile + y_local) -> spatial_units
-- z_global feature -> z_global_units (with separate quantization)
+- nModule_xlocal feature (nModule + x_local) -> nmodule_xlocal_units (with separate quantization)
 - Concatenate -> dense2_units -> dense3_units -> output
 
 Author: Eric
@@ -50,13 +50,14 @@ except ImportError:
 class Model2_5_Standalone(SmartPixModel):
     """
     Model2.5: Standalone implementation with single-hidden-layer architecture
-    and dedicated quantization for z_global feature.
+    and dedicated quantization for nModule_xlocal feature (concatenation of nModule and x_local).
     
     Features:
     - x_profile: 21-dimensional profile data
     - y_profile: 13-dimensional profile data
     - y_local: 1-dimensional local y coordinate
-    - z_global: 1-dimensional global z coordinate (separate branch)
+    - nModule: 1-dimensional module number (separate branch)
+    - x_local: 1-dimensional local x coordinate (separate branch)
     """
     
     def __init__(self,
@@ -65,7 +66,7 @@ class Model2_5_Standalone(SmartPixModel):
                  loadModel: bool = False,
                  modelPath: str = None,
                  dense_units: int = 128,
-                 z_global_units: int = 32,
+                 nmodule_xlocal_units: int = 32,
                  dense2_units: int = 128,
                  dense3_units: int = 64,
                  dropout_rate: float = 0.1,
@@ -73,8 +74,8 @@ class Model2_5_Standalone(SmartPixModel):
                  end_lr: float = 1e-4,
                  power: int = 2,
                  bit_configs = [(4, 0)],
-                 z_global_weight_bits: int = 4,
-                 z_global_int_bits: int = 0):
+                 nmodule_xlocal_weight_bits: int = 4,
+                 nmodule_xlocal_int_bits: int = 0):
         """
         Initialize Model2.5 Standalone.
         
@@ -84,7 +85,7 @@ class Model2_5_Standalone(SmartPixModel):
             loadModel: Whether to load a pre-trained model
             modelPath: Path to saved model (if loadModel=True)
             dense_units: Units for spatial features branch
-            z_global_units: Units for z_global branch
+            nmodule_xlocal_units: Units for nModule_xlocal branch
             dense2_units: Units in second dense layer
             dense3_units: Units in third dense layer
             dropout_rate: Dropout rate for regularization
@@ -92,8 +93,8 @@ class Model2_5_Standalone(SmartPixModel):
             end_lr: End learning rate for polynomial decay
             power: Power for polynomial decay
             bit_configs: List of (weight_bits, int_bits) tuples for quantization
-            z_global_weight_bits: Bit width for z_global weights
-            z_global_int_bits: Integer bits for z_global weights
+            nmodule_xlocal_weight_bits: Bit width for nModule_xlocal weights
+            nmodule_xlocal_int_bits: Integer bits for nModule_xlocal weights
         """
         # Call parent constructor
         super().__init__(
@@ -109,15 +110,15 @@ class Model2_5_Standalone(SmartPixModel):
         
         self.modelName = "Model2.5"
         self.dense_units = dense_units
-        self.z_global_units = z_global_units
+        self.nmodule_xlocal_units = nmodule_xlocal_units
         self.dense2_units = dense2_units
         self.dense3_units = dense3_units
         self.dropout_rate = dropout_rate
-        self.z_global_weight_bits = z_global_weight_bits
-        self.z_global_int_bits = z_global_int_bits
+        self.nmodule_xlocal_weight_bits = nmodule_xlocal_weight_bits
+        self.nmodule_xlocal_int_bits = nmodule_xlocal_int_bits
         
         # Feature configuration for Model2.5
-        self.x_feature_description = ['x_profile', 'z_global', 'y_profile', 'y_local']
+        self.x_feature_description = ['x_profile', 'nModule', 'x_local', 'y_profile', 'y_local']
         
         # Data generators (will be set by loadTfRecords)
         self.training_generator = None
@@ -175,12 +176,13 @@ class Model2_5_Standalone(SmartPixModel):
         """Build the unquantized Model2.5 architecture."""
         print("Building unquantized Model2.5...")
         print(f"  - Spatial features branch: {self.dense_units} units")
-        print(f"  - z_global branch: {self.z_global_units} units")
+        print(f"  - nModule_xlocal branch: {self.nmodule_xlocal_units} units")
         print(f"  - Merged dense layers: {self.dense2_units} -> {self.dense3_units}")
         
         # Input layers
         x_profile_input = Input(shape=(21,), name="x_profile")
-        z_global_input = Input(shape=(1,), name="z_global")
+        nmodule_input = Input(shape=(1,), name="nModule")
+        x_local_input = Input(shape=(1,), name="x_local")
         y_profile_input = Input(shape=(13,), name="y_profile")
         y_local_input = Input(shape=(1,), name="y_local")
 
@@ -189,11 +191,12 @@ class Model2_5_Standalone(SmartPixModel):
         other_features = Concatenate(name="other_features")([xy_concat, y_local_input])
         other_dense = Dense(self.dense_units, activation="relu", name="other_dense")(other_features)
 
-        # z_global branch
-        z_dense = Dense(self.z_global_units, activation="relu", name="z_global_dense")(z_global_input)
+        # nModule_xlocal branch - concatenate nModule and x_local first
+        nmodule_xlocal_concat = Concatenate(name="nmodule_xlocal_concat")([nmodule_input, x_local_input])
+        nmodule_xlocal_dense = Dense(self.nmodule_xlocal_units, activation="relu", name="nmodule_xlocal_dense")(nmodule_xlocal_concat)
 
         # Merge both branches
-        merged = Concatenate(name="merged_features")([other_dense, z_dense])
+        merged = Concatenate(name="merged_features")([other_dense, nmodule_xlocal_dense])
         
         # Two more dense layers
         hidden = Dense(self.dense2_units, activation="relu", name="dense2")(merged)
@@ -204,7 +207,7 @@ class Model2_5_Standalone(SmartPixModel):
         output = Dense(1, activation="tanh", name="output")(hidden)
 
         model = Model(
-            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+            inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
             outputs=output,
             name="model2_5_unquantized"
         )
@@ -228,15 +231,16 @@ class Model2_5_Standalone(SmartPixModel):
             config_name = f"quantized_{weight_bits}w{int_bits}i"
             print(f"Building Model2.5 {config_name}...")
             print(f"  - Spatial features branch: {self.dense_units} units ({weight_bits}-bit)")
-            print(f"  - z_global branch: {self.z_global_units} units ({self.z_global_weight_bits}-bit)")
+            print(f"  - nModule_xlocal branch: {self.nmodule_xlocal_units} units ({self.nmodule_xlocal_weight_bits}-bit)")
 
             # Quantizers
             weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
-            z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
+            nmodule_xlocal_weight_quantizer = quantized_bits(self.nmodule_xlocal_weight_bits, self.nmodule_xlocal_int_bits, alpha=1.0)
 
             # Input layers
             x_profile_input = Input(shape=(21,), name="x_profile")
-            z_global_input = Input(shape=(1,), name="z_global")
+            nmodule_input = Input(shape=(1,), name="nModule")
+            x_local_input = Input(shape=(1,), name="x_local")
             y_profile_input = Input(shape=(13,), name="y_profile")
             y_local_input = Input(shape=(1,), name="y_local")
 
@@ -251,17 +255,18 @@ class Model2_5_Standalone(SmartPixModel):
             )(other_features)
             other_dense = QActivation("quantized_relu(8,0)", name="other_activation")(other_dense)
 
-            # z_global branch
-            z_dense = QDense(
-                self.z_global_units,
-                kernel_quantizer=z_weight_quantizer,
-                bias_quantizer=z_weight_quantizer,
-                name="z_global_dense"
-            )(z_global_input)
-            z_dense = QActivation("quantized_relu(8,0)", name="z_activation")(z_dense)
+            # nModule_xlocal branch - concatenate nModule and x_local first
+            nmodule_xlocal_concat = Concatenate(name="nmodule_xlocal_concat")([nmodule_input, x_local_input])
+            nmodule_xlocal_dense = QDense(
+                self.nmodule_xlocal_units,
+                kernel_quantizer=nmodule_xlocal_weight_quantizer,
+                bias_quantizer=nmodule_xlocal_weight_quantizer,
+                name="nmodule_xlocal_dense"
+            )(nmodule_xlocal_concat)
+            nmodule_xlocal_dense = QActivation("quantized_relu(8,0)", name="nmodule_xlocal_activation")(nmodule_xlocal_dense)
 
             # Merge both branches
-            merged = Concatenate(name="merged_features")([other_dense, z_dense])
+            merged = Concatenate(name="merged_features")([other_dense, nmodule_xlocal_dense])
             
             # Two more dense layers
             hidden = QDense(
@@ -291,7 +296,7 @@ class Model2_5_Standalone(SmartPixModel):
             output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
 
             model = Model(
-                inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+                inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
                 outputs=output,
                 name=f"model2_5_{config_name}"
             )
@@ -314,10 +319,10 @@ class Model2_5_Standalone(SmartPixModel):
 
         # Hyperparameter search space with progressive constraints
         spatial_units = hp.Int('spatial_units', min_value=16, max_value=150, step=16)
-        z_global_units = hp.Int('z_global_units', min_value=2, max_value=16, step=2)
+        nmodule_xlocal_units = hp.Int('nmodule_xlocal_units', min_value=2, max_value=16, step=2)
         
         # Calculate max size for dense2 (should not exceed concatenated size)
-        concat_size = spatial_units + z_global_units
+        concat_size = spatial_units + nmodule_xlocal_units
         dense2_max = min(256, concat_size)
         dense2_units = hp.Int('dense2_units', min_value=4, max_value=dense2_max, step=8)
         
@@ -330,11 +335,12 @@ class Model2_5_Standalone(SmartPixModel):
 
         # Quantizers
         weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
-        z_weight_quantizer = quantized_bits(self.z_global_weight_bits, self.z_global_int_bits, alpha=1.0)
+        nmodule_xlocal_weight_quantizer = quantized_bits(self.nmodule_xlocal_weight_bits, self.nmodule_xlocal_int_bits, alpha=1.0)
 
         # Input layers
         x_profile_input = Input(shape=(21,), name="x_profile")
-        z_global_input = Input(shape=(1,), name="z_global")
+        nmodule_input = Input(shape=(1,), name="nModule")
+        x_local_input = Input(shape=(1,), name="x_local")
         y_profile_input = Input(shape=(13,), name="y_profile")
         y_local_input = Input(shape=(1,), name="y_local")
 
@@ -349,17 +355,18 @@ class Model2_5_Standalone(SmartPixModel):
         )(other_features)
         other_dense = QActivation("quantized_relu(8,0)", name="other_activation")(other_dense)
 
-        # z_global branch
-        z_dense = QDense(
-            z_global_units,
-            kernel_quantizer=z_weight_quantizer,
-            bias_quantizer=z_weight_quantizer,
-            name="z_global_dense"
-        )(z_global_input)
-        z_dense = QActivation("quantized_relu(8,0)", name="z_activation")(z_dense)
+        # nModule_xlocal branch - concatenate nModule and x_local first
+        nmodule_xlocal_concat = Concatenate(name="nmodule_xlocal_concat")([nmodule_input, x_local_input])
+        nmodule_xlocal_dense = QDense(
+            nmodule_xlocal_units,
+            kernel_quantizer=nmodule_xlocal_weight_quantizer,
+            bias_quantizer=nmodule_xlocal_weight_quantizer,
+            name="nmodule_xlocal_dense"
+        )(nmodule_xlocal_concat)
+        nmodule_xlocal_dense = QActivation("quantized_relu(8,0)", name="nmodule_xlocal_activation")(nmodule_xlocal_dense)
 
         # Merge both branches
-        merged = Concatenate(name="merged_features")([other_dense, z_dense])
+        merged = Concatenate(name="merged_features")([other_dense, nmodule_xlocal_dense])
         
         # Two more dense layers
         hidden = QDense(
@@ -389,7 +396,7 @@ class Model2_5_Standalone(SmartPixModel):
         output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
 
         model = Model(
-            inputs=[x_profile_input, z_global_input, y_profile_input, y_local_input],
+            inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
             outputs=output,
             name=f"model2_5_quantized_{weight_bits}w{int_bits}i_hyperparameter_tuning"
         )
@@ -406,19 +413,19 @@ class Model2_5_Standalone(SmartPixModel):
     def _calculate_model_parameters(self, hyperparams):
         """Calculate parameter counts for Model2.5 architecture."""
         spatial_units = hyperparams.get('spatial_units', self.dense_units)
-        z_global_units = hyperparams.get('z_global_units', self.z_global_units)
+        nmodule_xlocal_units = hyperparams.get('nmodule_xlocal_units', self.nmodule_xlocal_units)
         dense2_units = hyperparams.get('dense2_units', self.dense2_units)
         dense3_units = hyperparams.get('dense3_units', self.dense3_units)
         
         other_dim = 21 + 13 + 1  # x_profile + y_profile + y_local
-        z_dim = 1
+        nmodule_xlocal_dim = 2  # nModule + x_local
 
-        # First layer: spatial features and z_global
+        # First layer: spatial features and nModule_xlocal
         spatial_dense_params = (other_dim * spatial_units) + spatial_units
-        z_dense_params = (z_dim * z_global_units) + z_global_units
+        nmodule_xlocal_dense_params = (nmodule_xlocal_dim * nmodule_xlocal_units) + nmodule_xlocal_units
         
         # Second layer: concatenated -> dense2_units
-        concat_dim = spatial_units + z_global_units
+        concat_dim = spatial_units + nmodule_xlocal_units
         dense2_params = (concat_dim * dense2_units) + dense2_units
         
         # Third layer: dense2_units -> dense3_units
@@ -427,7 +434,7 @@ class Model2_5_Standalone(SmartPixModel):
         # Output layer: dense3_units -> 1
         output_params = dense3_units + 1
 
-        total_params = spatial_dense_params + z_dense_params + dense2_params + dense3_params + output_params
+        total_params = spatial_dense_params + nmodule_xlocal_dense_params + dense2_params + dense3_params + output_params
 
         return {
             'total_parameters': int(total_params),
@@ -847,7 +854,7 @@ def main():
     model25 = Model2_5_Standalone(
         tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
         dense_units=128,
-        z_global_units=32,
+        nmodule_xlocal_units=32,
         dense2_units=128,
         dense3_units=64,
         dropout_rate=0.1,
@@ -855,8 +862,8 @@ def main():
         end_lr=1e-4,
         power=2,
         bit_configs=[(4, 0)],
-        z_global_weight_bits=4,
-        z_global_int_bits=0
+        nmodule_xlocal_weight_bits=4,
+        nmodule_xlocal_int_bits=0
     )
 
     results = model25.runQuantizedHyperparameterTuning(

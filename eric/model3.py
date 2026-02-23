@@ -3,13 +3,13 @@ Model3 Implementation using the SmartPixModel Abstract Base Class
 
 This module implements Model3 as a concrete class inheriting from SmartPixModel.
 Model3 is a CNN-based architecture that processes cluster data through Conv2D/MaxPooling,
-then concatenates with a dense layer processing z_global and y_local features.
+then concatenates with a dense layer processing nModule, x_local, and y_local features.
 
 Architecture:
 - Conv2D branch: cluster -> Conv2D (3x5 kernel, 32 filters) -> MaxPooling -> Flatten
-- Scalar branch: z_global + y_local -> Concatenate -> Dense (32 units)
+- Scalar branch: (nModule + x_local) + y_local -> Concatenate -> Dense (32 units)
 - Merge: Concatenate conv output with scalar dense output
-- Head: Dense (200 units) -> Dense (100 units) -> Output (sigmoid)
+- Head: Dense (200 units) -> Dense (100 units) -> Output (quantized_tanh)
 
 Author: Eric
 Date: 2024
@@ -53,11 +53,12 @@ class Model3(SmartPixModel):
     Model3: CNN-based architecture for smart pixel detector classification.
     
     This model processes cluster data (13x21 spatial, last timestamp) through Conv2D layers,
-    then concatenates with z_global and y_local coordinates for binary classification.
+    then concatenates with nModule, x_local, and y_local coordinates for binary classification.
     
     Features:
     - cluster: 13x21x20 (uses last timestamp only)
-    - z_global: 1-dimensional global z coordinate
+    - nModule: 1-dimensional module number
+    - x_local: 1-dimensional local x coordinate
     - y_local: 1-dimensional local y coordinate
     """
     
@@ -89,7 +90,7 @@ class Model3(SmartPixModel):
             conv_filters: Number of filters in Conv2D layer
             kernel_rows: Kernel height for Conv2D
             kernel_cols: Kernel width for Conv2D
-            scalar_dense_units: Units in dense layer after concatenating z_global and y_local
+            scalar_dense_units: Units in dense layer after concatenating nModule, x_local, and y_local
             merged_dense_1: Units in first dense layer after merging conv and scalar branches
             merged_dense_2: Units in second dense layer before output
             dropout_rate: Dropout rate for regularization
@@ -117,7 +118,7 @@ class Model3(SmartPixModel):
         self.power = power
         
         # Model3 specific feature configuration
-        self.x_feature_description = ['cluster', 'y_local', 'z_global']
+        self.x_feature_description = ['cluster', 'y_local', 'nModule', 'x_local']
         self.time_stamps = [19]  # Use only the last timestamp
         
         # Initialize data generators
@@ -198,7 +199,8 @@ class Model3(SmartPixModel):
         # Input layers
         # cluster is already (13, 21) after taking last timestamp in data generator
         cluster_input = Input(shape=(13, 21), name="cluster")
-        z_global_input = Input(shape=(1,), name="z_global")
+        nmodule_input = Input(shape=(1,), name="nModule")
+        x_local_input = Input(shape=(1,), name="x_local")
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Conv2D branch
@@ -214,8 +216,8 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate z_global and y_local, then dense
-        scalar_concat = Concatenate(name="concat_scalars")([z_global_input, y_local_input])
+        # Scalar branch: concatenate nModule, x_local, and y_local, then dense
+        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
         scalar_x = Dense(self.scalar_dense_units, activation="relu", name="dense_scalars")(scalar_concat)
         
         # Merge conv and scalar branches
@@ -232,7 +234,7 @@ class Model3(SmartPixModel):
         
         # Create and compile model
         self.models["Unquantized"] = Model(
-            inputs=[cluster_input, z_global_input, y_local_input], 
+            inputs=[cluster_input, nmodule_input, x_local_input, y_local_input], 
             outputs=output, 
             name="model3_unquantized"
         )
@@ -248,7 +250,8 @@ class Model3(SmartPixModel):
         """
         # Input layers
         cluster_input = Input(shape=(13, 21), name="cluster")
-        z_global_input = Input(shape=(1,), name="z_global")
+        nmodule_input = Input(shape=(1,), name="nModule")
+        x_local_input = Input(shape=(1,), name="x_local")
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
@@ -272,8 +275,8 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate z_global and y_local, then dense
-        scalar_concat = Concatenate(name="concat_scalars")([z_global_input, y_local_input])
+        # Scalar branch: concatenate nModule, x_local, and y_local, then dense
+        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
         scalar_x = Dense(scalar_dense_units, activation="relu", name="dense_scalars")(scalar_concat)
         
         # Merge conv and scalar branches
@@ -290,7 +293,7 @@ class Model3(SmartPixModel):
         
         # Create model
         model = Model(
-            inputs=[cluster_input, z_global_input, y_local_input], 
+            inputs=[cluster_input, nmodule_input, x_local_input, y_local_input], 
             outputs=output, 
             name="model3_hyperparameter_tuning"
         )
@@ -329,7 +332,8 @@ class Model3(SmartPixModel):
             
             # Input layers
             cluster_input = Input(shape=(13, 21), name="cluster")
-            z_global_input = Input(shape=(1,), name="z_global")
+            nmodule_input = Input(shape=(1,), name="nModule")
+            x_local_input = Input(shape=(1,), name="x_local")
             y_local_input = Input(shape=(1,), name="y_local")
             
             # Conv2D branch with quantization
@@ -346,8 +350,8 @@ class Model3(SmartPixModel):
             conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
             conv_x = Flatten(name="flatten_vol")(conv_x)
             
-            # Scalar branch: concatenate z_global and y_local, then dense with quantization
-            scalar_concat = Concatenate(name="concat_scalars")([z_global_input, y_local_input])
+            # Scalar branch: concatenate nModule, x_local, and y_local, then dense with quantization
+            scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
             scalar_x = QDense(
                 self.scalar_dense_units, 
                 kernel_quantizer=weight_quantizer, 
@@ -388,7 +392,7 @@ class Model3(SmartPixModel):
             
             # Create model
             model = Model(
-                inputs=[cluster_input, z_global_input, y_local_input], 
+                inputs=[cluster_input, nmodule_input, x_local_input, y_local_input], 
                 outputs=output, 
                 name=f"model3_{config_name}"
             )
@@ -428,7 +432,8 @@ class Model3(SmartPixModel):
         
         # Input layers
         cluster_input = Input(shape=(13, 21), name="cluster")
-        z_global_input = Input(shape=(1,), name="z_global")
+        nmodule_input = Input(shape=(1,), name="nModule")
+        x_local_input = Input(shape=(1,), name="x_local")
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
@@ -460,8 +465,8 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate z_global and y_local, then dense with quantization
-        scalar_concat = Concatenate(name="concat_scalars")([z_global_input, y_local_input])
+        # Scalar branch: concatenate nModule, x_local, and y_local, then dense with quantization
+        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
         scalar_x = QDense(
             scalar_dense_units, 
             kernel_quantizer=weight_quantizer, 
@@ -502,7 +507,7 @@ class Model3(SmartPixModel):
         
         # Create model
         model = Model(
-            inputs=[cluster_input, z_global_input, y_local_input], 
+            inputs=[cluster_input, nmodule_input, x_local_input, y_local_input], 
             outputs=output, 
             name=f"model3_quantized_{weight_bits}w{int_bits}i_hyperparameter_tuning"
         )
@@ -522,10 +527,10 @@ class Model3(SmartPixModel):
         Calculate model parameters from hyperparameters without loading the model.
         
         Model3 architecture:
-        - Input: cluster (13x21), z_global (1), y_local (1)
+        - Input: cluster (13x21), nModule (1), x_local (1), y_local (1)
         - Conv2D: kernel_size=(kernel_rows, kernel_cols), filters=conv_filters
         - MaxPooling2D (2,2) -> Flatten
-        - Scalar branch: z_global + y_local (2 features) -> dense(scalar_dense_units)
+        - Scalar branch: nModule + x_local + y_local (3 features) -> dense(scalar_dense_units)
         - Concatenate conv + scalar
         - merged_dense_1
         - merged_dense_2
@@ -549,8 +554,8 @@ class Model3(SmartPixModel):
         # After MaxPooling2D(2,2) on (13, 21) input: (6, 10, conv_filters) -> flattened to 60*conv_filters
         conv_flattened_size = 60 * conv_filters
         
-        # Scalar dense: (2 * scalar_dense_units) + scalar_dense_units
-        scalar_dense_params = (2 * scalar_dense_units) + scalar_dense_units
+        # Scalar dense: (3 * scalar_dense_units) + scalar_dense_units (nModule + x_local + y_local = 3 features)
+        scalar_dense_params = (3 * scalar_dense_units) + scalar_dense_units
         
         # Concatenate: conv_flattened + scalar_dense_units
         concat_size = conv_flattened_size + scalar_dense_units
@@ -572,7 +577,8 @@ class Model3(SmartPixModel):
         # Layer structure
         layer_structure = [
             {'name': 'cluster_input', 'type': 'Input', 'shape': '(13, 21)'},
-            {'name': 'z_global_input', 'type': 'Input', 'shape': 1},
+            {'name': 'nmodule_input', 'type': 'Input', 'shape': 1},
+            {'name': 'x_local_input', 'type': 'Input', 'shape': 1},
             {'name': 'y_local_input', 'type': 'Input', 'shape': 1},
             {'name': 'conv2d', 'type': 'QConv2D', 'filters': conv_filters, 
              'kernel_size': f'{kernel_rows}x{kernel_cols}', 'parameters': conv2d_params},

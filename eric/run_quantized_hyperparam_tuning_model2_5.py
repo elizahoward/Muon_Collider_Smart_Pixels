@@ -9,7 +9,7 @@ Parameters:
 - 150 max trials  # CHANGED from 300 to 150
 - Objective: weighted background rejection
   weighted = 0.3*BR95 + 0.6*BR98 + 0.1*BR99
-- Progressive layer sizes: dense2_units <= (spatial_units + z_global_units)
+- Progressive layer sizes: dense2_units <= (spatial_units + nmodule_xlocal_units)
                           dense3_units <= dense2_units
 
 Author: Eric
@@ -35,7 +35,7 @@ def main():
     print("\nConfiguration:")
     print(f"  - Data folder: {data_folder}")
     print("  - Quantization: 6-bit fractional, 0 integer bits")  # CHANGED from 4-bit
-    print("  - z_global: 6-bit (matches spatial features)")  # CHANGED from 4-bit
+    print("  - nModule_xlocal: 6-bit (matches spatial features)")  # CHANGED from z_global to nModule_xlocal
     print("  - Epochs per trial: 16")
     print("  - Executions per trial: 1")
     print("  - Max trials: 150")  # CHANGED from 300
@@ -49,7 +49,7 @@ def main():
     # model25 = Model2_5(
     #     tfRecordFolder=data_folder,
     #     dense_units=128,
-    #     z_global_units=32,
+    #     nmodule_xlocal_units=32,  # CHANGED from z_global_units
     #     dense2_units=128,
     #     dense3_units=64,
     #     dropout_rate=0.1,
@@ -57,8 +57,8 @@ def main():
     #     end_lr=1e-4,
     #     power=2,
     #     bit_configs=[(4, 0)],   # 4-bit quantization
-    #     z_global_weight_bits=4,
-    #     z_global_int_bits=0
+    #     nmodule_xlocal_weight_bits=4,  # CHANGED from z_global_weight_bits
+    #     nmodule_xlocal_int_bits=0  # CHANGED from z_global_int_bits
     # )
     # bit_configs = [(4, 0)]  # 4-bit fractional, 0 integer bits
     # max_trials = 300
@@ -68,7 +68,7 @@ def main():
     model25 = Model2_5(
         tfRecordFolder=data_folder,
         dense_units=128,        # Will be overridden by hyperparameter search
-        z_global_units=32,      # Will be overridden by hyperparameter search
+        nmodule_xlocal_units=32,      # Will be overridden by hyperparameter search (CHANGED from z_global_units)
         dense2_units=128,       # Will be overridden by hyperparameter search
         dense3_units=64,        # Will be overridden by hyperparameter search
         dropout_rate=0.1,
@@ -76,12 +76,12 @@ def main():
         end_lr=1e-4,
         power=2,
         bit_configs=[(6, 0)],   # 6-bit quantization
-        z_global_weight_bits=6,    # 6-bit z_global
-        z_global_int_bits=0
+        nmodule_xlocal_weight_bits=6,    # 6-bit nModule_xlocal (CHANGED from z_global_weight_bits)
+        nmodule_xlocal_int_bits=0  # CHANGED from z_global_int_bits
     )
     
     # Run hyperparameter tuning on 6-bit quantization
-    bit_configs = [(6, 0)]  # 6-bit fractional, 0 integer bits
+    bit_configs = [(4, 0)]  # 6-bit fractional, 0 integer bits
     
     results = model25.runQuantizedHyperparameterTuning(
         bit_configs=bit_configs,
@@ -89,7 +89,7 @@ def main():
         executions_per_trial=1,
         numEpochs=20,
         use_weighted_bkg_rej=True,
-        bkg_rej_weights={0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
+        bkg_rej_weights={0.95: 0.1, 0.98: 0.7, 0.99: 0.2}
     )
     
     # Print results summary
