@@ -387,8 +387,8 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            inputList = [input1, input2, input3, input4]
 
-            
 
             x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
@@ -418,19 +418,6 @@ class Model1(SmartPixModel):
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
-        """
-
-        tuner = SaveModelRandomSearch(
-            hypermodel=model_builder,
-            objective="val_binary_accuracy",
-            max_trials=120,
-            executions_per_trial=2,
-            project_name="hp_search_2rows_matching",
-            #directory="./hyperparameter_tuning",   # tuner logs go here
-            save_dir=save_dir,                     # YOUR .h5 files go here
-            objective_name="val_binary_accuracy"
-        )
-        """
         tuner = SaveModelRandomSearch(
             hypermodel= model_builder,
             objective="val_binary_accuracy",
@@ -593,9 +580,9 @@ def main():
     """
     m1 = Model1()
     m1.loadTfRecords()
-    m1.makeUnquantizedModel()
-    m1.trainModel(early_stopping_patience=10)
-    m1.evaluate()
+    m1.makeUnquatizedModelHyperParameterTuning2()
+
+    
 
 
 if __name__ == "__main__":
