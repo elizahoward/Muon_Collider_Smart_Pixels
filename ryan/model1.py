@@ -227,20 +227,24 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
-
-            ## concatenate the inputs into one layer
             inputList = [input1, input2, input3, input4]
-            inputs = tf.keras.layers.Concatenate()(inputList)
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x=x_concat3
 
 
             ## here i will add the layers 
 
             # layer 1
-            x = tf.keras.layers.Dense(rownodes,activation='relu')(inputs)
+            x = tf.keras.layers.Dense(rownodes,activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
+
             output = tf.keras.layers.Dense(1,activation='sigmoid')(x)
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
@@ -253,22 +257,34 @@ class Model1(SmartPixModel):
             )
             return model
 
-        tuner = kt.RandomSearch(
-        model_builder, 
-        objective           = "val_binary_accuracy",
-        max_trials          = 120,
-        executions_per_trial = 2,
-        project_name        = "hp_search_5rows"
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_dir = f"{self.modelName.lower()}_unquantized_hp5rows_results_{timestamp}"
+        os.makedirs(save_dir, exist_ok=True)
+        print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
+
+        tuner = SaveModelRandomSearch(
+            hypermodel= model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_5rows_matching",
+            directory="./hyperparameter_tuning_5",   # keep KT logs in one place
+            overwrite=True,                        # avoid weird resume behavior
+            save_dir=save_dir,
+            objective_name="val_binary_accuracy",
         )
 
         tuner.search(
             self.training_generator,
-            validation_data = self.validation_generator,
-            epochs          = 110,
-            callbacks       = [
+            validation_data=self.validation_generator,
+            epochs=110,
+            callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-            ]
+            ],
         )
+        
+        return tuner, save_dir
+
 
     def makeUnquatizedModelHyperParameterTuning4(self):
         def model_builder(hp):
@@ -281,16 +297,19 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
-
-            ## concatenate the inputs into one layer
             inputList = [input1, input2, input3, input4]
-            inputs = tf.keras.layers.Concatenate()(inputList)
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x=x_concat3
 
 
             ## here i will add the layers 
 
             # layer 1
-            x = tf.keras.layers.Dense(rownodes,activation='relu')(inputs)
+            x = tf.keras.layers.Dense(rownodes,activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
@@ -306,22 +325,36 @@ class Model1(SmartPixModel):
             )
             return model
 
-        tuner = kt.RandomSearch(
-        model_builder, 
-        objective           = "val_binary_accuracy",
-        max_trials          = 120,
-        executions_per_trial = 2,
-        project_name        = "hp_search_4rows"
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_dir = f"{self.modelName.lower()}_unquantized_hp4rows_results_{timestamp}"
+        os.makedirs(save_dir, exist_ok=True)
+        print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
+
+        tuner = SaveModelRandomSearch(
+            hypermodel= model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_4rows_matching",
+            directory="./hyperparameter_tuning_4",   # keep KT logs in one place
+            overwrite=True,                        # avoid weird resume behavior
+            save_dir=save_dir,
+            objective_name="val_binary_accuracy",
         )
+
 
         tuner.search(
             self.training_generator,
-            validation_data = self.validation_generator,
-            epochs          = 110,
-            callbacks       = [
+            validation_data=self.validation_generator,
+            epochs=110,
+            callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-            ]
+            ],
         )
+        
+        return tuner, save_dir
+
+    
 
 
     def makeUnquatizedModelHyperParameterTuning3(self):
@@ -335,16 +368,19 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
-
-            ## concatenate the inputs into one layer
             inputList = [input1, input2, input3, input4]
-            inputs = tf.keras.layers.Concatenate()(inputList)
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x=x_concat3
 
 
             ## here i will add the layers 
 
             # layer 1
-            x = tf.keras.layers.Dense(rownodes,activation='relu')(inputs)
+            x = tf.keras.layers.Dense(rownodes,activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             x = tf.keras.layers.Dense(rownodes, activation='relu')(x)
             output = tf.keras.layers.Dense(1,activation='sigmoid')(x)
@@ -359,22 +395,34 @@ class Model1(SmartPixModel):
             )
             return model
 
-        tuner = kt.RandomSearch(
-        model_builder, 
-        objective           = "val_binary_accuracy",
-        max_trials          = 120,
-        executions_per_trial = 2,
-        project_name        = "hp_search_3rows"
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_dir = f"{self.modelName.lower()}_unquantized_hp3rows_results_{timestamp}"
+        os.makedirs(save_dir, exist_ok=True)
+        print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
+
+        tuner = SaveModelRandomSearch(
+            hypermodel= model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_3rows_matching",
+            directory="./hyperparameter_tuning_3",   # keep KT logs in one place
+            overwrite=True,                        # avoid weird resume behavior
+            save_dir=save_dir,
+            objective_name="val_binary_accuracy",
         )
+
 
         tuner.search(
             self.training_generator,
-            validation_data = self.validation_generator,
-            epochs          = 110,
-            callbacks       = [
+            validation_data=self.validation_generator,
+            epochs=110,
+            callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-            ]
+            ],
         )
+
+        return tuner, save_dir
 
     def makeUnquatizedModelHyperParameterTuning2(self):
         def model_builder(hp):
@@ -424,7 +472,7 @@ class Model1(SmartPixModel):
             max_trials=120,
             executions_per_trial=2,
             project_name="hp_search_2rows_matching",
-            directory="./hyperparameter_tuning",   # keep KT logs in one place
+            directory="./hyperparameter_tuning_2",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -581,6 +629,15 @@ def main():
     m1 = Model1()
     m1.loadTfRecords()
     m1.makeUnquatizedModelHyperParameterTuning2()
+        
+    m1.loadTfRecords()
+    m1.makeUnquatizedModelHyperParameterTuning3()
+
+    m1.loadTfRecords()
+    m1.makeUnquatizedModelHyperParameterTuning4()
+
+    m1.loadTfRecords()
+    m1.makeUnquatizedModelHyperParameterTuning5()
 
     
 
