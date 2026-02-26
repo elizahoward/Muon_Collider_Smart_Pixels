@@ -149,8 +149,8 @@ class ModelASIC(Model_Classes.SmartPixModel):
             
             # Concatenate all inputs
             x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
-            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input4])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input3])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
             x=x_concat3
             
             weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
