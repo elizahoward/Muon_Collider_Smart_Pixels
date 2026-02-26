@@ -27,3 +27,13 @@ Alternatively, if not working on the workstation, copy /local/d1/smartpixML/cond
 cd MuC_Smartpix_ML
 python modelRunner.py
 ```
+
+'''
+workflow for hyperparanmter
+
+/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/run_quantized_hyperparam_tuning_model2_5.py
+/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/ericHLS/analyze_and_select_pareto_roc.py
+/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/ericHLS/parallel_hls_synthesis.py
+/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/ericHLS/analyze_hls_results.py
+
+'''
