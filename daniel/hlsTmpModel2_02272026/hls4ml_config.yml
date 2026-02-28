@@ -1,0 +1,77 @@
+ASICFIFO: hls4ml_lib.mgc_pipe_mem
+ASICRAM: ccs_sample_mem.ccs_ram_sync_1R1W
+Backend: Catapult
+BuildOptions:
+  BUPWorkers: 0
+  BuildBUP: 0
+  LaunchDA: 0
+  PowerEst: 0
+  PowerOpt: 0
+  RTLSynth: 0
+  RandomTBFrames: 2
+  SCVerify: 1
+  Synth: 1
+  csim: 1
+  startup: ''
+  verilog: 1
+  vhdl: 1
+CModelDefaultThreshold: 0.0
+ClockPeriod: 5
+ClockUncertainty: 12.5%
+CopyAC: false
+CopyNNET: false
+FIFO: null
+GlobalDirectives:
+  allocate: {}
+  analyze:
+    MEM_MAP_THRESHOLD: '[expr 2048 * 16 + 1]'
+    REDUNDANT_RTL_ELIMINATION: 'false'
+    RESET_CLEARS_ALL_REGS: 'no'
+  architect: {}
+  assembly:
+    ADVANCED_DPOPT: 'false'
+  compile: {}
+  dpfsm: {}
+  extract: {}
+  libraries: {}
+  schedule: {}
+HLSConfig:
+  Model:
+    BitExact: null
+    Precision: ap_fixed<16,6>
+    ReuseFactor: 1
+IOType: io_parallel
+InputData: null
+InputShapes:
+  nModule:
+  - 1
+  x_local:
+  - 1
+  x_profile:
+  - 21
+  y_local:
+  - 1
+  y_profile:
+  - 13
+KerasModel: !keras_model './hlsTmpModel2_02272026/keras_model.keras'
+MemType: null
+OutputDir: ./hlsTmpModel2_02272026
+OutputPredictions: null
+OutputShapes:
+  layer24_out:
+  - 1
+ParamStore: global
+Part: xcvu13p-flga2577-2-e
+PortType: null
+ProjectDir: null
+ProjectName: myproject
+RAM: Xilinx_RAMS.BLOCK_1R1W_RBW
+ROMLocation: Local
+Stamp: 3b01d78b
+Technology: fpga
+Version: 1.0.0
+WriterConfig:
+  Namespace: null
+  TBOutputStream: both
+  WriteTar: false
+  WriteWeightsTxt: true

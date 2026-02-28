@@ -1,0 +1,15 @@
+Layer Name;Layer Class;Input Type;Input Shape;Output Type;Output Shape;Weight Type;Bias Type;Filter Shape;Stride;Reuse
+xy_concat;Concatenate;ac_fixed<16,6,true> ;[13];ac_fixed<16,6,true> ;[34];;;;;1
+other_features;Concatenate;ac_fixed<16,6,true> ;[1];ac_fixed<16,6,true> ;[35];;;;;1
+nmodule_xlocal_concat;Concatenate;ac_fixed<16,6,true> ;[35];ac_fixed<16,6,true> ;[2];;;;;1
+other_dense;Dense;ac_fixed<16,6,true> ;[2];ac_fixed<16,6,true> ;[128];ac_fixed<4,1,true>;ac_fixed<4,1,true>;;;1
+nmodule_xlocal_dense;Dense;ac_fixed<16,6,true> ;[128];ac_fixed<16,6,true> ;[14];ac_fixed<6,1,true>;ac_fixed<6,1,true>;;;1
+other_activation;relu;ac_fixed<16,6,true> ;[14];ac_fixed<16,6,true> ;[128];;;;;1
+nmodule_xlocal_activation;relu;ac_fixed<16,6,true> ;[128];ac_fixed<16,6,true> ;[14];;;;;1
+merged_features;Concatenate;ac_fixed<16,6,true> ;[14];ac_fixed<16,6,true> ;[142];;;;;1
+dense2;Dense;ac_fixed<16,6,true> ;[142];ac_fixed<16,6,true> ;[56];ac_fixed<4,1,true>;ac_fixed<4,1,true>;;;1
+dense2_activation;relu;ac_fixed<16,6,true> ;[56];ac_fixed<16,6,true> ;[56];;;;;1
+dense3;Dense;ac_fixed<16,6,true> ;[56];ac_fixed<16,6,true> ;[42];ac_fixed<4,1,true>;ac_fixed<4,1,true>;;;1
+dense3_activation;relu;ac_fixed<16,6,true> ;[42];ac_fixed<16,6,true> ;[42];;;;;1
+output;Dense;ac_fixed<16,6,true> ;[42];ac_fixed<16,6,true> ;[1];ac_fixed<4,1,true>;ac_fixed<4,1,true>;;;1
+output_activation;HardActivation;ac_fixed<16,6,true> ;[1];ac_fixed<16,6,true> ;[1];;;;;1
