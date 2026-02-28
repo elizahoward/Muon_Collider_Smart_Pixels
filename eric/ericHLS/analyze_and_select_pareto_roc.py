@@ -252,13 +252,13 @@ def compute_weighted_background_rejection(y_true, y_score, bkg_rej_weights=None)
         y_true: True labels
         y_score: Predicted scores
         bkg_rej_weights: Dict mapping signal efficiency to weight
-                        Default: {0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
+                        Default: {0.95: 0.1, 0.98: 0.7, 0.99: 0.2}
     
     Returns:
         float: Weighted background rejection score
     """
     if bkg_rej_weights is None:
-        bkg_rej_weights = {0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
+        bkg_rej_weights = {0.95: 0.1, 0.98: 0.7, 0.99: 0.2}
     
     weighted_score = 0.0
     for sig_eff, weight in bkg_rej_weights.items():
@@ -696,8 +696,8 @@ Examples:
     parser.add_argument(
         '--bkg_rej_weights',
         type=str,
-        default='0.95:0.3,0.98:0.6,0.99:0.1',
-        help='Weights for background rejection (format: "sig_eff:weight,..." default: "0.95:0.3,0.98:0.6,0.99:0.1")'
+        default='0.95:0.1,0.98:0.7,0.99:0.2',
+        help='Weights for background rejection (format: "sig_eff:weight,..." default: "0.95:0.1,0.98:0.7,0.99:0.2")'
     )
     
     parser.add_argument(

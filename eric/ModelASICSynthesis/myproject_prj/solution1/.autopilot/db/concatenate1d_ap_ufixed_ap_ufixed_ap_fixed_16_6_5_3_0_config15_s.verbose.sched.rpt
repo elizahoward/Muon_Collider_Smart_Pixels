@@ -1,0 +1,149 @@
+
+
+================================================================
+== Vitis HLS Report for 'concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s'
+================================================================
+* Date:           Mon Feb 23 22:02:33 2026
+
+* Version:        2024.1 (Build 5069499 on May 21 2024)
+* Project:        myproject_prj
+* Solution:       solution1 (Vivado IP Flow Target)
+* Product family: zynq
+* Target device:  xc7z020-clg400-1
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing: 
+    * Summary: 
+    +--------+---------+----------+------------+
+    |  Clock |  Target | Estimated| Uncertainty|
+    +--------+---------+----------+------------+
+    |ap_clk  |  5.00 ns|      0 ns|     0.62 ns|
+    +--------+---------+----------+------------+
+
++ Latency: 
+    * Summary: 
+    +---------+---------+----------+----------+-----+-----+---------+
+    |  Latency (cycles) |  Latency (absolute) |  Interval | Pipeline|
+    |   min   |   max   |    min   |    max   | min | max |   Type  |
+    +---------+---------+----------+----------+-----+-----+---------+
+    |        0|        0|      0 ns|      0 ns|    1|    1|      yes|
+    +---------+---------+----------+----------+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        N/A
+
+        * Loop: 
+        N/A
+
+============================================================
++ Verbose Summary: Synthesis Manager
+============================================================
+InlineROM: 1
+ExposeGlobal: 0
+============================================================
++ Verbose Summary: CDFG Model
+============================================================
+IsTopModel: 0
+ResetActiveHigh: 1
+IsCombinational: 0
+IsDatapathOnly: 0
+HasWiredReturn: 1
+HasMFsm: 2
+HasVarLatency: 0
+IsPipeline: 1
+IsRtlPipelined: 0
+IsInstanceOverlapped: 0
+IsDontTouch: 0
+HasImplIP: 0
+IsGatedGlobalClock: 0
+
++ Individual pipeline summary: 
+  * Pipeline-0: initiation interval (II) = 1, depth = 1
+
+
+============================================================
++ Verbose Summary: Schedule
+============================================================
+* Number of FSM states : 1
+* Pipeline : 1
+  Pipeline-0 : II = 1, D = 1, States = { 1 }
+* Dataflow Pipeline: 0
+
+* FSM state transitions: 
+1 --> 
+
+* FSM state operations: 
+
+State 1 <SV = 0> <Delay = 0.00>
+ST_1 : Operation 2 [1/1] (0.00ns)   --->   "%specpipeline_ln120 = specpipeline void @_ssdm_op_SpecPipeline, i32 4294967295, i32 0, i32 0, i32 0, void @empty_0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 2 'specpipeline' 'specpipeline_ln120' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 3 [1/1] (0.00ns)   --->   "%data2_1_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data2_1_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 3 'read' 'data2_1_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 4 [1/1] (0.00ns)   --->   "%data2_0_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data2_0_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 4 'read' 'data2_0_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 5 [1/1] (0.00ns)   --->   "%data1_7_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data1_7_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 5 'read' 'data1_7_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 6 [1/1] (0.00ns)   --->   "%data1_6_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data1_6_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 6 'read' 'data1_6_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 7 [1/1] (0.00ns)   --->   "%data1_5_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data1_5_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 7 'read' 'data1_5_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 8 [1/1] (0.00ns)   --->   "%data1_4_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data1_4_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 8 'read' 'data1_4_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 9 [1/1] (0.00ns)   --->   "%data1_3_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data1_3_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 9 'read' 'data1_3_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 10 [1/1] (0.00ns)   --->   "%data1_2_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data1_2_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 10 'read' 'data1_2_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 11 [1/1] (0.00ns)   --->   "%data1_1_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data1_1_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 11 'read' 'data1_1_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 12 [1/1] (0.00ns)   --->   "%data1_0_val_read = read i8 @_ssdm_op_Read.ap_auto.i8, i8 %data1_0_val" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 12 'read' 'data1_0_val_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 13 [1/1] (0.00ns)   --->   "%shl_ln = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data1_0_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 13 'bitconcatenate' 'shl_ln' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 14 [1/1] (0.00ns)   --->   "%zext_ln120 = zext i10 %shl_ln" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 14 'zext' 'zext_ln120' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 15 [1/1] (0.00ns)   --->   "%shl_ln120_1 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data1_1_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 15 'bitconcatenate' 'shl_ln120_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 16 [1/1] (0.00ns)   --->   "%zext_ln120_1 = zext i10 %shl_ln120_1" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 16 'zext' 'zext_ln120_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 17 [1/1] (0.00ns)   --->   "%shl_ln120_2 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data1_2_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 17 'bitconcatenate' 'shl_ln120_2' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 18 [1/1] (0.00ns)   --->   "%zext_ln120_2 = zext i10 %shl_ln120_2" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 18 'zext' 'zext_ln120_2' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 19 [1/1] (0.00ns)   --->   "%shl_ln120_3 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data1_3_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 19 'bitconcatenate' 'shl_ln120_3' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 20 [1/1] (0.00ns)   --->   "%zext_ln120_3 = zext i10 %shl_ln120_3" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 20 'zext' 'zext_ln120_3' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 21 [1/1] (0.00ns)   --->   "%shl_ln120_4 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data1_4_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 21 'bitconcatenate' 'shl_ln120_4' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 22 [1/1] (0.00ns)   --->   "%zext_ln120_4 = zext i10 %shl_ln120_4" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 22 'zext' 'zext_ln120_4' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 23 [1/1] (0.00ns)   --->   "%shl_ln120_5 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data1_5_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 23 'bitconcatenate' 'shl_ln120_5' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 24 [1/1] (0.00ns)   --->   "%zext_ln120_5 = zext i10 %shl_ln120_5" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 24 'zext' 'zext_ln120_5' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 25 [1/1] (0.00ns)   --->   "%shl_ln120_6 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data1_6_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 25 'bitconcatenate' 'shl_ln120_6' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 26 [1/1] (0.00ns)   --->   "%zext_ln120_6 = zext i10 %shl_ln120_6" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 26 'zext' 'zext_ln120_6' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 27 [1/1] (0.00ns)   --->   "%shl_ln120_7 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data1_7_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:120]   --->   Operation 27 'bitconcatenate' 'shl_ln120_7' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 28 [1/1] (0.00ns)   --->   "%zext_ln123 = zext i10 %shl_ln120_7" [firmware/nnet_utils/nnet_merge.h:123]   --->   Operation 28 'zext' 'zext_ln123' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 29 [1/1] (0.00ns)   --->   "%shl_ln2 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data2_0_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:123]   --->   Operation 29 'bitconcatenate' 'shl_ln2' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 30 [1/1] (0.00ns)   --->   "%zext_ln123_1 = zext i10 %shl_ln2" [firmware/nnet_utils/nnet_merge.h:123]   --->   Operation 30 'zext' 'zext_ln123_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 31 [1/1] (0.00ns)   --->   "%shl_ln123_1 = bitconcatenate i10 @_ssdm_op_BitConcatenate.i10.i8.i2, i8 %data2_1_val_read, i2 0" [firmware/nnet_utils/nnet_merge.h:123]   --->   Operation 31 'bitconcatenate' 'shl_ln123_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 32 [1/1] (0.00ns)   --->   "%zext_ln125 = zext i10 %shl_ln123_1" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 32 'zext' 'zext_ln125' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 33 [1/1] (0.00ns)   --->   "%mrv = insertvalue i160 <undef>, i16 %zext_ln120" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 33 'insertvalue' 'mrv' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 34 [1/1] (0.00ns)   --->   "%mrv_1 = insertvalue i160 %mrv, i16 %zext_ln120_1" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 34 'insertvalue' 'mrv_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 35 [1/1] (0.00ns)   --->   "%mrv_2 = insertvalue i160 %mrv_1, i16 %zext_ln120_2" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 35 'insertvalue' 'mrv_2' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 36 [1/1] (0.00ns)   --->   "%mrv_3 = insertvalue i160 %mrv_2, i16 %zext_ln120_3" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 36 'insertvalue' 'mrv_3' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 37 [1/1] (0.00ns)   --->   "%mrv_4 = insertvalue i160 %mrv_3, i16 %zext_ln120_4" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 37 'insertvalue' 'mrv_4' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 38 [1/1] (0.00ns)   --->   "%mrv_5 = insertvalue i160 %mrv_4, i16 %zext_ln120_5" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 38 'insertvalue' 'mrv_5' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 39 [1/1] (0.00ns)   --->   "%mrv_6 = insertvalue i160 %mrv_5, i16 %zext_ln120_6" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 39 'insertvalue' 'mrv_6' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 40 [1/1] (0.00ns)   --->   "%mrv_7 = insertvalue i160 %mrv_6, i16 %zext_ln123" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 40 'insertvalue' 'mrv_7' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 41 [1/1] (0.00ns)   --->   "%mrv_8 = insertvalue i160 %mrv_7, i16 %zext_ln123_1" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 41 'insertvalue' 'mrv_8' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 42 [1/1] (0.00ns)   --->   "%mrv_9 = insertvalue i160 %mrv_8, i16 %zext_ln125" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 42 'insertvalue' 'mrv_9' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 43 [1/1] (0.00ns)   --->   "%ret_ln125 = ret i160 %mrv_9" [firmware/nnet_utils/nnet_merge.h:125]   --->   Operation 43 'ret' 'ret_ln125' <Predicate = true> <Delay = 0.00>
+
+
+============================================================
++ Verbose Summary: Timing violations
+============================================================
+Target clock period: 5.000ns, clock uncertainty: 0.625ns.
+
+ <State 1>: 0.000ns
+The critical path consists of the following:
+
+
+============================================================
++ Verbose Summary: Binding
+============================================================
+N/A
+* FSMD analyzer results:
+  - Output states:
+ - Input state : 
+  - Chain level:
+	State 1
+
+
+============================================================
++ Verbose Summary: Datapath Resource usage 
+============================================================
+N/A

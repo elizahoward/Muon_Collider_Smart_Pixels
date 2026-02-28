@@ -270,14 +270,10 @@ class Model2_5(Model2):
         spatial_units = hp.Int('spatial_units', min_value=8, max_value=128, step=8)
         nmodule_xlocal_units = hp.Int('nmodule_xlocal_units', min_value=2, max_value=12, step=2)
         
-        # Layer 2: Use ratio of concat_size (avoids clipping bias)
-        # This ensures dense2_units <= concat_size by construction
         concat_size = spatial_units + nmodule_xlocal_units
         dense2_ratio = hp.Float('dense2_ratio', min_value=0.2, max_value=0.7, step=0.1)
         dense2_units = max(4, int(concat_size * dense2_ratio / 4) * 4)  # Round to multiple of 4
         
-        # Layer 3: Use ratio of dense2_units (avoids clipping bias)
-        # This ensures dense3_units <= dense2_units by construction
         dense3_ratio = hp.Float('dense3_ratio', min_value=0.2, max_value=0.7, step=0.1)
         dense3_units = max(4, int(dense2_units * dense3_ratio / 2) * 2)  # Round to multiple of 2
         
