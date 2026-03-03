@@ -1,4 +1,5 @@
 import importlib
+import os
 import yaml
 
 def buildFromConfig(conf, run_time_args = {}):
@@ -27,3 +28,7 @@ def load_config(config_file):
         conf = yaml.load(f, Loader=yaml.FullLoader)
     include_config(conf)
     return conf
+
+def save_config(config, output_dir):
+    with open(os.path.join(output_dir, 'config.yaml'), 'w') as f:
+        yaml.dump(config, f)

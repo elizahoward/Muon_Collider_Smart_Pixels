@@ -10,6 +10,7 @@ import keras_tuner as kt
 from sklearn.metrics import roc_curve, auc
 from pathlib import Path
 import os
+import keras
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -25,6 +26,7 @@ import matplotlib
 matplotlib.use('Agg')
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
+@keras.utils.register_keras_serializable(package='Custom', name='WarmupThenDecay')
 class WarmupThenDecay(tf.keras.optimizers.schedules.LearningRateSchedule):
     """
     Two-phase schedule for quantized models:
@@ -182,7 +184,7 @@ class SmartPixModel(ABC):
         # Do we want to specify model, modelType, bitSize, etc.
         # Decide here if we want to load a pre-trained model or create a new one from scratch
         self.tfRecordFolder = tfRecordFolder
-        self.modelName = "Base Model" # for other models, e.g., Model 1, Model 2, etc.
+        self.modelName = "Base_Model" # for other models, e.g., Model 1, Model 2, etc.
         self.models = {"Unquantized": None, "Quantized": None} # Maybe have a dictionary to store different versions of the model
         self.hyperparameterModel = None
         self.bit_configs = bit_configs
@@ -283,7 +285,7 @@ class SmartPixModel(ABC):
     """
     def loadModel(self, file_path: str,config_name = "Unquantized"):
         print(f"Loading model from: {file_path}")
-        custom_objects = {"QDense": QDense, "QActivation": QActivation, "quantized_bits": quantized_bits, "quantized_relu": quantized_relu}
+        custom_objects = {"QDense": QDense, "QActivation": QActivation, "quantized_bits": quantized_bits, "quantized_relu": quantized_relu, 'WarmupThenDecay': WarmupThenDecay}
         self.models[config_name]=tf.keras.models.load_model(file_path, compile=True, custom_objects=custom_objects)
 
     """
@@ -603,8 +605,11 @@ class SmartPixModel(ABC):
             'test_loss': float(test_loss),
             'test_accuracy': float(test_accuracy),
             'roc_auc': float(roc_auc),
-            'fpr': fpr.tolist(),
-            'tpr': tpr.tolist()
+            'fpr': np.array(fpr),
+            'tpr': np.array(tpr),
+            'thresholds': np.array(thresholds),
+            'predictions': np.array(predictions),
+            'true_labels': np.array(true_labels)
         }
         
         print(f"✓ {self.modelName} evaluation completed!")
@@ -771,7 +776,7 @@ class SmartPixModel(ABC):
         print(f"  - Plots: {plots_dir}/")
         print(f"  - Results CSV: {results_file}")
         
-        return results
+        return results, output_dir
     
     def runEval(self, evalAll = True):
         """
