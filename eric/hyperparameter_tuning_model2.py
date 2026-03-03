@@ -32,7 +32,7 @@ def main():
     print("=== Model2 Hyperparameter Tuning Script ===")
     
     # Configuration
-    tfRecordFolder = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/"
+    tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
     
     # Check if dataset exists
     if not os.path.exists(tfRecordFolder):

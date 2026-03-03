@@ -1,0 +1,379 @@
+
+
+================================================================
+== Vitis HLS Report for 'myproject'
+================================================================
+* Date:           Tue Mar  3 12:18:49 2026
+
+* Version:        2024.1 (Build 5069499 on May 21 2024)
+* Project:        myproject_prj
+* Solution:       solution1 (Vivado IP Flow Target)
+* Product family: zynq
+* Target device:  xc7z020-clg400-1
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing: 
+    * Summary: 
+    +--------+---------+----------+------------+
+    |  Clock |  Target | Estimated| Uncertainty|
+    +--------+---------+----------+------------+
+    |ap_clk  |  5.00 ns|  4.362 ns|     0.62 ns|
+    +--------+---------+----------+------------+
+
++ Latency: 
+    * Summary: 
+    +---------+---------+----------+----------+-----+-----+---------+
+    |  Latency (cycles) |  Latency (absolute) |  Interval | Pipeline|
+    |   min   |   max   |    min   |    max   | min | max |   Type  |
+    +---------+---------+----------+----------+-----+-----+---------+
+    |       23|       23|  0.115 us|  0.115 us|    1|    1|      yes|
+    +---------+---------+----------+----------+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        N/A
+
+        * Loop: 
+        N/A
+
+============================================================
++ Verbose Summary: Synthesis Manager
+============================================================
+InlineROM: 1
+ExposeGlobal: 0
+============================================================
++ Verbose Summary: CDFG Model
+============================================================
+IsTopModel: 1
+ResetActiveHigh: 1
+IsCombinational: 0
+IsDatapathOnly: 0
+HasWiredReturn: 1
+HasMFsm: 2
+HasVarLatency: 0
+IsPipeline: 1
+IsRtlPipelined: 1
+IsInstanceOverlapped: 0
+IsDontTouch: 0
+HasImplIP: 0
+IsGatedGlobalClock: 0
+
++ Individual pipeline summary: 
+  * Pipeline-0: initiation interval (II) = 1, depth = 24
+
+
+============================================================
++ Verbose Summary: Schedule
+============================================================
+* Number of FSM states : 24
+* Pipeline : 1
+  Pipeline-0 : II = 1, D = 24, States = { 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 }
+* Dataflow Pipeline: 0
+
+* FSM state transitions: 
+1 --> 2 
+2 --> 3 
+3 --> 4 
+4 --> 5 
+5 --> 6 
+6 --> 7 
+7 --> 8 
+8 --> 9 
+9 --> 10 
+10 --> 11 
+11 --> 12 
+12 --> 13 
+13 --> 14 
+14 --> 15 
+15 --> 16 
+16 --> 17 
+17 --> 18 
+18 --> 19 
+19 --> 20 
+20 --> 21 
+21 --> 22 
+22 --> 23 
+23 --> 24 
+24 --> 
+
+* FSM state operations: 
+
+State 1 <SV = 0> <Delay = 3.34>
+ST_1 : Operation 25 [1/1] (0.00ns)   --->   "%z_global_read = read i16 @_ssdm_op_Read.ap_vld.i16P0A, i16 %z_global"   --->   Operation 25 'read' 'z_global_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 26 [1/1] (0.00ns)   --->   "%x_size_read = read i16 @_ssdm_op_Read.ap_vld.i16P0A, i16 %x_size"   --->   Operation 26 'read' 'x_size_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 27 [1/1] (0.00ns)   --->   "%call_ret1 = call i32 @concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config3>, i16 %z_global_read, i16 %x_size_read" [firmware/myproject.cpp:42]   --->   Operation 27 'call' 'call_ret1' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+ST_1 : Operation 28 [1/1] (0.00ns)   --->   "%layer3_out = extractvalue i32 %call_ret1" [firmware/myproject.cpp:42]   --->   Operation 28 'extractvalue' 'layer3_out' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 29 [1/1] (0.00ns)   --->   "%layer3_out_1 = extractvalue i32 %call_ret1" [firmware/myproject.cpp:42]   --->   Operation 29 'extractvalue' 'layer3_out_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 30 [1/1] (0.00ns)   --->   "%y_size_read = read i16 @_ssdm_op_Read.ap_vld.i16P0A, i16 %y_size"   --->   Operation 30 'read' 'y_size_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 31 [1/1] (0.00ns)   --->   "%call_ret2 = call i48 @concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config5>, i16 %layer3_out, i16 %layer3_out_1, i16 %y_size_read" [firmware/myproject.cpp:46]   --->   Operation 31 'call' 'call_ret2' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+ST_1 : Operation 32 [1/1] (0.00ns)   --->   "%layer5_out = extractvalue i48 %call_ret2" [firmware/myproject.cpp:46]   --->   Operation 32 'extractvalue' 'layer5_out' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 33 [1/1] (0.00ns)   --->   "%layer5_out_1 = extractvalue i48 %call_ret2" [firmware/myproject.cpp:46]   --->   Operation 33 'extractvalue' 'layer5_out_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 34 [1/1] (0.00ns)   --->   "%layer5_out_2 = extractvalue i48 %call_ret2" [firmware/myproject.cpp:46]   --->   Operation 34 'extractvalue' 'layer5_out_2' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 35 [1/1] (0.00ns)   --->   "%y_local_read = read i16 @_ssdm_op_Read.ap_vld.i16P0A, i16 %y_local"   --->   Operation 35 'read' 'y_local_read' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 36 [1/1] (0.00ns)   --->   "%call_ret3 = call i64 @concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config7>, i16 %layer5_out, i16 %layer5_out_1, i16 %layer5_out_2, i16 %y_local_read" [firmware/myproject.cpp:50]   --->   Operation 36 'call' 'call_ret3' <Predicate = true> <Delay = 0.00> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+ST_1 : Operation 37 [1/1] (0.00ns)   --->   "%layer7_out = extractvalue i64 %call_ret3" [firmware/myproject.cpp:50]   --->   Operation 37 'extractvalue' 'layer7_out' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 38 [1/1] (0.00ns)   --->   "%layer7_out_1 = extractvalue i64 %call_ret3" [firmware/myproject.cpp:50]   --->   Operation 38 'extractvalue' 'layer7_out_1' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 39 [1/1] (0.00ns)   --->   "%layer7_out_2 = extractvalue i64 %call_ret3" [firmware/myproject.cpp:50]   --->   Operation 39 'extractvalue' 'layer7_out_2' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 40 [1/1] (0.00ns)   --->   "%layer7_out_3 = extractvalue i64 %call_ret3" [firmware/myproject.cpp:50]   --->   Operation 40 'extractvalue' 'layer7_out_3' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 41 [5/5] (3.34ns)   --->   "%call_ret4 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>, i16 %layer7_out, i16 %layer7_out_1, i16 %layer7_out_2, i16 %layer7_out_3" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 41 'call' 'call_ret4' <Predicate = true> <Delay = 3.34> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 2 <SV = 1> <Delay = 4.25>
+ST_2 : Operation 42 [4/5] (4.25ns)   --->   "%call_ret4 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>, i16 %layer7_out, i16 %layer7_out_1, i16 %layer7_out_2, i16 %layer7_out_3" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 42 'call' 'call_ret4' <Predicate = true> <Delay = 4.25> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 3 <SV = 2> <Delay = 4.25>
+ST_3 : Operation 43 [3/5] (4.25ns)   --->   "%call_ret4 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>, i16 %layer7_out, i16 %layer7_out_1, i16 %layer7_out_2, i16 %layer7_out_3" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 43 'call' 'call_ret4' <Predicate = true> <Delay = 4.25> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 4 <SV = 3> <Delay = 4.25>
+ST_4 : Operation 44 [2/5] (4.25ns)   --->   "%call_ret4 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>, i16 %layer7_out, i16 %layer7_out_1, i16 %layer7_out_2, i16 %layer7_out_3" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 44 'call' 'call_ret4' <Predicate = true> <Delay = 4.25> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 5 <SV = 4> <Delay = 3.90>
+ST_5 : Operation 45 [1/5] (3.90ns)   --->   "%call_ret4 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>, i16 %layer7_out, i16 %layer7_out_1, i16 %layer7_out_2, i16 %layer7_out_3" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 45 'call' 'call_ret4' <Predicate = true> <Delay = 3.90> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+ST_5 : Operation 46 [1/1] (0.00ns)   --->   "%layer8_out = extractvalue i112 %call_ret4" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 46 'extractvalue' 'layer8_out' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 47 [1/1] (0.00ns)   --->   "%layer8_out_1 = extractvalue i112 %call_ret4" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 47 'extractvalue' 'layer8_out_1' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 48 [1/1] (0.00ns)   --->   "%layer8_out_2 = extractvalue i112 %call_ret4" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 48 'extractvalue' 'layer8_out_2' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 49 [1/1] (0.00ns)   --->   "%layer8_out_3 = extractvalue i112 %call_ret4" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 49 'extractvalue' 'layer8_out_3' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 50 [1/1] (0.00ns)   --->   "%layer8_out_4 = extractvalue i112 %call_ret4" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 50 'extractvalue' 'layer8_out_4' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 51 [1/1] (0.00ns)   --->   "%layer8_out_5 = extractvalue i112 %call_ret4" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 51 'extractvalue' 'layer8_out_5' <Predicate = true> <Delay = 0.00>
+ST_5 : Operation 52 [1/1] (0.00ns)   --->   "%layer8_out_6 = extractvalue i112 %call_ret4" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54]   --->   Operation 52 'extractvalue' 'layer8_out_6' <Predicate = true> <Delay = 0.00>
+
+State 6 <SV = 5> <Delay = 2.83>
+ST_6 : Operation 53 [1/1] (2.83ns)   --->   "%call_ret5 = call i112 @relu<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, relu_config9>, i16 %layer8_out, i16 %layer8_out_1, i16 %layer8_out_2, i16 %layer8_out_3, i16 %layer8_out_4, i16 %layer8_out_5, i16 %layer8_out_6" [firmware/myproject.cpp:58]   --->   Operation 53 'call' 'call_ret5' <Predicate = true> <Delay = 2.83> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+ST_6 : Operation 54 [1/1] (0.00ns)   --->   "%layer9_out = extractvalue i112 %call_ret5" [firmware/myproject.cpp:58]   --->   Operation 54 'extractvalue' 'layer9_out' <Predicate = true> <Delay = 0.00>
+ST_6 : Operation 55 [1/1] (0.00ns)   --->   "%layer9_out_1 = extractvalue i112 %call_ret5" [firmware/myproject.cpp:58]   --->   Operation 55 'extractvalue' 'layer9_out_1' <Predicate = true> <Delay = 0.00>
+ST_6 : Operation 56 [1/1] (0.00ns)   --->   "%layer9_out_2 = extractvalue i112 %call_ret5" [firmware/myproject.cpp:58]   --->   Operation 56 'extractvalue' 'layer9_out_2' <Predicate = true> <Delay = 0.00>
+ST_6 : Operation 57 [1/1] (0.00ns)   --->   "%layer9_out_3 = extractvalue i112 %call_ret5" [firmware/myproject.cpp:58]   --->   Operation 57 'extractvalue' 'layer9_out_3' <Predicate = true> <Delay = 0.00>
+ST_6 : Operation 58 [1/1] (0.00ns)   --->   "%layer9_out_4 = extractvalue i112 %call_ret5" [firmware/myproject.cpp:58]   --->   Operation 58 'extractvalue' 'layer9_out_4' <Predicate = true> <Delay = 0.00>
+ST_6 : Operation 59 [1/1] (0.00ns)   --->   "%layer9_out_5 = extractvalue i112 %call_ret5" [firmware/myproject.cpp:58]   --->   Operation 59 'extractvalue' 'layer9_out_5' <Predicate = true> <Delay = 0.00>
+ST_6 : Operation 60 [1/1] (0.00ns)   --->   "%layer9_out_6 = extractvalue i112 %call_ret5" [firmware/myproject.cpp:58]   --->   Operation 60 'extractvalue' 'layer9_out_6' <Predicate = true> <Delay = 0.00>
+
+State 7 <SV = 6> <Delay = 3.34>
+ST_7 : Operation 61 [6/6] (3.34ns)   --->   "%call_ret6 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>, i16 %layer9_out, i16 %layer9_out_1, i16 %layer9_out_2, i16 %layer9_out_3, i16 %layer9_out_4, i16 %layer9_out_5, i16 %layer9_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 61 'call' 'call_ret6' <Predicate = true> <Delay = 3.34> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 8 <SV = 7> <Delay = 4.36>
+ST_8 : Operation 62 [5/6] (4.36ns)   --->   "%call_ret6 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>, i16 %layer9_out, i16 %layer9_out_1, i16 %layer9_out_2, i16 %layer9_out_3, i16 %layer9_out_4, i16 %layer9_out_5, i16 %layer9_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 62 'call' 'call_ret6' <Predicate = true> <Delay = 4.36> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 9 <SV = 8> <Delay = 4.36>
+ST_9 : Operation 63 [4/6] (4.36ns)   --->   "%call_ret6 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>, i16 %layer9_out, i16 %layer9_out_1, i16 %layer9_out_2, i16 %layer9_out_3, i16 %layer9_out_4, i16 %layer9_out_5, i16 %layer9_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 63 'call' 'call_ret6' <Predicate = true> <Delay = 4.36> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 10 <SV = 9> <Delay = 4.36>
+ST_10 : Operation 64 [3/6] (4.36ns)   --->   "%call_ret6 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>, i16 %layer9_out, i16 %layer9_out_1, i16 %layer9_out_2, i16 %layer9_out_3, i16 %layer9_out_4, i16 %layer9_out_5, i16 %layer9_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 64 'call' 'call_ret6' <Predicate = true> <Delay = 4.36> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 11 <SV = 10> <Delay = 4.36>
+ST_11 : Operation 65 [2/6] (4.36ns)   --->   "%call_ret6 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>, i16 %layer9_out, i16 %layer9_out_1, i16 %layer9_out_2, i16 %layer9_out_3, i16 %layer9_out_4, i16 %layer9_out_5, i16 %layer9_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 65 'call' 'call_ret6' <Predicate = true> <Delay = 4.36> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 12 <SV = 11> <Delay = 3.90>
+ST_12 : Operation 66 [1/6] (3.90ns)   --->   "%call_ret6 = call i112 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>, i16 %layer9_out, i16 %layer9_out_1, i16 %layer9_out_2, i16 %layer9_out_3, i16 %layer9_out_4, i16 %layer9_out_5, i16 %layer9_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 66 'call' 'call_ret6' <Predicate = true> <Delay = 3.90> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+ST_12 : Operation 67 [1/1] (0.00ns)   --->   "%layer10_out = extractvalue i112 %call_ret6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 67 'extractvalue' 'layer10_out' <Predicate = true> <Delay = 0.00>
+ST_12 : Operation 68 [1/1] (0.00ns)   --->   "%layer10_out_1 = extractvalue i112 %call_ret6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 68 'extractvalue' 'layer10_out_1' <Predicate = true> <Delay = 0.00>
+ST_12 : Operation 69 [1/1] (0.00ns)   --->   "%layer10_out_2 = extractvalue i112 %call_ret6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 69 'extractvalue' 'layer10_out_2' <Predicate = true> <Delay = 0.00>
+ST_12 : Operation 70 [1/1] (0.00ns)   --->   "%layer10_out_3 = extractvalue i112 %call_ret6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 70 'extractvalue' 'layer10_out_3' <Predicate = true> <Delay = 0.00>
+ST_12 : Operation 71 [1/1] (0.00ns)   --->   "%layer10_out_4 = extractvalue i112 %call_ret6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 71 'extractvalue' 'layer10_out_4' <Predicate = true> <Delay = 0.00>
+ST_12 : Operation 72 [1/1] (0.00ns)   --->   "%layer10_out_5 = extractvalue i112 %call_ret6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 72 'extractvalue' 'layer10_out_5' <Predicate = true> <Delay = 0.00>
+ST_12 : Operation 73 [1/1] (0.00ns)   --->   "%layer10_out_6 = extractvalue i112 %call_ret6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62]   --->   Operation 73 'extractvalue' 'layer10_out_6' <Predicate = true> <Delay = 0.00>
+
+State 13 <SV = 12> <Delay = 2.83>
+ST_13 : Operation 74 [1/1] (2.83ns)   --->   "%call_ret7 = call i112 @relu<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, relu_config11>, i16 %layer10_out, i16 %layer10_out_1, i16 %layer10_out_2, i16 %layer10_out_3, i16 %layer10_out_4, i16 %layer10_out_5, i16 %layer10_out_6" [firmware/myproject.cpp:66]   --->   Operation 74 'call' 'call_ret7' <Predicate = true> <Delay = 2.83> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+ST_13 : Operation 75 [1/1] (0.00ns)   --->   "%layer11_out = extractvalue i112 %call_ret7" [firmware/myproject.cpp:66]   --->   Operation 75 'extractvalue' 'layer11_out' <Predicate = true> <Delay = 0.00>
+ST_13 : Operation 76 [1/1] (0.00ns)   --->   "%layer11_out_1 = extractvalue i112 %call_ret7" [firmware/myproject.cpp:66]   --->   Operation 76 'extractvalue' 'layer11_out_1' <Predicate = true> <Delay = 0.00>
+ST_13 : Operation 77 [1/1] (0.00ns)   --->   "%layer11_out_2 = extractvalue i112 %call_ret7" [firmware/myproject.cpp:66]   --->   Operation 77 'extractvalue' 'layer11_out_2' <Predicate = true> <Delay = 0.00>
+ST_13 : Operation 78 [1/1] (0.00ns)   --->   "%layer11_out_3 = extractvalue i112 %call_ret7" [firmware/myproject.cpp:66]   --->   Operation 78 'extractvalue' 'layer11_out_3' <Predicate = true> <Delay = 0.00>
+ST_13 : Operation 79 [1/1] (0.00ns)   --->   "%layer11_out_4 = extractvalue i112 %call_ret7" [firmware/myproject.cpp:66]   --->   Operation 79 'extractvalue' 'layer11_out_4' <Predicate = true> <Delay = 0.00>
+ST_13 : Operation 80 [1/1] (0.00ns)   --->   "%layer11_out_5 = extractvalue i112 %call_ret7" [firmware/myproject.cpp:66]   --->   Operation 80 'extractvalue' 'layer11_out_5' <Predicate = true> <Delay = 0.00>
+ST_13 : Operation 81 [1/1] (0.00ns)   --->   "%layer11_out_6 = extractvalue i112 %call_ret7" [firmware/myproject.cpp:66]   --->   Operation 81 'extractvalue' 'layer11_out_6' <Predicate = true> <Delay = 0.00>
+
+State 14 <SV = 13> <Delay = 3.34>
+ST_14 : Operation 82 [6/6] (3.34ns)   --->   "%layer12_out = call i16 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>, i16 %layer11_out, i16 %layer11_out_1, i16 %layer11_out_2, i16 %layer11_out_3, i16 %layer11_out_4, i16 %layer11_out_5, i16 %layer11_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70]   --->   Operation 82 'call' 'layer12_out' <Predicate = true> <Delay = 3.34> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 15 <SV = 14> <Delay = 3.90>
+ST_15 : Operation 83 [5/6] (3.90ns)   --->   "%layer12_out = call i16 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>, i16 %layer11_out, i16 %layer11_out_1, i16 %layer11_out_2, i16 %layer11_out_3, i16 %layer11_out_4, i16 %layer11_out_5, i16 %layer11_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70]   --->   Operation 83 'call' 'layer12_out' <Predicate = true> <Delay = 3.90> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 16 <SV = 15> <Delay = 3.90>
+ST_16 : Operation 84 [4/6] (3.90ns)   --->   "%layer12_out = call i16 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>, i16 %layer11_out, i16 %layer11_out_1, i16 %layer11_out_2, i16 %layer11_out_3, i16 %layer11_out_4, i16 %layer11_out_5, i16 %layer11_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70]   --->   Operation 84 'call' 'layer12_out' <Predicate = true> <Delay = 3.90> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 17 <SV = 16> <Delay = 3.90>
+ST_17 : Operation 85 [3/6] (3.90ns)   --->   "%layer12_out = call i16 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>, i16 %layer11_out, i16 %layer11_out_1, i16 %layer11_out_2, i16 %layer11_out_3, i16 %layer11_out_4, i16 %layer11_out_5, i16 %layer11_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70]   --->   Operation 85 'call' 'layer12_out' <Predicate = true> <Delay = 3.90> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 18 <SV = 17> <Delay = 3.90>
+ST_18 : Operation 86 [2/6] (3.90ns)   --->   "%layer12_out = call i16 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>, i16 %layer11_out, i16 %layer11_out_1, i16 %layer11_out_2, i16 %layer11_out_3, i16 %layer11_out_4, i16 %layer11_out_5, i16 %layer11_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70]   --->   Operation 86 'call' 'layer12_out' <Predicate = true> <Delay = 3.90> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 19 <SV = 18> <Delay = 3.90>
+ST_19 : Operation 87 [1/6] (3.90ns)   --->   "%layer12_out = call i16 @dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>, i16 %layer11_out, i16 %layer11_out_1, i16 %layer11_out_2, i16 %layer11_out_3, i16 %layer11_out_4, i16 %layer11_out_5, i16 %layer11_out_6" [firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70]   --->   Operation 87 'call' 'layer12_out' <Predicate = true> <Delay = 3.90> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 20 <SV = 19> <Delay = 4.10>
+ST_20 : Operation 88 [5/5] (4.10ns)   --->   "%call_ret = call i10 @sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>, i16 %layer12_out, i10 %sigmoid_table" [firmware/myproject.cpp:72]   --->   Operation 88 'call' 'call_ret' <Predicate = true> <Delay = 4.10> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 21 <SV = 20> <Delay = 4.10>
+ST_21 : Operation 89 [4/5] (4.10ns)   --->   "%call_ret = call i10 @sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>, i16 %layer12_out, i10 %sigmoid_table" [firmware/myproject.cpp:72]   --->   Operation 89 'call' 'call_ret' <Predicate = true> <Delay = 4.10> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 22 <SV = 21> <Delay = 4.10>
+ST_22 : Operation 90 [3/5] (4.10ns)   --->   "%call_ret = call i10 @sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>, i16 %layer12_out, i10 %sigmoid_table" [firmware/myproject.cpp:72]   --->   Operation 90 'call' 'call_ret' <Predicate = true> <Delay = 4.10> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 23 <SV = 22> <Delay = 4.10>
+ST_23 : Operation 91 [2/5] (4.10ns)   --->   "%call_ret = call i10 @sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>, i16 %layer12_out, i10 %sigmoid_table" [firmware/myproject.cpp:72]   --->   Operation 91 'call' 'call_ret' <Predicate = true> <Delay = 4.10> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+
+State 24 <SV = 23> <Delay = 3.25>
+ST_24 : Operation 92 [1/1] (0.00ns)   --->   "%specpipeline_ln0 = specpipeline void @_ssdm_op_SpecPipeline, i32 4294967295, i32 0, i32 0, i32 0, void @empty_0"   --->   Operation 92 'specpipeline' 'specpipeline_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 93 [1/1] (0.00ns)   --->   "%spectopmodule_ln0 = spectopmodule void @_ssdm_op_SpecTopModule, void @empty_2"   --->   Operation 93 'spectopmodule' 'spectopmodule_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 94 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i16 %z_global"   --->   Operation 94 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 95 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i16 %z_global, void @empty, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0"   --->   Operation 95 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 96 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i16 %x_size"   --->   Operation 96 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 97 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i16 %x_size, void @empty, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0"   --->   Operation 97 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 98 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i16 %y_size"   --->   Operation 98 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 99 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i16 %y_size, void @empty, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0"   --->   Operation 99 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 100 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i16 %y_local"   --->   Operation 100 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 101 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i16 %y_local, void @empty, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0"   --->   Operation 101 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 102 [1/1] (0.00ns)   --->   "%specbitsmap_ln0 = specbitsmap void @_ssdm_op_SpecBitsMap, i16 %layer13_out"   --->   Operation 102 'specbitsmap' 'specbitsmap_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 103 [1/1] (0.00ns)   --->   "%specinterface_ln0 = specinterface void @_ssdm_op_SpecInterface, i16 %layer13_out, void @empty, i32 4294967295, i32 4294967295, void @empty_0, i32 0, i32 0, void @empty_0, void @empty_0, void @empty_0, i32 0, i32 0, i32 0, i32 0, void @empty_0, void @empty_0, i32 4294967295, i32 0, i32 0"   --->   Operation 103 'specinterface' 'specinterface_ln0' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 104 [1/5] (3.25ns)   --->   "%call_ret = call i10 @sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>, i16 %layer12_out, i10 %sigmoid_table" [firmware/myproject.cpp:72]   --->   Operation 104 'call' 'call_ret' <Predicate = true> <Delay = 3.25> <CoreType = "Generic">   --->   Core 0 '' <Latency = 0> <II = 1> <Delay = 1.00> <Generic> <Opcode : >
+ST_24 : Operation 105 [1/1] (0.00ns)   --->   "%zext_ln72 = zext i10 %call_ret" [firmware/myproject.cpp:72]   --->   Operation 105 'zext' 'zext_ln72' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 106 [1/1] (0.00ns)   --->   "%write_ln72 = write void @_ssdm_op_Write.ap_vld.i16P0A, i16 %layer13_out, i16 %zext_ln72" [firmware/myproject.cpp:72]   --->   Operation 106 'write' 'write_ln72' <Predicate = true> <Delay = 0.00>
+ST_24 : Operation 107 [1/1] (0.00ns)   --->   "%ret_ln74 = ret" [firmware/myproject.cpp:74]   --->   Operation 107 'ret' 'ret_ln74' <Predicate = true> <Delay = 0.00>
+
+
+============================================================
++ Verbose Summary: Timing violations
+============================================================
+Target clock period: 5.000ns, clock uncertainty: 0.625ns.
+
+ <State 1>: 3.349ns
+The critical path consists of the following:
+	wire read operation ('z_global_read') on port 'z_global' [19]  (0.000 ns)
+	'call' operation 32 bit ('call_ret1', firmware/myproject.cpp:42) to 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config3>' [21]  (0.000 ns)
+	'call' operation 48 bit ('call_ret2', firmware/myproject.cpp:46) to 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config5>' [25]  (0.000 ns)
+	'call' operation 64 bit ('call_ret3', firmware/myproject.cpp:50) to 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config7>' [30]  (0.000 ns)
+	'call' operation 112 bit ('call_ret4', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>' [35]  (3.349 ns)
+
+ <State 2>: 4.259ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret4', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>' [35]  (4.259 ns)
+
+ <State 3>: 4.259ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret4', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>' [35]  (4.259 ns)
+
+ <State 4>: 4.259ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret4', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>' [35]  (4.259 ns)
+
+ <State 5>: 3.903ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret4', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:54) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config8>' [35]  (3.903 ns)
+
+ <State 6>: 2.830ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret5', firmware/myproject.cpp:58) to 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, relu_config9>' [43]  (2.830 ns)
+
+ <State 7>: 3.349ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret6', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>' [51]  (3.349 ns)
+
+ <State 8>: 4.362ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret6', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>' [51]  (4.362 ns)
+
+ <State 9>: 4.362ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret6', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>' [51]  (4.362 ns)
+
+ <State 10>: 4.362ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret6', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>' [51]  (4.362 ns)
+
+ <State 11>: 4.362ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret6', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>' [51]  (4.362 ns)
+
+ <State 12>: 3.903ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret6', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:62) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config10>' [51]  (3.903 ns)
+
+ <State 13>: 2.830ns
+The critical path consists of the following:
+	'call' operation 112 bit ('call_ret7', firmware/myproject.cpp:66) to 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, relu_config11>' [59]  (2.830 ns)
+
+ <State 14>: 3.349ns
+The critical path consists of the following:
+	'call' operation 16 bit ('layer12_out', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>' [67]  (3.349 ns)
+
+ <State 15>: 3.903ns
+The critical path consists of the following:
+	'call' operation 16 bit ('layer12_out', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>' [67]  (3.903 ns)
+
+ <State 16>: 3.903ns
+The critical path consists of the following:
+	'call' operation 16 bit ('layer12_out', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>' [67]  (3.903 ns)
+
+ <State 17>: 3.903ns
+The critical path consists of the following:
+	'call' operation 16 bit ('layer12_out', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>' [67]  (3.903 ns)
+
+ <State 18>: 3.903ns
+The critical path consists of the following:
+	'call' operation 16 bit ('layer12_out', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>' [67]  (3.903 ns)
+
+ <State 19>: 3.903ns
+The critical path consists of the following:
+	'call' operation 16 bit ('layer12_out', firmware/nnet_utils/nnet_dense.h:41->firmware/myproject.cpp:70) to 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>' [67]  (3.903 ns)
+
+ <State 20>: 4.107ns
+The critical path consists of the following:
+	'call' operation 10 bit ('call_ret', firmware/myproject.cpp:72) to 'sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>' [68]  (4.107 ns)
+
+ <State 21>: 4.107ns
+The critical path consists of the following:
+	'call' operation 10 bit ('call_ret', firmware/myproject.cpp:72) to 'sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>' [68]  (4.107 ns)
+
+ <State 22>: 4.107ns
+The critical path consists of the following:
+	'call' operation 10 bit ('call_ret', firmware/myproject.cpp:72) to 'sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>' [68]  (4.107 ns)
+
+ <State 23>: 4.107ns
+The critical path consists of the following:
+	'call' operation 10 bit ('call_ret', firmware/myproject.cpp:72) to 'sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>' [68]  (4.107 ns)
+
+ <State 24>: 3.254ns
+The critical path consists of the following:
+	'call' operation 10 bit ('call_ret', firmware/myproject.cpp:72) to 'sigmoid<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, sigmoid_config13>' [68]  (3.254 ns)
+
+
+============================================================
++ Verbose Summary: Binding
+============================================================
+N/A
+* FSMD analyzer results:
+  - Output states:
+ - Input state : 
+  - Chain level:
+	State 1
+	State 2
+	State 3
+	State 4
+	State 5
+	State 6
+	State 7
+	State 8
+	State 9
+	State 10
+	State 11
+	State 12
+	State 13
+	State 14
+	State 15
+	State 16
+	State 17
+	State 18
+	State 19
+	State 20
+	State 21
+	State 22
+	State 23
+	State 24
+
+
+============================================================
++ Verbose Summary: Datapath Resource usage 
+============================================================
+N/A

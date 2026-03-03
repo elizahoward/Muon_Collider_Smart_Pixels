@@ -1,0 +1,1091 @@
+
+****** Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2024.1 (64-bit)
+  **** SW Build 5069499 on May 21 2024
+  **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+  **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+  **** Start of session at: Mon Feb 23 21:57:47 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source /code/Xilinx_2024.1/Vitis_HLS/2024.1/scripts/vitis_hls/hls.tcl -notrace
+INFO: [HLS 200-10] For user 'youeric' on host 'kdplab01' (Linux_x86_64 version 5.14.0-611.20.1.el9_7.x86_64) on Mon Feb 23 21:57:49 CST 2026
+INFO: [HLS 200-10] In directory '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110'
+WARNING: [HLS 200-2053] The vitis_hls executable is deprecated. Consider using vitis-run --mode hls --tcl
+Sourcing Tcl script 'build_prj.tcl'
+INFO: [HLS 200-1510] Running: open_project -reset myproject_prj 
+INFO: [HLS 200-10] Creating and opening project '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj'.
+INFO: [HLS 200-1510] Running: set_top myproject 
+INFO: [HLS 200-1510] Running: add_files firmware/myproject.cpp -cflags -std=c++0x 
+INFO: [HLS 200-10] Adding design file 'firmware/myproject.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb myproject_test.cpp -cflags -std=c++0x 
+INFO: [HLS 200-10] Adding test bench file 'myproject_test.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb firmware/weights 
+INFO: [HLS 200-10] Adding test bench file 'firmware/weights' to the project
+INFO: [HLS 200-1510] Running: add_files -tb tb_data 
+INFO: [HLS 200-10] Adding test bench file 'tb_data' to the project
+INFO: [HLS 200-1510] Running: open_solution -reset solution1 
+INFO: [HLS 200-10] Creating and opening solution '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1'.
+INFO: [HLS 200-10] Cleaning up the solution database.
+INFO: [HLS 200-1505] Using default flow_target 'vivado'
+Resolution: For help on HLS 200-1505 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1505.html
+INFO: [HLS 200-1510] Running: config_array_partition -maximum_size 4096 
+ERROR: [HLS 200-101] config_array_partition: Unknown option '-maximum_size'.
+ERROR: [HLS 200-101] config_array_partition: Unknown option '4096'.
+SYNTAX 
+  config_array_partition [OPTIONS]
+    -auto_partition_threshold <uint:*4*> *** DEPRECATED***
+    -auto_promotion_threshold <uint:*64*> *** DEPRECATED***
+    -complete_threshold <uint:*4*> 
+    -throughput_driven <off|auto|aggressive|*on*>
+
+SEE ALSO
+  INI: syn.array_partition.complete_threshold syn.array_partition.throughput_driven
+  docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1399-vitis-hls&resourceid=vyw1583260160301.html
+
+INFO: [HLS 200-1510] Running: config_compile -name_max_length 80 
+INFO: [XFORM 203-1161] The maximum of name length is set to 80.
+INFO: [HLS 200-1510] Running: set_part xc7z020clg400-1 
+INFO: [HLS 200-1611] Setting target device to 'xc7z020-clg400-1'
+INFO: [XFORM 203-1161] The maximum of name length is set to 80.
+INFO: [HLS 200-1510] Running: config_schedule -enable_dsp_full_reg=false 
+INFO: [HLS 200-1510] Running: create_clock -period 5 -name default 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 5ns.
+INFO: [HLS 200-1510] Running: set_clock_uncertainty 12.5% default 
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 0.625ns.
+***** C/RTL SYNTHESIS *****
+INFO: [HLS 200-1510] Running: csynth_design 
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 334.660 MB.
+INFO: [HLS 200-10] Analyzing design file 'firmware/myproject.cpp' ... 
+WARNING: [HLS 207-5575] Only for/while/do loop or function body support the pipeline pragma (firmware/nnet_utils/nnet_activation.h:464:9)
+WARNING: [HLS 207-5292] unused parameter 'keep' (firmware/nnet_utils/nnet_helpers.h:285:99)
+WARNING: [HLS 207-5292] unused parameter 'data' (firmware/nnet_utils/nnet_code_gen.h:11:36)
+WARNING: [HLS 207-5292] unused parameter 'buffer' (firmware/nnet_utils/nnet_code_gen.h:12:36)
+WARNING: [HLS 207-5292] unused parameter 'partition' (firmware/nnet_utils/nnet_code_gen.h:13:44)
+WARNING: [HLS 207-5292] unused parameter 'data' (firmware/nnet_utils/nnet_code_gen.h:21:24)
+WARNING: [HLS 207-5292] unused parameter 'buffer' (firmware/nnet_utils/nnet_code_gen.h:22:24)
+WARNING: [HLS 207-5292] unused parameter 'partition' (firmware/nnet_utils/nnet_code_gen.h:23:32)
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 7.4 seconds. CPU system time: 0.8 seconds. Elapsed time: 8.23 seconds; current allocated memory: 341.168 MB.
+INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
+INFO: [HLS 200-1995] There were 8,103 instructions in the design after the 'Compile/Link' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 30,474 instructions in the design after the 'Unroll/Inline (step 1)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 9,509 instructions in the design after the 'Unroll/Inline (step 2)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 9,213 instructions in the design after the 'Unroll/Inline (step 3)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 9,084 instructions in the design after the 'Unroll/Inline (step 4)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 4,619 instructions in the design after the 'Array/Struct (step 1)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,980 instructions in the design after the 'Array/Struct (step 2)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,980 instructions in the design after the 'Array/Struct (step 3)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 4,051 instructions in the design after the 'Array/Struct (step 4)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,943 instructions in the design after the 'Array/Struct (step 5)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,943 instructions in the design after the 'Performance (step 1)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,943 instructions in the design after the 'Performance (step 2)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,943 instructions in the design after the 'Performance (step 3)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,943 instructions in the design after the 'Performance (step 4)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,949 instructions in the design after the 'HW Transforms (step 1)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 3,964 instructions in the design after the 'HW Transforms (step 2)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<4, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<4, 1, (ap_q_mode)5, (ap_o_mode)3, 0>)' into 'void nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config9::weight_t*, config9::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:42:27)
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>)' into 'void nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config11::weight_t*, config11::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:42:27)
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<4, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<4, 1, (ap_q_mode)5, (ap_o_mode)3, 0>)' into 'void nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config16::weight_t*, config16::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:42:27)
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<4, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<4, 1, (ap_q_mode)5, (ap_o_mode)3, 0>)' into 'void nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config19::weight_t*, config19::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:42:27)
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<4, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<4, 1, (ap_q_mode)5, (ap_o_mode)3, 0>)' into 'void nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config22::weight_t*, config22::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:42:27)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config9::weight_t*, config9::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:59:2)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config11::weight_t*, config11::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:63:2)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config16::weight_t*, config16::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:79:2)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config19::weight_t*, config19::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:87:2)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config22::weight_t*, config22::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:95:2)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_467_1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_activation.h:467:23)
+INFO: [HLS 214-291] Loop 'Result' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_dense_latency.h:64:5)
+INFO: [HLS 214-291] Loop 'Accum1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_dense_latency.h:54:5)
+INFO: [HLS 214-291] Loop 'Accum2' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_dense_latency.h:56:9)
+INFO: [HLS 214-291] Loop 'ResetAccum' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_dense_latency.h:48:5)
+INFO: [HLS 214-291] Loop 'Product1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_dense_latency.h:37:5)
+INFO: [HLS 214-291] Loop 'Product2' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_dense_latency.h:40:9)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_43_1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_activation.h:43:22)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_122_2' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_merge.h:122:23)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_119_1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_merge.h:119:20)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_467_1' (firmware/nnet_utils/nnet_activation.h:467:23) in function 'nnet::hard_tanh<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, hard_tanh_config24>' completely with a factor of 1 (firmware/nnet_utils/nnet_activation.h:462:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_latency.h:64:5) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>' completely with a factor of 1 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum1' (firmware/nnet_utils/nnet_dense_latency.h:54:5) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>' completely with a factor of 4 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum2' (firmware/nnet_utils/nnet_dense_latency.h:56:9) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>' completely with a factor of 1 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'ResetAccum' (firmware/nnet_utils/nnet_dense_latency.h:48:5) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>' completely with a factor of 1 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product1' (firmware/nnet_utils/nnet_dense_latency.h:37:5) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>' completely with a factor of 4 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product2' (firmware/nnet_utils/nnet_dense_latency.h:40:9) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>' completely with a factor of 1 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_43_1' (firmware/nnet_utils/nnet_activation.h:43:22) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config21>' completely with a factor of 4 (firmware/nnet_utils/nnet_activation.h:39:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_latency.h:64:5) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>' completely with a factor of 4 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum1' (firmware/nnet_utils/nnet_dense_latency.h:54:5) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum2' (firmware/nnet_utils/nnet_dense_latency.h:56:9) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>' completely with a factor of 4 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'ResetAccum' (firmware/nnet_utils/nnet_dense_latency.h:48:5) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>' completely with a factor of 4 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product1' (firmware/nnet_utils/nnet_dense_latency.h:37:5) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product2' (firmware/nnet_utils/nnet_dense_latency.h:40:9) in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>' completely with a factor of 4 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_43_1' (firmware/nnet_utils/nnet_activation.h:43:22) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config18>' completely with a factor of 8 (firmware/nnet_utils/nnet_activation.h:39:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_latency.h:64:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum1' (firmware/nnet_utils/nnet_dense_latency.h:54:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>' completely with a factor of 16 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum2' (firmware/nnet_utils/nnet_dense_latency.h:56:9) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'ResetAccum' (firmware/nnet_utils/nnet_dense_latency.h:48:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product1' (firmware/nnet_utils/nnet_dense_latency.h:37:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>' completely with a factor of 16 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product2' (firmware/nnet_utils/nnet_dense_latency.h:40:9) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_122_2' (firmware/nnet_utils/nnet_merge.h:122:23) in function 'nnet::concatenate1d<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>' completely with a factor of 8 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_119_1' (firmware/nnet_utils/nnet_merge.h:119:20) in function 'nnet::concatenate1d<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>' completely with a factor of 8 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_43_1' (firmware/nnet_utils/nnet_activation.h:43:22) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config14>' completely with a factor of 8 (firmware/nnet_utils/nnet_activation.h:39:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_43_1' (firmware/nnet_utils/nnet_activation.h:43:22) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config13>' completely with a factor of 8 (firmware/nnet_utils/nnet_activation.h:39:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_latency.h:64:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum1' (firmware/nnet_utils/nnet_dense_latency.h:54:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>' completely with a factor of 2 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum2' (firmware/nnet_utils/nnet_dense_latency.h:56:9) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'ResetAccum' (firmware/nnet_utils/nnet_dense_latency.h:48:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product1' (firmware/nnet_utils/nnet_dense_latency.h:37:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>' completely with a factor of 2 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product2' (firmware/nnet_utils/nnet_dense_latency.h:40:9) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_latency.h:64:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum1' (firmware/nnet_utils/nnet_dense_latency.h:54:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' completely with a factor of 35 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Accum2' (firmware/nnet_utils/nnet_dense_latency.h:56:9) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'ResetAccum' (firmware/nnet_utils/nnet_dense_latency.h:48:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product1' (firmware/nnet_utils/nnet_dense_latency.h:37:5) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' completely with a factor of 35 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'Product2' (firmware/nnet_utils/nnet_dense_latency.h:40:9) in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' completely with a factor of 8 (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_122_2' (firmware/nnet_utils/nnet_merge.h:122:23) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config8>' completely with a factor of 1 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_119_1' (firmware/nnet_utils/nnet_merge.h:119:20) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config8>' completely with a factor of 1 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_122_2' (firmware/nnet_utils/nnet_merge.h:122:23) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config7>' completely with a factor of 1 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_119_1' (firmware/nnet_utils/nnet_merge.h:119:20) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config7>' completely with a factor of 34 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_122_2' (firmware/nnet_utils/nnet_merge.h:122:23) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config3>' completely with a factor of 13 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_119_1' (firmware/nnet_utils/nnet_merge.h:119:20) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config3>' completely with a factor of 21 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-178] Inlining function 'std::enable_if<!(std::is_same<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>(config9::accum_t)' into 'void nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config9::weight_t*, config9::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-178] Inlining function 'std::enable_if<!(std::is_same<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>(config11::accum_t)' into 'void nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config11::weight_t*, config11::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-178] Inlining function 'std::enable_if<!(std::is_same<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>(config16::accum_t)' into 'void nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config16::weight_t*, config16::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-178] Inlining function 'std::enable_if<!(std::is_same<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>(config19::accum_t)' into 'void nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config19::weight_t*, config19::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-178] Inlining function 'std::enable_if<!(std::is_same<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>(config22::accum_t)' into 'void nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config22::weight_t*, config22::bias_t*)' (firmware/nnet_utils/nnet_dense_latency.h:15:0)
+INFO: [HLS 214-178] Inlining function 'void nnet::hard_tanh<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, hard_tanh_config24>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_partition to 'b22': Complete partitioning on dimension 1. (firmware/weights/b22.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'b19': Complete partitioning on dimension 1. (firmware/weights/b19.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'b16': Complete partitioning on dimension 1. (firmware/weights/b16.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'b11': Complete partitioning on dimension 1. (firmware/weights/b11.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'b9': Complete partitioning on dimension 1. (firmware/weights/b9.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'mult': Complete partitioning on dimension 1. (firmware/nnet_utils/nnet_dense_latency.h:17:32)
+INFO: [HLS 214-248] Applying array_partition to 'layer3_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:45:11)
+INFO: [HLS 214-248] Applying array_partition to 'layer7_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:49:14)
+INFO: [HLS 214-248] Applying array_partition to 'layer8_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:53:14)
+INFO: [HLS 214-248] Applying array_partition to 'layer9_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:57:14)
+INFO: [HLS 214-248] Applying array_partition to 'layer11_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:61:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer13_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:65:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer14_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:69:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer15_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:73:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer16_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:77:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer18_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:81:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer19_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:85:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer21_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:89:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer22_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:93:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer24_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'x_profile': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'nModule': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'x_local': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'y_profile': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'y_local': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 5.43 seconds. CPU system time: 0.56 seconds. Elapsed time: 8.53 seconds; current allocated memory: 352.844 MB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0 seconds; current allocated memory: 352.844 MB.
+INFO: [HLS 200-10] Starting code transformations ...
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0.09 seconds. CPU system time: 0 seconds. Elapsed time: 0.09 seconds; current allocated memory: 357.098 MB.
+INFO: [HLS 200-10] Checking synthesizability ...
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0.11 seconds. CPU system time: 0 seconds. Elapsed time: 0.12 seconds; current allocated memory: 361.098 MB.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:42:9) to (firmware/nnet_utils/nnet_activation.h:50:1) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config21>'... converting 17 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:42:9) to (firmware/nnet_utils/nnet_activation.h:50:1) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config18>'... converting 33 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:42:9) to (firmware/nnet_utils/nnet_activation.h:50:1) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config14>'... converting 33 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:42:9) to (firmware/nnet_utils/nnet_activation.h:50:1) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config13>'... converting 33 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock to (firmware/myproject.cpp:99:1) in function 'myproject'... converting 3 basic blocks.
+INFO: [XFORM 203-11] Balancing expressions in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config22>' (firmware/nnet_utils/nnet_dense_latency.h:33:1)...3 expression(s) balanced.
+INFO: [XFORM 203-11] Balancing expressions in function 'nnet::dense_latency<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config19>' (firmware/nnet_utils/nnet_dense_latency.h:33:1)...27 expression(s) balanced.
+INFO: [XFORM 203-11] Balancing expressions in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' (firmware/nnet_utils/nnet_dense_latency.h:33:27)...242 expression(s) balanced.
+INFO: [XFORM 203-11] Balancing expressions in function 'nnet::dense_latency<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>' (firmware/nnet_utils/nnet_dense_latency.h:33:1)...106 expression(s) balanced.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0.38 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.39 seconds; current allocated memory: 389.738 MB.
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0.3 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.33 seconds; current allocated memory: 514.141 MB.
+INFO: [HLS 200-10] Starting hardware synthesis ...
+INFO: [HLS 200-10] Synthesizing 'myproject' ...
+WARNING: [SYN 201-103] Legalizing function name 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config3>' to 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s'.
+WARNING: [SYN 201-103] Legalizing function name 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config7>' to 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s'.
+WARNING: [SYN 201-103] Legalizing function name 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config8>' to 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config9>' to 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config11>' to 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s'.
+WARNING: [SYN 201-103] Legalizing function name 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>' to 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s'.
+WARNING: [SYN 201-103] Legalizing function name 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>' to 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s'.
+WARNING: [SYN 201-103] Legalizing function name 'concatenate1d<ap_ufixed,ap_ufixed,ap_fixed<16,6,5,3,0>,config15>' to 'concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config16>' to 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s'.
+WARNING: [SYN 201-103] Legalizing function name 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config18>' to 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config19>' to 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s'.
+WARNING: [SYN 201-103] Legalizing function name 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config21>' to 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config22>' to 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s'.
+WARNING: [SYN 201-223] Checking resource limit in 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config9>': cannot find any operation of 'mul'.
+WARNING: [SYN 201-223] Checking resource limit in 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config16>': cannot find any operation of 'mul'.
+WARNING: [SYN 201-223] Checking resource limit in 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config19>': cannot find any operation of 'mul'.
+WARNING: [SYN 201-223] Checking resource limit in 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config22>': cannot find any operation of 'mul'.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config3>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config3>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.08 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.1 seconds; current allocated memory: 515.254 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 515.445 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config7>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config7>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 515.996 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 516.059 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config8>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config8>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 516.371 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.02 seconds; current allocated memory: 516.438 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config9>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 5, function 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config9>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.33 seconds. CPU system time: 0 seconds. Elapsed time: 0.34 seconds; current allocated memory: 523.973 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.13 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.14 seconds; current allocated memory: 523.973 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config11>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 3, function 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config11>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.11 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.12 seconds; current allocated memory: 524.066 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Starting global binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 524.066 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.07 seconds. CPU system time: 0 seconds. Elapsed time: 0.07 seconds; current allocated memory: 525.453 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 525.734 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.07 seconds. CPU system time: 0 seconds. Elapsed time: 0.08 seconds; current allocated memory: 527.785 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 528.012 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_ufixed,ap_ufixed,ap_fixed<16,6,5,3,0>,config15>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_ufixed,ap_ufixed,ap_fixed<16,6,5,3,0>,config15>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 528.500 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 528.688 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config16>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 4, function 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config16>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.16 seconds. CPU system time: 0 seconds. Elapsed time: 0.16 seconds; current allocated memory: 532.465 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 532.465 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config18>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config18>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.1 seconds; current allocated memory: 533.758 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 534.191 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config19>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 3, function 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config19>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.1 seconds. CPU system time: 0 seconds. Elapsed time: 0.1 seconds; current allocated memory: 535.652 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 535.652 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config21>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config21>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 536.777 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 536.859 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config22>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config22>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 537.988 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 537.988 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'myproject' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'myproject'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 25, function 'myproject'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.08 seconds. CPU system time: 0 seconds. Elapsed time: 0.09 seconds; current allocated memory: 538.723 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 539.258 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.08 seconds. CPU system time: 0 seconds. Elapsed time: 0.09 seconds; current allocated memory: 542.660 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.08 seconds; current allocated memory: 547.172 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 548.395 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.16 seconds. CPU system time: 0 seconds. Elapsed time: 0.17 seconds; current allocated memory: 555.387 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s' pipeline 'dense_latency<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config11>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Generating core module 'mul_16s_5s_21_2_1': 1 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.33 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.37 seconds; current allocated memory: 572.656 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.1 seconds; current allocated memory: 573.312 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.13 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.15 seconds; current allocated memory: 578.746 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.12 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.12 seconds; current allocated memory: 583.336 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.11 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.11 seconds; current allocated memory: 587.500 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config18>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.22 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.23 seconds; current allocated memory: 596.559 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s' pipeline 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config19>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.13 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.15 seconds; current allocated memory: 601.473 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config21>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.12 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.14 seconds; current allocated memory: 605.715 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s' pipeline 'dense_latency<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config22>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.11 seconds; current allocated memory: 610.043 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'myproject' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/x_profile' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/nModule' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/x_local' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/y_profile' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/y_local' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/layer24_out' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on function 'myproject' to 'ap_ctrl_hs'.
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'myproject' pipeline 'myproject' pipeline type 'function pipeline'
+INFO: [RTGEN 206-104] Estimated max fanout for 'myproject' is 5240 from HDL expression: ((1'b1 == ap_CS_fsm_pp0_stage0) & (1'b0 == ap_block_pp0_stage0_11001_ignoreCallOp102))
+INFO: [RTGEN 206-100] Finished creating RTL model for 'myproject'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.19 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.2 seconds; current allocated memory: 616.812 MB.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 0.34 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.36 seconds; current allocated memory: 621.445 MB.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 0.72 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.74 seconds; current allocated memory: 639.402 MB.
+INFO: [VHDL 208-304] Generating VHDL RTL for myproject.
+INFO: [VLOG 209-307] Generating Verilog RTL for myproject.
+INFO: [HLS 200-789] **** Estimated Fmax: 232.43 MHz
+INFO: [HLS 200-2161] Finished Command csynth_design Elapsed time: 00:00:23; Allocated memory: 304.871 MB.
+***** C/RTL SYNTHESIS COMPLETED IN 0h0m23s *****
+***** C/RTL SIMULATION *****
+INFO: [HLS 200-1510] Running: add_files -tb myproject_test.cpp -cflags -std=c++0x -DRTL_SIM 
+INFO: [HLS 200-10] Adding test bench file 'myproject_test.cpp' to the project
+INFO: [HLS 200-1510] Running: cosim_design -trace_level all -setup 
+INFO: [COSIM 212-47] Using XSIM for RTL simulation.
+INFO: [COSIM 212-14] Instrumenting C test bench ...
+   Build using "/code/Xilinx_2024.1/Vitis_HLS/2024.1/vcxx/libexec/clang++"
+   Compiling apatb_myproject.cpp
+   Compiling myproject.cpp_pre.cpp.tb.cpp
+   Compiling myproject_test.cpp_pre.cpp.tb.cpp
+   Compiling apatb_myproject_ir.ll
+   Generating cosim.tv.exe
+INFO: [COSIM 212-302] Starting C TB testing ... 
+INFO: Unable to open input/predictions file, using default input.
+0.445313 
+INFO: Saved inference results to file: tb_data/rtl_cosim_results.log
+INFO: [COSIM 212-333] Generating C post check test bench ...
+INFO: [COSIM 212-12] Generating RTL test bench ...
+INFO: [COSIM 212-1] *** C/RTL co-simulation file generation completed. ***
+INFO: [COSIM 212-211] II is measurable only when transaction number is greater than 1 in RTL simulation. Otherwise, they will be marked as all NA. If user wants to calculate them, please make sure there are at least 2 transactions in RTL simulation.
+INFO: [HLS 200-2161] Finished Command cosim_design Elapsed time: 00:00:16; Allocated memory: 12.691 MB.
+INFO: [HLS 200-1510] Running: source ./project.tcl
+INFO: [HLS 200-1510] Running: source run_sim.tcl
+INFO: [HLS 200-1510] Running: source check_sim.tcl
+INFO: [HLS 200-1510] Running: source dataflow_monitor_API.tcl
+INFO: [COSIM 212-302] Starting C TB testing ...  
+INFO: Unable to open input/predictions file, using default input.
+0.445313 
+INFO: Saved inference results to file: tb_data/rtl_cosim_results.log
+INFO: [COSIM 212-323] Starting verilog simulation...
+INFO: [COSIM 212-15] Starting XSIM ...
+Vivado Simulator v2024.1
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+Running: /code/Xilinx_2024.1/Vivado/2024.1/bin/unwrapped/lnx64.o/xelab xil_defaultlib.apatb_myproject_top glbl -Oenable_linking_all_libraries -prj myproject.prj -L smartconnect_v1_0 -L axi_protocol_checker_v1_1_12 -L axi_protocol_checker_v1_1_13 -L axis_protocol_checker_v1_1_11 -L axis_protocol_checker_v1_1_12 -L xil_defaultlib -L unisims_ver -L xpm -L floating_point_v7_0_23 -L floating_point_v7_1_18 --lib ieee_proposed=./ieee_proposed -s myproject -debug all 
+Multi-threading is on. Using 62 slave threads.
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/glbl.v" into library work
+INFO: [VRFC 10-311] analyzing module glbl
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject.autotb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module apatb_myproject_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject_mul_16s_5s_21_2_1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module myproject_mul_16s_5s_21_2_1
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/dataflow_monitor.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dataflow_monitor
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package xil_defaultlib.$unit_dataflow_monitor_sv
+Compiling module xil_defaultlib.myproject_concatenate1d_ap_fixed...
+Compiling module xil_defaultlib.myproject_concatenate1d_ap_fixed...
+Compiling module xil_defaultlib.myproject_dense_latency_ap_fixed...
+Compiling module xil_defaultlib.myproject_concatenate1d_ap_fixed...
+Compiling module xil_defaultlib.myproject_mul_16s_5s_21_2_1(NUM_...
+Compiling module xil_defaultlib.myproject_dense_latency_ap_fixed...
+Compiling module xil_defaultlib.myproject_relu_ap_fixed_16_6_5_3...
+Compiling module xil_defaultlib.myproject_relu_ap_fixed_16_6_5_3...
+Compiling module xil_defaultlib.myproject_concatenate1d_ap_ufixe...
+Compiling module xil_defaultlib.myproject_dense_latency_ap_fixed...
+Compiling module xil_defaultlib.myproject_relu_ap_fixed_16_6_5_3...
+Compiling module xil_defaultlib.myproject_dense_latency_ap_ufixe...
+Compiling module xil_defaultlib.myproject_relu_ap_fixed_16_6_5_3...
+Compiling module xil_defaultlib.myproject_dense_latency_ap_ufixe...
+Compiling module xil_defaultlib.myproject
+Compiling module xil_defaultlib.nodf_module_intf_default
+Compiling module xil_defaultlib.dataflow_monitor_1
+Compiling module xil_defaultlib.apatb_myproject_top
+Compiling module work.glbl
+Built simulation snapshot myproject
+
+****** xsim v2024.1 (64-bit)
+  **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
+  **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+  **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+  **** Start of session at: Mon Feb 23 21:58:39 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source xsim.dir/myproject/xsim_script.tcl
+# xsim {myproject} -view {{myproject_dataflow_ana.wcfg}} -tclbatch {myproject.tcl} -protoinst {myproject.protoinst}
+INFO: [Wavedata 42-565] Reading protoinst file myproject.protoinst
+INFO: [Wavedata 42-564]   Found protocol instance at /apatb_myproject_top/AESL_inst_myproject//AESL_inst_myproject_activity
+INFO: [Wavedata 42-564]   Found protocol instance at /apatb_myproject_top/AESL_inst_myproject/grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s_fu_236/grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s_fu_236_activity
+INFO: [Wavedata 42-564]   Found protocol instance at /apatb_myproject_top/AESL_inst_myproject/grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s_fu_318/grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s_fu_318_activity
+INFO: [Wavedata 42-564]   Found protocol instance at /apatb_myproject_top/AESL_inst_myproject/grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s_fu_338/grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s_fu_338_activity
+INFO: [Wavedata 42-564]   Found protocol instance at /apatb_myproject_top/AESL_inst_myproject/grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s_fu_242/grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s_fu_242_activity
+INFO: [Wavedata 42-564]   Found protocol instance at /apatb_myproject_top/AESL_inst_myproject/grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s_fu_254/grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s_fu_254_activity
+INFO: [Wavedata 42-564]   Found protocol instance at /apatb_myproject_top/AESL_inst_myproject/grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s_fu_306/grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s_fu_306_activity
+INFO: [Wavedata 42-564]   Found protocol instance at /apatb_myproject_top/AESL_inst_myproject/grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s_fu_330/grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s_fu_330_activity
+Time resolution is 1 ps
+open_wave_config myproject_dataflow_ana.wcfg
+source myproject.tcl
+## set designtopgroup [add_wave_group "Design Top Signals"]
+## set coutputgroup [add_wave_group "C Outputs" -into $designtopgroup]
+## set return_group [add_wave_group return(wire) -into $coutputgroup]
+## add_wave /apatb_myproject_top/AESL_inst_myproject/layer24_out_ap_vld -into $return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/layer24_out -into $return_group -radix hex
+## set cinputgroup [add_wave_group "C Inputs" -into $designtopgroup]
+## set return_group [add_wave_group return(wire) -into $cinputgroup]
+## add_wave /apatb_myproject_top/AESL_inst_myproject/y_local -into $return_group -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/y_profile -into $return_group -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/x_local -into $return_group -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/nModule -into $return_group -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/x_profile -into $return_group -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/x_local_ap_vld -into $return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/nModule_ap_vld -into $return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/y_local_ap_vld -into $return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/y_profile_ap_vld -into $return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/AESL_inst_myproject/x_profile_ap_vld -into $return_group -color #ffff00 -radix hex
+## set blocksiggroup [add_wave_group "Block-level IO Handshake" -into $designtopgroup]
+## add_wave /apatb_myproject_top/AESL_inst_myproject/ap_start -into $blocksiggroup
+## add_wave /apatb_myproject_top/AESL_inst_myproject/ap_done -into $blocksiggroup
+## add_wave /apatb_myproject_top/AESL_inst_myproject/ap_idle -into $blocksiggroup
+## add_wave /apatb_myproject_top/AESL_inst_myproject/ap_ready -into $blocksiggroup
+## set resetgroup [add_wave_group "Reset" -into $designtopgroup]
+## add_wave /apatb_myproject_top/AESL_inst_myproject/ap_rst -into $resetgroup
+## set clockgroup [add_wave_group "Clock" -into $designtopgroup]
+## add_wave /apatb_myproject_top/AESL_inst_myproject/ap_clk -into $clockgroup
+## set testbenchgroup [add_wave_group "Test Bench Signals"]
+## set tbinternalsiggroup [add_wave_group "Internal Signals" -into $testbenchgroup]
+## set tb_simstatus_group [add_wave_group "Simulation Status" -into $tbinternalsiggroup]
+## set tb_portdepth_group [add_wave_group "Port Depth" -into $tbinternalsiggroup]
+## add_wave /apatb_myproject_top/AUTOTB_TRANSACTION_NUM -into $tb_simstatus_group -radix hex
+## add_wave /apatb_myproject_top/ready_cnt -into $tb_simstatus_group -radix hex
+## add_wave /apatb_myproject_top/done_cnt -into $tb_simstatus_group -radix hex
+## add_wave /apatb_myproject_top/LENGTH_layer24_out -into $tb_portdepth_group -radix hex
+## add_wave /apatb_myproject_top/LENGTH_nModule -into $tb_portdepth_group -radix hex
+## add_wave /apatb_myproject_top/LENGTH_x_local -into $tb_portdepth_group -radix hex
+## add_wave /apatb_myproject_top/LENGTH_x_profile -into $tb_portdepth_group -radix hex
+## add_wave /apatb_myproject_top/LENGTH_y_local -into $tb_portdepth_group -radix hex
+## add_wave /apatb_myproject_top/LENGTH_y_profile -into $tb_portdepth_group -radix hex
+## set tbcoutputgroup [add_wave_group "C Outputs" -into $testbenchgroup]
+## set tb_return_group [add_wave_group return(wire) -into $tbcoutputgroup]
+## add_wave /apatb_myproject_top/layer24_out_ap_vld -into $tb_return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/layer24_out -into $tb_return_group -radix hex
+## set tbcinputgroup [add_wave_group "C Inputs" -into $testbenchgroup]
+## set tb_return_group [add_wave_group return(wire) -into $tbcinputgroup]
+## add_wave /apatb_myproject_top/y_local -into $tb_return_group -radix hex
+## add_wave /apatb_myproject_top/y_profile -into $tb_return_group -radix hex
+## add_wave /apatb_myproject_top/x_local -into $tb_return_group -radix hex
+## add_wave /apatb_myproject_top/nModule -into $tb_return_group -radix hex
+## add_wave /apatb_myproject_top/x_profile -into $tb_return_group -radix hex
+## add_wave /apatb_myproject_top/x_local_ap_vld -into $tb_return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/nModule_ap_vld -into $tb_return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/y_local_ap_vld -into $tb_return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/y_profile_ap_vld -into $tb_return_group -color #ffff00 -radix hex
+## add_wave /apatb_myproject_top/x_profile_ap_vld -into $tb_return_group -color #ffff00 -radix hex
+## save_wave_config myproject.wcfg
+## run all
+////////////////////////////////////////////////////////////////////////////////////
+// Inter-Transaction Progress: Completed Transaction / Total Transaction
+// Intra-Transaction Progress: Measured Latency / Latency Estimation * 100%
+//
+// RTL Simulation : "Inter-Transaction Progress" ["Intra-Transaction Progress"] @ "Simulation Time"
+////////////////////////////////////////////////////////////////////////////////////
+// RTL Simulation : 0 / 1 [0.00%] @ "113000"
+// RTL Simulation : 1 / 1 [100.00%] @ "243000"
+////////////////////////////////////////////////////////////////////////////////////
+$finish called at time : 272500 ps : File "/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/sim/verilog/myproject.autotb.v" Line 563
+## quit
+INFO: [Common 17-206] Exiting xsim at Mon Feb 23 21:58:42 2026...
+INFO: [COSIM 212-316] Starting C post checking ...
+INFO: Unable to open input/predictions file, using default input.
+0.445313 
+INFO: Saved inference results to file: tb_data/rtl_cosim_results.log
+INFO:
+Report time       : Mon Feb 23 09:58:30 PM CST 2026.
+Solution          : solution1.
+Simulation tool   : xsim.
+
++----------+----------+-----------------------------------------------+-----------------------------------------------+----------------------+
+|          |          |             Latency(Clock Cycles)             |              Interval(Clock Cycles)           | Total Execution Time |
++   RTL    +  Status  +-----------------------------------------------+-----------------------------------------------+    (Clock Cycles)    +
+|          |          |      min      |      avg      |      max      |      min      |      avg      |      max      |                      |
++----------+----------+-----------------------------------------------+-----------------------------------------------+----------------------+
+|      VHDL|        NA|             NA|             NA|             NA|             NA|             NA|             NA|                    NA|
+|   Verilog|      Pass|             NA|             NA|             NA|             NA|             NA|             NA|                    NA|
++----------+----------+-----------------------------------------------+-----------------------------------------------+----------------------+
+
+***** C/RTL SIMULATION COMPLETED IN 0h0m28s *****
+***** EXPORT IP *****
+INFO: [HLS 200-1510] Running: export_design -format ip_catalog -version 1.0.0 
+INFO: [IMPL 213-8] Exporting RTL as a Vivado IP.
+
+****** Vivado v2024.1 (64-bit)
+  **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
+  **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+  **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+  **** Start of session at: Mon Feb 23 21:58:44 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source run_ippack.tcl -notrace
+INFO: calling package_hls_ip ip_types=vitis sysgen json_file=/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/solution1_data.json outdir=/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/impl/ip srcdir=/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1 sort_interfaces_ports=false
+INFO: Copied 1 ipmisc file(s) to /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/impl/ip/misc
+INFO: Copied 15 verilog file(s) to /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/impl/ip/hdl/verilog
+INFO: Copied 15 vhdl file(s) to /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/impl/ip/hdl/vhdl
+ipx::create_core: Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1705.262 ; gain = 40.836 ; free physical = 70477 ; free virtual = 92729
+INFO: Import ports from HDL: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/impl/ip/hdl/vhdl/myproject.vhd (myproject)
+INFO: Add clock interface ap_clk
+INFO: Add reset interface ap_rst
+INFO: Add ap_ctrl interface ap_ctrl
+INFO: Add data interface x_profile
+INFO: Add data interface y_profile
+INFO: Add data interface y_local
+INFO: Add data interface nModule
+INFO: Add data interface x_local
+INFO: Add data interface layer24_out
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/code/Xilinx_2024.1/Vivado/2024.1/data/ip'.
+INFO: Calling post_process_vitis to specialize IP
+INFO: Calling post_process_sysgen to specialize IP
+Generating sysgen info xml from json file
+INFO: Created IP /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/impl/ip/component.xml
+INFO: Created IP archive /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/impl/ip/xilinx_com_hls_myproject_1_0.zip
+INFO: [Common 17-206] Exiting Vivado at Mon Feb 23 21:58:55 2026...
+INFO: [HLS 200-802] Generated output file myproject_prj/solution1/impl/export.zip
+INFO: [HLS 200-2161] Finished Command export_design Elapsed time: 00:00:16; Allocated memory: 1.590 MB.
+***** EXPORT IP COMPLETED IN 0h0m16s *****
+***** VIVADO SYNTHESIS *****
+
+****** Vivado v2024.1 (64-bit)
+  **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
+  **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+  **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+  **** Start of session at: Mon Feb 23 21:59:01 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source vivado_synth.tcl
+# set tcldir [file dirname [info script]]
+# source [file join $tcldir project.tcl]
+## variable project_name
+## set project_name "myproject"
+## variable backend
+## set backend "vivado"
+## variable part
+## set part "xc7z020clg400-1"
+## variable clock_period
+## set clock_period 5
+## variable clock_uncertainty
+## set clock_uncertainty 12.5%
+## variable version
+## set version "1.0.0"
+# add_files ${project_name}_prj/solution1/syn/vhdl
+add_files: Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1673.051 ; gain = 37.836 ; free physical = 70862 ; free virtual = 93132
+# synth_design -top ${project_name} -part $part
+Command: synth_design -top myproject -part xc7z020clg400-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z020'
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 205576
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2106.641 ; gain = 425.629 ; free physical = 69231 ; free virtual = 91501
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'myproject' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:34]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s.vhd:11' bound to instance 'call_ret1_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s_fu_143' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:878]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s.vhd:54]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s.vhd:54]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s.vhd:11' bound to instance 'call_ret2_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s_fu_151' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:919]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s.vhd:88]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s.vhd:88]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s.vhd:11' bound to instance 'grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s_fu_191' of component 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:994]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s.vhd:62]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s.vhd:62]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s.vhd:11' bound to instance 'call_ret3_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s_fu_230' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1043]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s.vhd:22]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s.vhd:22]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s.vhd:11' bound to instance 'grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s_fu_236' of component 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1052]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s.vhd:33]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_5s_21_2_1' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5s_21_2_1.vhd:7' bound to instance 'mul_16s_5s_21_2_1_U75' of component 'myproject_mul_16s_5s_21_2_1' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s.vhd:165]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_16s_5s_21_2_1' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5s_21_2_1.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_16s_5s_21_2_1' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5s_21_2_1.vhd:27]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s.vhd:33]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s_fu_242' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1072]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s.vhd:39]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s.vhd:39]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s_fu_254' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1098]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:39]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:39]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s.vhd:11' bound to instance 'call_ret8_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s_fu_266' of component 'myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1124]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s.vhd:50]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s.vhd:50]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s.vhd:11' bound to instance 'grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s_fu_286' of component 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1161]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s.vhd:43]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s.vhd:43]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s_fu_306' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1191]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s.vhd:39]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s.vhd:39]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s.vhd:11' bound to instance 'grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s_fu_318' of component 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1217]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s.vhd:35]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s.vhd:35]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s_fu_330' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1239]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s.vhd:31]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s.vhd:31]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s.vhd:11' bound to instance 'grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s_fu_338' of component 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:1257]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s.vhd:28]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s.vhd:28]
+INFO: [Synth 8-256] done synthesizing module 'myproject' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/eric_new_smaller_2_23_run/hls_outputs/hls_model_trial_110/myproject_prj/solution1/syn/vhdl/myproject.vhd:34]
+WARNING: [Synth 8-7129] Port data_0_val[0] in module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_ufixed_ap_ufixed_ap_fixed_16_6_5_3_0_config15_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port reset in module myproject_mul_16s_5s_21_2_1 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config8_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config7_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config3_s is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 2230.609 ; gain = 549.598 ; free physical = 68969 ; free virtual = 91245
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2248.422 ; gain = 567.410 ; free physical = 68914 ; free virtual = 91190
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7z020clg400-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2256.426 ; gain = 575.414 ; free physical = 68910 ; free virtual = 91186
+INFO: [Device 21-403] Loading part xc7z020clg400-1
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:11 ; elapsed = 00:00:09 . Memory (MB): peak = 2267.402 ; gain = 586.391 ; free physical = 68858 ; free virtual = 91138
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input   21 Bit       Adders := 3     
+	   2 Input   21 Bit       Adders := 2     
+	   3 Input   20 Bit       Adders := 2     
+	   3 Input   19 Bit       Adders := 100   
+	   2 Input   19 Bit       Adders := 11    
+	   3 Input   16 Bit       Adders := 109   
+	   2 Input   16 Bit       Adders := 84    
+	   2 Input   15 Bit       Adders := 32    
+	   2 Input   14 Bit       Adders := 28    
+	   2 Input   13 Bit       Adders := 6     
+	   3 Input   13 Bit       Adders := 1     
+	   2 Input   12 Bit       Adders := 11    
+	   3 Input   12 Bit       Adders := 6     
+	   3 Input   11 Bit       Adders := 8     
+	   2 Input   11 Bit       Adders := 8     
+	   2 Input   10 Bit       Adders := 3     
+	   3 Input   10 Bit       Adders := 1     
+	   2 Input    8 Bit       Adders := 29    
++---XORs : 
+	   2 Input      1 Bit         XORs := 60    
+	   3 Input      1 Bit         XORs := 1     
++---Registers : 
+	              336 Bit    Registers := 1     
+	              208 Bit    Registers := 1     
+	               19 Bit    Registers := 1     
+	               16 Bit    Registers := 430   
+	               15 Bit    Registers := 66    
+	               14 Bit    Registers := 27    
+	               13 Bit    Registers := 1     
+	               12 Bit    Registers := 10    
+	               11 Bit    Registers := 9     
+	               10 Bit    Registers := 5     
+	                9 Bit    Registers := 1     
+	                8 Bit    Registers := 64    
+	                1 Bit    Registers := 141   
++---Muxes : 
+	   2 Input  336 Bit        Muxes := 1     
+	   2 Input  208 Bit        Muxes := 1     
+	   2 Input   16 Bit        Muxes := 19    
+	   2 Input   14 Bit        Muxes := 1     
+	   3 Input   13 Bit        Muxes := 1     
+	   2 Input   12 Bit        Muxes := 1     
+	   2 Input    8 Bit        Muxes := 112   
+	   3 Input    8 Bit        Muxes := 1     
+	   2 Input    1 Bit        Muxes := 41    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+INFO: [Device 21-9227] Part: xc7z020clg400-1 does not have CEAM library.
+Part Resources:
+DSPs: 220 (col length:60)
+BRAMs: 280 (col length: RAMB18 60 RAMB36 30)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:23 ; elapsed = 00:00:21 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 68763 ; free virtual = 91100
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:23 ; elapsed = 00:00:22 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 68735 ; free virtual = 91071
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:26 ; elapsed = 00:00:24 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 68153 ; free virtual = 90489
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:30 ; elapsed = 00:00:29 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 67089 ; free virtual = 89426
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:30 ; elapsed = 00:00:29 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 67077 ; free virtual = 89413
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:31 ; elapsed = 00:00:29 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 66987 ; free virtual = 89323
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:31 ; elapsed = 00:00:29 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 66979 ; free virtual = 89315
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:31 ; elapsed = 00:00:30 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 66791 ; free virtual = 89128
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:31 ; elapsed = 00:00:30 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 66769 ; free virtual = 89106
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+-------------------------------------------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                                                                                                    | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+-------------------------------------------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|myproject   | grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s_fu_236/data_1_val_read_reg_587_reg[15] | 4      | 16    | NO           | NO                 | YES               | 16     | 0       | 
+|myproject   | nModule_read_reg_1403_pp0_iter2_reg_reg[15]                                                                 | 3      | 16    | NO           | NO                 | YES               | 16     | 0       | 
++------------+-------------------------------------------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-------+------+
+|      |Cell   |Count |
++------+-------+------+
+|1     |BUFG   |     1|
+|2     |CARRY4 |  2020|
+|3     |LUT1   |  1578|
+|4     |LUT2   |  4107|
+|5     |LUT3   |  2615|
+|6     |LUT4   |  2304|
+|7     |LUT5   |   156|
+|8     |LUT6   |   159|
+|9     |SRL16E |    32|
+|10    |FDRE   |  8820|
+|11    |IBUF   |   600|
+|12    |OBUF   |    12|
++------+-------+------+
+
+Report Instance Areas: 
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+|      |Instance                                                                      |Module                                                                     |Cells |
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+|1     |top                                                                           |                                                                           | 22404|
+|2     |  grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s_fu_236 |myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config11_s |   765|
+|3     |    mul_16s_5s_21_2_1_U75                                                     |myproject_mul_16s_5s_21_2_1                                                |    72|
+|4     |  grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s_fu_286 |myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s |  4361|
+|5     |  grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s_fu_191  |myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config9_s  | 12893|
+|6     |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s_fu_318 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config19_s |   864|
+|7     |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s_fu_338 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config22_s |   121|
+|8     |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s_fu_242     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s     |   384|
+|9     |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s_fu_254     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s     |   384|
+|10    |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s_fu_306     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config18_s     |   384|
+|11    |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s_fu_330     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config21_s     |   180|
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:31 ; elapsed = 00:00:30 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 66765 ; free virtual = 89102
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 9 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:31 ; elapsed = 00:00:30 . Memory (MB): peak = 2458.715 ; gain = 777.703 ; free physical = 66759 ; free virtual = 89095
+Synthesis Optimization Complete : Time (s): cpu = 00:00:31 ; elapsed = 00:00:30 . Memory (MB): peak = 2458.723 ; gain = 777.703 ; free physical = 66758 ; free virtual = 89095
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00.12 ; elapsed = 00:00:00.12 . Memory (MB): peak = 2458.723 ; gain = 0.000 ; free physical = 66553 ; free virtual = 88889
+INFO: [Netlist 29-17] Analyzing 2020 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2589.805 ; gain = 0.000 ; free physical = 65622 ; free virtual = 87959
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Synth Design complete | Checksum: 5c029d3d
+INFO: [Common 17-83] Releasing license: Synthesis
+57 Infos, 9 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:40 ; elapsed = 00:00:36 . Memory (MB): peak = 2589.805 ; gain = 916.754 ; free physical = 65578 ; free virtual = 87914
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 1842.083; main = 1448.429; forked = 393.654
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 4115.180; main = 2589.809; forked = 1656.461
+# report_utilization -file vivado_synth.rpt
+INFO: [Common 17-206] Exiting Vivado at Mon Feb 23 21:59:46 2026...
+***** VIVADO SYNTHESIS COMPLETED IN 0h0m57s *****
+INFO: [HLS 200-112] Total CPU user time: 122.84 seconds. Total CPU system time: 6.92 seconds. Total elapsed time: 129.15 seconds; peak allocated memory: 653.812 MB.

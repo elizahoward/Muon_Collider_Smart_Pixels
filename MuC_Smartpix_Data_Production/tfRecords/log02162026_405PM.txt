@@ -1,0 +1,1744 @@
+Using existing output directory: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records
+
+================================================================================
+GENERATING TF RECORDS FOR 1 CONFIGURATIONS
+Batch sizes: [16384]
+Timestamp configurations: Single timestamp and All timestamps
+Output directory: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records
+================================================================================
+
+[1/1] Processing batch size 16384 with single timestamp (19)
+Data directory path (as of create_tf_records) is  /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/Parquet_Files/
+
+============================================================
+CREATING: filtering_records16384_data_shuffled_single_bigData
+Batch size: 16384
+Timestamps: Single (19)
+Random seed: 42
+============================================================
+Directory /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData already exists. Cleaning...
+Total files mm: 1752
+Training files mm: 1402
+Validation files mm: 350
+Total files mp: 1713
+Training files mp: 1370
+Validation files mp: 343
+Total files sig: 3500
+Training files sig: 2800
+Validation files sig: 700
+Creating training generator...
+Loading 5604 files (BIB mm: 1402, BIB mp: 1402, SIG: 2800)
+start reading all parquets in OptimizedDataGenerator4
+loaded all parquets into memory, now concatenating
+[1341241 1341242 1341243 1341244 1341245 1341246 1341247 1341248 1341249]
+finished pandas concatenation
+for debug
+labels signal counts: [1341240       0       0       0       0       0       0       0       0
+ 1341240] with bins [0.  0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1. ]
+x_profiles.shape: (2682480, 21)
+y_profiles.shape: (2682480, 13)
+[0.43423077 0.44692308 0.26384615 ... 0.90384612 0.91961537 0.92807694]
+0      0.171154
+1      0.234615
+2      0.319231
+3      0.338462
+4      0.723077
+         ...   
+473    0.238462
+474    0.442308
+475    0.519231
+476    0.598077
+477    0.640385
+Name: z-global, Length: 2682480, dtype: float64
+Shuffling all data points (seed=42)...
+First 20 types after shuffling: ['sig', 'bib_mp', 'bib_mm', 'sig', 'sig', 'sig', 'sig', 'bib_mm', 'sig', 'sig', 'bib_mm', 'bib_mp', 'sig', 'sig', 'sig', 'sig', 'bib_mp', 'bib_mm', 'bib_mp', 'bib_mm']
+Shuffling metrics:
+  - Alternations (switches between BIB/SIG): 1676652
+  - Longest contiguous run of same type: 20
+  - Alternation rate: 62.5%
+Error saving batch 0: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 1: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 2: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 3: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 4: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 5: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 6: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 7: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 8: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 9: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 10: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 11: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 12: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 13: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 14: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 15: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 16: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 17: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 18: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 19: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 20: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 21: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 22: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 23: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 24: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 25: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 26: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 27: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 28: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 29: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 30: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 31: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 32: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 33: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 34: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 35: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 36: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 37: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 38: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 39: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 40: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 41: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 42: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 43: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 44: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 45: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 46: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 47: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 48: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 49: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 50: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 51: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 52: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 53: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 54: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 55: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 56: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 57: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 58: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 59: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 60: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 61: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 62: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 63: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 64: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 65: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 66: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 67: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 68: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 69: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 70: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 71: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 72: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 73: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 74: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 75: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 76: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 77: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 78: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 79: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 80: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 81: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 82: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 83: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 84: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 85: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 86: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 87: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 88: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 89: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 90: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 91: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 92: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 93: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 94: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 95: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 96: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 97: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 98: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 99: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 100: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 101: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 102: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 103: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 104: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 105: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 106: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 107: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 108: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 109: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 110: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 111: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 112: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 113: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 114: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 115: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 116: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 117: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 118: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 119: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 120: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 121: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 122: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 123: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 124: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 125: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 126: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 127: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 128: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 129: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 130: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 131: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 132: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 133: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 134: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 135: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 136: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 137: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 138: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 139: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 140: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 141: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 142: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 143: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 144: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 145: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 146: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 147: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 148: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 149: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 150: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 151: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 152: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 153: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 154: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 155: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 156: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 157: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 158: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 159: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 160: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 161: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 162: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 163: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Training generator created in 860.84 seconds
+Creating validation generator...
+Loading 1393 files (BIB mm: 350, BIB mp: 343, SIG: 700)
+start reading all parquets in OptimizedDataGenerator4
+loaded all parquets into memory, now concatenating
+[330742 330743 330744 330745 330746 330747 330748 330749 330750]
+finished pandas concatenation
+for debug
+labels signal counts: [330741      0      0      0      0      0      0      0      0 330741] with bins [0.  0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1. ]
+x_profiles.shape: (661482, 21)
+y_profiles.shape: (661482, 13)
+[-0.15538462 -0.16076923 -0.45461537 ...  0.67076923  0.42653846
+  0.21192308]
+0      0.223077
+1      0.196154
+2      0.726923
+3      0.034615
+4      0.288462
+         ...   
+472    0.515385
+473    0.823077
+474    0.353846
+475    0.132692
+476    0.059615
+Name: z-global, Length: 661482, dtype: float64
+Shuffling all data points (seed=43)...
+First 20 types after shuffling: ['bib_mm', 'bib_mp', 'sig', 'sig', 'sig', 'sig', 'bib_mp', 'sig', 'sig', 'bib_mm', 'bib_mp', 'sig', 'sig', 'sig', 'bib_mp', 'sig', 'bib_mp', 'sig', 'sig', 'bib_mp']
+Shuffling metrics:
+  - Alternations (switches between BIB/SIG): 413861
+  - Longest contiguous run of same type: 16
+  - Alternation rate: 62.6%
+Error saving batch 0: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 1: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 2: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 3: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 4: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 5: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 6: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 7: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 8: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 9: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 10: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 11: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 12: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 13: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 14: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 15: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 16: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 17: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 18: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 19: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 20: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 21: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 22: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 23: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 24: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 25: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 26: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 27: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 28: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 29: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 30: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 31: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 32: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 33: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 34: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 35: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 36: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 37: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 38: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 39: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Error saving batch 40: 'x_local' 
+Traceback (most recent call last):
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 380, in save_single_batch
+    X, y = self.prepare_batch_data(batch_index)
+  File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/MuC_Smartpix_Data_Production/tfRecords/OptimizedDataGenerator4_data_shuffled_bigData_NewFormat.py", line 393, in prepare_batch_data
+    X.append(self.x_features[x_feature][index:index+self.batch_size])
+KeyError: 'x_local'
+
+Validation generator created in 232.15 seconds
+✓ TF records created successfully for filtering_records16384_data_shuffled_single_bigData
+  Training records: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData/tfrecords_train
+  Validation records: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData/tfrecords_validation
+
+================================================================================
+GENERATION COMPLETE!
+================================================================================
+Total time: 1093.07 seconds (18.2 minutes)
+Successfully created 1 out of 1 configurations
+
+Created directories:
+  1. filtering_records16384_data_shuffled_single_bigData
+
+All records are stored in: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records

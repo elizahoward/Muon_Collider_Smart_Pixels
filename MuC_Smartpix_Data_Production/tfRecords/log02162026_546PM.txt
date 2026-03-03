@@ -1,0 +1,82 @@
+Using existing output directory: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records
+
+================================================================================
+GENERATING TF RECORDS FOR 1 CONFIGURATIONS
+Batch sizes: [16384]
+Timestamp configurations: Single timestamp and All timestamps
+Output directory: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records
+================================================================================
+
+[1/1] Processing batch size 16384 with single timestamp (19)
+Data directory path (as of create_tf_records) is  /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/Parquet_Files/
+
+============================================================
+CREATING: filtering_records16384_data_shuffled_single_bigData
+Batch size: 16384
+Timestamps: Single (19)
+Random seed: 42
+============================================================
+Directory /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData already exists. Cleaning...
+Total files mm: 1752
+Training files mm: 1402
+Validation files mm: 350
+Total files mp: 1713
+Training files mp: 1370
+Validation files mp: 343
+Total files sig: 3500
+Training files sig: 2800
+Validation files sig: 700
+Creating training generator...
+Loading 5604 files (BIB mm: 1402, BIB mp: 1402, SIG: 2800)
+start reading all parquets in OptimizedDataGenerator4
+loaded all parquets into memory, now concatenating
+[1341241 1341242 1341243 1341244 1341245 1341246 1341247 1341248 1341249]
+finished pandas concatenation
+for debug
+labels signal counts: [1341240       0       0       0       0       0       0       0       0
+ 1341240] with bins [0.  0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1. ]
+x_profiles.shape: (2682480, 21)
+y_profiles.shape: (2682480, 13)
+[0.43423077 0.44692308 0.26384615 ... 0.90384612 0.91961537 0.92807694]
+[0.17115385 0.23461538 0.31923077 ... 0.51923062 0.59807685 0.64038469]
+Shuffling all data points (seed=42)...
+First 20 types after shuffling: ['sig', 'bib_mp', 'bib_mm', 'sig', 'sig', 'sig', 'sig', 'bib_mm', 'sig', 'sig', 'bib_mm', 'bib_mp', 'sig', 'sig', 'sig', 'sig', 'bib_mp', 'bib_mm', 'bib_mp', 'bib_mm']
+Shuffling metrics:
+  - Alternations (switches between BIB/SIG): 1676652
+  - Longest contiguous run of same type: 20
+  - Alternation rate: 62.5%
+Training generator created in 818.58 seconds
+Creating validation generator...
+Loading 1393 files (BIB mm: 350, BIB mp: 343, SIG: 700)
+start reading all parquets in OptimizedDataGenerator4
+loaded all parquets into memory, now concatenating
+[330742 330743 330744 330745 330746 330747 330748 330749 330750]
+finished pandas concatenation
+for debug
+labels signal counts: [330741      0      0      0      0      0      0      0      0 330741] with bins [0.  0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1. ]
+x_profiles.shape: (661482, 21)
+y_profiles.shape: (661482, 13)
+[-0.15538462 -0.16076923 -0.45461537 ...  0.67076923  0.42653846
+  0.21192308]
+[0.22307692 0.19615385 0.72692315 ... 0.35384615 0.13269231 0.05961538]
+Shuffling all data points (seed=43)...
+First 20 types after shuffling: ['bib_mm', 'bib_mp', 'sig', 'sig', 'sig', 'sig', 'bib_mp', 'sig', 'sig', 'bib_mm', 'bib_mp', 'sig', 'sig', 'sig', 'bib_mp', 'sig', 'bib_mp', 'sig', 'sig', 'bib_mp']
+Shuffling metrics:
+  - Alternations (switches between BIB/SIG): 413861
+  - Longest contiguous run of same type: 16
+  - Alternation rate: 62.6%
+Validation generator created in 243.79 seconds
+✓ TF records created successfully for filtering_records16384_data_shuffled_single_bigData
+  Training records: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData/tfrecords_train
+  Validation records: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData/tfrecords_validation
+
+================================================================================
+GENERATION COMPLETE!
+================================================================================
+Total time: 1062.45 seconds (17.7 minutes)
+Successfully created 1 out of 1 configurations
+
+Created directories:
+  1. filtering_records16384_data_shuffled_single_bigData
+
+All records are stored in: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records

@@ -1,0 +1,174 @@
+[
+    {
+        "trial_id": "0",
+        "model_file": "model_trial_0.h5",
+        "hyperparams_file": "hyperparams_trial_0.json",
+        "hyperparameters": {
+            "conv_filters": 48,
+            "kernel_rows": 3,
+            "kernel_cols": 3,
+            "scalar_dense_units": 48,
+            "merged_dense_1": 65,
+            "merged_multiplier_2": 0.6000000000000001,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.000978041751919679
+        },
+        "is_best": true,
+        "val_weighted_bkg_rej": 0.9090257935968022,
+        "total_parameters": 193623,
+        "trainable_parameters": 193623,
+        "non_trainable_parameters": 0,
+        "num_layers": 10,
+        "layer_structure": [
+            {
+                "name": "cluster_input",
+                "type": "Input",
+                "shape": "(13, 21)"
+            },
+            {
+                "name": "z_global_input",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "y_local_input",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "conv2d",
+                "type": "QConv2D",
+                "filters": 48,
+                "kernel_size": "3x3",
+                "parameters": 480
+            },
+            {
+                "name": "flatten",
+                "type": "Flatten",
+                "units": 2880
+            },
+            {
+                "name": "scalar_dense",
+                "type": "QDense",
+                "units": 48,
+                "parameters": 144
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 2928
+            },
+            {
+                "name": "merged_dense_1",
+                "type": "QDense",
+                "units": 65,
+                "parameters": 190385
+            },
+            {
+                "name": "merged_dense_2",
+                "type": "QDense",
+                "units": 39,
+                "parameters": 2574
+            },
+            {
+                "name": "output",
+                "type": "QDense",
+                "units": 1,
+                "parameters": 40
+            }
+        ],
+        "auc": 0.9720320406508209,
+        "bkg_rej_95": 0.9251045379919635,
+        "bkg_rej_98": 0.9052581929667021,
+        "bkg_rej_99": 0.8833951641919205,
+        "weighted_bkg_rej": 0.9090257935968022,
+        "roc_csv": "roc_analysis/model_trial_0_roc_data.csv",
+        "roc_plot": "roc_analysis/model_trial_0_roc.png"
+    },
+    {
+        "trial_id": "1",
+        "model_file": "model_trial_1.h5",
+        "hyperparams_file": "hyperparams_trial_1.json",
+        "hyperparameters": {
+            "conv_filters": 48,
+            "kernel_rows": 3,
+            "kernel_cols": 3,
+            "scalar_dense_units": 16,
+            "merged_dense_1": 80,
+            "merged_multiplier_2": 0.4,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.004114773318984142
+        },
+        "is_best": false,
+        "val_weighted_bkg_rej": 0.8930855261367656,
+        "total_parameters": 234913,
+        "trainable_parameters": 234913,
+        "non_trainable_parameters": 0,
+        "num_layers": 10,
+        "layer_structure": [
+            {
+                "name": "cluster_input",
+                "type": "Input",
+                "shape": "(13, 21)"
+            },
+            {
+                "name": "z_global_input",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "y_local_input",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "conv2d",
+                "type": "QConv2D",
+                "filters": 48,
+                "kernel_size": "3x3",
+                "parameters": 480
+            },
+            {
+                "name": "flatten",
+                "type": "Flatten",
+                "units": 2880
+            },
+            {
+                "name": "scalar_dense",
+                "type": "QDense",
+                "units": 16,
+                "parameters": 48
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 2896
+            },
+            {
+                "name": "merged_dense_1",
+                "type": "QDense",
+                "units": 80,
+                "parameters": 231760
+            },
+            {
+                "name": "merged_dense_2",
+                "type": "QDense",
+                "units": 32,
+                "parameters": 2592
+            },
+            {
+                "name": "output",
+                "type": "QDense",
+                "units": 1,
+                "parameters": 33
+            }
+        ],
+        "auc": 0.9654962928818477,
+        "bkg_rej_95": 0.911281032590456,
+        "bkg_rej_98": 0.8891156524289399,
+        "bkg_rej_99": 0.8623182490226491,
+        "weighted_bkg_rej": 0.8930855261367656,
+        "roc_csv": "roc_analysis/model_trial_1_roc_data.csv",
+        "roc_plot": "roc_analysis/model_trial_1_roc.png"
+    }
+]

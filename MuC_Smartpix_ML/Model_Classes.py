@@ -14,17 +14,12 @@ import keras
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
-import OptimizedDataGenerator4_data_shuffled_bigData as ODG2
 from qkeras import QDense, QActivation, quantized_bits, quantized_relu
+# sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
+sys.path.append("../MuC_Smartpix_Data_Production/tfRecords")
+import OptimizedDataGenerator4_data_shuffled_bigData_NewFormat as ODG2
 import pandas as pd
 from datetime import datetime
-sys.path.append("../ryan")
-import OptimizedDataGenerator4 as ODG
-
-import matplotlib
-matplotlib.use('Agg')
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 @keras.utils.register_keras_serializable(package='Custom', name='WarmupThenDecay')
 class WarmupThenDecay(tf.keras.optimizers.schedules.LearningRateSchedule):
@@ -170,8 +165,9 @@ class GradientMonitor(Callback):
                 pass
 
 class SmartPixModel(ABC):
-    def __init__(self,
-            tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+    def __init__(self,                 
+            # tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
+            tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
             nBits: list = None, # just for fractional bits, integer bits 
             loadModel: bool = False,
             modelPath: str = None, # Only include if you are loading a model
@@ -265,20 +261,20 @@ class SmartPixModel(ABC):
         )
         raise NotImplementedError("Subclasses should implement this method.")
     
-    def buildModel(self, model_type="unquantized"):
+    def buildModel(self, model_type="Unquantized"):
         """
         Build the specified model type.
         
         Args:
-            model_type: "unquantized" or "quantized"
+            model_type: "Unquantized" or "quantized"
             bit_configs: List of bit configurations for quantized models --Actually now a class field/attribute
         """
-        if model_type == "unquantized":
+        if model_type == "Unquantized":
             return self.makeUnquantizedModel()
         elif model_type == "quantized":
             return self.makeQuantizedModel()
         else:
-            raise ValueError("model_type must be 'unquantized' or 'quantized'")
+            raise ValueError("model_type must be 'Unquantized' or 'quantized'")
     """
     config_name = Unquantized or 
     config_name = f"quantized_{total_bits}w{int_bits}i"
@@ -301,7 +297,7 @@ class SmartPixModel(ABC):
     
     def warmStartQuantizedModel(self, quantized_config_name, source_config_name="Unquantized"):
         """
-        Warm-start a quantized model by copying weights from an unquantized (or other) model.
+        Warm-start a quantized model by copying weights from an Unquantized (or other) model.
         This implements quantization-aware fine-tuning by initializing the quantized model
         with pre-trained weights.
         
@@ -569,12 +565,51 @@ class SmartPixModel(ABC):
             plt.show()
 
     # Evaluate the model
-    def evaluate(self, test_generator=None,config_name = "Unquantized"):
+    def compute_background_rejection_at_signal_eff(self, fpr, tpr, target_signal_efficiencies=[0.90, 0.98, 0.99]):
         """
-        Evaluate the trained {self.modelNam.
+        Compute background rejection at specified signal efficiencies.
+        
+        Background rejection = 1 - FPR, where FPR is the false positive rate.
+        
+        Args:
+            fpr: False positive rate array from ROC curve
+            tpr: True positive rate array (signal efficiency) from ROC curve
+            target_signal_efficiencies: List of target signal efficiencies
+        
+        Returns:
+            dict: Background rejection values and FPR at each target signal efficiency
+        """
+        results = {}
+        
+        for sig_eff in target_signal_efficiencies:
+            # Find the index where TPR >= target signal efficiency
+            idx = np.where(tpr >= sig_eff)[0]
+            
+            if len(idx) == 0:
+                # Model doesn't reach target signal efficiency
+                results[f'bkg_rej_at_{int(sig_eff*100)}pct'] = None
+                results[f'fpr_at_{int(sig_eff*100)}pct'] = None
+            else:
+                # Use the first index where we reach the target
+                # This gives us the operating point at the target signal efficiency
+                fpr_at_target = fpr[idx[0]]
+                
+                # Background rejection = 1 - FPR
+                bg_rej = 1.0 - fpr_at_target
+                
+                results[f'bkg_rej_at_{int(sig_eff*100)}pct'] = float(bg_rej)
+                results[f'fpr_at_{int(sig_eff*100)}pct'] = float(fpr_at_target)
+        
+        return results
+    
+    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99]):
+        """
+        Evaluate the trained model with background rejection metrics.
         
         Args:
             test_generator: Optional test data generator
+            config_name: Name of the model configuration to evaluate
+            signal_efficiencies: List of target signal efficiencies for background rejection
         """
         if self.models[config_name] is None:
             raise ValueError("No model to evaluate. Train a model first.")
@@ -586,7 +621,7 @@ class SmartPixModel(ABC):
             self.loadTfRecords()
             eval_generator = self.validation_generator
         
-        print(f"Evaluating {self.modelName}...")
+        print(f"Evaluating {self.modelName} [{config_name}]...")
         
         # Get predictions
         predictions = self.models[config_name].predict(eval_generator, verbose=1)
@@ -600,6 +635,11 @@ class SmartPixModel(ABC):
         fpr, tpr, thresholds = roc_curve(true_labels, predictions.ravel())
         roc_auc = auc(fpr, tpr)
         
+        # Compute background rejection at specific signal efficiencies
+        bkg_rejection_metrics = self.compute_background_rejection_at_signal_eff(
+            fpr, tpr, signal_efficiencies
+        )
+        
         # Store results
         self.evaluation_results = {
             'test_loss': float(test_loss),
@@ -609,13 +649,28 @@ class SmartPixModel(ABC):
             'tpr': np.array(tpr),
             'thresholds': np.array(thresholds),
             'predictions': np.array(predictions),
-            'true_labels': np.array(true_labels)
+            'true_labels': np.array(true_labels),
+            **bkg_rejection_metrics  # Add background rejection metrics
         }
         
         print(f"✓ {self.modelName} evaluation completed!")
         print(f"  Test Loss: {test_loss:.4f}")
         print(f"  Test Accuracy: {test_accuracy:.4f}")
         print(f"  ROC AUC: {roc_auc:.4f}")
+        
+        # Print background rejection metrics
+        print(f"\n  Background Rejection Metrics (Bkg Rej = 1 - FPR):")
+        for sig_eff in signal_efficiencies:
+            key = f'bkg_rej_at_{int(sig_eff*100)}pct'
+            fpr_key = f'fpr_at_{int(sig_eff*100)}pct'
+            
+            bg_rej = bkg_rejection_metrics[key]
+            fpr_val = bkg_rejection_metrics[fpr_key]
+            
+            if bg_rej is None:
+                print(f"    @ {sig_eff:.0%} signal efficiency: NOT REACHED")
+            else:
+                print(f"    @ {sig_eff:.0%} signal efficiency: Bkg Rej = {bg_rej:.4f} (FPR = {fpr_val:.6f})")
         
         return self.evaluation_results
     
@@ -646,18 +701,18 @@ class SmartPixModel(ABC):
         
         # Test non-quantized model first
         print("\n2. Testing Non-quantized Model...")
-        print("2a. Building unquantized model...")
-        self.buildModel("unquantized")
+        print("2a. Building Unquantized model...")
+        self.buildModel("Unquantized")
         
-        print("2b. Training unquantized model...")
+        print("2b. Training Unquantized model...")
         self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
         
-        print("2c. Evaluating unquantized model...")
+        print("2c. Evaluating Unquantized model...")
         eval_results = self.evaluate()
         
         # Save non-quantized model
-        print("2d. Saving unquantized model...")
-        model_save_path = os.path.join(models_dir, f"{self.modelName}_unquantized.h5")
+        print("2d. Saving Unquantized model...")
+        model_save_path = os.path.join(models_dir, f"{self.modelName}_Unquantized.h5")
         self.saveModel(file_path = model_save_path, config_name = "Unquantized")
         print(f"Unquantized model saved to: {model_save_path}")
         
@@ -669,6 +724,9 @@ class SmartPixModel(ABC):
             'test_accuracy': eval_results['test_accuracy'],
             'test_loss': eval_results['test_loss'],
             'roc_auc': eval_results['roc_auc'],
+            'bkg_rej_90pct': eval_results.get('bkg_rej_at_90pct'),
+            'bkg_rej_98pct': eval_results.get('bkg_rej_at_98pct'),
+            'bkg_rej_99pct': eval_results.get('bkg_rej_at_99pct'),
             'model_path': model_save_path
         })
         
@@ -695,10 +753,11 @@ class SmartPixModel(ABC):
             print(f"3b. Building {weight_bits}-bit quantized model...")
             # self.buildModel("quantized", bit_configs=[(weight_bits, int_bits)])
             self.buildModel("quantized")
+            print(self.models)
 
             
-            # Warm-start: Copy weights from unquantized model to quantized model
-            print(f"3c. Warm-starting {weight_bits}-bit quantized model from unquantized model...")
+            # Warm-start: Copy weights from Unquantized model to quantized model
+            print(f"3c. Warm-starting {weight_bits}-bit quantized model from Unquantized model...")
             self.warmStartQuantizedModel(config_name, source_config_name="Unquantized")
             
             print(f"3d. Training {weight_bits}-bit quantized model...")
@@ -728,6 +787,9 @@ class SmartPixModel(ABC):
                 'test_accuracy': evaluation_results["test_accuracy"],
                 'test_loss': evaluation_results["test_loss"],
                 'roc_auc': evaluation_results["roc_auc"],
+                'bkg_rej_90pct': evaluation_results.get('bkg_rej_at_90pct'),
+                'bkg_rej_98pct': evaluation_results.get('bkg_rej_at_98pct'),
+                'bkg_rej_99pct': evaluation_results.get('bkg_rej_at_99pct'),
                 'model_path': model_save_path
             })
             
@@ -742,9 +804,9 @@ class SmartPixModel(ABC):
         # Create results summary
         results.sort(key=lambda x: x['test_accuracy'], reverse=True)
         print("\n4. Results Summary:")
-        print("=" * 60)
-        print(f"{'Model Type':<15} {'Bits':<8} {'Accuracy':<10} {'Loss':<12} {'ROC AUC':<10}")
-        print("-" * 60)
+        print("=" * 120)
+        print(f"{'Model Type':<15} {'Bits':<8} {'Accuracy':<10} {'Loss':<10} {'ROC AUC':<10} {'BkgRej@90%':<12} {'BkgRej@98%':<12} {'BkgRej@99%':<12}")
+        print("-" * 120)
         
         for result in results:
             model_type = result['model_type']
@@ -752,8 +814,15 @@ class SmartPixModel(ABC):
             acc = result['test_accuracy']
             loss = result['test_loss']
             auc_score = result['roc_auc']
+            br90 = result.get('bkg_rej_90pct')
+            br98 = result.get('bkg_rej_98pct')
+            br99 = result.get('bkg_rej_99pct')
             
-            print(f"{model_type:<15} {bits:<8} {acc:<10.4f} {loss:<12.4f} {auc_score:<10.4f}")
+            br90_str = f"{br90:.4f}" if br90 is not None else "N/A"
+            br98_str = f"{br98:.4f}" if br98 is not None else "N/A"
+            br99_str = f"{br99:.4f}" if br99 is not None else "N/A"
+            
+            print(f"{model_type:<15} {bits:<8} {acc:<10.4f} {loss:<10.4f} {auc_score:<10.4f} {br90_str:<12} {br98_str:<12} {br99_str:<12}")
         
         # Find best configuration
         best_result = results[0]

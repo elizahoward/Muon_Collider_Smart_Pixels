@@ -1,0 +1,127 @@
+Backend: Vitis
+ClockPeriod: 5
+HLSConfig:
+  LayerName:
+    dense2:
+      Precision:
+        bias: fixed<4,1>
+        result: fixed<16,6>
+        weight: fixed<4,1>
+      Trace: false
+    dense2_activation:
+      Precision:
+        result: ufixed<8,0,RND_CONV,SAT>
+      Trace: false
+    dense2_linear:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    dense3:
+      Precision:
+        bias: fixed<4,1>
+        result: fixed<16,6>
+        weight: fixed<4,1>
+      Trace: false
+    dense3_activation:
+      Precision:
+        result: ufixed<8,0,RND_CONV,SAT>
+      Trace: false
+    dense3_linear:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    merged_features:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    nModule:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    nmodule_xlocal_activation:
+      Precision:
+        result: ufixed<8,0,RND_CONV,SAT>
+      Trace: false
+    nmodule_xlocal_concat:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    nmodule_xlocal_dense:
+      Precision:
+        bias: fixed<6,1>
+        result: fixed<16,6>
+        weight: fixed<6,1>
+      Trace: false
+    nmodule_xlocal_dense_linear:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    other_activation:
+      Precision:
+        result: ufixed<8,0,RND_CONV,SAT>
+      Trace: false
+    other_dense:
+      Precision:
+        bias: fixed<4,1>
+        result: fixed<16,6>
+        weight: fixed<4,1>
+      Trace: false
+    other_dense_linear:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    other_features:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    output:
+      Precision:
+        bias: fixed<4,1>
+        result: fixed<16,6>
+        weight: fixed<4,1>
+      Trace: false
+    output_activation:
+      Precision:
+        result: fixed<8,1,RND_CONV,SAT>
+        shift: fixed<16,6>
+        slope: fixed<16,6>
+      Trace: false
+    output_linear:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    x_local:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    x_profile:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    xy_concat:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    y_local:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    y_profile:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+  Model:
+    BramFactor: 1000000000
+    Precision: fixed<16,6>
+    ReuseFactor: 1
+    Strategy: Latency
+    TraceOutput: false
+IOType: io_parallel
+InputData: null
+KerasModel: !keras_model '../ModelASICSynthesis/keras_model.h5'
+OutputDir: ../ModelASICSynthesis
+OutputPredictions: null
+Part: xc7z020clg400-1
+ProjectName: myproject
+Stamp: b900230A
+Version: 1.0.0
