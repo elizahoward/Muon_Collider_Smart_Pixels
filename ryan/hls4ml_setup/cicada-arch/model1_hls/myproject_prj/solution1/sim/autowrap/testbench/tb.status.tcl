@@ -1,0 +1,1 @@
+set ::AESL_AUTOSIM::gTopFileName /home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/hls4ml_setup/cicada-arch/model1_hls/myproject_prj/solution1/./sim/autowrap/testbench/myproject.cpp_pre.cpp.tb.cpp
