@@ -1,0 +1,77 @@
+Backend: Vitis
+ClockPeriod: 5
+HLSConfig:
+  LayerName:
+    concatenate_3:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    concatenate_4:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    concatenate_5:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    dense_3:
+      Precision:
+        bias: fixed<16,6>
+        result: fixed<16,6>
+        weight: fixed<16,6>
+      Trace: false
+    dense_3_relu:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    dense_4:
+      Precision:
+        bias: fixed<16,6>
+        result: fixed<16,6>
+        weight: fixed<16,6>
+      Trace: false
+    dense_4_relu:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    dense_5:
+      Precision:
+        bias: fixed<16,6>
+        result: fixed<16,6>
+        weight: fixed<16,6>
+      Trace: false
+    dense_5_sigmoid:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    x_size:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    y_local:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    y_size:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+    z_global:
+      Precision:
+        result: fixed<16,6>
+      Trace: false
+  Model:
+    BramFactor: 1000000000
+    Precision: fixed<16,6>
+    ReuseFactor: 1
+    Strategy: Latency
+    TraceOutput: false
+IOType: io_parallel
+InputData: null
+KerasModel: !keras_model 'model1_hls/keras_model.h5'
+OutputDir: model1_hls
+OutputPredictions: null
+Part: xc7z020clg400-1
+ProjectName: myproject
+Stamp: 0D5c89cf
+Version: 1.0.0

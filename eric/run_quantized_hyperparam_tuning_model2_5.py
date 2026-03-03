@@ -81,13 +81,13 @@ def main():
     )
     
     # Run hyperparameter tuning on 6-bit quantization
-    bit_configs = [(10, 0)]  # 6-bit fractional, 0 integer bits
+    bit_configs = [(16, 0)]  # 6-bit fractional, 0 integer bits
     
     results = model25.runQuantizedHyperparameterTuning(
         bit_configs=bit_configs,
-        max_trials=120,  # CHANGED from 300 to 150
+        max_trials=140,  # CHANGED from 300 to 150
         executions_per_trial=1,
-        numEpochs=20,
+        numEpochs=22,
         use_weighted_bkg_rej=True,
         bkg_rej_weights={0.95: 0.1, 0.98: 0.7, 0.99: 0.2}
     )
