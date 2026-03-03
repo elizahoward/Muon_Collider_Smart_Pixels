@@ -30,14 +30,11 @@ class Model1(SmartPixModel):
             initial_lr: float = 1e-3,
             end_lr: float = 1e-4,
             power: int = 2,
-            bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)],  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            n_layers: int = 4,
+            width: int = 16
             ): 
-        self.modelName = "Model1" # for other models, e.g., Model 1, Model 2, etc.
         # self.model = None
-        self.histories = {}
-        self.training_generator = None
-        self.validation_generator = None
-        self.x_feature_description: list = ['z_global','x_size', 'y_size', 'y_local']
 
         # Handle initialization that's common to all SmartPixModels, including loading models.
         super().__init__(tfRecordFolder=tfRecordFolder, 
@@ -49,6 +46,13 @@ class Model1(SmartPixModel):
             power=power,
             bit_configs=bit_configs
         )
+        self.modelName = "Model1" # for other models, e.g., Model 1, Model 2, etc.
+        self.histories = {}
+        self.training_generator = None
+        self.validation_generator = None
+        self.x_feature_description: list = ['z_global','x_size', 'y_size', 'y_local']
+        self.n_layers = n_layers
+        self.width = width
         return
      
     def makeUnquantizedModel(self):
@@ -69,12 +73,10 @@ class Model1(SmartPixModel):
 
         ## here i will add the layers 
 
-        stack1 = tf.keras.layers.Dense(17,activation='relu')(inputs)
-        stack2 = tf.keras.layers.Dense(20, activation='relu')(stack1)
-        stack3 = tf.keras.layers.Dense(9, activation='relu')(stack2)
-        stack4 = tf.keras.layers.Dense(16, activation='relu')(stack3)
-        stack5 = tf.keras.layers.Dense(18, activation='relu')(stack4)
-        output = tf.keras.layers.Dense(1,activation='sigmoid')(stack5)
+        layer = tf.keras.layers.Dense(self.width, activation='relu')(inputs)
+        for _ in range(self.n_layers - 1):
+            layer = tf.keras.layers.Dense(self.width, activation='relu')(layer)
+        output = tf.keras.layers.Dense(1, activation='sigmoid')(layer)
 
         self.models["Unquantized"] = tf.keras.Model(inputs=inputList, outputs=output)
 
@@ -145,9 +147,9 @@ class Model1(SmartPixModel):
         for total_bits, int_bits in self.bit_configs:
             config_name = f"quantized_{total_bits}w{int_bits}i"
         
-        
             print(f"Building {config_name} model...")
             self.makeQuantizedModel_withBits(total_bits=total_bits,int_bits=int_bits)
+
     def makeQuantizedModel_withBits(self, total_bits = 8,int_bits =0):
         """
         Build & compile your QKeras model with the given number of integer bits.
@@ -159,87 +161,26 @@ class Model1(SmartPixModel):
         input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
         input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
         x = tf.keras.layers.Concatenate()([input1, input2, input3, input4])
-
-        ## I want to try this with 1 int bit and 7 fractional
-        ## I want to try this with 0 int bit and 7 fractional
         
-        # layer 1
-        x = QDense(
-            17,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
-            ## adds sum of the activations squared to the loss function 
-            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
-        )(x)
-        x = QActivation(
-            activation=quantized_relu(total_bits, int_bits),
-            name="q_relu1"
-        )(x)
-
-        # layer 2 (example—you can tweak per‐layer bits)
-        x = QDense(
-            20,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
-            ## adds sum of the activations squared to the loss function 
-            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
-        )(x)
-        x = QActivation(
-            activation=quantized_relu(total_bits, int_bits),
-            name="q_relu2"
-        )(x)
-
-        # layer 3
-        x = QDense(
-            9,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
-            ## adds sum of the activations squared to the loss function 
-            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
-        )(x)
-        x = QActivation(
-            activation=quantized_relu(total_bits, int_bits),
-            name="q_relu3"
-        )(x)
-
-        # layer 4
-        x = QDense(
-            16,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
-            ## adds sum of the activations squared to the loss function 
-            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
-        )(x)
-        x = QActivation(
-            activation=quantized_relu(total_bits, int_bits),
-            name="q_relu4"
-        )(x)
-
-        # layer 5
-        x = QDense(
-            8,
-            kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
-            ## adds sum of the activations squared to the loss function 
-            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
-        )(x)
-        x = QActivation(
-            activation=quantized_relu(total_bits, int_bits),
-            name="q_relu5"
-        )(x)
+        for i in range(self.n_layers):
+            # hidden layers
+            x = QDense(
+                self.width,
+                kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
+                bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
+            )(x)
+            x = QActivation(
+                activation=quantized_relu(total_bits, int_bits),
+                name=f"q_relu_layer{i+1}"
+            )(x)
 
         # output
         x = QDense(
             1,
             kernel_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
             bias_quantizer=quantized_bits(total_bits, int_bits, alpha=1),
-            #kernel_regularizer=tf.keras.regularizers.L2(0.0001),
         )(x)
+        
         out = QActivation("smooth_sigmoid")(x)
         config_name = f"quantized_{total_bits}w{int_bits}i"
         self.models[config_name] = tf.keras.Model(inputs=[input1, input2, input3, input4], outputs=out)
@@ -268,22 +209,22 @@ class Model1(SmartPixModel):
 
 
     #THESE SHOULD BE UNNECESSARY NOW, use the abstract version
-    def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
-                   save_best=True, early_stopping_patience=20,
-                   run_eagerly = False,config_name = "Unquantized"):
-        # raise NotImplementedError("Use the abstract class version, trainModel()")
-        print("\n\n\nWARNING SHOULD BE USING THE ABSTRACT VERSION INSTEAD\n\n\n")
-        print("\n\n\nTHIS IS FOR DEBUGGING WHY YOUR QUANTIZED MODEL IS RANDOMLY GUESSING\n\n\n")
-        print("\n\n\nONCE THAT IS FIGURED OUT, GO BACK TO THE ABSTRACT VERSION\n\n\n")
-        # self.loadTfRecords()
-        callbacks = []
-        print(self.models[config_name].summary())
-        self.models[config_name].compile(optimizer='adam', 
-                            loss='binary_crossentropy', 
-                            metrics=['binary_accuracy'],
-                            run_eagerly=True
-                            )
-        self.histories[config_name] = self.models[config_name].fit(x=self.training_generator,validation_data=self.validation_generator, callbacks=callbacks,epochs=epochs)
+    # def trainModel(self, epochs=100, batch_size=32, learning_rate=None, 
+    #                save_best=True, early_stopping_patience=20,
+    #                run_eagerly = False,config_name = "Unquantized"):
+    #     # raise NotImplementedError("Use the abstract class version, trainModel()")
+    #     print("\n\n\nWARNING SHOULD BE USING THE ABSTRACT VERSION INSTEAD\n\n\n")
+    #     print("\n\n\nTHIS IS FOR DEBUGGING WHY YOUR QUANTIZED MODEL IS RANDOMLY GUESSING\n\n\n")
+    #     print("\n\n\nONCE THAT IS FIGURED OUT, GO BACK TO THE ABSTRACT VERSION\n\n\n")
+    #     # self.loadTfRecords()
+    #     callbacks = []
+    #     print(self.models[config_name].summary())
+    #     self.models[config_name].compile(optimizer='adam', 
+    #                         loss='binary_crossentropy', 
+    #                         metrics=['binary_accuracy'],
+    #                         run_eagerly=True
+    #                         )
+    #     self.histories[config_name] = self.models[config_name].fit(x=self.training_generator,validation_data=self.validation_generator, callbacks=callbacks,epochs=epochs)
 
 
     def trainUnquantizedModel(self): # in the input, specify the learning rate scheduler, etc.
