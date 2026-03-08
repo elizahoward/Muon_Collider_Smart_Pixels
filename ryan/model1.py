@@ -1116,7 +1116,10 @@ def main():
 
     m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
 
+    m1.makeQuantizedModelHyperParameterTuning5()
     m1.makeQuantizedModelHyperParameterTuning4()
+    m1.makeQuantizedModelHyperParameterTuning3()
+    m1.makeQuantizedModelHyperParameterTuning2()
 
     
 
