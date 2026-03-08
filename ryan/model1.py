@@ -501,6 +501,159 @@ class Model1(SmartPixModel):
             print(f"Building {config_name} model...")
             self.makeQuantizedModel_withBits(total_bits=total_bits,int_bits=int_bits)
 
+    ################################################################################################################################################
+    ## Quantization starts here
+    ################################################################################################################################################
+    def makeQuantizedModelHyperParameterTuning5(self):
+        def model_builder(hp):
+            # ── B) Architecture hyperparams ──────────────────────────────────────────
+            # separately tune rows and cols
+
+            rownodes      = hp.Int("1",   2, 11, step=1)
+        
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+            input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            inputList = [input1, input2, input3, input4]
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x=x_concat3
+
+
+            ## here i will add the layers 
+            
+            # layer 1
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu1"
+            )(x)
+
+            ## layer 2
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu2"
+            )(x)
+
+            ## layer 3
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu3"
+            )(x)
+
+            ## layer 4
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu4"
+            )(x)
+
+            ## layer 5
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu5"
+            )(x)
+
+
+
+            ## output layer
+            x = QDense(
+            1,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+
+            ## output later
+            output = QActivation("quantized_tanh(8,0)")(x)
+
+            model = tf.keras.Model(inputs=inputList, outputs=output)
+
+            model.compile(
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly  = True 
+            )
+            return model
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_dir = f"{self.modelName.lower()}_unquantized_hp5q_results_{timestamp}"
+        os.makedirs(save_dir, exist_ok=True)
+        print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
+
+        tuner = SaveModelRandomSearch(
+            hypermodel= model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_5rows_quantized_matching",
+            directory="./hyperparameter_tuning_5q",   # keep KT logs in one place
+            overwrite=True,                        # avoid weird resume behavior
+            save_dir=save_dir,
+            objective_name="val_binary_accuracy",
+        )
+
+
+        tuner.search(
+            self.training_generator,
+            validation_data=self.validation_generator,
+            epochs=80,
+            callbacks=[
+                EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            ],
+        )
+
+        return tuner, save_dir
+
+
+
+
+
     def makeQuantizedModelHyperParameterTuning4(self):
         def model_builder(hp):
             # ── B) Architecture hyperparams ──────────────────────────────────────────
@@ -579,8 +732,21 @@ class Model1(SmartPixModel):
             name="q_relu4"
             )(x)
 
+
+            ## output layer
+            x = QDense(
+            1,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+
+            
+
             ## output later
-            output = QActivation("quantized_tanh(8,8)")(x)
+            output = QActivation("quantized_tanh(8,0)")(x)
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
@@ -604,6 +770,232 @@ class Model1(SmartPixModel):
             executions_per_trial=2,
             project_name="hp_search_4rows_quantized_matching",
             directory="./hyperparameter_tuning_4q",   # keep KT logs in one place
+            overwrite=True,                        # avoid weird resume behavior
+            save_dir=save_dir,
+            objective_name="val_binary_accuracy",
+        )
+
+
+        tuner.search(
+            self.training_generator,
+            validation_data=self.validation_generator,
+            epochs=80,
+            callbacks=[
+                EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            ],
+        )
+
+        return tuner, save_dir
+
+
+    def makeQuantizedModelHyperParameterTuning3(self):
+        def model_builder(hp):
+            # ── B) Architecture hyperparams ──────────────────────────────────────────
+            # separately tune rows and cols
+
+            rownodes      = hp.Int("1",   2, 11, step=1)
+        
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+            input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            inputList = [input1, input2, input3, input4]
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x=x_concat3
+
+
+            ## here i will add the layers 
+            
+            # layer 1
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu1"
+            )(x)
+
+            ## layer 2
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu2"
+            )(x)
+
+            ## layer 3
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu3"
+            )(x)
+
+
+
+            ## output layer
+            x = QDense(
+            1,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+
+            
+
+            ## output later
+            output = QActivation("quantized_tanh(8,0)")(x)
+
+            model = tf.keras.Model(inputs=inputList, outputs=output)
+
+            model.compile(
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly  = True 
+            )
+            return model
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_dir = f"{self.modelName.lower()}_unquantized_hp3q_results_{timestamp}"
+        os.makedirs(save_dir, exist_ok=True)
+        print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
+
+        tuner = SaveModelRandomSearch(
+            hypermodel= model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_3rows_quantized_matching",
+            directory="./hyperparameter_tuning_3q",   # keep KT logs in one place
+            overwrite=True,                        # avoid weird resume behavior
+            save_dir=save_dir,
+            objective_name="val_binary_accuracy",
+        )
+
+
+        tuner.search(
+            self.training_generator,
+            validation_data=self.validation_generator,
+            epochs=80,
+            callbacks=[
+                EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            ],
+        )
+
+        return tuner, save_dir
+
+
+    def makeQuantizedModelHyperParameterTuning2(self):
+        def model_builder(hp):
+            # ── B) Architecture hyperparams ──────────────────────────────────────────
+            # separately tune rows and cols
+
+            rownodes      = hp.Int("1",   2, 11, step=1)
+        
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+            input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            inputList = [input1, input2, input3, input4]
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x=x_concat3
+
+
+            ## here i will add the layers 
+            
+            # layer 1
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu1"
+            )(x)
+
+            ## layer 2
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 0),
+            name="q_relu2"
+            )(x)
+
+             ## output layer
+            x = QDense(
+            1,
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+
+            
+
+            ## output later
+            output = QActivation("quantized_tanh(8,0)")(x)
+
+            model = tf.keras.Model(inputs=inputList, outputs=output)
+
+            model.compile(
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly  = True 
+            )
+            return model
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_dir = f"{self.modelName.lower()}_unquantized_hp2q_results_{timestamp}"
+        os.makedirs(save_dir, exist_ok=True)
+        print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
+
+        tuner = SaveModelRandomSearch(
+            hypermodel= model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_2rows_quantized_matching",
+            directory="./hyperparameter_tuning_2q",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
