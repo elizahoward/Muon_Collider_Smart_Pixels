@@ -19,12 +19,13 @@ from datetime import datetime
 import json
 from datetime import datetime
 import keras_tuner as kt
-
+from qkeras import QDense, QActivation, quantized_bits, quantized_relu, quantized_tanh
 
 sys.path.append(str(Path.cwd().parents[0]))
 
 from MuC_Smartpix_ML.Model_Classes import SmartPixModel
 print(SmartPixModel)
+
 
 
 class SaveModelRandomSearch(kt.RandomSearch):
@@ -500,6 +501,126 @@ class Model1(SmartPixModel):
             print(f"Building {config_name} model...")
             self.makeQuantizedModel_withBits(total_bits=total_bits,int_bits=int_bits)
 
+    def makeQuantizedModelHyperParameterTuning4(self):
+        def model_builder(hp):
+            # ── B) Architecture hyperparams ──────────────────────────────────────────
+            # separately tune rows and cols
+
+            rownodes      = hp.Int("1",   2, 11, step=1)
+        
+            input1 = tf.keras.layers.Input(shape=(1,), name="z_global")
+            input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
+            input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
+            input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            inputList = [input1, input2, input3, input4]
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x=x_concat3
+
+
+            ## here i will add the layers 
+            
+            # layer 1
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 4, alpha=1),
+            bias_quantizer=quantized_bits(4, 4, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 8),
+            name="q_relu1"
+            )(x)
+
+            ## layer 2
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 4, alpha=1),
+            bias_quantizer=quantized_bits(4, 4, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 8),
+            name="q_relu2"
+            )(x)
+
+            ## layer 3
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 4, alpha=1),
+            bias_quantizer=quantized_bits(4, 4, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 8),
+            name="q_relu3"
+            )(x)
+
+            ## layer 4
+            x = QDense(
+            rownodes,
+            kernel_quantizer=quantized_bits(4, 4, alpha=1),
+            bias_quantizer=quantized_bits(4, 4, alpha=1),
+            #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
+            ## adds sum of the activations squared to the loss function 
+            #activity_regularizer=tf.keras.regularizers.L2(0.0001),
+            )(x)
+            x = QActivation(
+            activation=quantized_relu(8, 8),
+            name="q_relu4"
+            )(x)
+
+            ## output later
+            output = QActivation("quantized_tanh(8,8)")(x)
+
+            model = tf.keras.Model(inputs=inputList, outputs=output)
+
+            model.compile(
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["binary_accuracy"],
+            run_eagerly  = True 
+            )
+            return model
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_dir = f"{self.modelName.lower()}_unquantized_hp4q_results_{timestamp}"
+        os.makedirs(save_dir, exist_ok=True)
+        print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
+
+        tuner = SaveModelRandomSearch(
+            hypermodel= model_builder,
+            objective="val_binary_accuracy",
+            max_trials=120,
+            executions_per_trial=2,
+            project_name="hp_search_4rows_quantized_matching",
+            directory="./hyperparameter_tuning_4q",   # keep KT logs in one place
+            overwrite=True,                        # avoid weird resume behavior
+            save_dir=save_dir,
+            objective_name="val_binary_accuracy",
+        )
+
+
+        tuner.search(
+            self.training_generator,
+            validation_data=self.validation_generator,
+            epochs=80,
+            callbacks=[
+                EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+            ],
+        )
+
+        return tuner, save_dir
+
     def makeQuantizedModel_withBits(self, total_bits = 8,int_bits =0):
         """
         Build & compile your QKeras model with the given number of integer bits.
@@ -599,46 +720,11 @@ class Model1(SmartPixModel):
 
 def main():
 
-# import your Model1 class definition (wherever it lives)
-# from model1 import Model1   # <-- if your class is in model1.py
-# or paste/define Model1 once (but do NOT redefine SmartPixModel again)
-    """
+    m1 = Model1()                 # your subclass
 
-    MODEL_PATH = "model1_unquantized_hp2rows_results_20260213_105714/model_trial_008.h5"
+    m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
 
-    m1 = Model1()
-    m1.loadTfRecords()
-
-    # Load the saved model
-    m1.models["Unquantized"] = tf.keras.models.load_model(MODEL_PATH, compile=False)
-
-    # Ensure compiled (your evaluate() uses predict/evaluate; evaluate() calls model.evaluate)
-    m1.models["Unquantized"].compile(
-        optimizer="adam",
-        loss="binary_crossentropy",
-        metrics=["binary_accuracy"],
-    )
-
-    m1.models["Unquantized"].summary()
-
-    # Run your full evaluation (ROC, AUC, bkg rej, etc.)
-    results = m1.evaluate(config_name="Unquantized")
-
-    print(results["test_accuracy"], results["roc_auc"])
-    """
-    m1 = Model1()
-    m1.loadTfRecords()
-    m1.makeUnquatizedModelHyperParameterTuning2()
-        
-    m1.loadTfRecords()
-    m1.makeUnquatizedModelHyperParameterTuning3()
-
-    m1.loadTfRecords()
-    m1.makeUnquatizedModelHyperParameterTuning4()
-
-    m1.loadTfRecords()
-    m1.makeUnquatizedModelHyperParameterTuning5()
-
+    m1.makeQuantizedModelHyperParameterTuning4()
     
 
 
