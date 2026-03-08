@@ -526,56 +526,56 @@ class Model1(SmartPixModel):
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(4, 4, alpha=1),
-            bias_quantizer=quantized_bits(4, 4, alpha=1),
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
             )(x)
             x = QActivation(
-            activation=quantized_relu(8, 8),
+            activation=quantized_relu(8, 0),
             name="q_relu1"
             )(x)
 
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(4, 4, alpha=1),
-            bias_quantizer=quantized_bits(4, 4, alpha=1),
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
             )(x)
             x = QActivation(
-            activation=quantized_relu(8, 8),
+            activation=quantized_relu(8, 0),
             name="q_relu2"
             )(x)
 
             ## layer 3
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(4, 4, alpha=1),
-            bias_quantizer=quantized_bits(4, 4, alpha=1),
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
             )(x)
             x = QActivation(
-            activation=quantized_relu(8, 8),
+            activation=quantized_relu(8, 0),
             name="q_relu3"
             )(x)
 
             ## layer 4
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(4, 4, alpha=1),
-            bias_quantizer=quantized_bits(4, 4, alpha=1),
+            kernel_quantizer=quantized_bits(4, 0, alpha=1),
+            bias_quantizer=quantized_bits(4, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
             )(x)
             x = QActivation(
-            activation=quantized_relu(8, 8),
+            activation=quantized_relu(8, 0),
             name="q_relu4"
             )(x)
 
@@ -725,6 +725,7 @@ def main():
     m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
 
     m1.makeQuantizedModelHyperParameterTuning4()
+
     
 
 
