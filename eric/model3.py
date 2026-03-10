@@ -216,8 +216,9 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate nModule, x_local, and y_local, then dense
-        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
+        # Scalar branch: concatenate nModule and x_local first, then concatenate with y_local
+        scalar_concat_1 = Concatenate(name="concat_scalars_1")([nmodule_input, x_local_input])
+        scalar_concat = Concatenate(name="concat_scalars_2")([scalar_concat_1, y_local_input])
         scalar_x = Dense(self.scalar_dense_units, activation="relu", name="dense_scalars")(scalar_concat)
         
         # Merge conv and scalar branches
@@ -275,8 +276,9 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate nModule, x_local, and y_local, then dense
-        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
+        # Scalar branch: concatenate nModule and x_local first, then concatenate with y_local
+        scalar_concat_1 = Concatenate(name="concat_scalars_1")([nmodule_input, x_local_input])
+        scalar_concat = Concatenate(name="concat_scalars_2")([scalar_concat_1, y_local_input])
         scalar_x = Dense(scalar_dense_units, activation="relu", name="dense_scalars")(scalar_concat)
         
         # Merge conv and scalar branches
@@ -350,8 +352,9 @@ class Model3(SmartPixModel):
             conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
             conv_x = Flatten(name="flatten_vol")(conv_x)
             
-            # Scalar branch: concatenate nModule, x_local, and y_local, then dense with quantization
-            scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
+            # Scalar branch: concatenate nModule and x_local first, then concatenate with y_local
+            scalar_concat_1 = Concatenate(name="concat_scalars_1")([nmodule_input, x_local_input])
+            scalar_concat = Concatenate(name="concat_scalars_2")([scalar_concat_1, y_local_input])
             scalar_x = QDense(
                 self.scalar_dense_units, 
                 kernel_quantizer=weight_quantizer, 
@@ -465,8 +468,9 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate nModule, x_local, and y_local, then dense with quantization
-        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
+        # Scalar branch: concatenate nModule and x_local first, then concatenate with y_local
+        scalar_concat_1 = Concatenate(name="concat_scalars_1")([nmodule_input, x_local_input])
+        scalar_concat = Concatenate(name="concat_scalars_2")([scalar_concat_1, y_local_input])
         scalar_x = QDense(
             scalar_dense_units, 
             kernel_quantizer=weight_quantizer, 
