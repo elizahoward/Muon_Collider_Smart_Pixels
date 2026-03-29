@@ -529,8 +529,8 @@ class Model1(SmartPixModel):
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -543,8 +543,8 @@ class Model1(SmartPixModel):
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -557,8 +557,8 @@ class Model1(SmartPixModel):
             ## layer 3
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -571,8 +571,8 @@ class Model1(SmartPixModel):
             ## layer 4
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -585,8 +585,8 @@ class Model1(SmartPixModel):
             ## layer 5
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -601,8 +601,8 @@ class Model1(SmartPixModel):
             ## output layer
             x = QDense(
             1,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -622,7 +622,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp5q_6w0i_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp5q_8w0i_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -631,8 +631,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_5_6w0irows_quantized_matching",
-            directory="./hyperparameter_tuning_5q_6w0i",   # keep KT logs in one place
+            project_name="hp_search_5_8w0irows_quantized_matching",
+            directory="./hyperparameter_tuning_5q_8w0i",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -679,8 +679,8 @@ class Model1(SmartPixModel):
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -693,8 +693,8 @@ class Model1(SmartPixModel):
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -707,8 +707,8 @@ class Model1(SmartPixModel):
             ## layer 3
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -721,8 +721,8 @@ class Model1(SmartPixModel):
             ## layer 4
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -736,8 +736,8 @@ class Model1(SmartPixModel):
             ## output layer
             x = QDense(
             1,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -759,7 +759,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp4q_6w0i_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp4q_8w0i_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -768,8 +768,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_4rows_6w0i_quantized_matching",
-            directory="./hyperparameter_tuning_4q_6w0i",   # keep KT logs in one place
+            project_name="hp_search_4rows_8w0i_quantized_matching",
+            directory="./hyperparameter_tuning_4q_8w0i",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -813,8 +813,8 @@ class Model1(SmartPixModel):
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -827,8 +827,8 @@ class Model1(SmartPixModel):
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -841,8 +841,8 @@ class Model1(SmartPixModel):
             ## layer 3
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -857,8 +857,8 @@ class Model1(SmartPixModel):
             ## output layer
             x = QDense(
             1,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -880,7 +880,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp3q_6w0i_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp3q_8w0i_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -889,8 +889,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_3rows_6w0i_quantized_matching",
-            directory="./hyperparameter_tuning_3q_6w0i",   # keep KT logs in one place
+            project_name="hp_search_3rows_8w0i_quantized_matching",
+            directory="./hyperparameter_tuning_3q_8w0i",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -934,8 +934,8 @@ class Model1(SmartPixModel):
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -948,8 +948,8 @@ class Model1(SmartPixModel):
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -962,8 +962,8 @@ class Model1(SmartPixModel):
              ## output layer
             x = QDense(
             1,
-            kernel_quantizer=quantized_bits(6, 0, alpha=1),
-            bias_quantizer=quantized_bits(6, 0, alpha=1),
+            kernel_quantizer=quantized_bits(8, 0, alpha=1),
+            bias_quantizer=quantized_bits(8, 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -985,7 +985,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp2q_6w0i_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp2q_8w0i_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -994,8 +994,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_2rows_6w0i_quantized_matching",
-            directory="./hyperparameter_tuning_2q_6w0i",   # keep KT logs in one place
+            project_name="hp_search_2rows_8w0i_quantized_matching",
+            directory="./hyperparameter_tuning_2q_8w0i",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
