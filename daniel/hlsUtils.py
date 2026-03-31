@@ -43,7 +43,7 @@ def flattenTfData(modelType, doTrain=True):
     xTestList = [xTest[key].numpy() for key in xTest.keys()]
     if doTrain:
         xTrain, yTrain = odgToVect(odgTrain)
-        return xTest, yTest, xTestList, xTrain, yTrain
+        return xTest, yTest, xTestList, xTrain, yTrain, 
     else:
         return xTest, yTest, xTestList
 
