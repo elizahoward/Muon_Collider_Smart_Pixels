@@ -620,7 +620,8 @@ class Model2(SmartPixModel):
         executions_per_trial=2,
         numEpochs=30,
         use_weighted_bkg_rej=False,
-        bkg_rej_weights=None
+        bkg_rej_weights=None,
+        hyperparameter_name_tag=None,
     ):
         """
         Run hyperparameter tuning for quantized Model2 with specified bit configurations.
@@ -636,6 +637,9 @@ class Model2(SmartPixModel):
                 val_weighted_bkg_rej = w95*BR95 + w98*BR98 + w99*BR99
             bkg_rej_weights: Optional dict for BR weights, defaults to:
                 {0.95: 0.3, 0.98: 0.6, 0.99: 0.1}
+            hyperparameter_name_tag: If set (e.g. "qi"), appended to Keras Tuner
+                project_name and results directory so runs do not collide with
+                untagged hyperparameter searches.
             
         Returns:
             Dictionary mapping config_name to (best_model, results, tuner)
@@ -664,7 +668,7 @@ class Model2(SmartPixModel):
             fpr = float(np.mean(bkg_scores >= threshold))
             return 1.0 - fpr
         
-        print(f"Starting quantized hyperparameter tuning for Model2 with {len(bit_configs)} bit configurations...")
+        print(f"Starting quantized hyperparameter tuning for {self.modelName} with {len(bit_configs)} bit configurations...")
         if use_weighted_bkg_rej:
             print("Objective: val_weighted_bkg_rej")
             print(
@@ -697,19 +701,25 @@ class Model2(SmartPixModel):
             )
             objective_name = "val_weighted_bkg_rej" if use_weighted_bkg_rej else "val_binary_accuracy"
             
-            # Create tuner with unique project name
+            # Create tuner with unique project name (optional tag avoids collisions)
+            proj_core = f"model2_quantized_{weight_bits}w{int_bits}i"
+            if hyperparameter_name_tag:
+                proj_core = f"{proj_core}_{hyperparameter_name_tag}"
             tuner = kt.RandomSearch(
                 model_builder,
                 objective=tuner_objective,
                 max_trials=max_trials,
                 executions_per_trial=executions_per_trial,
-                project_name=f"model2_quantized_{weight_bits}w{int_bits}i_hyperparameter_search",
+                project_name=f"{proj_core}_hyperparameter_search",
                 directory="./hyperparameter_tuning"
             )
             
             # Create directory for this configuration's models (before tuning starts)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            config_dir = f"{self.modelName.lower()}_{config_name}_hyperparameter_results_{timestamp}"
+            if hyperparameter_name_tag:
+                config_dir = f"{self.modelName.lower()}_{config_name}_{hyperparameter_name_tag}_hyperparameter_results_{timestamp}"
+            else:
+                config_dir = f"{self.modelName.lower()}_{config_name}_hyperparameter_results_{timestamp}"
             os.makedirs(config_dir, exist_ok=True)
             print(f"\n✓ Created directory for {config_name} results: {config_dir}/")
             print(f"Models will be saved to this directory after each trial completes.\n")

@@ -1,0 +1,2882 @@
+[
+    {
+        "trial_id": "20",
+        "rank": 0,
+        "model_file": "model_trial_20.h5",
+        "hyperparams_file": "hyperparams_trial_20.json",
+        "hyperparameters": {
+            "input_bits": 8,
+            "input_int_bits": 4,
+            "spatial_units": 128,
+            "nmodule_xlocal_units": 10,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.2,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.0026798596778915378
+        },
+        "is_best": true,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9184709191322327,
+        "val_accuracy": 0.9184709191322327,
+        "roc": {
+            "auc": 0.955630466711824,
+            "bkg_rej_95": 0.882726967627237,
+            "bkg_rej_98": 0.8534412123081203,
+            "bkg_rej_99": 0.809651660967343,
+            "weighted_bkg_rej": 0.8476118775718766,
+            "roc_csv": "roc_analysis/model_trial_20_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_20_roc.png"
+        },
+        "total_parameters": 30751,
+        "trainable_parameters": 30751,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 4608
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 10,
+                "parameters": 30
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 138,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 17792
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "08",
+        "rank": 1,
+        "model_file": "model_trial_08.h5",
+        "hyperparams_file": "hyperparams_trial_08.json",
+        "hyperparameters": {
+            "input_bits": 8,
+            "input_int_bits": 1,
+            "spatial_units": 96,
+            "nmodule_xlocal_units": 12,
+            "dense2_ratio": 0.5,
+            "dense3_ratio": 0.6000000000000001,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.0023057788252851554
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9150135517120361,
+        "val_accuracy": 0.9150135517120361,
+        "roc": {
+            "auc": 0.9482724534575304,
+            "bkg_rej_95": 0.8699586685654334,
+            "bkg_rej_98": 0.8496104202381924,
+            "bkg_rej_99": 0.8211168255523205,
+            "weighted_bkg_rej": 0.8459465261337421,
+            "roc_csv": "roc_analysis/model_trial_08_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_08_roc.png"
+        },
+        "total_parameters": 25765,
+        "trainable_parameters": 25765,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 96,
+                "parameters": 3456
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 12,
+                "parameters": 36
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 108,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 13952
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "21",
+        "rank": 2,
+        "model_file": "model_trial_21.h5",
+        "hyperparams_file": "hyperparams_trial_21.json",
+        "hyperparameters": {
+            "input_bits": 10,
+            "input_int_bits": 2,
+            "spatial_units": 96,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.5,
+            "dense3_ratio": 0.4,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.000788703986228305
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9146220088005066,
+        "val_accuracy": 0.9146220088005066,
+        "roc": {
+            "auc": 0.9497207828951342,
+            "bkg_rej_95": 0.8699677391070354,
+            "bkg_rej_98": 0.848026098971703,
+            "bkg_rej_99": 0.8243671029597177,
+            "weighted_bkg_rej": 0.845488463782839,
+            "roc_csv": "roc_analysis/model_trial_21_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_21_roc.png"
+        },
+        "total_parameters": 25241,
+        "trainable_parameters": 25241,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 96,
+                "parameters": 3456
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 104,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 13440
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "28",
+        "rank": 3,
+        "model_file": "model_trial_28.h5",
+        "hyperparams_file": "hyperparams_trial_28.json",
+        "hyperparameters": {
+            "input_bits": 10,
+            "input_int_bits": 2,
+            "spatial_units": 32,
+            "nmodule_xlocal_units": 12,
+            "dense2_ratio": 0.30000000000000004,
+            "dense3_ratio": 0.30000000000000004,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.006155357671731701
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.914495050907135,
+        "val_accuracy": 0.914495050907135,
+        "roc": {
+            "auc": 0.9492669003379415,
+            "bkg_rej_95": 0.8698105163859334,
+            "bkg_rej_98": 0.8486187076897028,
+            "bkg_rej_99": 0.8262447050713398,
+            "weighted_bkg_rej": 0.8462630880356533,
+            "roc_csv": "roc_analysis/model_trial_28_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_28_roc.png"
+        },
+        "total_parameters": 15269,
+        "trainable_parameters": 15269,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 32,
+                "parameters": 1152
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 12,
+                "parameters": 36
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 44,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 5760
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "07",
+        "rank": 4,
+        "model_file": "model_trial_07.h5",
+        "hyperparams_file": "hyperparams_trial_07.json",
+        "hyperparameters": {
+            "input_bits": 8,
+            "input_int_bits": 2,
+            "spatial_units": 88,
+            "nmodule_xlocal_units": 10,
+            "dense2_ratio": 0.5,
+            "dense3_ratio": 0.2,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.0016462793896227354
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9138510227203369,
+        "val_accuracy": 0.9138510227203369,
+        "roc": {
+            "auc": 0.9497561033568531,
+            "bkg_rej_95": 0.8691060376548417,
+            "bkg_rej_98": 0.8466957528700705,
+            "bkg_rej_99": 0.8222445962248406,
+            "weighted_bkg_rej": 0.8440465500195016,
+            "roc_csv": "roc_analysis/model_trial_07_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_07_roc.png"
+        },
+        "total_parameters": 24191,
+        "trainable_parameters": 24191,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 88,
+                "parameters": 3168
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 10,
+                "parameters": 30
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 98,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 12672
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "26",
+        "rank": 5,
+        "model_file": "model_trial_26.h5",
+        "hyperparams_file": "hyperparams_trial_26.json",
+        "hyperparameters": {
+            "input_bits": 8,
+            "input_int_bits": 0,
+            "spatial_units": 112,
+            "nmodule_xlocal_units": 12,
+            "dense2_ratio": 0.30000000000000004,
+            "dense3_ratio": 0.2,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.0005804429242741638
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9135985374450684,
+        "val_accuracy": 0.9135985374450684,
+        "roc": {
+            "auc": 0.9462324667268458,
+            "bkg_rej_95": 0.8683350416186684,
+            "bkg_rej_98": 0.8460396503608564,
+            "bkg_rej_99": 0.8085329608364249,
+            "weighted_bkg_rej": 0.8407678515817513,
+            "roc_csv": "roc_analysis/model_trial_26_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_26_roc.png"
+        },
+        "total_parameters": 28389,
+        "trainable_parameters": 28389,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 112,
+                "parameters": 4032
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 12,
+                "parameters": 36
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 124,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 16000
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "02",
+        "rank": 6,
+        "model_file": "model_trial_02.h5",
+        "hyperparams_file": "hyperparams_trial_02.json",
+        "hyperparameters": {
+            "input_bits": 12,
+            "input_int_bits": 0,
+            "spatial_units": 56,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.2,
+            "dense3_ratio": 0.5,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.0058263756897235135
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9132024645805359,
+        "val_accuracy": 0.9132024645805359,
+        "roc": {
+            "auc": 0.9432760743535945,
+            "bkg_rej_95": 0.8686404165192704,
+            "bkg_rej_98": 0.8453019129772239,
+            "bkg_rej_99": 0.8135066411482096,
+            "weighted_bkg_rej": 0.8412767089656257,
+            "roc_csv": "roc_analysis/model_trial_02_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_02_roc.png"
+        },
+        "total_parameters": 18681,
+        "trainable_parameters": 18681,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 56,
+                "parameters": 2016
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 64,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 8320
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "06",
+        "rank": 7,
+        "model_file": "model_trial_06.h5",
+        "hyperparams_file": "hyperparams_trial_06.json",
+        "hyperparameters": {
+            "input_bits": 14,
+            "input_int_bits": 3,
+            "spatial_units": 32,
+            "nmodule_xlocal_units": 12,
+            "dense2_ratio": 0.2,
+            "dense3_ratio": 0.4,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.0036398004667523446
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9125403165817261,
+        "val_accuracy": 0.9125403165817261,
+        "roc": {
+            "auc": 0.9385452102582963,
+            "bkg_rej_95": 0.8695625882488109,
+            "bkg_rej_98": 0.8469315869517235,
+            "bkg_rej_99": 0.8196050686186472,
+            "weighted_bkg_rej": 0.8437293834148171,
+            "roc_csv": "roc_analysis/model_trial_06_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_06_roc.png"
+        },
+        "total_parameters": 15269,
+        "trainable_parameters": 15269,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 32,
+                "parameters": 1152
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 12,
+                "parameters": 36
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 44,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 5760
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "17",
+        "rank": 8,
+        "model_file": "model_trial_17.h5",
+        "hyperparams_file": "hyperparams_trial_17.json",
+        "hyperparameters": {
+            "input_bits": 16,
+            "input_int_bits": 3,
+            "spatial_units": 72,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.5,
+            "dense3_ratio": 0.6000000000000001,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.0020571513013852606
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9124133586883545,
+        "val_accuracy": 0.9124133586883545,
+        "roc": {
+            "auc": 0.945611875364738,
+            "bkg_rej_95": 0.867161918238138,
+            "bkg_rej_98": 0.8438748144318364,
+            "bkg_rej_99": 0.822510665445167,
+            "weighted_bkg_rej": 0.8419306950151327,
+            "roc_csv": "roc_analysis/model_trial_17_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_17_roc.png"
+        },
+        "total_parameters": 21305,
+        "trainable_parameters": 21305,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 72,
+                "parameters": 2592
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 80,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 10368
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "29",
+        "rank": 9,
+        "model_file": "model_trial_29.h5",
+        "hyperparams_file": "hyperparams_trial_29.json",
+        "hyperparameters": {
+            "input_bits": 16,
+            "input_int_bits": 0,
+            "spatial_units": 56,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.30000000000000004,
+            "dense3_ratio": 0.6000000000000001,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.002606977587599251
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9121230840682983,
+        "val_accuracy": 0.9121230840682983,
+        "roc": {
+            "auc": 0.945255943143871,
+            "bkg_rej_95": 0.8655836439993831,
+            "bkg_rej_98": 0.8422451404573367,
+            "bkg_rej_99": 0.8098754009935266,
+            "weighted_bkg_rej": 0.8381050429187793,
+            "roc_csv": "roc_analysis/model_trial_29_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_29_roc.png"
+        },
+        "total_parameters": 18681,
+        "trainable_parameters": 18681,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 56,
+                "parameters": 2016
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 64,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 8320
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "01",
+        "rank": 10,
+        "model_file": "model_trial_01.h5",
+        "hyperparams_file": "hyperparams_trial_01.json",
+        "hyperparameters": {
+            "input_bits": 16,
+            "input_int_bits": 1,
+            "spatial_units": 104,
+            "nmodule_xlocal_units": 4,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.2,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.004114773318984142
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9120580554008484,
+        "val_accuracy": 0.9120580554008484,
+        "roc": {
+            "auc": 0.9475758344034884,
+            "bkg_rej_95": 0.8694295536386478,
+            "bkg_rej_98": 0.8426744794264999,
+            "bkg_rej_99": 0.812348635337016,
+            "weighted_bkg_rej": 0.8392848180298178,
+            "roc_csv": "roc_analysis/model_trial_01_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_01_roc.png"
+        },
+        "total_parameters": 26029,
+        "trainable_parameters": 26029,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 104,
+                "parameters": 3744
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 4,
+                "parameters": 12
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 108,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 13952
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "13",
+        "rank": 11,
+        "model_file": "model_trial_13.h5",
+        "hyperparams_file": "hyperparams_trial_13.json",
+        "hyperparameters": {
+            "input_bits": 14,
+            "input_int_bits": 3,
+            "spatial_units": 104,
+            "nmodule_xlocal_units": 4,
+            "dense2_ratio": 0.30000000000000004,
+            "dense3_ratio": 0.30000000000000004,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.0005472836126493526
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9120278358459473,
+        "val_accuracy": 0.9120278358459473,
+        "roc": {
+            "auc": 0.9444136729431265,
+            "bkg_rej_95": 0.8646917074085161,
+            "bkg_rej_98": 0.8430735832569896,
+            "bkg_rej_99": 0.819332952370586,
+            "weighted_bkg_rej": 0.8404872694948614,
+            "roc_csv": "roc_analysis/model_trial_13_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_13_roc.png"
+        },
+        "total_parameters": 26029,
+        "trainable_parameters": 26029,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 104,
+                "parameters": 3744
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 4,
+                "parameters": 12
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 108,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 13952
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "23",
+        "rank": 12,
+        "model_file": "model_trial_23.h5",
+        "hyperparams_file": "hyperparams_trial_23.json",
+        "hyperparameters": {
+            "input_bits": 6,
+            "input_int_bits": 0,
+            "spatial_units": 72,
+            "nmodule_xlocal_units": 2,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.30000000000000004,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.0029912317267680685
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9112659096717834,
+        "val_accuracy": 0.9112659096717834,
+        "roc": {
+            "auc": 0.9478618502487123,
+            "bkg_rej_95": 0.8674491520555359,
+            "bkg_rej_98": 0.8393788493110923,
+            "bkg_rej_99": 0.7840727336495928,
+            "weighted_bkg_rej": 0.8311246564532367,
+            "roc_csv": "roc_analysis/model_trial_23_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_23_roc.png"
+        },
+        "total_parameters": 20519,
+        "trainable_parameters": 20519,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 72,
+                "parameters": 2592
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 2,
+                "parameters": 6
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 74,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 9600
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "15",
+        "rank": 13,
+        "model_file": "model_trial_15.h5",
+        "hyperparams_file": "hyperparams_trial_15.json",
+        "hyperparameters": {
+            "input_bits": 8,
+            "input_int_bits": 4,
+            "spatial_units": 96,
+            "nmodule_xlocal_units": 6,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.30000000000000004,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.002726448356888336
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9111797213554382,
+        "val_accuracy": 0.9111797213554382,
+        "roc": {
+            "auc": 0.9510415081378125,
+            "bkg_rej_95": 0.8705482537695659,
+            "bkg_rej_98": 0.8368753798289296,
+            "bkg_rej_99": 0.8068790987509864,
+            "weighted_bkg_rej": 0.8342434110074046,
+            "roc_csv": "roc_analysis/model_trial_15_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_15_roc.png"
+        },
+        "total_parameters": 24979,
+        "trainable_parameters": 24979,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 96,
+                "parameters": 3456
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 6,
+                "parameters": 18
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 102,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 13184
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "24",
+        "rank": 14,
+        "model_file": "model_trial_24.h5",
+        "hyperparams_file": "hyperparams_trial_24.json",
+        "hyperparameters": {
+            "input_bits": 6,
+            "input_int_bits": 2,
+            "spatial_units": 112,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.6000000000000001,
+            "dense3_ratio": 0.4,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.00087132753175437
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9111737012863159,
+        "val_accuracy": 0.9111737012863159,
+        "roc": {
+            "auc": 0.9473492649266597,
+            "bkg_rej_95": 0.8649517296011078,
+            "bkg_rej_98": 0.8415225206430409,
+            "bkg_rej_99": 0.8126993629456282,
+            "weighted_bkg_rej": 0.838100809999365,
+            "roc_csv": "roc_analysis/model_trial_24_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_24_roc.png"
+        },
+        "total_parameters": 27865,
+        "trainable_parameters": 27865,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 112,
+                "parameters": 4032
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 120,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 15488
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "00",
+        "rank": 15,
+        "model_file": "model_trial_00.h5",
+        "hyperparams_file": "hyperparams_trial_00.json",
+        "hyperparameters": {
+            "input_bits": 16,
+            "input_int_bits": 3,
+            "spatial_units": 40,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.30000000000000004,
+            "dense3_ratio": 0.5,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.000978041751919679
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9110466837882996,
+        "val_accuracy": 0.9110466837882996,
+        "roc": {
+            "auc": 0.9415486517621117,
+            "bkg_rej_95": 0.869081849543903,
+            "bkg_rej_98": 0.8448362918416525,
+            "bkg_rej_99": 0.816215709573352,
+            "weighted_bkg_rej": 0.8415367311582175,
+            "roc_csv": "roc_analysis/model_trial_00_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_00_roc.png"
+        },
+        "total_parameters": 16057,
+        "trainable_parameters": 16057,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 40,
+                "parameters": 1440
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 48,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 6272
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "18",
+        "rank": 16,
+        "model_file": "model_trial_18.h5",
+        "hyperparams_file": "hyperparams_trial_18.json",
+        "hyperparameters": {
+            "input_bits": 8,
+            "input_int_bits": 0,
+            "spatial_units": 32,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.2,
+            "dense3_ratio": 0.6000000000000001,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.005064291429476238
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9103497862815857,
+        "val_accuracy": 0.9103497862815857,
+        "roc": {
+            "auc": 0.9432162865359495,
+            "bkg_rej_95": 0.8628292228662306,
+            "bkg_rej_98": 0.8376524228928376,
+            "bkg_rej_99": 0.8013279272905385,
+            "weighted_bkg_rej": 0.8329052037697171,
+            "roc_csv": "roc_analysis/model_trial_18_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_18_roc.png"
+        },
+        "total_parameters": 14745,
+        "trainable_parameters": 14745,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 32,
+                "parameters": 1152
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 40,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 5248
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "04",
+        "rank": 17,
+        "model_file": "model_trial_04.h5",
+        "hyperparams_file": "hyperparams_trial_04.json",
+        "hyperparameters": {
+            "input_bits": 16,
+            "input_int_bits": 2,
+            "spatial_units": 96,
+            "nmodule_xlocal_units": 10,
+            "dense2_ratio": 0.5,
+            "dense3_ratio": 0.6000000000000001,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.000134820344475202
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9102137088775635,
+        "val_accuracy": 0.9102137088775635,
+        "roc": {
+            "auc": 0.9479691390040027,
+            "bkg_rej_95": 0.8654445623614853,
+            "bkg_rej_98": 0.8388860165507149,
+            "bkg_rej_99": 0.8095065323017104,
+            "weighted_bkg_rej": 0.835665974281991,
+            "roc_csv": "roc_analysis/model_trial_04_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_04_roc.png"
+        },
+        "total_parameters": 25503,
+        "trainable_parameters": 25503,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 96,
+                "parameters": 3456
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 10,
+                "parameters": 30
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 106,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 13696
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "16",
+        "rank": 18,
+        "model_file": "model_trial_16.h5",
+        "hyperparams_file": "hyperparams_trial_16.json",
+        "hyperparameters": {
+            "input_bits": 14,
+            "input_int_bits": 3,
+            "spatial_units": 96,
+            "nmodule_xlocal_units": 10,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.5,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.00034991855683622004
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9096936583518982,
+        "val_accuracy": 0.9096936583518982,
+        "roc": {
+            "auc": 0.9472054463077599,
+            "bkg_rej_95": 0.8636939478322917,
+            "bkg_rej_98": 0.8380605972649293,
+            "bkg_rej_99": 0.8105526680998123,
+            "weighted_bkg_rej": 0.8351223464886421,
+            "roc_csv": "roc_analysis/model_trial_16_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_16_roc.png"
+        },
+        "total_parameters": 25503,
+        "trainable_parameters": 25503,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 96,
+                "parameters": 3456
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 10,
+                "parameters": 30
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 106,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 13696
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "25",
+        "rank": 19,
+        "model_file": "model_trial_25.h5",
+        "hyperparams_file": "hyperparams_trial_25.json",
+        "hyperparameters": {
+            "input_bits": 10,
+            "input_int_bits": 0,
+            "spatial_units": 16,
+            "nmodule_xlocal_units": 6,
+            "dense2_ratio": 0.5,
+            "dense3_ratio": 0.30000000000000004,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.004523993367757095
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9094926118850708,
+        "val_accuracy": 0.9094926118850708,
+        "roc": {
+            "auc": 0.9417656217714151,
+            "bkg_rej_95": 0.8614444535149861,
+            "bkg_rej_98": 0.8353605993813891,
+            "bkg_rej_99": 0.7868029666718066,
+            "weighted_bkg_rej": 0.8282574582528324,
+            "roc_csv": "roc_analysis/model_trial_25_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_25_roc.png"
+        },
+        "total_parameters": 11859,
+        "trainable_parameters": 11859,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 16,
+                "parameters": 576
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 6,
+                "parameters": 18
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 22,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 2944
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "05",
+        "rank": 20,
+        "model_file": "model_trial_05.h5",
+        "hyperparams_file": "hyperparams_trial_05.json",
+        "hyperparameters": {
+            "input_bits": 16,
+            "input_int_bits": 2,
+            "spatial_units": 80,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.5,
+            "dense3_ratio": 0.30000000000000004,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.0003498923554592848
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9087503552436829,
+        "val_accuracy": 0.9087503552436829,
+        "roc": {
+            "auc": 0.9445299417835298,
+            "bkg_rej_95": 0.8626175768955164,
+            "bkg_rej_98": 0.8336432435047363,
+            "bkg_rej_99": 0.8043363235885481,
+            "weighted_bkg_rej": 0.8306792928605766,
+            "roc_csv": "roc_analysis/model_trial_05_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_05_roc.png"
+        },
+        "total_parameters": 22617,
+        "trainable_parameters": 22617,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 80,
+                "parameters": 2880
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 88,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 11392
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "11",
+        "rank": 21,
+        "model_file": "model_trial_11.h5",
+        "hyperparams_file": "hyperparams_trial_11.json",
+        "hyperparameters": {
+            "input_bits": 10,
+            "input_int_bits": 0,
+            "spatial_units": 72,
+            "nmodule_xlocal_units": 2,
+            "dense2_ratio": 0.30000000000000004,
+            "dense3_ratio": 0.2,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.0009689679055404804
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9077087640762329,
+        "val_accuracy": 0.9077087640762329,
+        "roc": {
+            "auc": 0.9435655398271986,
+            "bkg_rej_95": 0.8622396376620981,
+            "bkg_rej_98": 0.8280678839333496,
+            "bkg_rej_99": 0.7821890845102362,
+            "weighted_bkg_rej": 0.8223092994216018,
+            "roc_csv": "roc_analysis/model_trial_11_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_11_roc.png"
+        },
+        "total_parameters": 20519,
+        "trainable_parameters": 20519,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 72,
+                "parameters": 2592
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 2,
+                "parameters": 6
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 74,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 9600
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "12",
+        "rank": 22,
+        "model_file": "model_trial_12.h5",
+        "hyperparams_file": "hyperparams_trial_12.json",
+        "hyperparameters": {
+            "input_bits": 12,
+            "input_int_bits": 0,
+            "spatial_units": 64,
+            "nmodule_xlocal_units": 12,
+            "dense2_ratio": 0.2,
+            "dense3_ratio": 0.5,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.00018444106652649943
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.901197612285614,
+        "val_accuracy": 0.901197612285614,
+        "roc": {
+            "auc": 0.9436084314696447,
+            "bkg_rej_95": 0.8555848836400688,
+            "bkg_rej_98": 0.8144650950441584,
+            "bkg_rej_99": 0.7803598586204916,
+            "weighted_bkg_rej": 0.8117560266190161,
+            "roc_csv": "roc_analysis/model_trial_12_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_12_roc.png"
+        },
+        "total_parameters": 20517,
+        "trainable_parameters": 20517,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 2304
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 12,
+                "parameters": 36
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 76,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 9856
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "14",
+        "rank": 23,
+        "model_file": "model_trial_14.h5",
+        "hyperparams_file": "hyperparams_trial_14.json",
+        "hyperparameters": {
+            "input_bits": 12,
+            "input_int_bits": 2,
+            "spatial_units": 80,
+            "nmodule_xlocal_units": 10,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.6000000000000001,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.00012991121600668937
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.8997009992599487,
+        "val_accuracy": 0.8997009992599487,
+        "roc": {
+            "auc": 0.9385422773334722,
+            "bkg_rej_95": 0.8465143420380298,
+            "bkg_rej_98": 0.8124544583223731,
+            "bkg_rej_99": 0.7746937936330844,
+            "weighted_bkg_rej": 0.8083083137560809,
+            "roc_csv": "roc_analysis/model_trial_14_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_14_roc.png"
+        },
+        "total_parameters": 22879,
+        "trainable_parameters": 22879,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 80,
+                "parameters": 2880
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 10,
+                "parameters": 30
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 90,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 11648
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "03",
+        "rank": 24,
+        "model_file": "model_trial_03.h5",
+        "hyperparams_file": "hyperparams_trial_03.json",
+        "hyperparameters": {
+            "input_bits": 8,
+            "input_int_bits": 3,
+            "spatial_units": 56,
+            "nmodule_xlocal_units": 2,
+            "dense2_ratio": 0.30000000000000004,
+            "dense3_ratio": 0.30000000000000004,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.006882586554868881
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.8953728079795837,
+        "val_accuracy": 0.8953728079795837,
+        "roc": {
+            "auc": 0.9283458572907413,
+            "bkg_rej_95": 0.8446881396621526,
+            "bkg_rej_98": 0.8141506496019544,
+            "bkg_rej_99": 0.7834922189870623,
+            "weighted_bkg_rej": 0.8110727124849958,
+            "roc_csv": "roc_analysis/model_trial_03_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_03_roc.png"
+        },
+        "total_parameters": 17895,
+        "trainable_parameters": 17895,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 56,
+                "parameters": 2016
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 2,
+                "parameters": 6
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 58,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 7552
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "09",
+        "rank": 25,
+        "model_file": "model_trial_09.h5",
+        "hyperparams_file": "hyperparams_trial_09.json",
+        "hyperparameters": {
+            "input_bits": 16,
+            "input_int_bits": 1,
+            "spatial_units": 24,
+            "nmodule_xlocal_units": 2,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.2,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.0009231873341519738
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.8236671686172485,
+        "val_accuracy": 0.8236671686172485,
+        "roc": {
+            "auc": 0.878974844976391,
+            "bkg_rej_95": 0.6956712351961203,
+            "bkg_rej_98": 0.6607708146253413,
+            "bkg_rej_99": 0.6396122645816515,
+            "weighted_bkg_rej": 0.6600291466736812,
+            "roc_csv": "roc_analysis/model_trial_09_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_09_roc.png"
+        },
+        "total_parameters": 12647,
+        "trainable_parameters": 12647,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 24,
+                "parameters": 864
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 2,
+                "parameters": 6
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 26,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 3456
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "10",
+        "rank": 26,
+        "model_file": "model_trial_10.h5",
+        "hyperparams_file": "hyperparams_trial_10.json",
+        "hyperparameters": {
+            "input_bits": 4,
+            "input_int_bits": 1,
+            "spatial_units": 32,
+            "nmodule_xlocal_units": 4,
+            "dense2_ratio": 0.30000000000000004,
+            "dense3_ratio": 0.2,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.00012470968260895233
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.8220404982566833,
+        "val_accuracy": 0.8220404982566833,
+        "roc": {
+            "auc": 0.8569491672932766,
+            "bkg_rej_95": 0.7087297915891891,
+            "bkg_rej_98": 0.6640180685188712,
+            "bkg_rej_99": 0.6044246101934747,
+            "weighted_bkg_rej": 0.6565705491608237,
+            "roc_csv": "roc_analysis/model_trial_10_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_10_roc.png"
+        },
+        "total_parameters": 14221,
+        "trainable_parameters": 14221,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 32,
+                "parameters": 1152
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 4,
+                "parameters": 12
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 36,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 4736
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "19",
+        "rank": 27,
+        "model_file": "model_trial_19.h5",
+        "hyperparams_file": "hyperparams_trial_19.json",
+        "hyperparameters": {
+            "input_bits": 10,
+            "input_int_bits": 0,
+            "spatial_units": 16,
+            "nmodule_xlocal_units": 2,
+            "dense2_ratio": 0.2,
+            "dense3_ratio": 0.5,
+            "dropout_rate": 0.1,
+            "learning_rate": 0.0005334045447934204
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.8158664703369141,
+        "val_accuracy": 0.8158664703369141,
+        "roc": {
+            "auc": 0.8646175372924678,
+            "bkg_rej_95": 0.6766744975675831,
+            "bkg_rej_98": 0.6501159517568127,
+            "bkg_rej_99": 0.618054610707472,
+            "weighted_bkg_rej": 0.6463595381280215,
+            "roc_csv": "roc_analysis/model_trial_19_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_19_roc.png"
+        },
+        "total_parameters": 11335,
+        "trainable_parameters": 11335,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 16,
+                "parameters": 576
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 2,
+                "parameters": 6
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 18,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 2432
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "22",
+        "rank": 28,
+        "model_file": "model_trial_22.h5",
+        "hyperparams_file": "hyperparams_trial_22.json",
+        "hyperparameters": {
+            "input_bits": 12,
+            "input_int_bits": 3,
+            "spatial_units": 16,
+            "nmodule_xlocal_units": 8,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.4,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.006026090875658576
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.5,
+        "val_accuracy": 0.5,
+        "roc": {
+            "auc": 0.5772258135390602,
+            "bkg_rej_95": 0.01896952600373103,
+            "bkg_rej_98": 0.0059170166383968326,
+            "bkg_rej_99": 0.003897309375009428,
+            "weighted_bkg_rej": 0.006818326122252771,
+            "roc_csv": "roc_analysis/model_trial_22_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_22_roc.png"
+        },
+        "total_parameters": 12121,
+        "trainable_parameters": 12121,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 16,
+                "parameters": 576
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 8,
+                "parameters": 24
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 24,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 3200
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    },
+    {
+        "trial_id": "27",
+        "rank": 29,
+        "model_file": "model_trial_27.h5",
+        "hyperparams_file": "hyperparams_trial_27.json",
+        "hyperparameters": {
+            "input_bits": 4,
+            "input_int_bits": 3,
+            "spatial_units": 64,
+            "nmodule_xlocal_units": 12,
+            "dense2_ratio": 0.6000000000000001,
+            "dense3_ratio": 0.4,
+            "dropout_rate": 0.05,
+            "learning_rate": 0.0003781383962816197
+        },
+        "is_best": false,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.5,
+        "val_accuracy": 0.5,
+        "roc": {
+            "auc": 0.4979402771991519,
+            "bkg_rej_95": 0.0,
+            "bkg_rej_98": 0.0,
+            "bkg_rej_99": 0.0,
+            "weighted_bkg_rej": 0.0,
+            "roc_csv": "roc_analysis/model_trial_27_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_27_roc.png"
+        },
+        "total_parameters": 20517,
+        "trainable_parameters": 20517,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 2304
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 12,
+                "parameters": 36
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 76,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 9856
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    }
+]
