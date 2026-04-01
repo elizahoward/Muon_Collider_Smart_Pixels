@@ -518,10 +518,14 @@ class Model1(SmartPixModel):
             inputList = [input1, input2, input3, input4]
 
 
+            
+
+
             x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
             x=x_concat3
+
 
 
             ## here i will add the layers 
