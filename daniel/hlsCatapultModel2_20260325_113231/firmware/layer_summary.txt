@@ -1,0 +1,8 @@
+     Layer Name        Layer Class       Input Type        Input Shape       Output Type       Output Shape      Weight Type          Bias Type        Filter Shape    Stride    Reuse
+--------------------  -------------  -------------------  -------------  -------------------  --------------  ------------------  ------------------  --------------  --------  -------
+  clone_y_profile         Clone      ac_fixed<16,6,true>      [13]       ac_fixed<16,6,true>       [13]                                                                            1
+   concatenate_24      Concatenate   ac_fixed<16,6,true>      [13]       ac_fixed<16,6,true>       [26]                                                                            1
+clone_concatenate_24      Clone      ac_fixed<16,6,true>      [26]       ac_fixed<16,6,true>       [26]                                                                            1
+   concatenate_25      Concatenate   ac_fixed<16,6,true>      [26]       ac_fixed<16,6,true>       [52]                                                                            1
+    hidden_dense          Dense      ac_fixed<16,6,true>      [52]       ac_fixed<16,6,true>       [10]       ac_fixed<4,1,true>  ac_fixed<4,1,true>                               1
+    output_dense          Dense      ac_fixed<16,6,true>      [10]       ac_fixed<16,6,true>       [1]        ac_fixed<4,1,true>  ac_fixed<4,1,true>                               1
