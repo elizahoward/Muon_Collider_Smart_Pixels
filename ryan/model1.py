@@ -515,15 +515,25 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+
             inputList = [input1, input2, input3, input4]
+            
+
+            q_input1 = QActivation(activation=quantized_bits(8, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(8, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(8, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(8, 0), name="q_input_4")(input4)
+
+            
+
 
 
             
 
 
-            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
-            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
 
 
@@ -669,12 +679,20 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+
             inputList = [input1, input2, input3, input4]
+            
+            q_input1 = QActivation(activation=quantized_bits(8, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(8, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(8, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(8, 0), name="q_input_4")(input4)
+
+           
 
 
-            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
-            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
 
 
@@ -803,12 +821,25 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+
             inputList = [input1, input2, input3, input4]
 
 
-            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
-            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+            q_input1 = QActivation(activation=quantized_bits(8, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(8, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(8, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(8, 0), name="q_input_4")(input4)
+
+            
+
+
+
+            
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
 
 
@@ -925,11 +956,19 @@ class Model1(SmartPixModel):
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
             inputList = [input1, input2, input3, input4]
+            
+
+            q_input1 = QActivation(activation=quantized_bits(8, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(8, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(8, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(8, 0), name="q_input_4")(input4)
 
 
-            x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
-            x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
 
 
