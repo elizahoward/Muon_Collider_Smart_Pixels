@@ -282,6 +282,12 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
                 # For multiple timestamps, ensure proper 2D output
                 y_profiles = y_profiles.reshape((-1, 13))
                 x_profiles = x_profiles.reshape((-1, 21))
+
+            #Log normalization of xprofile and yprofile            
+            nonzeros = abs(y_profiles) > 0
+            y_profiles[nonzeros] = np.sign(y_profiles[nonzeros])*np.log1p(abs(y_profiles[nonzeros]))/math.log(2)
+            nonzeros = abs(x_profiles) > 0
+            x_profiles[nonzeros] = np.sign(x_profiles[nonzeros])*np.log1p(abs(x_profiles[nonzeros]))/math.log(2)
             
             y_locals = ylocal_df_raw.values/8.5
             z_locs = z_loc_df_raw.values/65

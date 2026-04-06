@@ -20,7 +20,7 @@ from ASICModel import ModelASIC
 import tensorflow as tf
 
 tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
-
+tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData"
 def flattenTfData(modelType, doTrain=True):
     if modelType not in ["1","2","2.5","3",1,2,3,2.5,"ASIC"]:
         raise TypeError("Not supported model type")
