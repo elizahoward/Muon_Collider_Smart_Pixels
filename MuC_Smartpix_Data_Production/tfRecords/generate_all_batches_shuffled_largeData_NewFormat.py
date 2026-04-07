@@ -187,8 +187,8 @@ def main():
     # Create main output directory
     # base_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "all_batches_shuffled_bigData_try3_eric")
     base_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "all_batches_shuffled_bigData_try3_eric")
-    
-    datasetName = "Data_Set_2026Feb"
+        
+    datasetName = "Data_Set_2026V2_Apr"
     data_directory_path = os.path.join(Path("/local/d1/smartpixML/2026Datasets/Data_Files/"),Path(datasetName))
     base_output_dir = os.path.join(data_directory_path,"TF_Records")
     data_directory_path = os.path.join(data_directory_path,"Parquet_Files/")
