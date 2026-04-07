@@ -31,14 +31,14 @@ Examples:
   # Auto-detect features from model (default - recommended)
   python analyze_and_select_pareto_roc.py
       --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815
-      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
+      --data_dir /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData
       --output_dir ../model2_5_pareto_roc_selected
       --use_weighted
   
   # Manually specify features (if needed)
   python analyze_and_select_pareto_roc.py
       --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815
-      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
+      --data_dir /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData
       --output_dir ../model2_5_pareto_roc_selected
       --features "x_profile,nModule,x_local,y_profile,y_local"
 """
@@ -652,7 +652,7 @@ Examples:
   # Use weighted background rejection (default)
   python analyze_and_select_pareto_roc.py \\
       --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815 \\
-      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData \\
+      --data_dir /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData \\
       --output_dir ../model2_5_pareto_roc_selected \\
       --use_weighted
         """

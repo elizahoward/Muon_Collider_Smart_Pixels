@@ -128,7 +128,7 @@ def main():
     parser.add_argument(
         "--data_dir",
         type=str,
-        default="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+        default="/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData",
         help="TFRecords base data directory used by hyperparameter tuning and ROC analysis.",
     )
 

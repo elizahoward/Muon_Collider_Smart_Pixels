@@ -1,0 +1,98 @@
+[
+    {
+        "trial_id": "0",
+        "rank": 0,
+        "model_file": "model_trial_0.h5",
+        "hyperparams_file": "hyperparams_trial_0.json",
+        "hyperparameters": {
+            "input_bits": 6,
+            "input_int_bits": 1,
+            "spatial_units": 120,
+            "nmodule_xlocal_units": 10,
+            "dense2_ratio": 0.4,
+            "dense3_ratio": 0.4,
+            "dropout_rate": 0.0,
+            "learning_rate": 0.0007797416572730908
+        },
+        "is_best": true,
+        "objective_name": "val_binary_accuracy",
+        "objective_score": 0.9145698547363281,
+        "val_accuracy": 0.9145698547363281,
+        "roc": {
+            "auc": 0.9519836355607536,
+            "bkg_rej_95": 0.8734417565406164,
+            "bkg_rej_98": 0.85059306224508,
+            "bkg_rej_99": 0.8233391082448199,
+            "weighted_bkg_rej": 0.8474271408745816,
+            "roc_csv": "roc_analysis/model_trial_0_roc_data.csv",
+            "roc_plot": "roc_analysis/model_trial_0_roc.png"
+        },
+        "total_parameters": 29439,
+        "trainable_parameters": 29439,
+        "non_trainable_parameters": 0,
+        "num_layers": 11,
+        "layer_structure": [
+            {
+                "name": "x_profile",
+                "type": "Input",
+                "shape": 21
+            },
+            {
+                "name": "y_profile",
+                "type": "Input",
+                "shape": 13
+            },
+            {
+                "name": "y_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "nModule",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "x_local",
+                "type": "Input",
+                "shape": 1
+            },
+            {
+                "name": "other_dense",
+                "type": "Dense/QDense",
+                "units": 120,
+                "parameters": 4320
+            },
+            {
+                "name": "nmodule_xlocal_dense",
+                "type": "Dense/QDense (8-bit)",
+                "units": 10,
+                "parameters": 30
+            },
+            {
+                "name": "concatenate",
+                "type": "Concatenate",
+                "units": 130,
+                "parameters": 0
+            },
+            {
+                "name": "dense2",
+                "type": "Dense/QDense",
+                "units": 128,
+                "parameters": 16768
+            },
+            {
+                "name": "dense3",
+                "type": "Dense/QDense",
+                "units": 64,
+                "parameters": 8256
+            },
+            {
+                "name": "output",
+                "type": "Dense/QDense",
+                "units": 1,
+                "parameters": 65
+            }
+        ]
+    }
+]

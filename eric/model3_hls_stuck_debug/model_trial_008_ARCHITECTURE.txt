@@ -1,0 +1,86 @@
+Model Architecture (from H5 model_config)
+==========================================
+Model file: model_trial_008.h5
+Model name: model3_quantized_4w0i_hyperparameter_tuning
+Number of layers: 21
+
+Input layer references
+----------------------
+- ['cluster', 0, 0]
+- ['nModule', 0, 0]
+- ['x_local', 0, 0]
+- ['y_local', 0, 0]
+
+Output layer references
+-----------------------
+- ['output', 0, 0]
+
+Layer-by-layer details
+----------------------
+01. cluster (InputLayer)
+    batch_input_shape=[None, 13, 21], dtype=float32
+02. add_channel (Reshape)
+    dtype=float32, trainable=True
+    inbound_nodes: [[['cluster', 0, 0, {}]]]
+03. nModule (InputLayer)
+    batch_input_shape=[None, 1], dtype=float32
+04. x_local (InputLayer)
+    batch_input_shape=[None, 1], dtype=float32
+05. conv2d (QConv2D)
+    dtype=float32, filters=24, kernel_size=[3, 3], strides=[1, 1], padding=same, activation=linear, use_bias=True, kernel_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, bias_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, trainable=True
+    inbound_nodes: [[['add_channel', 0, 0, {}]]]
+06. concat_scalars_1 (Concatenate)
+    dtype=float32, axis=-1, trainable=True
+    inbound_nodes: [[['nModule', 0, 0, {}], ['x_local', 0, 0, {}]]]
+07. y_local (InputLayer)
+    batch_input_shape=[None, 1], dtype=float32
+08. conv2d_act (QActivation)
+    dtype=float32, activation={'class_name': 'quantized_relu', 'config': {'bits': 8, 'integer': 0, 'use_sigmoid': 0, 'negative_slope': 0.0, 'use_stochastic_rounding': False, 'relu_upper_bound': None, 'qnoise_factor': 1.0}, '__passive_serialization__': True, 'shared_object_id': 7}, trainable=True
+    inbound_nodes: [[['conv2d', 0, 0, {}]]]
+09. concat_scalars_2 (Concatenate)
+    dtype=float32, axis=-1, trainable=True
+    inbound_nodes: [[['concat_scalars_1', 0, 0, {}], ['y_local', 0, 0, {}]]]
+10. pool2d_1 (MaxPooling2D)
+    dtype=float32, strides=[2, 2], padding=valid, pool_size=[2, 2], trainable=True
+    inbound_nodes: [[['conv2d_act', 0, 0, {}]]]
+11. dense_scalars (QDense)
+    dtype=float32, units=64, activation=linear, use_bias=True, kernel_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, bias_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, trainable=True
+    inbound_nodes: [[['concat_scalars_2', 0, 0, {}]]]
+12. flatten_vol (Flatten)
+    dtype=float32, trainable=True
+    inbound_nodes: [[['pool2d_1', 0, 0, {}]]]
+13. dense_scalars_act (QActivation)
+    dtype=float32, activation={'class_name': 'quantized_relu', 'config': {'bits': 8, 'integer': 0, 'use_sigmoid': 0, 'negative_slope': 0.0, 'use_stochastic_rounding': False, 'relu_upper_bound': None, 'qnoise_factor': 1.0}, '__passive_serialization__': True, 'shared_object_id': 7}, trainable=True
+    inbound_nodes: [[['dense_scalars', 0, 0, {}]]]
+14. concat_all (Concatenate)
+    dtype=float32, axis=-1, trainable=True
+    inbound_nodes: [[['flatten_vol', 0, 0, {}], ['dense_scalars_act', 0, 0, {}]]]
+15. merged_dense1 (QDense)
+    dtype=float32, units=110, activation=linear, use_bias=True, kernel_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, bias_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, trainable=True
+    inbound_nodes: [[['concat_all', 0, 0, {}]]]
+16. merged_dense1_act (QActivation)
+    dtype=float32, activation={'class_name': 'quantized_relu', 'config': {'bits': 8, 'integer': 0, 'use_sigmoid': 0, 'negative_slope': 0.0, 'use_stochastic_rounding': False, 'relu_upper_bound': None, 'qnoise_factor': 1.0}, '__passive_serialization__': True, 'shared_object_id': 7}, trainable=True
+    inbound_nodes: [[['merged_dense1', 0, 0, {}]]]
+17. dropout_1 (Dropout)
+    dtype=float32, trainable=True
+    inbound_nodes: [[['merged_dense1_act', 0, 0, {}]]]
+18. merged_dense2 (QDense)
+    dtype=float32, units=88, activation=linear, use_bias=True, kernel_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, bias_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, trainable=True
+    inbound_nodes: [[['dropout_1', 0, 0, {}]]]
+19. merged_dense2_act (QActivation)
+    dtype=float32, activation={'class_name': 'quantized_relu', 'config': {'bits': 8, 'integer': 0, 'use_sigmoid': 0, 'negative_slope': 0.0, 'use_stochastic_rounding': False, 'relu_upper_bound': None, 'qnoise_factor': 1.0}, '__passive_serialization__': True, 'shared_object_id': 7}, trainable=True
+    inbound_nodes: [[['merged_dense2', 0, 0, {}]]]
+20. output_dense (QDense)
+    dtype=float32, units=1, activation=linear, use_bias=True, kernel_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, bias_quantizer={'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1.0, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}, trainable=True
+    inbound_nodes: [[['merged_dense2_act', 0, 0, {}]]]
+21. output (QActivation)
+    dtype=float32, activation=quantized_tanh, trainable=True
+    inbound_nodes: [[['output_dense', 0, 0, {}]]]
+
+High-level architecture summary
+-------------------------------
+- Multi-input model: image-like cluster input plus scalar inputs (nModule, x_local, y_local).
+- CNN branch: Conv2D -> Activation -> MaxPooling2D -> Flatten.
+- Scalar branch: concatenate scalars -> QDense -> QActivation.
+- Fusion: concatenate CNN flattened features with scalar branch features.
+- Head: QDense -> QActivation -> QDense -> QActivation -> QDense -> Activation(output).

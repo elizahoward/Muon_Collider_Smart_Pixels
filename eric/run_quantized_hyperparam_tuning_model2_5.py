@@ -30,8 +30,7 @@ def main():
     print("="*70)
     
     # Data folder path
-    # data_folder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
-    data_folder = "../Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
+    data_folder = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData"
     
     print("\nConfiguration:")
     print(f"  - Data folder: {data_folder}")

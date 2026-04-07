@@ -11,10 +11,11 @@ Example
 -------
     cd .../eric
     python run_quantized_inputs_hyperparam_tuning_model2_5.py \\
-        --data_folder /path/to/TF_Records/filtering_records16384_data_shuffled_single_bigData \\
-        --bit-config 6,0 \\
-        --max-trials 50 \\
-        --epochs 22 \\
+        --data_folder /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData \\
+        --bit-config 4,0 --bit-config 6,0 --bit-config 8,0 --bit-config 10,0 \\
+        --max-trials 1 \\
+        --executions-per-trial 2 \\
+        --epochs 20 \\
         --tag qi
 
 Author: Eric
@@ -30,8 +31,8 @@ sys.path.append("../MuC_Smartpix_ML/")
 from model2_5_quantized_inputs import Model2_5_QuantizedInputs
 
 DEFAULT_DATA_FOLDER = (
-    "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/"
-    "TF_Records/filtering_records16384_data_shuffled_single_bigData"
+    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/"
+    "Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData"
 )
 
 
@@ -57,9 +58,9 @@ def main():
         metavar="W,I",
         help="Weight quantizer (total bits, int bits). Repeat for multiple sweeps. Default: 6,0",
     )
-    parser.add_argument("--max-trials", type=int, default=50)
-    parser.add_argument("--executions-per-trial", type=int, default=1)
-    parser.add_argument("--epochs", type=int, default=22, help="Epochs per tuner trial")
+    parser.add_argument("--max-trials", type=int, default=1)
+    parser.add_argument("--executions-per-trial", type=int, default=2)
+    parser.add_argument("--epochs", type=int, default=20, help="Epochs per tuner trial")
     parser.add_argument(
         "--tag",
         type=str,
@@ -89,7 +90,7 @@ def main():
     parser.add_argument("--hp-input-int-bits-step", type=int, default=1)
     args = parser.parse_args()
 
-    bit_configs = args.bit_configs if args.bit_configs else [(6, 0)]
+    bit_configs = args.bit_configs if args.bit_configs else [(4, 0), (6, 0), (8, 0), (10, 0)]
 
     if args.nmodule_weight_bits is not None:
         nm_wb = args.nmodule_weight_bits
