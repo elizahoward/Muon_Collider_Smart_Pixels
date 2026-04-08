@@ -25,7 +25,7 @@ class Model2_5(Model2):
     """
 
     def __init__(self,
-                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+                 tfRecordFolder: str = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData",
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,
@@ -411,7 +411,7 @@ def main():
     print("=== Model2.5 Example Usage ===")
 
     model25 = Model2_5(
-        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+        tfRecordFolder="/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData",
         dense_units=128,
         nmodule_xlocal_units=32,
         dense2_units=128,

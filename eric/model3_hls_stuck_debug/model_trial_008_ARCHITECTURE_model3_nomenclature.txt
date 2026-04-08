@@ -1,0 +1,61 @@
+Model3 Trial 008 Architecture (Model3 nomenclature)
+====================================================
+Reference scripts:
+- run_quantized_hyperparam_tuning_model3.py
+- model3.py (Model3.makeQuantizedModelHyperParameterTuning)
+
+Hyperparameter names and values for this .h5
+---------------------------------------------
+- conv_filters      = 24
+- kernel_rows       = 3
+- kernel_cols       = 3
+- scalar_dense_units= 64
+- merged_dense_1    = 110
+- merged_dense_2    = 88
+- dropout_rate      = 0.1
+
+Quantization (from model config)
+--------------------------------
+- weight_bits = 4, int_bits = 0 (quantized_bits(4,0) on QDense/QConv2D kernels/biases)
+- activation quantizer = quantized_relu(8,0) for hidden activations
+- output activation = quantized_tanh
+
+Architecture in Model3 nomenclature
+------------------------------------
+Inputs:
+- cluster: shape (13,21)
+- nModule: shape (1,)
+- x_local: shape (1,)
+- y_local: shape (1,)
+
+Conv branch:
+- add_channel: (13,21) -> (13,21,1)
+- conv2d: QConv2D(filters=conv_filters=24, kernel_size=(3,3), padding="same")
+- conv2d_act: QActivation(quantized_relu(8,0))
+- pool2d_1: MaxPooling2D((2,2)) -> (6,10,24)
+- flatten_vol: -> conv_flattened_size = 6*10*conv_filters = 1440
+
+Scalar branch:
+- concat_scalars_1: concatenate(nModule, x_local) -> 2 features
+- concat_scalars_2: concatenate(previous, y_local) -> 3 features
+- dense_scalars: QDense(units=scalar_dense_units=64)
+- dense_scalars_act: QActivation(quantized_relu(8,0))
+
+Merged head:
+- concat_all: concatenate(flatten_vol, dense_scalars_act) -> concat_size = 1440+64 = 1504
+- merged_dense1: QDense(units=merged_dense_1=110)
+- merged_dense1_act: QActivation(quantized_relu(8,0))
+- dropout_1: Dropout(rate=0.1)
+- merged_dense2: QDense(units=merged_dense_2=88)
+- merged_dense2_act: QActivation(quantized_relu(8,0))
+- output_dense: QDense(units=1)
+- output: QActivation(quantized_tanh)
+
+Parameter count using Model3 formulas
+--------------------------------------
+- conv2d_params         = (3*3*1*24) + 24 = 240
+- scalar_dense_params   = (3*64) + 64 = 256
+- merged_dense_1_params = (1504*110) + 110 = 165550
+- merged_dense_2_params = (110*88) + 88 = 9768
+- output_params         = 88 + 1 = 89
+- total_params (formula)= 175903

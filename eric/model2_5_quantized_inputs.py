@@ -60,7 +60,7 @@ class Model2_5_QuantizedInputs(Model2_5):
     """
 
     def __init__(self,
-                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+                 tfRecordFolder: str = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData",
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,

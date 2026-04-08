@@ -220,8 +220,8 @@ def _print_layer_table(layer_table: list, arch_params: dict):
 DEFAULT_INPUT_BIT_WIDTHS = [2, 3, 4, 6, 8, 12, 16]
 DEFAULT_NUM_EPOCHS       = 80
 DEFAULT_DATA_FOLDER      = (
-    "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/"
-    "TF_Records/filtering_records16384_data_shuffled_single_bigData"
+    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/"
+    "Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData"
 )
 
 
