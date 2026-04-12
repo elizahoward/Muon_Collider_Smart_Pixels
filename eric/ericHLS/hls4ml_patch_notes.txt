@@ -1,0 +1,46 @@
+hls4ml Patch Notes
+==================
+
+Date: 2026-04-11
+
+Bug Fix: vivado_writer.py - UnboundLocalError for 'depth' with io_serial + Conv2D
+----------------------------------------------------------------------------------
+File:
+  /home/youeric/miniconda3/envs/newHLSEnviro/lib/python3.8/site-packages/hls4ml/writer/vivado_writer.py
+
+Function:
+  _make_array_pragma() (~line 72)
+
+Problem:
+  When using io_type="io_serial" with a model containing Conv2D layers, hls4ml
+  sets some layer pragmas to the plain string 'stream' (rather than a tuple like
+  ('stream', depth_value)). In the else-branch of _make_array_pragma(), the
+  variables 'typ' and 'factor' were initialized but 'depth' was not. This caused
+  an UnboundLocalError when the function reached:
+
+      return f'#pragma HLS STREAM variable={variable.name} depth={depth}'
+
+  Traceback seen:
+      UnboundLocalError: local variable 'depth' referenced before assignment
+
+Fix Applied:
+  Added depth = 0 to the else-branch so all variables are initialized:
+
+      # Before
+      else:
+          mode = config
+          typ = 'complete'
+          factor = 0
+
+      # After
+      else:
+          mode = config
+          typ = 'complete'
+          factor = 0
+          depth = 0
+
+Context:
+  This fix was needed to use the "quick" synthesis scripts (io_serial + ReuseFactor=4)
+  which were created to prevent Vitis HLS from hanging indefinitely on Model3
+  during the Unroll/Inline phase (Model3 has ~4x more HLS IR than Model2.5 due
+  to Conv2D layers, causing the csynth_design step to never complete).
