@@ -210,7 +210,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data = self.validation_generator,
-            epochs          = 80,
+            epochs          = 30,
             callbacks       = [
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ]
@@ -278,7 +278,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=80,
+            epochs=30,
             callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ],
@@ -347,7 +347,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=80,
+            epochs=30,
             callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ],
@@ -417,7 +417,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=80,
+            epochs=30,
             callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ],
@@ -483,7 +483,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=80,
+            epochs=30,
             callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ],
@@ -656,7 +656,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=60,
+            epochs=30,
             callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ],
@@ -801,7 +801,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=60,
+            epochs=30,
             callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ],
@@ -935,7 +935,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=60,
+            epochs=30,
             callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ],
@@ -1048,7 +1048,7 @@ class Model1(SmartPixModel):
         tuner.search(
             self.training_generator,
             validation_data=self.validation_generator,
-            epochs=60,
+            epochs=30,
             callbacks=[
                 EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
             ],
