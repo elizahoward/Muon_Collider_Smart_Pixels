@@ -97,19 +97,19 @@ def synthesize_model(h5_file, output_dir, fpga_part):
             # Check layer name — hls4ml adds internal layers (e.g. conv2d_linear)
             # not present in the Keras model, so we cannot use get_layer().
             if 'conv' in layer.lower():
-                config['LayerName'][layer]['ReuseFactor'] = 64
+                config['LayerName'][layer]['ReuseFactor'] = 256
             else:
                 config['LayerName'][layer]['ReuseFactor'] = 8
 
-        # Convert to HLS model using io_parallel (default)
-        print(f"[{model_name}] Converting to HLS model (io_parallel, Strategy=Resource, ReuseFactor=64(conv)/8(dense))...")
+        # Convert to HLS model using io_stream
+        print(f"[{model_name}] Converting to HLS model (io_stream, Strategy=Resource, ReuseFactor=256(conv)/8(dense))...")
         hls_model = hls4ml.converters.convert_from_keras_model(
             quantized_model,
             hls_config=config,
             part=fpga_part,
             output_dir=output_dir,
             backend="Vitis",
-            io_type="io_parallel"
+            io_type="io_stream"
         )
 
         # Write HLS files
@@ -117,15 +117,18 @@ def synthesize_model(h5_file, output_dir, fpga_part):
         hls_model.write()
 
         # Build with synthesis
+        # vsynth=False: skip Vivado gate-level synthesis — it fails on small FPGAs
+        # due to BRAM overflow and produces no useful output. The HLS C-synthesis
+        # (synth=True) already produces FF/LUT/BRAM estimates in myproject_csynth.rpt.
         print(f"[{model_name}] Building HLS project (this may take a while)...")
-        print(f"[{model_name}] Running: csim=False, synth=True, cosim=True, validation=False, export=True, vsynth=True")
+        print(f"[{model_name}] Running: csim=False, synth=True, cosim=True, validation=False, export=True, vsynth=False")
         hls_model.build(
             csim=False,
             synth=True,
             cosim=True,
             validation=False,
             export=True,
-            vsynth=True,
+            vsynth=False,
             reset=True
         )
 

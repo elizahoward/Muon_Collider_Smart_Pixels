@@ -440,7 +440,7 @@ class Model3(SmartPixModel):
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
-        conv_filters = hp.Int('conv_filters', min_value=16, max_value=48, step=8)
+        conv_filters = hp.Int('conv_filters', min_value=2, max_value=16, step=2)
         kernel_rows = hp.Choice('kernel_rows', values=[3, 3])
         kernel_cols = hp.Choice('kernel_cols', values=[3, 3])
         scalar_dense_units = hp.Int('scalar_dense_units', min_value=16, max_value=64, step=16)

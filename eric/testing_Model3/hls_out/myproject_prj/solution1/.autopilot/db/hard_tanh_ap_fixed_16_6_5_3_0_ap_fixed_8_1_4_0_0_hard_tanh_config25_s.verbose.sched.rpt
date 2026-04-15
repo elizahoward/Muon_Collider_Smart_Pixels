@@ -1,0 +1,184 @@
+
+
+================================================================
+== Vitis HLS Report for 'hard_tanh_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_hard_tanh_config25_s'
+================================================================
+* Date:           Mon Apr 13 14:52:43 2026
+
+* Version:        2024.1 (Build 5069499 on May 21 2024)
+* Project:        myproject_prj
+* Solution:       solution1 (Vivado IP Flow Target)
+* Product family: zynq
+* Target device:  xc7z020-clg400-1
+
+
+================================================================
+== Performance Estimates
+================================================================
++ Timing: 
+    * Summary: 
+    +--------+---------+----------+------------+
+    |  Clock |  Target | Estimated| Uncertainty|
+    +--------+---------+----------+------------+
+    |ap_clk  |  5.00 ns|  4.264 ns|     0.62 ns|
+    +--------+---------+----------+------------+
+
++ Latency: 
+    * Summary: 
+    +---------+---------+-----------+-----------+-----+-----+---------+
+    |  Latency (cycles) |   Latency (absolute)  |  Interval | Pipeline|
+    |   min   |   max   |    min    |    max    | min | max |   Type  |
+    +---------+---------+-----------+-----------+-----+-----+---------+
+    |        3|        3|  15.000 ns|  15.000 ns|    3|    3|       no|
+    +---------+---------+-----------+-----------+-----+-----+---------+
+
+    + Detail: 
+        * Instance: 
+        N/A
+
+        * Loop: 
+        N/A
+
+============================================================
++ Verbose Summary: Synthesis Manager
+============================================================
+InlineROM: 1
+ExposeGlobal: 0
+============================================================
++ Verbose Summary: CDFG Model
+============================================================
+IsTopModel: 0
+ResetActiveHigh: 1
+IsCombinational: 2
+IsDatapathOnly: 0
+HasWiredReturn: 1
+HasMFsm: 0
+HasVarLatency: 1
+IsPipeline: 0
+IsRtlPipelined: 0
+IsInstanceOverlapped: 0
+IsDontTouch: 0
+HasImplIP: 0
+IsGatedGlobalClock: 0
+
+
+============================================================
++ Verbose Summary: Schedule
+============================================================
+* Number of FSM states : 4
+* Pipeline : 0
+* Dataflow Pipeline: 0
+
+* FSM state transitions: 
+1 --> 2 
+2 --> 3 
+3 --> 4 
+4 --> 
+
+* FSM state operations: 
+
+State 1 <SV = 0> <Delay = 4.26>
+ST_1 : Operation 5 [1/1] (2.18ns)   --->   "%p_read_709 = read i15 @_ssdm_op_Read.ap_auto.i15, i15 %p_read" [firmware/nnet_utils/nnet_activation.h:462]   --->   Operation 5 'read' 'p_read_709' <Predicate = true> <Delay = 2.18> <CoreInst = "FIFO_SRL">   --->   Core 80 'FIFO_SRL' <Latency = 0> <II = 1> <Delay = 3.63> <Storage> <Opcode : 'read' 'write' 'nbread' 'nbwrite'> <Ports = 0> <Width = -1> <Depth = -1> <FIFO>
+ST_1 : Operation 6 [1/1] (0.00ns)   --->   "%shl_ln = bitconcatenate i16 @_ssdm_op_BitConcatenate.i16.i15.i1, i15 %p_read_709, i1 0" [firmware/nnet_utils/nnet_activation.h:468]   --->   Operation 6 'bitconcatenate' 'shl_ln' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 7 [1/1] (0.00ns)   --->   "%sext_ln468 = sext i16 %shl_ln" [firmware/nnet_utils/nnet_activation.h:468]   --->   Operation 7 'sext' 'sext_ln468' <Predicate = true> <Delay = 0.00>
+ST_1 : Operation 8 [1/1] (2.07ns)   --->   "%sigmoid = add i17 %sext_ln468, i17 2048" [firmware/nnet_utils/nnet_activation.h:468]   --->   Operation 8 'add' 'sigmoid' <Predicate = true> <Delay = 2.07> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 2.07> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+
+State 2 <SV = 1> <Delay = 3.91>
+ST_2 : Operation 9 [1/1] (2.10ns)   --->   "%icmp_ln469 = icmp_sgt  i17 %sigmoid, i17 4096" [firmware/nnet_utils/nnet_activation.h:469]   --->   Operation 9 'icmp' 'icmp_ln469' <Predicate = true> <Delay = 2.10> <CoreInst = "Cmp">   --->   Core 9 'Cmp' <Latency = 0> <II = 1> <Delay = 2.10> <FuncUnit> <Opcode : 'seteq' 'setne' 'setle' 'setge' 'setlt' 'setgt'> <InPorts = 2> <OutPorts = 1>
+ST_2 : Operation 10 [1/1] (0.00ns) (grouped into LUT with out node add_ln473)   --->   "%tmp = bitselect i1 @_ssdm_op_BitSelect.i1.i17.i32, i17 %sigmoid, i32 16" [firmware/nnet_utils/nnet_activation.h:471]   --->   Operation 10 'bitselect' 'tmp' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 11 [1/1] (0.00ns) (grouped into LUT with out node add_ln473)   --->   "%or_ln469 = or i1 %icmp_ln469, i1 %tmp" [firmware/nnet_utils/nnet_activation.h:469]   --->   Operation 11 'or' 'or_ln469' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_2 : Operation 12 [1/1] (0.00ns) (grouped into LUT with out node add_ln473)   --->   "%select_ln469 = select i1 %icmp_ln469, i13 4096, i13 0" [firmware/nnet_utils/nnet_activation.h:469]   --->   Operation 12 'select' 'select_ln469' <Predicate = true> <Delay = 0.00> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 0.69> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_2 : Operation 13 [1/1] (0.00ns) (grouped into LUT with out node add_ln473)   --->   "%trunc_ln473 = trunc i17 %sigmoid" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 13 'trunc' 'trunc_ln473' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 14 [1/1] (0.00ns) (grouped into LUT with out node add_ln473)   --->   "%select_ln469_1 = select i1 %or_ln469, i13 %select_ln469, i13 %trunc_ln473" [firmware/nnet_utils/nnet_activation.h:469]   --->   Operation 14 'select' 'select_ln469_1' <Predicate = true> <Delay = 0.00> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 0.69> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_2 : Operation 15 [1/1] (0.00ns) (grouped into LUT with out node add_ln473)   --->   "%shl_ln1 = bitconcatenate i14 @_ssdm_op_BitConcatenate.i14.i13.i1, i13 %select_ln469_1, i1 0" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 15 'bitconcatenate' 'shl_ln1' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 16 [1/1] (1.81ns) (out node of the LUT)   --->   "%add_ln473 = add i14 %shl_ln1, i14 12288" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 16 'add' 'add_ln473' <Predicate = true> <Delay = 1.81> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 1.81> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_2 : Operation 17 [1/1] (0.00ns)   --->   "%tmp_3685 = bitselect i1 @_ssdm_op_BitSelect.i1.i14.i32, i14 %add_ln473, i32 13" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 17 'bitselect' 'tmp_3685' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 18 [1/1] (0.00ns)   --->   "%trunc_ln473_1 = trunc i14 %add_ln473" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 18 'trunc' 'trunc_ln473_1' <Predicate = true> <Delay = 0.00>
+ST_2 : Operation 19 [1/1] (0.00ns)   --->   "%tmp_3687 = bitselect i1 @_ssdm_op_BitSelect.i1.i14.i32, i14 %add_ln473, i32 12" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 19 'bitselect' 'tmp_3687' <Predicate = true> <Delay = 0.00>
+
+State 3 <SV = 2> <Delay = 3.65>
+ST_3 : Operation 20 [1/1] (0.00ns) (grouped into LUT with out node add_ln473_1)   --->   "%trunc_ln = partselect i8 @_ssdm_op_PartSelect.i8.i14.i32.i32, i14 %add_ln473, i32 5, i32 12" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 20 'partselect' 'trunc_ln' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 21 [1/1] (0.00ns) (grouped into LUT with out node add_ln473_1)   --->   "%tmp_3686 = bitselect i1 @_ssdm_op_BitSelect.i1.i14.i32, i14 %add_ln473, i32 4" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 21 'bitselect' 'tmp_3686' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 22 [1/1] (1.73ns)   --->   "%icmp_ln473 = icmp_ne  i4 %trunc_ln473_1, i4 0" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 22 'icmp' 'icmp_ln473' <Predicate = true> <Delay = 1.73> <CoreInst = "Cmp">   --->   Core 9 'Cmp' <Latency = 0> <II = 1> <Delay = 1.73> <FuncUnit> <Opcode : 'seteq' 'setne' 'setle' 'setge' 'setlt' 'setgt'> <InPorts = 2> <OutPorts = 1>
+ST_3 : Operation 23 [1/1] (0.00ns) (grouped into LUT with out node add_ln473_1)   --->   "%tmp_3688 = bitselect i1 @_ssdm_op_BitSelect.i1.i14.i32, i14 %add_ln473, i32 5" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 23 'bitselect' 'tmp_3688' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 24 [1/1] (0.00ns) (grouped into LUT with out node add_ln473_1)   --->   "%or_ln473 = or i1 %tmp_3688, i1 %icmp_ln473" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 24 'or' 'or_ln473' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_3 : Operation 25 [1/1] (0.00ns) (grouped into LUT with out node add_ln473_1)   --->   "%and_ln473 = and i1 %or_ln473, i1 %tmp_3686" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 25 'and' 'and_ln473' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_3 : Operation 26 [1/1] (0.00ns) (grouped into LUT with out node add_ln473_1)   --->   "%zext_ln473 = zext i1 %and_ln473" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 26 'zext' 'zext_ln473' <Predicate = true> <Delay = 0.00>
+ST_3 : Operation 27 [1/1] (1.91ns) (out node of the LUT)   --->   "%add_ln473_1 = add i8 %trunc_ln, i8 %zext_ln473" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 27 'add' 'add_ln473_1' <Predicate = true> <Delay = 1.91> <CoreInst = "Adder">   --->   Core 1 'Adder' <Latency = 0> <II = 1> <Delay = 1.91> <FuncUnit> <Opcode : 'add' 'sub'> <InPorts = 2> <OutPorts = 1>
+ST_3 : Operation 28 [1/1] (0.00ns)   --->   "%tmp_3689 = bitselect i1 @_ssdm_op_BitSelect.i1.i8.i32, i8 %add_ln473_1, i32 7" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 28 'bitselect' 'tmp_3689' <Predicate = true> <Delay = 0.00>
+
+State 4 <SV = 3> <Delay = 2.22>
+ST_4 : Operation 29 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_5)   --->   "%xor_ln473 = xor i1 %tmp_3689, i1 1" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 29 'xor' 'xor_ln473' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 30 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_3)   --->   "%xor_ln473_2 = xor i1 %tmp_3687, i1 1" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 30 'xor' 'xor_ln473_2' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 31 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_3)   --->   "%or_ln473_3 = or i1 %tmp_3689, i1 %xor_ln473_2" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 31 'or' 'or_ln473_3' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 32 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_3)   --->   "%xor_ln473_1 = xor i1 %tmp_3685, i1 1" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 32 'xor' 'xor_ln473_1' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 33 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_5)   --->   "%and_ln473_1 = and i1 %tmp_3685, i1 %xor_ln473" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 33 'and' 'and_ln473_1' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 34 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_5)   --->   "%and_ln473_2 = and i1 %and_ln473_1, i1 %tmp_3687" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 34 'and' 'and_ln473_2' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 35 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_5)   --->   "%empty = xor i1 %and_ln473_2, i1 %tmp_3685" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 35 'xor' 'empty' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 36 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_3)   --->   "%xor_ln473_4 = xor i1 %tmp_3685, i1 %or_ln473_3" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 36 'xor' 'xor_ln473_4' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 37 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_3)   --->   "%xor_ln473_3 = xor i1 %xor_ln473_4, i1 1" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 37 'xor' 'xor_ln473_3' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 38 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_3)   --->   "%or_ln473_1 = or i1 %tmp_3689, i1 %xor_ln473_3" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 38 'or' 'or_ln473_1' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 39 [1/1] (0.97ns) (out node of the LUT)   --->   "%and_ln473_3 = and i1 %or_ln473_1, i1 %xor_ln473_1" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 39 'and' 'and_ln473_3' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 40 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_5)   --->   "%and_ln473_4 = and i1 %tmp_3685, i1 %tmp_3689" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 40 'and' 'and_ln473_4' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 41 [1/1] (0.00ns) (grouped into LUT with out node and_ln473_5)   --->   "%xor_ln473_5 = xor i1 %and_ln473_4, i1 1" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 41 'xor' 'xor_ln473_5' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 42 [1/1] (0.97ns) (out node of the LUT)   --->   "%and_ln473_5 = and i1 %empty, i1 %xor_ln473_5" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 42 'and' 'and_ln473_5' <Predicate = true> <Delay = 0.97> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 43 [1/1] (0.00ns) (grouped into LUT with out node select_ln473_1)   --->   "%select_ln473 = select i1 %and_ln473_3, i8 127, i8 128" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 43 'select' 'select_ln473' <Predicate = true> <Delay = 0.00> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 1.24> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_4 : Operation 44 [1/1] (0.00ns) (grouped into LUT with out node select_ln473_1)   --->   "%or_ln473_2 = or i1 %and_ln473_3, i1 %and_ln473_5" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 44 'or' 'or_ln473_2' <Predicate = true> <Delay = 0.00> <CoreInst = "LogicGate">   --->   Core 74 'LogicGate' <Latency = 0> <II = 1> <Delay = 0.97> <FuncUnit> <Opcode : 'and' 'or' 'xor'> <InPorts = 2> <OutPorts = 1>
+ST_4 : Operation 45 [1/1] (1.24ns) (out node of the LUT)   --->   "%select_ln473_1 = select i1 %or_ln473_2, i8 %select_ln473, i8 %add_ln473_1" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 45 'select' 'select_ln473_1' <Predicate = true> <Delay = 1.24> <CoreInst = "Sel">   --->   Core 73 'Sel' <Latency = 0> <II = 1> <Delay = 1.24> <FuncUnit> <Opcode : 'select'> <InPorts = 3> <OutPorts = 1>
+ST_4 : Operation 46 [1/1] (0.00ns)   --->   "%write_ln473 = write void @_ssdm_op_Write.ap_auto.i8P0A, i8 %layer25_out, i8 %select_ln473_1" [firmware/nnet_utils/nnet_activation.h:473]   --->   Operation 46 'write' 'write_ln473' <Predicate = true> <Delay = 0.00>
+ST_4 : Operation 47 [1/1] (0.00ns)   --->   "%ret_ln475 = ret" [firmware/nnet_utils/nnet_activation.h:475]   --->   Operation 47 'ret' 'ret_ln475' <Predicate = true> <Delay = 0.00>
+
+
+============================================================
++ Verbose Summary: Timing violations
+============================================================
+Target clock period: 5.000ns, clock uncertainty: 0.625ns.
+
+ <State 1>: 4.264ns
+The critical path consists of the following:
+	wire read operation ('p_read_709', firmware/nnet_utils/nnet_activation.h:462) on port 'p_read' (firmware/nnet_utils/nnet_activation.h:462) [3]  (2.188 ns)
+	'add' operation 17 bit ('sigmoid', firmware/nnet_utils/nnet_activation.h:468) [6]  (2.077 ns)
+
+ <State 2>: 3.919ns
+The critical path consists of the following:
+	'icmp' operation 1 bit ('icmp_ln469', firmware/nnet_utils/nnet_activation.h:469) [7]  (2.107 ns)
+	'or' operation 1 bit ('or_ln469', firmware/nnet_utils/nnet_activation.h:469) [9]  (0.000 ns)
+	'select' operation 13 bit ('select_ln469_1', firmware/nnet_utils/nnet_activation.h:469) [12]  (0.000 ns)
+	'add' operation 14 bit ('add_ln473', firmware/nnet_utils/nnet_activation.h:473) [14]  (1.812 ns)
+
+ <State 3>: 3.650ns
+The critical path consists of the following:
+	'icmp' operation 1 bit ('icmp_ln473', firmware/nnet_utils/nnet_activation.h:473) [19]  (1.735 ns)
+	'or' operation 1 bit ('or_ln473', firmware/nnet_utils/nnet_activation.h:473) [22]  (0.000 ns)
+	'and' operation 1 bit ('and_ln473', firmware/nnet_utils/nnet_activation.h:473) [23]  (0.000 ns)
+	'add' operation 8 bit ('add_ln473_1', firmware/nnet_utils/nnet_activation.h:473) [25]  (1.915 ns)
+
+ <State 4>: 2.226ns
+The critical path consists of the following:
+	'xor' operation 1 bit ('xor_ln473', firmware/nnet_utils/nnet_activation.h:473) [27]  (0.000 ns)
+	'and' operation 1 bit ('and_ln473_1', firmware/nnet_utils/nnet_activation.h:473) [31]  (0.000 ns)
+	'and' operation 1 bit ('and_ln473_2', firmware/nnet_utils/nnet_activation.h:473) [32]  (0.000 ns)
+	'xor' operation 1 bit ('empty', firmware/nnet_utils/nnet_activation.h:473) [33]  (0.000 ns)
+	'and' operation 1 bit ('and_ln473_5', firmware/nnet_utils/nnet_activation.h:473) [40]  (0.978 ns)
+	'or' operation 1 bit ('or_ln473_2', firmware/nnet_utils/nnet_activation.h:473) [42]  (0.000 ns)
+	'select' operation 8 bit ('select_ln473_1', firmware/nnet_utils/nnet_activation.h:473) [43]  (1.248 ns)
+
+
+============================================================
++ Verbose Summary: Binding
+============================================================
+N/A
+* FSMD analyzer results:
+  - Output states:
+ - Input state : 
+  - Chain level:
+	State 1
+	State 2
+	State 3
+	State 4
+
+
+============================================================
++ Verbose Summary: Datapath Resource usage 
+============================================================
+N/A

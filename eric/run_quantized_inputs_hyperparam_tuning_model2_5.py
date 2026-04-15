@@ -82,77 +82,69 @@ def main():
     parser.add_argument("--br99", type=float, default=0.2, help="Weight for BR @ 99%% sig. eff.")
     parser.add_argument("--nmodule-weight-bits", type=int, default=None, help="nModule-xlocal branch weight bits")
     parser.add_argument("--nmodule-int-bits", type=int, default=0)
-    parser.add_argument("--hp-input-bits-min", type=int, default=4)
-    parser.add_argument("--hp-input-bits-max", type=int, default=16)
-    parser.add_argument("--hp-input-bits-step", type=int, default=2)
-    parser.add_argument("--hp-input-int-bits-min", type=int, default=0)
-    parser.add_argument("--hp-input-int-bits-max", type=int, default=4)
-    parser.add_argument("--hp-input-int-bits-step", type=int, default=1)
     args = parser.parse_args()
 
     bit_configs = args.bit_configs if args.bit_configs else [(4, 0), (6, 0), (8, 0), (10, 0)]
-
-    if args.nmodule_weight_bits is not None:
-        nm_wb = args.nmodule_weight_bits
-        nm_ib = args.nmodule_int_bits
-    else:
-        first_w, first_i = bit_configs[0]
-        nm_wb, nm_ib = first_w, first_i
-
-    model = Model2_5_QuantizedInputs(
-        tfRecordFolder=args.data_folder,
-        dense_units=128,
-        nmodule_xlocal_units=32,
-        dense2_units=128,
-        dense3_units=64,
-        dropout_rate=0.1,
-        initial_lr=1e-3,
-        end_lr=1e-4,
-        power=2,
-        bit_configs=bit_configs,
-        nmodule_xlocal_weight_bits=nm_wb,
-        nmodule_xlocal_int_bits=nm_ib,
-        hp_input_bits_min=args.hp_input_bits_min,
-        hp_input_bits_max=args.hp_input_bits_max,
-        hp_input_bits_step=args.hp_input_bits_step,
-        hp_input_int_bits_min=args.hp_input_int_bits_min,
-        hp_input_int_bits_max=args.hp_input_int_bits_max,
-        hp_input_int_bits_step=args.hp_input_int_bits_step,
-    )
-
     bkg_rej_weights = {0.95: args.br95, 0.98: args.br98, 0.99: args.br99}
+    tag = None if args.no_results_tag else args.tag
 
     print("=" * 70)
     print("Model2.5_QuantizedInputs — quantized hyperparameter tuning")
     print("=" * 70)
     print(f"  Data folder:     {args.data_folder}")
     print(f"  Bit configs:     {bit_configs}")
-    print(f"  nModule-xlocal:  {nm_wb} weight bits, {nm_ib} int bits")
     print(f"  Max trials:      {args.max_trials}")
     print(f"  Exec / trial:    {args.executions_per_trial}")
     print(f"  Epochs / trial:  {args.epochs}")
-    tag = None if args.no_results_tag else args.tag
     print(f"  Results tag:     {tag!r}")
     print(f"  Objective:       {'val_weighted_bkg_rej' if args.weighted_br else 'val_binary_accuracy'}")
     if args.weighted_br:
         print(f"  BR weights:      95={args.br95} 98={args.br98} 99={args.br99}")
-    print(f"  Input HP bits:   [{args.hp_input_bits_min}, {args.hp_input_bits_max}] step {args.hp_input_bits_step}")
+    print(f"  Input bits:      weight_bits + 2 per config")
     print("=" * 70)
 
-    results = model.runQuantizedHyperparameterTuning(
-        bit_configs=bit_configs,
-        max_trials=args.max_trials,
-        executions_per_trial=args.executions_per_trial,
-        numEpochs=args.epochs,
-        use_weighted_bkg_rej=args.weighted_br,
-        bkg_rej_weights=bkg_rej_weights,
-        hyperparameter_name_tag=tag,
-    )
+    all_results = {}
+
+    for w, i in bit_configs:
+        nm_wb = args.nmodule_weight_bits if args.nmodule_weight_bits is not None else w
+        nm_ib = args.nmodule_int_bits if args.nmodule_weight_bits is not None else i
+        input_bits = w + 2
+        input_int_bits = i
+
+        print(f"\n--- bit_config=({w},{i})  input_bits={input_bits}  nmodule={nm_wb}w{nm_ib}i ---")
+
+        model = Model2_5_QuantizedInputs(
+            tfRecordFolder=args.data_folder,
+            dense_units=128,
+            nmodule_xlocal_units=32,
+            dense2_units=128,
+            dense3_units=64,
+            dropout_rate=0.1,
+            initial_lr=1e-3,
+            end_lr=1e-4,
+            power=2,
+            bit_configs=[(w, i)],
+            nmodule_xlocal_weight_bits=nm_wb,
+            nmodule_xlocal_int_bits=nm_ib,
+            input_bits=input_bits,
+            input_int_bits=input_int_bits,
+        )
+
+        results = model.runQuantizedHyperparameterTuning(
+            bit_configs=[(w, i)],
+            max_trials=args.max_trials,
+            executions_per_trial=args.executions_per_trial,
+            numEpochs=args.epochs,
+            use_weighted_bkg_rej=args.weighted_br,
+            bkg_rej_weights=bkg_rej_weights,
+            hyperparameter_name_tag=tag,
+        )
+        all_results.update(results)
 
     print("\n" + "=" * 70)
     print("HYPERPARAMETER TUNING COMPLETED")
     print("=" * 70)
-    for config_name, result in results.items():
+    for config_name, result in all_results.items():
         print(f"\n{config_name}:")
         print(f"  Results directory: {result['config_dir']}/")
         print(f"  Number of trials:  {result['num_trials']}")
