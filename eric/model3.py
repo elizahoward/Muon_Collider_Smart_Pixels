@@ -829,34 +829,11 @@ class Model3(SmartPixModel):
             # Sort by objective score (best first, objective is maximized)
             completed_trials.sort(key=lambda t: t.score, reverse=True)
             
-            all_models = []
             all_hyperparameters = []
-            print(f"\nLoading models from {len(completed_trials)} completed trials (out of {num_trials} total)...")
-            
-            for idx, trial in enumerate(completed_trials):
-                try:
-                    # Load model for this specific trial
-                    model = tuner.load_model(trial)
-                    all_models.append(model)
-                    all_hyperparameters.append(trial.hyperparameters)
-                    if idx == 0:
-                        print(f"  ✓ Loaded best model (trial {trial.trial_id}, score={trial.score:.4f})")
-                    elif idx < 5:  # Print first 5 for visibility
-                        print(f"  ✓ Loaded model {idx+1} (trial {trial.trial_id}, score={trial.score:.4f})")
-                except Exception as e:
-                    print(f"  ⚠ Failed to load model for trial {trial.trial_id}: {str(e)}")
-                    # Continue with other trials
-            
-            if len(completed_trials) > 5:
-                print(f"  ... (loaded {len(all_models)} models total)")
-            else:
-                print(f"  ✓ Successfully loaded {len(all_models)} out of {len(completed_trials)} completed models")
-            
-            if len(all_models) == 0:
-                raise RuntimeError(f"Failed to load any models for {config_name}. All trials may have missing checkpoints.")
-            
-            # Note: Models have already been saved during training by the SaveModelAfterTrial callback
-            # This section now only creates the summary files
+            model_files = []
+            hyperparams_files = []
+            loaded_count = 0
+            print(f"\nProcessing {len(completed_trials)} completed trials (out of {num_trials} total)...")
 
             # Generate ROC artifacts for each saved trial model in this configuration.
             print(f"\nGenerating ROC artifacts for {config_name} models...")
@@ -869,11 +846,36 @@ class Model3(SmartPixModel):
             )
 
             roc_rows = []
-            for idx, model in enumerate(all_models):
-                trial = completed_trials[idx]
+            for idx, trial in enumerate(completed_trials):
                 trial_id = trial.trial_id
                 model_stem = f"model_trial_{trial_id}"
+                model_filename = os.path.join(config_dir, f"model_trial_{trial_id}.h5")
+                hyperparams_filename = os.path.join(config_dir, f"hyperparams_trial_{trial_id}.json")
 
+                try:
+                    model = tuner.load_model(trial)
+                    loaded_count += 1
+                    all_hyperparameters.append(trial.hyperparameters)
+                    if idx == 0:
+                        print(f"  ✓ Loaded best model (trial {trial_id}, score={trial.score:.4f})")
+                    elif idx < 5:
+                        print(f"  ✓ Loaded model {idx+1} (trial {trial_id}, score={trial.score:.4f})")
+                except Exception as e:
+                    print(f"  ⚠ Failed to load model for trial {trial_id}: {str(e)}")
+                    continue
+
+                # Fallback save if the callback didn't write the file during training.
+                if not os.path.exists(model_filename):
+                    print(f"⚠ Model for trial {trial_id} was not saved during training, saving now...")
+                    model.save(model_filename)
+                    hyperparams_dict = trial.hyperparameters.values
+                    with open(hyperparams_filename, 'w') as f:
+                        json.dump(hyperparams_dict, f, indent=4)
+
+                model_files.append(model_filename)
+                hyperparams_files.append(hyperparams_filename)
+
+                # ROC
                 try:
                     y_pred_all = model.predict(self.validation_generator, verbose=0).ravel()
 
@@ -933,6 +935,16 @@ class Model3(SmartPixModel):
                 except Exception as e:
                     print(f"  ⚠ Failed ROC generation for trial {trial_id}: {str(e)}")
 
+                del model
+
+            if len(completed_trials) > 5:
+                print(f"  ... (processed {loaded_count} models total)")
+            else:
+                print(f"  ✓ Successfully processed {loaded_count} out of {len(completed_trials)} completed models")
+
+            if loaded_count == 0:
+                raise RuntimeError(f"Failed to load any models for {config_name}. All trials may have missing checkpoints.")
+
             roc_summary_file = None
             if roc_rows:
                 roc_metrics_df = pd.DataFrame(roc_rows).sort_values('weighted_bkg_rej', ascending=False)
@@ -967,29 +979,10 @@ class Model3(SmartPixModel):
                 plt.close(fig)
                 print(f"✓ Saved combined ROC plot to: {combined_roc_path}")
             
-            # Collect list of model and hyperparameter files that were saved during training
-            model_files = []
-            hyperparams_files = []
-            
-            # Check which models were actually saved and create lists
-            for idx, (model, hyperparams) in enumerate(zip(all_models, all_hyperparameters)):
-                trial_id = completed_trials[idx].trial_id
-                model_filename = os.path.join(config_dir, f"model_trial_{trial_id}.h5")
-                hyperparams_filename = os.path.join(config_dir, f"hyperparams_trial_{trial_id}.json")
-                
-                # If model wasn't saved during training (callback failed), save it now as fallback
-                if not os.path.exists(model_filename):
-                    print(f"⚠ Model for trial {trial_id} was not saved during training, saving now...")
-                    model.save(model_filename)
-                    
-                    hyperparams_dict = hyperparams.values
-                    with open(hyperparams_filename, 'w') as f:
-                        json.dump(hyperparams_dict, f, indent=4)
-                
-                model_files.append(model_filename)
-                hyperparams_files.append(hyperparams_filename)
-            
-            print(f"✓ Verified {len(model_files)} models and hyperparameter files in {config_dir}/")
+            if model_files:
+                print(f"✓ Best model: {model_files[0]}")
+                print(f"  Best hyperparameters: {all_hyperparameters[0].values}")
+            print(f"✓ Total {len(model_files)} models saved to {config_dir}/")
             
             # Also save a summary JSON with all trials (enriched with metadata and ROC metrics)
             summary_filename = os.path.join(config_dir, "trials_summary.json")
@@ -1042,11 +1035,8 @@ class Model3(SmartPixModel):
             
             # Store results
             all_results[config_name] = {
-                'best_model': all_models[0],
                 'best_hyperparameters': all_hyperparameters[0].values,
-                'all_models': all_models,
                 'all_hyperparameters': [hp.values for hp in all_hyperparameters],
-                'tuner': tuner,
                 'config_dir': config_dir,
                 'model_files': model_files,
                 'hyperparams_files': hyperparams_files,
