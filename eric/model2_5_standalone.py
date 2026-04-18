@@ -204,7 +204,7 @@ class Model2_5_Standalone(SmartPixModel):
         hidden = Dense(self.dense3_units, activation="relu", name="dense3")(hidden)
         
         # Output layer
-        output = Dense(1, activation="tanh", name="output")(hidden)
+        output = Dense(1, activation="sigmoid", name="output")(hidden)
 
         model = Model(
             inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
@@ -293,7 +293,7 @@ class Model2_5_Standalone(SmartPixModel):
                 bias_quantizer=weight_quantizer,
                 name="output"
             )(hidden)
-            output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
+            output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
 
             model = Model(
                 inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
@@ -393,7 +393,7 @@ class Model2_5_Standalone(SmartPixModel):
             bias_quantizer=weight_quantizer,
             name="output"
         )(hidden)
-        output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
+        output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
 
         model = Model(
             inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],

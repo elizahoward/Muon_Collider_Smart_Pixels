@@ -179,7 +179,7 @@ class Model2_5_QuantizedInputs(Model2_5):
         hidden = Dense(self.dense2_units, activation="relu", name="dense2")(merged)
         hidden = Dropout(self.dropout_rate, name="dropout1")(hidden)
         hidden = Dense(self.dense3_units, activation="relu", name="dense3")(hidden)
-        output = Dense(1, activation="tanh", name="output")(hidden)
+        output = Dense(1, activation="sigmoid", name="output")(hidden)
 
         self.models["Unquantized"] = Model(
             inputs=[x_profile_input, nmodule_input, x_local_input,
@@ -254,7 +254,7 @@ class Model2_5_QuantizedInputs(Model2_5):
         hidden = Dense(dense2_units, activation="relu", name="dense2")(merged)
         hidden = Dropout(dropout_rate, name="dropout1")(hidden)
         hidden = Dense(dense3_units, activation="relu", name="dense3")(hidden)
-        output = Dense(1, activation="tanh", name="output")(hidden)
+        output = Dense(1, activation="sigmoid", name="output")(hidden)
 
         model = Model(
             inputs=[x_profile_input, nmodule_input, x_local_input,
@@ -357,7 +357,7 @@ class Model2_5_QuantizedInputs(Model2_5):
                 bias_quantizer=weight_quantizer,
                 name="output"
             )(hidden)
-            output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
+            output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
 
             model = Model(
                 inputs=[x_profile_input, nmodule_input, x_local_input,
@@ -477,7 +477,7 @@ class Model2_5_QuantizedInputs(Model2_5):
             bias_quantizer=weight_quantizer,
             name="output"
         )(hidden)
-        output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
+        output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
 
         model = Model(
             inputs=[x_profile_input, nmodule_input, x_local_input,

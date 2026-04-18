@@ -366,7 +366,7 @@ class Model2(SmartPixModel):
                 bias_quantizer=bias_quantizer,
                 name="output"
             )(merged_dense)
-            output = QActivation("sigmoid", name="output_activation")(output_dense)  # MUST be sigmoid for binary_crossentropy!
+            output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
             
             # Create model
             model = Model(
@@ -533,7 +533,7 @@ class Model2(SmartPixModel):
             bias_quantizer=bias_quantizer,
             name="output"
         )(merged_dense)
-        output = QActivation("sigmoid", name="output_activation")(output_dense)
+        output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
         
         # Create model
         model = Model(

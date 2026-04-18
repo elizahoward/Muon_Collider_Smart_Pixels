@@ -3,7 +3,7 @@ Model2.5 Implementation based on Model2 with a single dense fusion layer
 and an 8-bit dedicated projection for the nModule_xlocal feature (concatenation of nModule and x_local).
 """
 
-from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Add, Activation
+from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Add
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
@@ -99,7 +99,7 @@ class Model2_5(Model2):
         hidden = Dense(self.dense3_units, activation="relu", name="dense3")(hidden)
         
         # Output layer
-        output = Dense(1, activation="tanh", name="output")(hidden)
+        output = Dense(1, activation="sigmoid", name="output")(hidden)
 
         self.models["Unquantized"] = Model(
             inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
@@ -155,7 +155,7 @@ class Model2_5(Model2):
         hidden = Dense(dense3_units, activation="relu", name="dense3")(hidden)
         
         # Output layer
-        output = Dense(1, activation="tanh", name="output")(hidden)
+        output = Dense(1, activation="sigmoid", name="output")(hidden)
 
         model = Model(
             inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
@@ -242,7 +242,7 @@ class Model2_5(Model2):
                 bias_quantizer=weight_quantizer,
                 name="output"
             )(hidden)
-            output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
+            output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
 
             model = Model(
                 inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],
@@ -340,7 +340,7 @@ class Model2_5(Model2):
             bias_quantizer=weight_quantizer,
             name="output"
         )(hidden)
-        output = QActivation("quantized_tanh(8,0)", name="output_activation")(output_dense)
+        output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
 
         model = Model(
             inputs=[x_profile_input, nmodule_input, x_local_input, y_profile_input, y_local_input],

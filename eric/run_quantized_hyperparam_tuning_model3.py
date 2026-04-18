@@ -62,7 +62,7 @@ def main():
         bit_configs=bit_configs,
         max_trials=10,
         executions_per_trial=1,
-        numEpochs=10,
+        numEpochs=40,
         use_weighted_bkg_rej=True,
         bkg_rej_weights={0.95: 0.1, 0.98: 0.7, 0.99: 0.2}
     )

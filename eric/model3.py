@@ -16,7 +16,7 @@ Date: 2024
 """
 
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Conv2D, MaxPooling2D, Flatten, Reshape, Lambda
+from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Conv2D, MaxPooling2D, Flatten, Reshape
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import PolynomialDecay
@@ -230,8 +230,7 @@ class Model3(SmartPixModel):
         h = Dense(self.merged_dense_2, activation="relu", name="merged_dense2")(h)
         
         # Output layer with quantized_tanh
-        output_dense = Dense(1, name="output_dense")(h)
-        output = QActivation("quantized_tanh", name="output")(output_dense)
+        output = Dense(1, activation="sigmoid", name="output")(h)
         
         # Create and compile model
         self.models["Unquantized"] = Model(
@@ -290,8 +289,7 @@ class Model3(SmartPixModel):
         h = Dense(merged_dense_2, activation="relu", name="merged_dense2")(h)
         
         # Output layer with quantized_tanh
-        output_dense = Dense(1, name="output_dense")(h)
-        output = QActivation("quantized_tanh", name="output")(output_dense)
+        output = Dense(1, activation="sigmoid", name="output")(h)
         
         # Create model
         model = Model(
@@ -391,7 +389,7 @@ class Model3(SmartPixModel):
                 bias_quantizer=bias_quantizer, 
                 name="output_dense"
             )(h)
-            output = QActivation("quantized_tanh", name="output")(output_dense)
+            output = QActivation("quantized_sigmoid(8,0)", name="output")(output_dense)
             
             # Create model
             model = Model(
@@ -440,14 +438,14 @@ class Model3(SmartPixModel):
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
-        conv_filters = hp.Int('conv_filters', min_value=2, max_value=16, step=2)
+        conv_filters = hp.Int('conv_filters', min_value=4, max_value=10, step=2)
         kernel_rows = hp.Choice('kernel_rows', values=[3, 3])
         kernel_cols = hp.Choice('kernel_cols', values=[3, 3])
-        scalar_dense_units = hp.Int('scalar_dense_units', min_value=16, max_value=64, step=16)
-        merged_dense_1 = hp.Int('merged_dense_1', min_value=20, max_value=150, step=15)
-        
-        # Multiplier for second layer (0.4 to 1.0 of previous layer)
-        merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.4, max_value=1.0, step=0.2)
+        scalar_dense_units = hp.Int('scalar_dense_units', min_value=8, max_value=32, step=8)
+        merged_dense_1 = hp.Int('merged_dense_1', min_value=16, max_value=128, step=16)
+
+        # Multiplier for second layer (0.4 to 0.8 of previous layer)
+        merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.4, max_value=0.8, step=0.2)
         
         # Calculate layer size with rounding
         merged_dense_2 = int(round(merged_dense_1 * merged_multiplier_2))
@@ -507,7 +505,7 @@ class Model3(SmartPixModel):
             bias_quantizer=bias_quantizer, 
             name="output_dense"
         )(h)
-        output = QActivation("quantized_tanh", name="output")(output_dense)
+        output = QActivation("quantized_sigmoid(8,0)", name="output")(output_dense)
         
         # Create model
         model = Model(
@@ -609,7 +607,8 @@ class Model3(SmartPixModel):
         executions_per_trial=2,
         numEpochs=30,
         use_weighted_bkg_rej=False,
-        bkg_rej_weights=None
+        bkg_rej_weights=None,
+        hyperparameter_name_tag=None,
     ):
         """
         Run hyperparameter tuning for quantized Model3 with specified bit configurations.
@@ -686,19 +685,22 @@ class Model3(SmartPixModel):
             )
             objective_name = "val_weighted_bkg_rej" if use_weighted_bkg_rej else "val_binary_accuracy"
             
+            # Build tag suffix so qi runs don't clash with baseline runs
+            tag_suffix = f"_{hyperparameter_name_tag}" if hyperparameter_name_tag else ""
+
             # Create tuner with unique project name
             tuner = kt.RandomSearch(
                 model_builder,
                 objective=tuner_objective,
                 max_trials=max_trials,
                 executions_per_trial=executions_per_trial,
-                project_name=f"model3_quantized_{weight_bits}w{int_bits}i_hyperparameter_search",
+                project_name=f"model3_quantized_{weight_bits}w{int_bits}i_hyperparameter_search{tag_suffix}",
                 directory="./hyperparameter_tuning"
             )
-            
+
             # Create directory for this configuration's models (before tuning starts)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            config_dir = f"{self.modelName.lower()}_{config_name}_hyperparameter_results_{timestamp}"
+            config_dir = f"{self.modelName.lower()}_{config_name}_hyperparameter_results{tag_suffix}_{timestamp}"
             os.makedirs(config_dir, exist_ok=True)
             print(f"\n✓ Created directory for {config_name} results: {config_dir}/")
             print(f"Models will be saved to this directory after each trial completes.\n")
