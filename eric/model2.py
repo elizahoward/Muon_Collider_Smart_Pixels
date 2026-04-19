@@ -768,6 +768,40 @@ class Model2(SmartPixModel):
                         # Don't fail training if saving fails
                         pass
 
+            class HistoryRecorderCallback(tf.keras.callbacks.Callback):
+                """Records per-epoch metrics for each trial during tuner.search()."""
+
+                def __init__(self, tuner):
+                    super().__init__()
+                    self.tuner = tuner
+                    self._histories = {}
+                    self._current_trial_id = None
+
+                def __deepcopy__(self, memo):
+                    # Prevent Keras Tuner from making a copy — we need one shared
+                    # instance so that histories accumulated during training are
+                    # visible when we read them back after tuner.search().
+                    memo[id(self)] = self
+                    return self
+
+                def on_train_begin(self, logs=None):
+                    try:
+                        for trial_id, trial in self.tuner.oracle.trials.items():
+                            if trial.status == 'RUNNING':
+                                self._current_trial_id = trial_id
+                                self._histories.setdefault(trial_id, {})
+                                break
+                    except Exception:
+                        self._current_trial_id = None
+
+                def on_epoch_end(self, epoch, logs=None):
+                    if logs and self._current_trial_id is not None:
+                        for k, v in logs.items():
+                            self._histories[self._current_trial_id].setdefault(k, []).append(float(v))
+
+                def get_history(self, trial_id):
+                    return self._histories.get(str(trial_id), {})
+
             class WeightedBackgroundRejectionCallback(tf.keras.callbacks.Callback):
                 """Compute weighted BR objective at each epoch and inject into Keras logs."""
 
@@ -811,13 +845,15 @@ class Model2(SmartPixModel):
             
             # Create callbacks
             save_callback = SaveModelAfterTrial(tuner, config_dir, config_name)
+            history_recorder = HistoryRecorderCallback(tuner)
             callbacks = [
                 EarlyStopping(
                     monitor='val_loss',
                     patience=10,
                     restore_best_weights=True
                 ),
-                save_callback
+                save_callback,
+                history_recorder,
             ]
             if use_weighted_bkg_rej:
                 callbacks.insert(0, WeightedBackgroundRejectionCallback(self.validation_generator, bkg_rej_weights))
@@ -939,6 +975,42 @@ class Model2(SmartPixModel):
                         bkg_rej_weights.get(0.99, 0.0) * br99
                     )
 
+                    # History plots
+                    history = history_recorder.get_history(trial_id)
+                    history_json_path = os.path.join(roc_dir, f"{model_stem}_history.json")
+                    with open(history_json_path, 'w') as f:
+                        json.dump(history, f, indent=4)
+
+                    val_acc_plot_path = os.path.join(roc_dir, f"{model_stem}_val_accuracy.png")
+                    if 'val_binary_accuracy' in history:
+                        fig, ax = plt.subplots(figsize=(8, 6))
+                        if 'binary_accuracy' in history:
+                            ax.plot(history['binary_accuracy'], label='Train accuracy')
+                        ax.plot(history['val_binary_accuracy'], label='Val accuracy')
+                        ax.set_xlabel('Epoch', fontsize=12)
+                        ax.set_ylabel('Accuracy', fontsize=12)
+                        ax.set_title(f'Accuracy: {model_stem}', fontsize=14, fontweight='bold')
+                        ax.legend(loc="lower right")
+                        ax.grid(True, alpha=0.3)
+                        plt.tight_layout()
+                        plt.savefig(val_acc_plot_path, dpi=300, bbox_inches='tight')
+                        plt.close(fig)
+
+                    val_loss_plot_path = os.path.join(roc_dir, f"{model_stem}_val_loss.png")
+                    if 'val_loss' in history:
+                        fig, ax = plt.subplots(figsize=(8, 6))
+                        if 'loss' in history:
+                            ax.plot(history['loss'], label='Train loss')
+                        ax.plot(history['val_loss'], label='Val loss')
+                        ax.set_xlabel('Epoch', fontsize=12)
+                        ax.set_ylabel('Loss', fontsize=12)
+                        ax.set_title(f'Loss: {model_stem}', fontsize=14, fontweight='bold')
+                        ax.legend(loc="upper right")
+                        ax.grid(True, alpha=0.3)
+                        plt.tight_layout()
+                        plt.savefig(val_loss_plot_path, dpi=300, bbox_inches='tight')
+                        plt.close(fig)
+
                     roc_rows.append({
                         'trial_id': trial_id,
                         'model_name': model_stem,
@@ -948,11 +1020,17 @@ class Model2(SmartPixModel):
                         'bkg_rej_99': float(br99),
                         'weighted_bkg_rej': float(weighted_br),
                         'roc_csv': os.path.join("roc_analysis", f"{model_stem}_roc_data.csv"),
-                        'roc_plot': os.path.join("roc_analysis", f"{model_stem}_roc.png")
+                        'roc_plot': os.path.join("roc_analysis", f"{model_stem}_roc.png"),
+                        'history_json': os.path.join("roc_analysis", f"{model_stem}_history.json"),
+                        'val_accuracy_plot': os.path.join("roc_analysis", f"{model_stem}_val_accuracy.png"),
+                        'val_loss_plot': os.path.join("roc_analysis", f"{model_stem}_val_loss.png"),
+                        'final_val_loss': history.get('val_loss', [None])[-1],
+                        'final_val_accuracy': history.get('val_binary_accuracy', [None])[-1],
+                        'num_epochs_trained': len(history.get('val_loss', [])),
                     })
-                    print(f"  ✓ ROC saved for trial {trial_id} (AUC={roc_auc:.4f})")
+                    print(f"  ✓ ROC + history saved for trial {trial_id} (AUC={roc_auc:.4f})")
                 except Exception as e:
-                    print(f"  ⚠ Failed ROC generation for trial {trial_id}: {str(e)}")
+                    print(f"  ⚠ Failed ROC/history generation for trial {trial_id}: {str(e)}")
 
                 del model
 
