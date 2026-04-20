@@ -235,11 +235,11 @@ class Model3_QuantizedInputs(Model3):
                                 step=self.hp_input_int_bits_step)
 
         # Architecture HPs (same ranges as the constrained search in model3.py)
-        conv_filters       = hp.Int('conv_filters',       min_value=4,  max_value=10,  step=2)
+        conv_filters       = hp.Int('conv_filters',       min_value=2,  max_value=10,  step=2)
         kernel_rows        = hp.Choice('kernel_rows',     values=[3, 3])
         kernel_cols        = hp.Choice('kernel_cols',     values=[3, 3])
         scalar_dense_units = hp.Int('scalar_dense_units', min_value=8,  max_value=32,  step=8)
-        merged_dense_1     = hp.Int('merged_dense_1',     min_value=16, max_value=128, step=16)
+        merged_dense_1     = hp.Int('merged_dense_1',     min_value=8, max_value=128, step=16)
         merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.4, max_value=0.8, step=0.2)
         merged_dense_2     = int(round(merged_dense_1 * merged_multiplier_2))
         dropout_rate       = hp.Float('dropout_rate',     min_value=0.1, max_value=0.1, step=0.1)
