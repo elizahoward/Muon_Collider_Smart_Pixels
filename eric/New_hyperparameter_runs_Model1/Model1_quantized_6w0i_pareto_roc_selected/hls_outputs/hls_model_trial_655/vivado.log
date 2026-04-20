@@ -1,0 +1,1312 @@
+#-----------------------------------------------------------
+# Vivado v2024.1 (64-bit)
+# SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
+# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+# Start of session at: Mon Apr 20 17:05:24 2026
+# Process ID: 3574448
+# Current directory: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655
+# Command line: vivado -mode batch -source vivado_synth.tcl
+# Log file: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/vivado.log
+# Journal file: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/vivado.jou
+# Running On        :kdplab01
+# Platform          :unknown
+# Operating System  :unknown
+# Processor Detail  :Intel(R) Xeon(R) Silver 4314 CPU @ 2.40GHz
+# CPU Frequency     :3299.785 MHz
+# CPU Physical cores:32
+# CPU Logical cores :64
+# Host memory       :134212 MB
+# Swap memory       :122406 MB
+# Total Virtual     :256618 MB
+# Available Virtual :136081 MB
+#-----------------------------------------------------------
+source vivado_synth.tcl
+# set tcldir [file dirname [info script]]
+# source [file join $tcldir project.tcl]
+## variable project_name
+## set project_name "myproject"
+## variable backend
+## set backend "vivado"
+## variable part
+## set part "xc7z020clg400-1"
+## variable clock_period
+## set clock_period 5
+## variable clock_uncertainty
+## set clock_uncertainty 12.5%
+## variable version
+## set version "1.0.0"
+# add_files ${project_name}_prj/solution1/syn/vhdl
+add_files: Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 1673.961 ; gain = 24.836 ; free physical = 56222 ; free virtual = 129348
+# synth_design -top ${project_name} -part $part
+Command: synth_design -top myproject -part xc7z020clg400-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z020'
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 3586426
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2106.488 ; gain = 426.543 ; free physical = 55431 ; free virtual = 128573
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'myproject' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:32]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:11' bound to instance 'grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s_fu_143' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:965]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:25]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:11' bound to instance 'grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s_fu_149' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:977]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:25]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:11' bound to instance 'grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s_fu_155' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:989]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:25]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:11' bound to instance 'grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s_fu_161' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1001]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:25]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:11' bound to instance 'call_ret1_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s_fu_167' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1013]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:22]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:22]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:11' bound to instance 'call_ret2_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s_fu_173' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1022]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:24]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:24]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:11' bound to instance 'call_ret3_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s_fu_180' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1033]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:26]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:26]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:11' bound to instance 'grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_fu_188' of component 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1046]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:34]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_6s_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6s_21_2_0.vhd:7' bound to instance 'mul_16s_6s_21_2_0_U14' of component 'myproject_mul_16s_6s_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:379]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_16s_6s_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6s_21_2_0.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_16s_6s_21_2_0' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6s_21_2_0.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_5s_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5s_21_2_0.vhd:7' bound to instance 'mul_16s_5s_21_2_0_U15' of component 'myproject_mul_16s_5s_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:394]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_16s_5s_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5s_21_2_0.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_16s_5s_21_2_0' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5s_21_2_0.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_5ns_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5ns_21_2_0.vhd:7' bound to instance 'mul_16s_5ns_21_2_0_U16' of component 'myproject_mul_16s_5ns_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:409]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_16s_5ns_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5ns_21_2_0.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_16s_5ns_21_2_0' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5ns_21_2_0.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_6s_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6s_21_2_0.vhd:7' bound to instance 'mul_16s_6s_21_2_0_U17' of component 'myproject_mul_16s_6s_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:424]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_5ns_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_5ns_21_2_0.vhd:7' bound to instance 'mul_16s_5ns_21_2_0_U18' of component 'myproject_mul_16s_5ns_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:439]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_6s_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6s_21_2_0.vhd:7' bound to instance 'mul_16s_6s_21_2_0_U19' of component 'myproject_mul_16s_6s_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:454]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_6s_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6s_21_2_0.vhd:7' bound to instance 'mul_16s_6s_21_2_0_U20' of component 'myproject_mul_16s_6s_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:469]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_6ns_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6ns_21_2_0.vhd:7' bound to instance 'mul_16s_6ns_21_2_0_U21' of component 'myproject_mul_16s_6ns_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:484]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_16s_6ns_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6ns_21_2_0.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_16s_6ns_21_2_0' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6ns_21_2_0.vhd:27]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_6ns_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6ns_21_2_0.vhd:7' bound to instance 'mul_16s_6ns_21_2_0_U22' of component 'myproject_mul_16s_6ns_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:499]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 2 - type: integer 
+	Parameter din0_WIDTH bound to: 16 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 21 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_16s_6ns_21_2_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_16s_6ns_21_2_0.vhd:7' bound to instance 'mul_16s_6ns_21_2_0_U23' of component 'myproject_mul_16s_6ns_21_2_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:514]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:34]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s_fu_196' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1067]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:45]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:11' bound to instance 'grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_fu_211' of component 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1099]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:41]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U43' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:958]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:23]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_8ns_5s_13_1_0' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:23]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U44' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:970]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:23]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_8ns_5ns_12_1_0' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:23]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U45' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:982]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U46' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:994]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U47' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1006]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U48' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1018]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U49' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1030]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:23]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_8ns_6ns_13_1_0' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:23]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U50' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1042]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U51' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1054]
+INFO: [Synth 8-638] synthesizing module 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:23]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_mul_8ns_6s_14_1_0' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:23]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U52' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1066]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U53' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1078]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U54' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1090]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U55' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1102]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U56' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1114]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U57' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1126]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U58' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1138]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U59' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1150]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U60' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:1162]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:41]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s_fu_226' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1127]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:45]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:11' bound to instance 'grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s_fu_241' of component 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1159]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:41]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U87' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:997]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U88' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1009]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U89' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1021]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U90' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1033]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U91' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1045]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U92' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1057]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U93' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1069]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U94' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1081]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U95' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1093]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U96' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1105]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U97' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1117]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U98' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1129]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U99' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1141]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U100' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1153]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U101' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1165]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U102' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1177]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U103' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1189]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U104' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1201]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U105' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1213]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U106' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1225]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U107' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1237]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U108' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1249]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U109' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1261]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U110' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1273]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U111' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1285]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U112' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1297]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U113' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1309]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U114' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1321]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U115' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1333]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U116' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1345]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U117' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:1357]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:41]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s_fu_256' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1187]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s.vhd:45]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:11' bound to instance 'grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s_fu_271' of component 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1219]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:41]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U140' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:990]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U141' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1002]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U142' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1014]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U143' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1026]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U144' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1038]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U145' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1050]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U146' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1062]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U147' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1074]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U148' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1086]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U149' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1098]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U150' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1110]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U151' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1122]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U152' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1134]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U153' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1146]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U154' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1158]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U155' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1170]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U156' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1182]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5s_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5s_13_1_0.vhd:7' bound to instance 'mul_8ns_5s_13_1_0_U157' of component 'myproject_mul_8ns_5s_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1194]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U158' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1206]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_5ns_12_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_5ns_12_1_0.vhd:7' bound to instance 'mul_8ns_5ns_12_1_0_U159' of component 'myproject_mul_8ns_5ns_12_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1218]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U160' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1230]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U161' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1242]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U162' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1254]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6ns_13_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6ns_13_1_0.vhd:7' bound to instance 'mul_8ns_6ns_13_1_0_U163' of component 'myproject_mul_8ns_6ns_13_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1266]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U164' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1278]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_0' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_0.vhd:7' bound to instance 'mul_8ns_6s_14_1_0_U165' of component 'myproject_mul_8ns_6s_14_1_0' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:1290]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.vhd:41]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s' declared at '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s_fu_286' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:1247]
+INFO: [Common 17-14] Message 'Synth 8-3491' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s.vhd:45]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s.vhd:41]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 12 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s.vhd:41]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s.vhd:45]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s.vhd:45]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s' [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s.vhd:35]
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 14 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 6 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+	Parameter ID bound to: 1 - type: integer 
+	Parameter NUM_STAGE bound to: 1 - type: integer 
+	Parameter din0_WIDTH bound to: 8 - type: integer 
+	Parameter din1_WIDTH bound to: 5 - type: integer 
+	Parameter dout_WIDTH bound to: 13 - type: integer 
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s.vhd:35]
+INFO: [Synth 8-256] done synthesizing module 'myproject' (0#1) [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject.vhd:32]
+WARNING: [Synth 8-7129] Port data_5_val[1] in module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port data_5_val[0] in module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port reset in module myproject_mul_16s_6ns_21_2_0 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port reset in module myproject_mul_16s_6s_21_2_0 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port reset in module myproject_mul_16s_5ns_21_2_0 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port reset in module myproject_mul_16s_5s_21_2_0 is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2259.426 ; gain = 579.480 ; free physical = 55728 ; free virtual = 128643
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:08 ; elapsed = 00:00:09 . Memory (MB): peak = 2277.238 ; gain = 597.293 ; free physical = 55717 ; free virtual = 128632
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7z020clg400-1
+INFO: [Device 21-403] Loading part xc7z020clg400-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:08 ; elapsed = 00:00:09 . Memory (MB): peak = 2285.242 ; gain = 605.297 ; free physical = 55717 ; free virtual = 128632
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-3936] Found unconnected internal register 'data_val_read_reg_299_reg' and it is trimmed from '16' to '12' bits. [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:144]
+WARNING: [Synth 8-3936] Found unconnected internal register 'data_val_read_reg_299_reg' and it is trimmed from '16' to '12' bits. [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:144]
+WARNING: [Synth 8-3936] Found unconnected internal register 'data_val_read_reg_299_reg' and it is trimmed from '16' to '12' bits. [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:144]
+WARNING: [Synth 8-3936] Found unconnected internal register 'data_val_read_reg_299_reg' and it is trimmed from '16' to '12' bits. [/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/hls_outputs/hls_model_trial_655/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:144]
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:11 . Memory (MB): peak = 2300.086 ; gain = 620.141 ; free physical = 55620 ; free virtual = 128540
+---------------------------------------------------------------------------------
+INFO: [Device 21-9227] Part: xc7z020clg400-1 does not have CEAM library.
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input   21 Bit       Adders := 11    
+	   3 Input   19 Bit       Adders := 2     
+	   2 Input   16 Bit       Adders := 8     
+	   3 Input   16 Bit       Adders := 13    
+	   2 Input   15 Bit       Adders := 3     
+	   2 Input   14 Bit       Adders := 32    
+	   3 Input   14 Bit       Adders := 45    
+	   2 Input   13 Bit       Adders := 68    
+	   3 Input   13 Bit       Adders := 76    
+	   3 Input   12 Bit       Adders := 93    
+	   2 Input   12 Bit       Adders := 83    
+	   3 Input   11 Bit       Adders := 56    
+	   2 Input   11 Bit       Adders := 62    
+	   2 Input   10 Bit       Adders := 39    
+	   3 Input   10 Bit       Adders := 12    
+	   2 Input    9 Bit       Adders := 19    
+	   3 Input    9 Bit       Adders := 3     
+	   2 Input    8 Bit       Adders := 62    
+	   3 Input    8 Bit       Adders := 1     
+	   2 Input    7 Bit       Adders := 1     
++---XORs : 
+	   2 Input      1 Bit         XORs := 140   
+	   3 Input      1 Bit         XORs := 1     
++---Registers : 
+	               16 Bit    Registers := 116   
+	               15 Bit    Registers := 3     
+	               14 Bit    Registers := 47    
+	               13 Bit    Registers := 63    
+	               12 Bit    Registers := 94    
+	               11 Bit    Registers := 156   
+	               10 Bit    Registers := 164   
+	                9 Bit    Registers := 114   
+	                8 Bit    Registers := 235   
+	                7 Bit    Registers := 18    
+	                6 Bit    Registers := 14    
+	                5 Bit    Registers := 8     
+	                1 Bit    Registers := 264   
++---Muxes : 
+	   2 Input   16 Bit        Muxes := 59    
+	   2 Input   15 Bit        Muxes := 1     
+	   3 Input   13 Bit        Muxes := 1     
+	   2 Input   12 Bit        Muxes := 1     
+	   2 Input    8 Bit        Muxes := 220   
+	   3 Input    8 Bit        Muxes := 5     
+	   2 Input    1 Bit        Muxes := 90    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 220 (col length:60)
+BRAMs: 280 (col length: RAMB18 60 RAMB36 30)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+DSP Report: Generating DSP mul_16s_6s_21_2_0_U17/buff0_reg, operation Mode is: (A''*(B:0x3ffe6))'.
+DSP Report: register data_1_val_int_reg_reg is absorbed into DSP mul_16s_6s_21_2_0_U17/buff0_reg.
+DSP Report: register data_1_val_read_reg_2858_reg is absorbed into DSP mul_16s_6s_21_2_0_U17/buff0_reg.
+DSP Report: register mul_16s_6s_21_2_0_U17/buff0_reg is absorbed into DSP mul_16s_6s_21_2_0_U17/buff0_reg.
+DSP Report: operator mul_16s_6s_21_2_0_U17/tmp_product is absorbed into DSP mul_16s_6s_21_2_0_U17/buff0_reg.
+DSP Report: Generating DSP mul_16s_6s_21_2_0_U20/buff0_reg, operation Mode is: (A2*(B:0x3ffeb))'.
+DSP Report: register data_3_val_int_reg_reg is absorbed into DSP mul_16s_6s_21_2_0_U20/buff0_reg.
+DSP Report: register mul_16s_6s_21_2_0_U20/buff0_reg is absorbed into DSP mul_16s_6s_21_2_0_U20/buff0_reg.
+DSP Report: operator mul_16s_6s_21_2_0_U20/tmp_product is absorbed into DSP mul_16s_6s_21_2_0_U20/buff0_reg.
+DSP Report: Generating DSP mul_16s_6ns_21_2_0_U22/buff0_reg, operation Mode is: (A''*(B:0x1b))'.
+DSP Report: register data_0_val_int_reg_reg is absorbed into DSP mul_16s_6ns_21_2_0_U22/buff0_reg.
+DSP Report: register data_0_val_read_reg_2867_reg is absorbed into DSP mul_16s_6ns_21_2_0_U22/buff0_reg.
+DSP Report: register mul_16s_6ns_21_2_0_U22/buff0_reg is absorbed into DSP mul_16s_6ns_21_2_0_U22/buff0_reg.
+DSP Report: operator mul_16s_6ns_21_2_0_U22/tmp_product is absorbed into DSP mul_16s_6ns_21_2_0_U22/buff0_reg.
+DSP Report: Generating DSP mul_16s_6s_21_2_0_U19/buff0_reg, operation Mode is: (A2*(B:0x3ffed))'.
+DSP Report: register data_2_val_int_reg_reg is absorbed into DSP mul_16s_6s_21_2_0_U19/buff0_reg.
+DSP Report: register mul_16s_6s_21_2_0_U19/buff0_reg is absorbed into DSP mul_16s_6s_21_2_0_U19/buff0_reg.
+DSP Report: operator mul_16s_6s_21_2_0_U19/tmp_product is absorbed into DSP mul_16s_6s_21_2_0_U19/buff0_reg.
+DSP Report: Generating DSP mul_16s_5ns_21_2_0_U16/buff0_reg, operation Mode is: (A''*(B:0xb))'.
+DSP Report: register data_0_val_int_reg_reg is absorbed into DSP mul_16s_5ns_21_2_0_U16/buff0_reg.
+DSP Report: register data_0_val_read_reg_2867_reg is absorbed into DSP mul_16s_5ns_21_2_0_U16/buff0_reg.
+DSP Report: register mul_16s_5ns_21_2_0_U16/buff0_reg is absorbed into DSP mul_16s_5ns_21_2_0_U16/buff0_reg.
+DSP Report: operator mul_16s_5ns_21_2_0_U16/tmp_product is absorbed into DSP mul_16s_5ns_21_2_0_U16/buff0_reg.
+DSP Report: Generating DSP mul_16s_6ns_21_2_0_U21/buff0_reg, operation Mode is: (A''*(B:0x1a))'.
+DSP Report: register data_0_val_int_reg_reg is absorbed into DSP mul_16s_6ns_21_2_0_U21/buff0_reg.
+DSP Report: register data_0_val_read_reg_2867_reg is absorbed into DSP mul_16s_6ns_21_2_0_U21/buff0_reg.
+DSP Report: register mul_16s_6ns_21_2_0_U21/buff0_reg is absorbed into DSP mul_16s_6ns_21_2_0_U21/buff0_reg.
+DSP Report: operator mul_16s_6ns_21_2_0_U21/tmp_product is absorbed into DSP mul_16s_6ns_21_2_0_U21/buff0_reg.
+DSP Report: Generating DSP mul_16s_5ns_21_2_0_U18/buff0_reg, operation Mode is: (A2*(B:0xb))'.
+DSP Report: register data_2_val_int_reg_reg is absorbed into DSP mul_16s_5ns_21_2_0_U18/buff0_reg.
+DSP Report: register mul_16s_5ns_21_2_0_U18/buff0_reg is absorbed into DSP mul_16s_5ns_21_2_0_U18/buff0_reg.
+DSP Report: operator mul_16s_5ns_21_2_0_U18/tmp_product is absorbed into DSP mul_16s_5ns_21_2_0_U18/buff0_reg.
+DSP Report: Generating DSP mul_16s_6s_21_2_0_U14/buff0_reg, operation Mode is: (A''*(B:0x3ffe7))'.
+DSP Report: register data_0_val_int_reg_reg is absorbed into DSP mul_16s_6s_21_2_0_U14/buff0_reg.
+DSP Report: register data_0_val_read_reg_2867_reg is absorbed into DSP mul_16s_6s_21_2_0_U14/buff0_reg.
+DSP Report: register mul_16s_6s_21_2_0_U14/buff0_reg is absorbed into DSP mul_16s_6s_21_2_0_U14/buff0_reg.
+DSP Report: operator mul_16s_6s_21_2_0_U14/tmp_product is absorbed into DSP mul_16s_6s_21_2_0_U14/buff0_reg.
+DSP Report: Generating DSP mul_16s_6ns_21_2_0_U23/buff0_reg, operation Mode is: (A''*(B:0x13))'.
+DSP Report: register data_2_val_int_reg_reg is absorbed into DSP mul_16s_6ns_21_2_0_U23/buff0_reg.
+DSP Report: register data_2_val_read_reg_2850_reg is absorbed into DSP mul_16s_6ns_21_2_0_U23/buff0_reg.
+DSP Report: register mul_16s_6ns_21_2_0_U23/buff0_reg is absorbed into DSP mul_16s_6ns_21_2_0_U23/buff0_reg.
+DSP Report: operator mul_16s_6ns_21_2_0_U23/tmp_product is absorbed into DSP mul_16s_6ns_21_2_0_U23/buff0_reg.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_176_reg_12616_reg__9) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_176_reg_12616_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_176_reg_12616_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_29_reg_12396_reg__8) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_29_reg_12396_reg__9) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_29_reg_12396_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_108_reg_18506_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_108_reg_18506_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_108_reg_18506_reg__12) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_122_reg_18599_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_122_reg_18599_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_122_reg_18599_reg__12) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_117_reg_18573_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_117_reg_18573_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_117_reg_18573_reg__12) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_149_reg_18842_reg__9) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_149_reg_18842_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_149_reg_18842_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_100_reg_16141_reg__9) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_100_reg_16141_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_100_reg_16141_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (tmp_46_reg_15951_reg__8) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (tmp_46_reg_15951_reg__9) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (tmp_46_reg_15951_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_11_reg_16186_reg__9) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_11_reg_16186_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_11_reg_16186_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_8_reg_16296_reg__9) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_8_reg_16296_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (lshr_ln42_8_reg_16296_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_66_reg_15915_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_66_reg_15915_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_66_reg_15915_reg__12) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_12_reg_17237_reg__9) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_12_reg_17237_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_12_reg_17237_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_9_reg_17161_reg__10) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_9_reg_17161_reg__11) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s.
+WARNING: [Synth 8-3332] Sequential element (trunc_ln42_9_reg_17161_reg__12) is unused and will be removed from module myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:29 ; elapsed = 00:00:28 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 56051 ; free virtual = 128784
+---------------------------------------------------------------------------------
+ Sort Area is myproject__GB1 mul_16s_6ns_21_2_0_U21/buff0_reg_8 : 0 0 : 301 301 : Used 1 time 0
+ Sort Area is myproject__GB1 mul_16s_6ns_21_2_0_U22/buff0_reg_4 : 0 0 : 301 301 : Used 1 time 0
+ Sort Area is myproject__GB1 mul_16s_6ns_21_2_0_U23/buff0_reg_c : 0 0 : 301 301 : Used 1 time 0
+ Sort Area is myproject__GB1 mul_16s_6s_21_2_0_U14/buff0_reg_b : 0 0 : 301 301 : Used 1 time 0
+ Sort Area is myproject__GB1 mul_16s_6s_21_2_0_U17/buff0_reg_2 : 0 0 : 301 301 : Used 1 time 0
+ Sort Area is myproject__GB1 mul_16s_6s_21_2_0_U19/buff0_reg_5 : 0 0 : 282 282 : Used 1 time 0
+ Sort Area is myproject__GB1 mul_16s_6s_21_2_0_U20/buff0_reg_0 : 0 0 : 282 282 : Used 1 time 0
+ Sort Area is myproject__GB1 mul_16s_5ns_21_2_0_U16/buff0_reg_6 : 0 0 : 204 204 : Used 1 time 0
+ Sort Area is myproject__GB1 mul_16s_5ns_21_2_0_U18/buff0_reg_9 : 0 0 : 188 188 : Used 1 time 0
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+DSP: Preliminary Mapping Report (see note below. The ' indicates corresponding REG is set)
++---------------------------------------------------------------------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name                                                                | DSP Mapping        | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++---------------------------------------------------------------------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A''*(B:0x3ffe6))' | 16     | 6      | -      | -      | 22     | 2    | 0    | -    | -    | -     | 1    | 0    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A2*(B:0x3ffeb))'  | 16     | 6      | -      | -      | 22     | 1    | 0    | -    | -    | -     | 1    | 0    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A''*(B:0x1b))'    | 16     | 6      | -      | -      | 22     | 2    | 0    | -    | -    | -     | 1    | 0    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A2*(B:0x3ffed))'  | 16     | 6      | -      | -      | 22     | 1    | 0    | -    | -    | -     | 1    | 0    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A''*(B:0xb))'     | 16     | 5      | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 0    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A''*(B:0x1a))'    | 16     | 6      | -      | -      | 22     | 2    | 0    | -    | -    | -     | 1    | 0    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A2*(B:0xb))'      | 16     | 5      | -      | -      | 21     | 1    | 0    | -    | -    | -     | 1    | 0    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A''*(B:0x3ffe7))' | 16     | 6      | -      | -      | 22     | 2    | 0    | -    | -    | -     | 1    | 0    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | (A''*(B:0x13))'    | 16     | 6      | -      | -      | 22     | 2    | 0    | -    | -    | -     | 1    | 0    | 
++---------------------------------------------------------------------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:30 ; elapsed = 00:00:29 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55968 ; free virtual = 128643
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:33 ; elapsed = 00:00:32 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 56161 ; free virtual = 128838
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:37 ; elapsed = 00:00:36 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55936 ; free virtual = 128467
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:37 ; elapsed = 00:00:36 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55931 ; free virtual = 128462
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:38 ; elapsed = 00:00:37 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55933 ; free virtual = 128467
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:38 ; elapsed = 00:00:37 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55937 ; free virtual = 128470
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:38 ; elapsed = 00:00:37 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55944 ; free virtual = 128478
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:38 ; elapsed = 00:00:37 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55942 ; free virtual = 128477
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+DSP Final Report (the ' indicates corresponding REG is set)
++---------------------------------------------------------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name                                                                | DSP Mapping | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++---------------------------------------------------------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 4      | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 4      | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 5      | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 5      | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 5      | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 18     | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 18     | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 18     | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
+|myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s | ((A''*B)')' | 30     | 18     | -      | -      | 21     | 2    | 0    | -    | -    | -     | 1    | 1    | 
++---------------------------------------------------------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+--------+------+
+|      |Cell    |Count |
++------+--------+------+
+|1     |BUFG    |     1|
+|2     |CARRY4  |  2714|
+|3     |DSP48E1 |     9|
+|4     |LUT1    |  1260|
+|5     |LUT2    |  6136|
+|6     |LUT3    |  2991|
+|7     |LUT4    |  2151|
+|8     |LUT5    |   432|
+|9     |LUT6    |   375|
+|10    |FDRE    | 10326|
+|11    |IBUF    |    71|
+|12    |OBUF    |    12|
++------+--------+------+
+
+Report Instance Areas: 
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+|      |Instance                                                                      |Module                                                                     |Cells |
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+|1     |top                                                                           |                                                                           | 26478|
+|2     |  grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_fu_188 |myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s |  1863|
+|3     |    mul_16s_5ns_21_2_0_U16                                                    |myproject_mul_16s_5ns_21_2_0                                               |    51|
+|4     |    mul_16s_5ns_21_2_0_U18                                                    |myproject_mul_16s_5ns_21_2_0_102                                           |    21|
+|5     |    mul_16s_5s_21_2_0_U15                                                     |myproject_mul_16s_5s_21_2_0                                                |    47|
+|6     |    mul_16s_6ns_21_2_0_U21                                                    |myproject_mul_16s_6ns_21_2_0                                               |    51|
+|7     |    mul_16s_6ns_21_2_0_U22                                                    |myproject_mul_16s_6ns_21_2_0_103                                           |    51|
+|8     |    mul_16s_6ns_21_2_0_U23                                                    |myproject_mul_16s_6ns_21_2_0_104                                           |    51|
+|9     |    mul_16s_6s_21_2_0_U14                                                     |myproject_mul_16s_6s_21_2_0                                                |    51|
+|10    |    mul_16s_6s_21_2_0_U17                                                     |myproject_mul_16s_6s_21_2_0_105                                            |    51|
+|11    |    mul_16s_6s_21_2_0_U19                                                     |myproject_mul_16s_6s_21_2_0_106                                            |    17|
+|12    |    mul_16s_6s_21_2_0_U20                                                     |myproject_mul_16s_6s_21_2_0_107                                            |    21|
+|13    |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_fu_211 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s |  4710|
+|14    |    mul_8ns_5ns_12_1_0_U44                                                    |myproject_mul_8ns_5ns_12_1_0_84                                            |    15|
+|15    |    mul_8ns_5ns_12_1_0_U45                                                    |myproject_mul_8ns_5ns_12_1_0_85                                            |    15|
+|16    |    mul_8ns_5ns_12_1_0_U48                                                    |myproject_mul_8ns_5ns_12_1_0_86                                            |    15|
+|17    |    mul_8ns_5ns_12_1_0_U50                                                    |myproject_mul_8ns_5ns_12_1_0_87                                            |    18|
+|18    |    mul_8ns_5ns_12_1_0_U52                                                    |myproject_mul_8ns_5ns_12_1_0_88                                            |    18|
+|19    |    mul_8ns_5ns_12_1_0_U59                                                    |myproject_mul_8ns_5ns_12_1_0_89                                            |    15|
+|20    |    mul_8ns_5ns_12_1_0_U60                                                    |myproject_mul_8ns_5ns_12_1_0_90                                            |    15|
+|21    |    mul_8ns_5s_13_1_0_U43                                                     |myproject_mul_8ns_5s_13_1_0_91                                             |    30|
+|22    |    mul_8ns_5s_13_1_0_U46                                                     |myproject_mul_8ns_5s_13_1_0_92                                             |    30|
+|23    |    mul_8ns_5s_13_1_0_U47                                                     |myproject_mul_8ns_5s_13_1_0_93                                             |    30|
+|24    |    mul_8ns_6ns_13_1_0_U49                                                    |myproject_mul_8ns_6ns_13_1_0_94                                            |    24|
+|25    |    mul_8ns_6ns_13_1_0_U53                                                    |myproject_mul_8ns_6ns_13_1_0_95                                            |    19|
+|26    |    mul_8ns_6ns_13_1_0_U56                                                    |myproject_mul_8ns_6ns_13_1_0_96                                            |    23|
+|27    |    mul_8ns_6ns_13_1_0_U57                                                    |myproject_mul_8ns_6ns_13_1_0_97                                            |    11|
+|28    |    mul_8ns_6s_14_1_0_U51                                                     |myproject_mul_8ns_6s_14_1_0_98                                             |    20|
+|29    |    mul_8ns_6s_14_1_0_U54                                                     |myproject_mul_8ns_6s_14_1_0_99                                             |    38|
+|30    |    mul_8ns_6s_14_1_0_U55                                                     |myproject_mul_8ns_6s_14_1_0_100                                            |    30|
+|31    |    mul_8ns_6s_14_1_0_U58                                                     |myproject_mul_8ns_6s_14_1_0_101                                            |    38|
+|32    |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s_fu_241 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s |  5041|
+|33    |    mul_8ns_5ns_12_1_0_U102                                                   |myproject_mul_8ns_5ns_12_1_0_53                                            |    15|
+|34    |    mul_8ns_5ns_12_1_0_U115                                                   |myproject_mul_8ns_5ns_12_1_0_54                                            |    15|
+|35    |    mul_8ns_5ns_12_1_0_U87                                                    |myproject_mul_8ns_5ns_12_1_0_55                                            |    18|
+|36    |    mul_8ns_5ns_12_1_0_U89                                                    |myproject_mul_8ns_5ns_12_1_0_56                                            |    15|
+|37    |    mul_8ns_5ns_12_1_0_U92                                                    |myproject_mul_8ns_5ns_12_1_0_57                                            |    18|
+|38    |    mul_8ns_5s_13_1_0_U101                                                    |myproject_mul_8ns_5s_13_1_0_58                                             |    30|
+|39    |    mul_8ns_5s_13_1_0_U104                                                    |myproject_mul_8ns_5s_13_1_0_59                                             |    30|
+|40    |    mul_8ns_5s_13_1_0_U117                                                    |myproject_mul_8ns_5s_13_1_0_60                                             |    30|
+|41    |    mul_8ns_5s_13_1_0_U91                                                     |myproject_mul_8ns_5s_13_1_0_61                                             |    30|
+|42    |    mul_8ns_5s_13_1_0_U93                                                     |myproject_mul_8ns_5s_13_1_0_62                                             |    30|
+|43    |    mul_8ns_6ns_13_1_0_U100                                                   |myproject_mul_8ns_6ns_13_1_0_63                                            |    29|
+|44    |    mul_8ns_6ns_13_1_0_U106                                                   |myproject_mul_8ns_6ns_13_1_0_64                                            |    24|
+|45    |    mul_8ns_6ns_13_1_0_U107                                                   |myproject_mul_8ns_6ns_13_1_0_65                                            |     7|
+|46    |    mul_8ns_6ns_13_1_0_U108                                                   |myproject_mul_8ns_6ns_13_1_0_66                                            |    12|
+|47    |    mul_8ns_6ns_13_1_0_U109                                                   |myproject_mul_8ns_6ns_13_1_0_67                                            |    24|
+|48    |    mul_8ns_6ns_13_1_0_U110                                                   |myproject_mul_8ns_6ns_13_1_0_68                                            |    13|
+|49    |    mul_8ns_6ns_13_1_0_U111                                                   |myproject_mul_8ns_6ns_13_1_0_69                                            |    18|
+|50    |    mul_8ns_6ns_13_1_0_U112                                                   |myproject_mul_8ns_6ns_13_1_0_70                                            |    18|
+|51    |    mul_8ns_6ns_13_1_0_U90                                                    |myproject_mul_8ns_6ns_13_1_0_71                                            |    18|
+|52    |    mul_8ns_6ns_13_1_0_U95                                                    |myproject_mul_8ns_6ns_13_1_0_72                                            |    33|
+|53    |    mul_8ns_6ns_13_1_0_U96                                                    |myproject_mul_8ns_6ns_13_1_0_73                                            |    18|
+|54    |    mul_8ns_6ns_13_1_0_U98                                                    |myproject_mul_8ns_6ns_13_1_0_74                                            |    23|
+|55    |    mul_8ns_6ns_13_1_0_U99                                                    |myproject_mul_8ns_6ns_13_1_0_75                                            |    33|
+|56    |    mul_8ns_6s_14_1_0_U103                                                    |myproject_mul_8ns_6s_14_1_0_76                                             |    29|
+|57    |    mul_8ns_6s_14_1_0_U105                                                    |myproject_mul_8ns_6s_14_1_0_77                                             |    47|
+|58    |    mul_8ns_6s_14_1_0_U113                                                    |myproject_mul_8ns_6s_14_1_0_78                                             |    30|
+|59    |    mul_8ns_6s_14_1_0_U114                                                    |myproject_mul_8ns_6s_14_1_0_79                                             |    30|
+|60    |    mul_8ns_6s_14_1_0_U116                                                    |myproject_mul_8ns_6s_14_1_0_80                                             |    35|
+|61    |    mul_8ns_6s_14_1_0_U88                                                     |myproject_mul_8ns_6s_14_1_0_81                                             |    30|
+|62    |    mul_8ns_6s_14_1_0_U94                                                     |myproject_mul_8ns_6s_14_1_0_82                                             |    37|
+|63    |    mul_8ns_6s_14_1_0_U97                                                     |myproject_mul_8ns_6s_14_1_0_83                                             |    38|
+|64    |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s_fu_271 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s |  4904|
+|65    |    mul_8ns_6ns_13_1_0_U143                                                   |myproject_mul_8ns_6ns_13_1_0_35                                            |    13|
+|66    |    mul_8ns_5ns_12_1_0_U145                                                   |myproject_mul_8ns_5ns_12_1_0_27                                            |    15|
+|67    |    mul_8ns_5ns_12_1_0_U149                                                   |myproject_mul_8ns_5ns_12_1_0_28                                            |    18|
+|68    |    mul_8ns_5ns_12_1_0_U150                                                   |myproject_mul_8ns_5ns_12_1_0_29                                            |    18|
+|69    |    mul_8ns_5ns_12_1_0_U159                                                   |myproject_mul_8ns_5ns_12_1_0_30                                            |    18|
+|70    |    mul_8ns_5s_13_1_0_U141                                                    |myproject_mul_8ns_5s_13_1_0_31                                             |    30|
+|71    |    mul_8ns_5s_13_1_0_U154                                                    |myproject_mul_8ns_5s_13_1_0_32                                             |    30|
+|72    |    mul_8ns_5s_13_1_0_U157                                                    |myproject_mul_8ns_5s_13_1_0_33                                             |    30|
+|73    |    mul_8ns_6ns_13_1_0_U142                                                   |myproject_mul_8ns_6ns_13_1_0_34                                            |    23|
+|74    |    mul_8ns_6ns_13_1_0_U144                                                   |myproject_mul_8ns_6ns_13_1_0_36                                            |    33|
+|75    |    mul_8ns_6ns_13_1_0_U146                                                   |myproject_mul_8ns_6ns_13_1_0_37                                            |    23|
+|76    |    mul_8ns_6ns_13_1_0_U147                                                   |myproject_mul_8ns_6ns_13_1_0_38                                            |    13|
+|77    |    mul_8ns_6ns_13_1_0_U151                                                   |myproject_mul_8ns_6ns_13_1_0_39                                            |    23|
+|78    |    mul_8ns_6ns_13_1_0_U152                                                   |myproject_mul_8ns_6ns_13_1_0_40                                            |    13|
+|79    |    mul_8ns_6ns_13_1_0_U155                                                   |myproject_mul_8ns_6ns_13_1_0_41                                            |    33|
+|80    |    mul_8ns_6ns_13_1_0_U156                                                   |myproject_mul_8ns_6ns_13_1_0_42                                            |    12|
+|81    |    mul_8ns_6ns_13_1_0_U158                                                   |myproject_mul_8ns_6ns_13_1_0_43                                            |    11|
+|82    |    mul_8ns_6ns_13_1_0_U161                                                   |myproject_mul_8ns_6ns_13_1_0_44                                            |    23|
+|83    |    mul_8ns_6ns_13_1_0_U162                                                   |myproject_mul_8ns_6ns_13_1_0_45                                            |    24|
+|84    |    mul_8ns_6ns_13_1_0_U163                                                   |myproject_mul_8ns_6ns_13_1_0_46                                            |    23|
+|85    |    mul_8ns_6s_14_1_0_U140                                                    |myproject_mul_8ns_6s_14_1_0_47                                             |    26|
+|86    |    mul_8ns_6s_14_1_0_U148                                                    |myproject_mul_8ns_6s_14_1_0_48                                             |    20|
+|87    |    mul_8ns_6s_14_1_0_U153                                                    |myproject_mul_8ns_6s_14_1_0_49                                             |    30|
+|88    |    mul_8ns_6s_14_1_0_U160                                                    |myproject_mul_8ns_6s_14_1_0_50                                             |    30|
+|89    |    mul_8ns_6s_14_1_0_U164                                                    |myproject_mul_8ns_6s_14_1_0_51                                             |    30|
+|90    |    mul_8ns_6s_14_1_0_U165                                                    |myproject_mul_8ns_6s_14_1_0_52                                             |    30|
+|91    |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s_fu_301 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s |  5187|
+|92    |    mul_8ns_6ns_13_1_0_U195                                                   |myproject_mul_8ns_6ns_13_1_0_9                                             |    11|
+|93    |    mul_8ns_5ns_12_1_0_U204                                                   |myproject_mul_8ns_5ns_12_1_0                                               |    18|
+|94    |    mul_8ns_5ns_12_1_0_U206                                                   |myproject_mul_8ns_5ns_12_1_0_0                                             |    18|
+|95    |    mul_8ns_5ns_12_1_0_U207                                                   |myproject_mul_8ns_5ns_12_1_0_1                                             |    18|
+|96    |    mul_8ns_5ns_12_1_0_U212                                                   |myproject_mul_8ns_5ns_12_1_0_2                                             |    15|
+|97    |    mul_8ns_5s_13_1_0_U191                                                    |myproject_mul_8ns_5s_13_1_0_3                                              |    30|
+|98    |    mul_8ns_5s_13_1_0_U200                                                    |myproject_mul_8ns_5s_13_1_0_4                                              |    30|
+|99    |    mul_8ns_5s_13_1_0_U209                                                    |myproject_mul_8ns_5s_13_1_0_5                                              |    30|
+|100   |    mul_8ns_5s_13_1_0_U215                                                    |myproject_mul_8ns_5s_13_1_0_6                                              |    30|
+|101   |    mul_8ns_6ns_13_1_0_U189                                                   |myproject_mul_8ns_6ns_13_1_0_7                                             |    24|
+|102   |    mul_8ns_6ns_13_1_0_U190                                                   |myproject_mul_8ns_6ns_13_1_0_8                                             |    33|
+|103   |    mul_8ns_6ns_13_1_0_U196                                                   |myproject_mul_8ns_6ns_13_1_0_10                                            |    18|
+|104   |    mul_8ns_6ns_13_1_0_U198                                                   |myproject_mul_8ns_6ns_13_1_0_11                                            |    23|
+|105   |    mul_8ns_6ns_13_1_0_U202                                                   |myproject_mul_8ns_6ns_13_1_0_12                                            |    29|
+|106   |    mul_8ns_6ns_13_1_0_U205                                                   |myproject_mul_8ns_6ns_13_1_0_13                                            |    24|
+|107   |    mul_8ns_6ns_13_1_0_U208                                                   |myproject_mul_8ns_6ns_13_1_0_14                                            |    15|
+|108   |    mul_8ns_6ns_13_1_0_U213                                                   |myproject_mul_8ns_6ns_13_1_0_15                                            |    23|
+|109   |    mul_8ns_6s_14_1_0_U188                                                    |myproject_mul_8ns_6s_14_1_0_16                                             |    28|
+|110   |    mul_8ns_6s_14_1_0_U192                                                    |myproject_mul_8ns_6s_14_1_0_17                                             |    30|
+|111   |    mul_8ns_6s_14_1_0_U193                                                    |myproject_mul_8ns_6s_14_1_0_18                                             |    30|
+|112   |    mul_8ns_6s_14_1_0_U194                                                    |myproject_mul_8ns_6s_14_1_0_19                                             |    30|
+|113   |    mul_8ns_6s_14_1_0_U197                                                    |myproject_mul_8ns_6s_14_1_0_20                                             |    38|
+|114   |    mul_8ns_6s_14_1_0_U199                                                    |myproject_mul_8ns_6s_14_1_0_21                                             |    47|
+|115   |    mul_8ns_6s_14_1_0_U201                                                    |myproject_mul_8ns_6s_14_1_0_22                                             |    38|
+|116   |    mul_8ns_6s_14_1_0_U203                                                    |myproject_mul_8ns_6s_14_1_0_23                                             |    38|
+|117   |    mul_8ns_6s_14_1_0_U210                                                    |myproject_mul_8ns_6s_14_1_0_24                                             |    38|
+|118   |    mul_8ns_6s_14_1_0_U211                                                    |myproject_mul_8ns_6s_14_1_0_25                                             |    30|
+|119   |    mul_8ns_6s_14_1_0_U214                                                    |myproject_mul_8ns_6s_14_1_0_26                                             |    30|
+|120   |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s_fu_331 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s |   436|
+|121   |    mul_8ns_5s_13_1_0_U240                                                    |myproject_mul_8ns_5s_13_1_0                                                |    30|
+|122   |    mul_8ns_6ns_13_1_0_U239                                                   |myproject_mul_8ns_6ns_13_1_0                                               |    29|
+|123   |    mul_8ns_6s_14_1_0_U238                                                    |myproject_mul_8ns_6s_14_1_0                                                |    31|
+|124   |  grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s_fu_161  |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s  |    49|
+|125   |  grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s_fu_143   |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s   |    59|
+|126   |  grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s_fu_149   |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s   |    49|
+|127   |  grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s_fu_155   |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s   |    49|
+|128   |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s_fu_196     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s     |   528|
+|129   |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s_fu_226     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s     |   517|
+|130   |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s_fu_256     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s     |   516|
+|131   |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s_fu_286     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s     |   503|
+|132   |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s_fu_316     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s     |   509|
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:38 ; elapsed = 00:00:37 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55941 ; free virtual = 128474
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 57 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:38 ; elapsed = 00:00:37 . Memory (MB): peak = 2469.750 ; gain = 789.805 ; free physical = 55941 ; free virtual = 128475
+Synthesis Optimization Complete : Time (s): cpu = 00:00:38 ; elapsed = 00:00:37 . Memory (MB): peak = 2469.758 ; gain = 789.805 ; free physical = 55941 ; free virtual = 128475
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.14 . Memory (MB): peak = 2472.719 ; gain = 0.000 ; free physical = 56244 ; free virtual = 128788
+INFO: [Netlist 29-17] Analyzing 2723 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2613.715 ; gain = 0.000 ; free physical = 56299 ; free virtual = 128853
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Synth Design complete | Checksum: 91769d4b
+INFO: [Common 17-83] Releasing license: Synthesis
+168 Infos, 57 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:48 ; elapsed = 00:00:44 . Memory (MB): peak = 2613.715 ; gain = 939.754 ; free physical = 56299 ; free virtual = 128854
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 1702.983; main = 1437.954; forked = 333.312
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 4126.211; main = 2613.719; forked = 1656.457
+# report_utilization -file vivado_synth.rpt
+INFO: [Common 17-206] Exiting Vivado at Mon Apr 20 17:06:17 2026...
