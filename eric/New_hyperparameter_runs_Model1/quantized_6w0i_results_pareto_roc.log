@@ -1,0 +1,202 @@
+2026-04-20 16:23:59.777116: I tensorflow/core/util/port.cc:110] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-04-20 16:23:59.821619: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-04-20 16:24:01.918810: E tensorflow/compiler/xla/stream_executor/cuda/cuda_driver.cc:268] failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected
+2026-04-20 16:24:01.919622: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:168] retrieving CUDA diagnostic information for host: kdplab01
+2026-04-20 16:24:01.919645: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:175] hostname: kdplab01
+2026-04-20 16:24:01.919787: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:199] libcuda reported version is: 595.58.3
+2026-04-20 16:24:01.919828: I tensorflow/compiler/xla/stream_executor/cuda/cuda_diagnostics.cc:203] kernel reported version is: NOT_FOUND: could not find kernel module information in driver version file contents: "NVRM version: NVIDIA UNIX Open Kernel Module for x86_64  595.58.03  Release Build  (root@kdplab01)  Fri Apr 17 07:47:52 AM CDT 2026
+GCC version:  gcc version 11.5.0 20240719 (Red Hat 11.5.0-11) (GCC) 
+"
+
+================================================================================
+PARETO SELECTION USING ROC-BASED METRICS
+================================================================================
+
+Input directory: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/New_hyperparameter_runs_Model1/quantized_6w0i_results
+Data directory: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData
+Output directory: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected
+Model name: quantized_6w0i_results
+Metric: Weighted background rejection
+Weights: {0.95: 0.1, 0.98: 0.7, 0.99: 0.2}
+
+================================================================================
+FINDING MODEL FILES
+================================================================================
+Found 39 models to evaluate
+
+================================================================================
+DETECTING INPUT FEATURES FROM MODEL
+================================================================================
+Inspecting first model: model_trial_620.h5
+  Detected 4 input features from model: ['x_size', 'y_local', 'y_size', 'z_global']
+
+================================================================================
+LOADING VALIDATION DATA
+================================================================================
+Loading validation data from: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData/tfrecords_validation/
+✓ Validation dataset loaded
+
+================================================================================
+EVALUATING MODELS WITH ROC METRICS
+================================================================================
+  Evaluating model_trial_620... ✓ (params=171, AUC=0.9380, metric=0.8094)
+  Evaluating model_trial_621... ✓ (params=145, AUC=0.9421, metric=0.8243)
+  Evaluating model_trial_622... ✓ (params=45, AUC=0.8831, metric=0.6233)
+  Evaluating model_trial_623... ✓ (params=121, AUC=0.9293, metric=0.7860)
+  Evaluating model_trial_624... ✓ (params=61, AUC=0.9103, metric=0.7440)
+  Evaluating model_trial_625... ✓ (params=99, AUC=0.9206, metric=0.7481)
+  Evaluating model_trial_626... ✓ (params=79, AUC=0.9092, metric=0.7138)
+  Evaluating model_trial_627... ✓ (params=31, AUC=0.4933, metric=0.0075)
+  Evaluating model_trial_628... ✓ (params=19, AUC=0.5534, metric=0.1039)
+  Evaluating model_trial_629... ✓ (params=199, AUC=0.9434, metric=0.8259)
+  Evaluating model_trial_630... ✓ (params=235, AUC=0.6432, metric=0.0279)
+  Evaluating model_trial_631... ✓ (params=43, AUC=0.8624, metric=0.6244)
+  Evaluating model_trial_632... ✓ (params=25, AUC=0.5764, metric=0.0724)
+  Evaluating model_trial_633... ✓ (params=155, AUC=0.5996, metric=0.1100)
+  Evaluating model_trial_634... ✓ (params=91, AUC=0.9094, metric=0.7150)
+  Evaluating model_trial_635... ✓ (params=281, AUC=0.9423, metric=0.8298)
+  Evaluating model_trial_636... ✓ (params=65, AUC=0.9138, metric=0.7460)
+  Evaluating model_trial_637... ✓ (params=193, AUC=0.9433, metric=0.8290)
+  Evaluating model_trial_638... ✓ (params=121, AUC=0.9318, metric=0.8058)
+  Evaluating model_trial_640... ✓ (params=163, AUC=0.6064, metric=0.0289)
+  Evaluating model_trial_641... ✓ (params=121, AUC=0.9227, metric=0.7870)
+  Evaluating model_trial_642... ✓ (params=85, AUC=0.6127, metric=0.0014)
+  Evaluating model_trial_643... ✓ (params=31, AUC=0.7102, metric=0.2433)
+  Evaluating model_trial_644... ✓ (params=391, AUC=0.6384, metric=0.1169)
+  Evaluating model_trial_645... ✓ (params=325, AUC=0.9387, metric=0.8232)
+  Evaluating model_trial_646... ✓ (params=55, AUC=0.8995, metric=0.7141)
+  Evaluating model_trial_647... ✓ (params=265, AUC=0.9425, metric=0.8335)
+  Evaluating model_trial_648... ✓ (params=211, AUC=0.5827, metric=0.0434)
+  Evaluating model_trial_649... ✓ (params=463, AUC=0.9449, metric=0.8351)
+  Evaluating model_trial_650... ✓ (params=337, AUC=0.9304, metric=0.8017)
+  Evaluating model_trial_651... ✓ (params=267, AUC=0.9395, metric=0.8202)
+  Evaluating model_trial_652... ✓ (params=37, AUC=0.5876, metric=0.1236)
+  Evaluating model_trial_653... ✓ (params=67, AUC=0.5000, metric=0.0000)
+  Evaluating model_trial_654... ✓ (params=415, AUC=0.9451, metric=0.8348)
+  Evaluating model_trial_655... ✓ (params=595, AUC=0.9450, metric=0.8353)
+  Evaluating model_trial_656... ✓ (params=205, AUC=0.9425, metric=0.8273)
+  Evaluating model_trial_657... ✓ (params=501, AUC=0.9436, metric=0.8372)
+  Evaluating model_trial_658... ✓ (params=105, AUC=0.8859, metric=0.6990)
+  Evaluating model_trial_659... ✓ (params=151, AUC=0.9242, metric=0.7776)
+
+✓ Successfully evaluated 39 models
+  Parameters range: 19 - 595
+  Primary metric range: 0.0000 - 0.8372
+  AUC range: 0.4933 - 0.9451
+
+================================================================================
+PARETO SELECTION
+================================================================================
+
+--- Tier 1: Primary Pareto Front ---
+  ✓ Found 14 primary Pareto optimal models
+
+--- Tier 2: Secondary Pareto Front (Redundancy) ---
+  ✓ Found 11 secondary Pareto optimal models
+
+================================================================================
+GENERATING PLOTS
+================================================================================
+  ✓ Saved: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/pareto_front_roc_based.png
+
+================================================================================
+COPYING MODEL FILES
+================================================================================
+  Separate-folder mode: primary → /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/pareto_primary
+
+Copying 14 primary Pareto models...
+  ✓ model_trial_657.h5
+  ✓ model_trial_649.h5
+  ✓ model_trial_654.h5
+  ✓ model_trial_647.h5
+  ✓ model_trial_637.h5
+  ✓ model_trial_621.h5
+  ✓ model_trial_638.h5
+  ✓ model_trial_625.h5
+  ✓ model_trial_636.h5
+  ✓ model_trial_624.h5
+  ✓ model_trial_646.h5
+  ✓ model_trial_631.h5
+  ✓ model_trial_643.h5
+  ✓ model_trial_628.h5
+
+Copying 11 secondary Pareto models → /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/pareto_secondary...
+  ✓ model_trial_655.h5
+  ✓ model_trial_635.h5
+  ✓ model_trial_656.h5
+  ✓ model_trial_629.h5
+  ✓ model_trial_620.h5
+  ✓ model_trial_641.h5
+  ✓ model_trial_634.h5
+  ✓ model_trial_626.h5
+  ✓ model_trial_622.h5
+  ✓ model_trial_652.h5
+  ✓ model_trial_632.h5
+
+Total copied: 25 model files
+
+================================================================================
+SAVING RESULTS
+================================================================================
+
+✓ Detailed results: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/roc_based_analysis_detailed.csv
+✓ Primary Pareto: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/pareto_optimal_models_roc_primary.csv
+✓ Secondary Pareto: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/pareto_optimal_models_roc_secondary.csv
+✓ Combined Pareto: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/pareto_optimal_models_roc_combined.csv
+
+✓ Analysis summary: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/pareto_roc_analysis_summary.json
+
+================================================================================
+SAVING MODEL ARCHITECTURES
+================================================================================
+  ✓ model_trial_657 (primary): 23 layers, 501 params → model_trial_657_architecture.json
+/home/youeric/miniconda3/envs/mlgpu_qkeras/lib/python3.8/site-packages/tensorflow/python/data/ops/structured_function.py:265: UserWarning: Even though the `tf.config.experimental_run_functions_eagerly` option is set, this option does not apply to tf.data functions. To force eager execution of tf.data functions, please use `tf.data.experimental.enable_debug_mode()`.
+  warnings.warn(
+  ✓ model_trial_649 (primary): 21 layers, 463 params → model_trial_649_architecture.json
+  ✓ model_trial_654 (primary): 23 layers, 415 params → model_trial_654_architecture.json
+  ✓ model_trial_647 (primary): 21 layers, 265 params → model_trial_647_architecture.json
+  ✓ model_trial_637 (primary): 19 layers, 193 params → model_trial_637_architecture.json
+  ✓ model_trial_621 (primary): 17 layers, 145 params → model_trial_621_architecture.json
+  ✓ model_trial_638 (primary): 19 layers, 121 params → model_trial_638_architecture.json
+  ✓ model_trial_625 (primary): 17 layers, 99 params → model_trial_625_architecture.json
+  ✓ model_trial_636 (primary): 19 layers, 65 params → model_trial_636_architecture.json
+  ✓ model_trial_624 (primary): 17 layers, 61 params → model_trial_624_architecture.json
+  ✓ model_trial_646 (primary): 21 layers, 55 params → model_trial_646_architecture.json
+  ✓ model_trial_631 (primary): 19 layers, 43 params → model_trial_631_architecture.json
+  ✓ model_trial_643 (primary): 21 layers, 31 params → model_trial_643_architecture.json
+  ✓ model_trial_628 (primary): 17 layers, 19 params → model_trial_628_architecture.json
+  ✓ model_trial_655 (secondary): 23 layers, 595 params → model_trial_655_architecture.json
+  ✓ model_trial_635 (secondary): 19 layers, 281 params → model_trial_635_architecture.json
+  ✓ model_trial_656 (secondary): 23 layers, 205 params → model_trial_656_architecture.json
+  ✓ model_trial_629 (secondary): 17 layers, 199 params → model_trial_629_architecture.json
+  ✓ model_trial_620 (secondary): 17 layers, 171 params → model_trial_620_architecture.json
+  ✓ model_trial_641 (secondary): 21 layers, 121 params → model_trial_641_architecture.json
+  ✓ model_trial_634 (secondary): 19 layers, 91 params → model_trial_634_architecture.json
+  ✓ model_trial_626 (secondary): 17 layers, 79 params → model_trial_626_architecture.json
+  ✓ model_trial_622 (secondary): 17 layers, 45 params → model_trial_622_architecture.json
+  ✓ model_trial_652 (secondary): 23 layers, 37 params → model_trial_652_architecture.json
+  ✓ model_trial_632 (secondary): 19 layers, 25 params → model_trial_632_architecture.json
+
+  ✓ Combined summary: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected/architectures/all_architectures_summary.json
+
+================================================================================
+COMPLETE - PARETO SELECTION FINISHED!
+================================================================================
+
+Output directory: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/Model1_quantized_6w0i_pareto_roc_selected
+
+Selected models:
+  Primary Pareto: 14
+  Secondary Pareto: 11
+  Total: 25
+
+Files created:
+  - Pareto front plot
+  - CSV files with results
+  - JSON summary
+  - 25 H5 model files
+  - architectures/<model>_architecture.json  (per-model layer structure)
+  - architectures/all_architectures_summary.json
+
+================================================================================

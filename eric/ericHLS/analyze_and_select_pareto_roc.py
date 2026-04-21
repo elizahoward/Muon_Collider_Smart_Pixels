@@ -532,41 +532,59 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
 # FILE OPERATIONS
 # ============================================================================
 
-def copy_model_files(pareto_df, pareto_df_secondary, output_dir):
-    """Copy H5 model files for selected Pareto models."""
+def copy_model_files(pareto_df, pareto_df_secondary, output_dir, separate_folders=False):
+    """Copy H5 model files for selected Pareto models.
+
+    If separate_folders=True, copies primary into output_dir/pareto_primary/
+    and secondary into output_dir/pareto_secondary/ instead of a flat layout.
+    """
     print("\n" + "=" * 80)
     print("COPYING MODEL FILES")
     print("=" * 80)
-    
+
     success_count = 0
-    
+
+    if separate_folders:
+        primary_dir = os.path.join(output_dir, 'pareto_primary')
+        secondary_dir = os.path.join(output_dir, 'pareto_secondary')
+        os.makedirs(primary_dir, exist_ok=True)
+        print(f"  Separate-folder mode: primary → {primary_dir}")
+    else:
+        primary_dir = output_dir
+
     # Copy primary Pareto models
     print(f"\nCopying {len(pareto_df)} primary Pareto models...")
     for _, row in pareto_df.iterrows():
         src_path = row['model_file']
-        dst_path = os.path.join(output_dir, os.path.basename(src_path))
-        
+        dst_path = os.path.join(primary_dir, os.path.basename(src_path))
+
         if os.path.exists(src_path):
             shutil.copy2(src_path, dst_path)
             print(f"  ✓ {os.path.basename(src_path)}")
             success_count += 1
         else:
             print(f"  ✗ File not found: {src_path}")
-    
+
     # Copy secondary Pareto models
     if pareto_df_secondary is not None and not pareto_df_secondary.empty:
-        print(f"\nCopying {len(pareto_df_secondary)} secondary Pareto models (redundancy)...")
+        if separate_folders:
+            os.makedirs(secondary_dir, exist_ok=True)
+            print(f"\nCopying {len(pareto_df_secondary)} secondary Pareto models → {secondary_dir}...")
+        else:
+            print(f"\nCopying {len(pareto_df_secondary)} secondary Pareto models (redundancy)...")
+
+        dest_dir = secondary_dir if separate_folders else output_dir
         for _, row in pareto_df_secondary.iterrows():
             src_path = row['model_file']
-            dst_path = os.path.join(output_dir, os.path.basename(src_path))
-            
+            dst_path = os.path.join(dest_dir, os.path.basename(src_path))
+
             if os.path.exists(src_path):
                 shutil.copy2(src_path, dst_path)
                 print(f"  ✓ {os.path.basename(src_path)}")
                 success_count += 1
             else:
                 print(f"  ✗ File not found: {src_path}")
-    
+
     print(f"\nTotal copied: {success_count} model files")
     return success_count
 
@@ -640,6 +658,110 @@ def save_results(df, pareto_df, pareto_df_secondary, output_dir, metric_name, bk
 
 
 # ============================================================================
+# MODEL ARCHITECTURE SAVING
+# ============================================================================
+
+def save_model_architectures(pareto_df, pareto_df_secondary, output_dir):
+    """
+    Load each selected Pareto model and save its layer structure to JSON.
+
+    Produces:
+      architectures/<model_name>_architecture.json  — per-model layer details
+      architectures/all_architectures_summary.json  — all selected models combined
+    """
+    arch_dir = os.path.join(output_dir, 'architectures')
+    os.makedirs(arch_dir, exist_ok=True)
+
+    all_dfs = []
+    if pareto_df is not None:
+        tmp = pareto_df.copy()
+        tmp['tier'] = 'primary'
+        all_dfs.append(tmp)
+    if pareto_df_secondary is not None and not pareto_df_secondary.empty:
+        tmp = pareto_df_secondary.copy()
+        tmp['tier'] = 'secondary'
+        all_dfs.append(tmp)
+
+    if not all_dfs:
+        return
+
+    combined = pd.concat(all_dfs, ignore_index=True)
+    custom_objects = get_custom_objects()
+    all_summary = {}
+
+    print("\n" + "=" * 80)
+    print("SAVING MODEL ARCHITECTURES")
+    print("=" * 80)
+
+    for _, row in combined.iterrows():
+        model_file = row['model_file']
+        model_name = Path(model_file).stem
+        tier = row['tier']
+
+        try:
+            model = load_model(model_file, custom_objects=custom_objects, compile=False)
+        except Exception as e:
+            print(f"  ✗ Could not load {model_name}: {e}")
+            continue
+
+        layers_info = []
+        for layer in model.layers:
+            layer_cfg = {
+                'name': layer.name,
+                'type': layer.__class__.__name__,
+                'trainable_params': int(
+                    np.sum([tf.keras.backend.count_params(w) for w in layer.trainable_weights])
+                ),
+                'non_trainable_params': int(
+                    np.sum([tf.keras.backend.count_params(w) for w in layer.non_trainable_weights])
+                ),
+            }
+            # Output shape (safe — some layers have no computed output shape)
+            try:
+                shape = layer.output_shape
+                layer_cfg['output_shape'] = str(shape)
+            except Exception:
+                layer_cfg['output_shape'] = 'unknown'
+
+            # Quantization config for QKeras layers
+            try:
+                qcfg = layer.get_config()
+                for key in ('kernel_quantizer', 'bias_quantizer', 'activation'):
+                    if key in qcfg:
+                        layer_cfg[key] = str(qcfg[key])
+            except Exception:
+                pass
+
+            layers_info.append(layer_cfg)
+
+        model_arch = {
+            'model_name': model_name,
+            'tier': tier,
+            'total_params': int(model.count_params()),
+            'num_layers': len(layers_info),
+            'layers': layers_info,
+        }
+
+        # Per-model JSON
+        out_path = os.path.join(arch_dir, f"{model_name}_architecture.json")
+        with open(out_path, 'w') as f:
+            json.dump(model_arch, f, indent=2)
+
+        all_summary[model_name] = model_arch
+        print(f"  ✓ {model_name} ({tier}): {len(layers_info)} layers, "
+              f"{model_arch['total_params']:,} params → {os.path.basename(out_path)}")
+
+        del model
+        tf.keras.backend.clear_session()
+
+    # Combined summary
+    combined_path = os.path.join(arch_dir, 'all_architectures_summary.json')
+    with open(combined_path, 'w') as f:
+        json.dump(all_summary, f, indent=2)
+    print(f"\n  ✓ Combined summary: {combined_path}")
+
+
+# ============================================================================
 # MAIN FUNCTION
 # ============================================================================
 
@@ -705,6 +827,20 @@ Examples:
         type=str,
         default=None,
         help='Comma-separated list of feature names to parse (default: auto-detect from first model)'
+    )
+
+    parser.add_argument(
+        '--no_secondary',
+        action='store_true',
+        default=False,
+        help='Disable the secondary (tier-2) Pareto front — only primary models are selected and saved'
+    )
+
+    parser.add_argument(
+        '--no_separate_folders',
+        action='store_true',
+        default=False,
+        help='Disable separate sub-folders and save all models flat into output_dir (overrides default separate-folder behavior)'
     )
     
     args = parser.parse_args()
@@ -832,21 +968,29 @@ Examples:
     print("=" * 80)
     
     pareto_df, pareto_df_secondary = select_pareto_models(df)
-    
+
+    # Suppress secondary tier if requested
+    if args.no_secondary:
+        print("\n  [--no_secondary] Secondary Pareto front disabled — skipping tier 2.")
+        pareto_df_secondary = None
+
     # Generate Pareto front plot
     print("\n" + "=" * 80)
     print("GENERATING PLOTS")
     print("=" * 80)
-    
+
     metric_name = df.iloc[0]['metric_name']
     plot_pareto_front(df, pareto_df, pareto_df_secondary, args.output_dir, model_name, metric_name)
-    
+
     # Copy model files
-    copy_model_files(pareto_df, pareto_df_secondary, args.output_dir)
-    
+    copy_model_files(pareto_df, pareto_df_secondary, args.output_dir, separate_folders=not args.no_separate_folders)
+
     # Save results
     save_results(df, pareto_df, pareto_df_secondary, args.output_dir, metric_name, bkg_rej_weights)
-    
+
+    # Save layer structure for each selected model
+    save_model_architectures(pareto_df, pareto_df_secondary, args.output_dir)
+
     # Final summary
     print("\n" + "=" * 80)
     print("COMPLETE - PARETO SELECTION FINISHED!")
@@ -862,6 +1006,8 @@ Examples:
     print(f"  - CSV files with results")
     print(f"  - JSON summary")
     print(f"  - {len(pareto_df) + (len(pareto_df_secondary) if pareto_df_secondary is not None else 0)} H5 model files")
+    print(f"  - architectures/<model>_architecture.json  (per-model layer structure)")
+    print(f"  - architectures/all_architectures_summary.json")
     print("\n" + "=" * 80)
 
 

@@ -22,7 +22,18 @@ Date: 2026
 """
 
 import argparse
+import gc
+import os
 import sys
+
+# Limit TF thread pool to reduce per-thread memory arena allocations.
+# With run_eagerly=True each op is dispatched eagerly; fewer threads = less
+# concurrent memory pressure. Adjust if training throughput suffers.
+os.environ.setdefault("TF_NUM_INTEROP_THREADS", "4")
+os.environ.setdefault("TF_NUM_INTRAOP_THREADS", "8")
+os.environ.setdefault("TF_FORCE_GPU_ALLOW_GROWTH", "true")
+
+import tensorflow as tf
 
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/MuC_Smartpix_ML/')
 sys.path.append('../MuC_Smartpix_ML/')
@@ -100,6 +111,12 @@ def main():
     all_results = {}
 
     for w, i in bit_configs:
+        # Free TF graph state and Python objects from the previous config before
+        # building the next one. Without this, all three configs' allocator pools,
+        # optimizer states, and quantizer variables accumulate simultaneously.
+        tf.keras.backend.clear_session()
+        gc.collect()
+
         input_bits     = w + 2
         input_int_bits = i
 
