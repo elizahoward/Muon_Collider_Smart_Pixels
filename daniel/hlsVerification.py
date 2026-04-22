@@ -1,5 +1,476 @@
 """
 Author: Daniel Abadjiev
 Date: Apr 9, 2026
-Description: Turning testCatapultNtbk.ipynb
+Description: Turning testCatapultNtbk.ipynb into a script, so these are helper function
 """
+
+#imports
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+from datetime import datetime
+
+print(tf.__version__)
+
+import os
+import sys
+print(sys.path)
+
+
+# import hls4ml # if doingCatapult need to add catapult's version of it to path first
+import csv
+import pandas as pd
+
+import qkeras
+import pickle
+
+
+# if not loadTestVectors:
+from tfLoaderUtils import *
+
+from importlib import import_module
+
+#end imports
+
+class hlsVerifier():
+    
+    def makeCustomModel(self):
+        assert self.customModel
+        input1 = tf.keras.layers.Input(shape=(1,), name="nModule")
+        input2 = tf.keras.layers.Input(shape=(1,), name="y_local")
+        input3 = tf.keras.layers.Input(shape=(1,), name="x_local")
+        input4 = tf.keras.layers.Input(shape=(13,), name="y_profile")
+        inputList = [input1, input2, input3, input4]
+        # inputList = [input2,input4]
+
+        # Concatenate all inputs
+        # x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
+        # x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
+        # x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
+        # x=x_concat3
+        weight_bits = 4;
+        int_bits = 0;
+        from qkeras import QDense, QActivation#, QDenseBatchnorm
+        from qkeras.quantizers import quantized_bits, quantized_relu
+
+        weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
+        input_q_str = f"quantized_bits({weight_bits},{int_bits})"
+        input_quantized  = QActivation(input_q_str, name="q_input_y_profile")(input4)
+        x = tf.keras.layers.Concatenate()([input4,input4])
+        x = tf.keras.layers.Concatenate()([x,x])
+        # x = input4
+        x = QDense(
+            10,
+            kernel_quantizer=weight_quantizer,
+            bias_quantizer=weight_quantizer,
+            name="hidden_dense"
+        )(x)
+
+        x = QDense(
+            1,
+            kernel_quantizer=weight_quantizer,
+            bias_quantizer=weight_quantizer,
+            name="output_dense"
+        )(x)
+        output = QActivation("smooth_sigmoid", name="output")(x)
+        model = tf.keras.Model(inputs=[input4], outputs=x)
+
+        # model.summary()
+        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['binary_accuracy'])
+        self.model = model
+
+    def fitCustomModel(self):
+        assert self.customModel
+        assert self.model is not None
+        epochs = 2
+        callbacks = []
+        self.history = self.model.fit(
+                    x=self.xTrain,
+                    y=self.yTrain,
+                    epochs=epochs,
+                    callbacks=callbacks,
+                    verbose=1
+                ) 
+    
+    def plotCustomModel(self):
+        assert self.customModel
+        assert self.model is not None
+        assert self.history is not None
+        plt.plot(self.history.history['binary_accuracy'],label="accuracy")
+        plt.plot(self.history.history['loss'],label="loss")
+        # plt.plot(history.history['val_binary_accuracy'],label="Validation")
+        test_loss, test_accuracy = self.model.evaluate(self.xTest, self.yTest)
+        print(test_loss,"that was loss, val accuracy  is",test_accuracy)
+
+    def fixLayerActivation(self):
+        for layer in self.quantizedModel.layers:
+            if hasattr(layer, 'activation'):
+                act = layer.activation
+                
+                # 1. Handle QKeras strings like 'quantized_relu(8,0)'
+                if isinstance(act, str) and 'quantized_' in act:
+                    # This converts the string into a QKeras activation object
+                    # layer.activation = qkeras.get_quantized_activation(act)
+                    layer.activation = qkeras.get_quantizer(act)
+                
+                # 2. Handle standard Keras strings like 'relu' or 'linear'
+                elif isinstance(act, str):
+                    layer.activation = tf.keras.activations.get(act)
+
+                # 3. Final safety check: ensure the object has a __name__ for hls4ml
+                if not hasattr(layer.activation, '__name__'):
+                    # QKeras objects usually store their name in __name__ or we can use the class name
+                    name = getattr(layer.activation, '__name__', layer.activation.__class__.__name__)
+                    # If it's still an object we can't edit, we can force a name attribute 
+                    # by wrapping it or using setattr if the object allows it
+                    try:
+                        setattr(layer.activation, '__name__', name)
+                    except AttributeError:
+                        pass 
+    def assignModel(self):
+        if self.customModel:
+            self.makeCustomModel()
+            self.fitCustomModel()
+            self.plotCustomModel()
+            self.quantizedModel = self.model
+        else:
+            co = {}       
+            qkeras.utils._add_supported_quantized_objects(co)
+            self.quantizedModel = tf.keras.models.load_model(self.filepath,custom_objects=co,compile=True)
+            self.fixLayerActivation()
+        print(self.quantizedModel.summary())
+    
+    def getTestVectors(self):
+        if self.loadTestVectors:
+            [self.yTest, self.xTestList] = pickle.load(open(f"./testVectors{self.modelType}.pkl",'rb'))
+            self.xTest = pickle.load(open(f"./tfTestVectors{self.modelType}.pkl",'rb'))
+            
+            # [yTest, xTestList] = pickle.load(open(f"./testVectors.pkl",'rb'))
+            # xTest = pickle.load(open(f"./tfTestVectors.pkl",'rb'))
+        else:
+            self.xTest, self.yTest, self.xTestList, self.xTrain, self.yTrain = flattenTfData(self.modelType)
+            if self.saveTestVectors:
+                pickle.dump([self.yTest, self.xTestList],open(f"./testVectors{self.modelType}.pkl","wb"))
+                pickle.dump(self.xTest,open(f"./tfTestVectors{self.modelType}.pkl","wb"))
+    
+    def verifyTestVectors(self):
+        if self.modelType in [2.5, "2.5"]:
+            print(self.xTest['y_profile'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['x_profile'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['nModule'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['x_local'][(np.random.randint(0,len(self.xTest["y_local"])))])
+        if self.modelType in [1,"1"]:
+            print(self.xTest['y_size'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['x_size'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['z_global'][(np.random.randint(0,len(self.xTest["y_local"])))])
+
+        print(self.xTest['y_local'][(np.random.randint(0,len(self.xTest["y_local"])))])
+
+        print(self.xTest.keys())
+        # print(len(xTest["x_profile"]))
+        print(len(self.yTest))
+        # print(len(yTrain))
+        # print(len(yTrain)+len(yTest))
+        print(1656656*2)
+        print(1600000*2)
+        print(1656656*2*(41/(41+164)))
+        print(1656656*2*0.2)
+        print()
+        print(661482/20672)
+        print(len(self.xTestList))
+        print(len(self.xTestList[0]))
+        if self.customModel:
+            self.xTestList = self.xTestList[3]
+
+    def __init__(self,
+                doingCatapult = True, #If using catapult, use the ccs_env python environment
+                doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
+                loadTestVectors = True,
+                saveTestVectors = False,
+                buildModel = False,
+                customModel = False,
+                modelType = 2.5, #so far using 1 and 2.5, but in future will use the specification in hlsUtils
+                filepath = "",
+                 ) -> None:
+        
+        self.doingCatapult = doingCatapult 
+        self.doingVitis = doingVitis  
+        self.loadTestVectors = loadTestVectors 
+        self.saveTestVectors = saveTestVectors 
+        self.buildModel = buildModel 
+        self.customModel = customModel 
+        self.modelType = modelType 
+
+        #process input flags
+        if self.doingCatapult:
+            sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.1-1267132/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
+            self.catapult_ai_nn = import_module("self.catapult_ai_nn")
+        self.hls4ml = import_module("hls4ml")
+        
+
+        #Verify inputs flags are appropriate
+        assert doingCatapult == (not doingVitis)
+
+        if saveTestVectors:
+            assert not loadTestVectors
+
+        customModel = False
+        if customModel:
+            assert not loadTestVectors
+
+        if modelType not in ["1","2","2.5","3",1,2,3,2.5,"ASIC"]:
+                raise TypeError("Not supported model type")
+        
+    
+        #process inputs part 2
+        if filepath == "":
+            filepath="../../Muon_Collider_Smart_Pixels/eric/model2.5_quantized_4w0i_hyperparameter_results_20260222_004048/model_trial_000.h5"
+            filepath="../../Muon_Collider_Smart_Pixels/eric/model2.5_quantized_8w0i_hyperparameter_results_20260228_020952/model_trial_0.h5"
+            filepath="./model_trial_0.h5"
+            if modelType==2:
+                filepath="../../Muon_Collider_Smart_Pixels/eric/model2.5_qi_4w0i_pareto_roc_selected/model_trial_25.h5"
+            # filepath = "../../smart-pixels-ml/DanielModels/model2_20260325.keras"
+            #Now trying an Ryan model
+            if modelType==1:
+                filepath="/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/ryan/old_quantization_res/model1_quantized_4w0i_pareto/model_trial_034.h5"
+        self.filepath = filepath
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.output_dir_catapult = "./hlsCatapultModel2_"+timestamp
+        self.output_dir_vitis = "./hlsVitisModel2_"+timestamp
+        self.output_dir = self.output_dir_catapult if doingCatapult else self.output_dir_vitis
+
+        self.model = None
+        self.history = None
+        self.runAllTheStuff()
+
+    def runAllTheStuff(self):
+        self.getTestVectors()
+        self.verifyTestVectors()
+        self.assignModel()
+        print("Summary of ")
+        self.quantizedModel.summary()
+        self.compileHLSModel()
+        self.printInputHLSVars()
+        self.predictFirstVector()
+        self.predictAllVectors()
+        self.traceAllVectors()
+        self.printHLSTrace()
+        self.plotHLSTrace()
+        self.plotHLSVerification()
+    
+    def compileHLSModel(self):
+        if self.doingCatapult:
+            config_ccs = self.catapult_ai_nn.config_for_dataflow(model=self.quantizedModel, x_test=None, y_test=None, num_samples=None, 
+                                                default_precision='ac_fixed<16,6>', max_precision='ac_fixed<16,6>',
+                                                default_reuse_factor=1,
+                                                output_dir=self.output_dir_catapult,
+                                                tech='asic',
+                                                asiclibs='saed32rvt_tt0p78v125c_beh',                                     
+                                                asicfifo='hls4ml_lib.mgc_pipe_mem',
+                                                clock_period=10,
+                                                io_type='io_stream',
+                                                csim=0, SCVerify=0, Synth=1)
+            # Specific architecture settings
+            # Configure input feature precision since it is known
+            # print(config_ccs['HLSConfig']['LayerName'].keys())
+            # config_ccs['HLSConfig']['LayerName']['x_profile']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['y_profile']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['x_local']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['y_local']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['nModule']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['xy_concat']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['other_features']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['nmodule_xlocal_concat']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['blabla']['Precision'] = 'ac_fixed<8,1,true>' 
+            # config_ccs['HLSConfig']['LayerName']['input1']['Precision'] = 'ac_fixed<8,1,true>' ##TODO
+            # Performance strategy is set to latency mode
+            config_ccs['HLSConfig']['Model']['Strategy'] = 'Latency'
+            hls_model_ccs = self.catapult_ai_nn.generate_dataflow(model=self.quantizedModel,config_ccs=config_ccs)
+            hls_model_ccs.compile()
+            self.hls_model_ccs = hls_model_ccs
+        if self.doingVitis:
+            #Actually need to import the other hls4ml for this
+            config = self.hls4ml.utils.config_from_keras_model(self.quantizedModel, granularity='name',default_precision = "fixed<16,7>",)
+            # config = self.hls4ml.utils.config_from_keras_model(quantizedModel, granularity='name',default_precision="ap_fixed<16,6,true>")
+
+            for layer in config['LayerName'].keys():
+                print('Enable tracing for layer:', layer)
+                config['LayerName'][layer]['Trace'] = True
+
+            # Convert to an hls model
+
+            hls_model = self.hls4ml.converters.convert_from_keras_model(self.quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=self.output_dir_vitis,backend="Vitis")
+            # hls_model = self.hls4ml.converters.convert_from_keras_model(quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=output_dir,backend="Catapult")
+            ##Part number input in above line as part='xcu
+            # part='xcu250-figd2104-2L-e',
+            hls_model.compile()
+            self.hls_model = hls_model
+    def printInputHLSVars(self):
+        if self.doingCatapult:
+    
+            for input_var in self.hls_model_ccs.get_input_variables():
+                print(input_var.name)
+                # hls_model_ccs.config.config['InputShapes'][input_var.name] = list(input_var.shape)
+                print(self.hls_model_ccs.config.config['InputShapes'][input_var.name])
+
+            # hls_model_ccs._get_top_function()
+            self.hls_model_ccs.config.backend.compile
+        else:
+            print('not implemented for vitis yet')
+    def predictFirstVector(self):
+        print([(self.xTestList[i].shape) for i in range(len(self.xTestList))])
+        print(self.xTest.keys())
+        # print(hls_model_ccs.get_input_variables())
+        firstInput = [self.xTestList[i][1:2] for i in range(len(self.xTestList))]
+        if self.customModel:
+            firstInput = self.xTestList[1:2]
+        print(firstInput)
+        # firstInputFlat = np.concatenate([firstInput[0][0],firstInput[1],firstInput[2],firstInput[3][0],firstInput[4]])
+        # print(*firstInputFlat)
+        if self.doingCatapult:
+            ccs_hls_model_predictions = [self.hls_model_ccs.predict(firstInput) for i in range(6)]
+        if self.doingVitis:
+            hls_model_predictions = [self.hls_model.predict(firstInput) for i in range(6)]
+        # q_predictions = quantizedModel.predict([xTest[key][1:2] for key in xTest.keys()])
+        q_predictions = [self.quantizedModel.predict(firstInput) for i in range(6)]
+
+        # print(self.yTest)
+        if self.doingCatapult:
+            print(ccs_hls_model_predictions)
+        else:
+            print(hls_model_predictions)
+        print(q_predictions)
+    def predictAllVectors(self,smallInput=False):
+        if smallInput:
+            self.multiInput = [self.xTestList[i][1:20] for i in range(len(self.xTestList))]
+        else:
+            self.multiInput = self.xTestList
+        if self.doingVitis:
+            self.hls_model_predictions = self.hls_model.predict(self.multiInput)
+        else:    
+            self.hls_model_predictions = self.hls_model_ccs.predict(self.multiInput)
+        self.q_predictions = self.quantizedModel.predict(self.multiInput)
+
+    def traceAllVectors(self):
+        if self.doingVitis:
+            self.hls4ml_pred, self.hls4ml_trace = self.hls_model.trace(self.multiInput)
+            self.keras_trace = self.hls4ml.model.profiling.get_ymodel_keras(self.quantizedModel, self.multiInput)
+        else:
+            self.hls4ml_pred, self.hls4ml_trace = self.hls_model_ccs.trace(self.multiInput)
+
+    def printHLSTrace(self,testVectorIndex = 370,N_ELEMENTS=5):
+        if True:#doingVitis:
+            # Print the traces on console
+            #(array([     3,     18,    217, ..., 661450, 661452, 661477]),)
+
+            # Backup print options
+            bkp_threshold = np.get_printoptions()['threshold']
+            bkp_linewidth = np.get_printoptions()['linewidth']
+
+            # Set print options
+            np.set_printoptions(threshold=np.inf, linewidth=np.inf)
+            if self.modelType in [2.5, "2.5"]:
+                print('input xprofile', self.xTestList[0][testVectorIndex])
+                print('input nModule', self.xTestList[1][testVectorIndex])
+                print('input x_local', self.xTestList[2][testVectorIndex])
+                print('input y_profile', self.xTestList[3][testVectorIndex])
+                print('input y_local', self.xTestList[4][testVectorIndex])
+            if self.modelType in [1,"1"]:
+                print('input z_global', self.xTestList[0][testVectorIndex])
+                print('input y_local', self.xTestList[3][testVectorIndex])
+                print('input xsize', self.xTestList[1][testVectorIndex])
+                print('input y_size', self.xTestList[2][testVectorIndex])
+            for key in self.hls4ml_trace.keys():
+                print('-------')
+                print(key, self.hls4ml_trace[key].shape)
+                print('[hls4ml]', key, self.hls4ml_trace[key][testVectorIndex].flatten()[:N_ELEMENTS])
+                if self.doingVitis:
+                    print('[keras] ', key, self.keras_trace[key][testVectorIndex].flatten()[:N_ELEMENTS])
+                
+                print('[hls4ml]', key, self.hls4ml_trace[key][testVectorIndex].flatten())
+                if self.doingVitis:
+                    print('[keras] ', key, self.keras_trace[key][testVectorIndex].flatten())
+                print('[hls4ml]', key, self.hls4ml_trace[key][testVectorIndex])
+                if self.doingVitis:
+                    print('[keras] ', key, self.keras_trace[key][testVectorIndex])
+                    print('|hls4ml - qkeras| > 0.001 indices', key, np.where(np.abs(self.hls4ml_trace[key][testVectorIndex] - self.keras_trace[key][testVectorIndex])>0.001))
+                    print('|1-hls4ml / qkeras| < 0.001 indices', key, np.where(np.abs(1-(self.hls4ml_trace[key][testVectorIndex] / self.keras_trace[key][testVectorIndex]))>0.001))
+                
+                    # np.set_printoptions(threshold=bkp_threshold, linewidth=bkp_linewidth)
+                    print("Are there any values with integer bits (-2 to 2 excluded)?",np.any(np.bitwise_or(self.keras_trace[key][:]>2 ,self.keras_trace[key][:]<-2)) )
+                    print("list of indices with integer bits?",np.where(np.bitwise_or(self.keras_trace[key][:]>2 ,self.keras_trace[key][:]<-2))[0][0:20] )
+                    print("list of values with integer bits?",self.keras_trace[key][np.where(np.bitwise_or(self.keras_trace[key][:]>2 ,self.keras_trace[key][:]<-2))[0][0:20]] )
+                # np.set_printoptions(threshold=np.inf, linewidth=np.inf)
+            # Restore print options
+            np.set_printoptions(threshold=bkp_threshold, linewidth=bkp_linewidth)
+        # print(xTestList[0][661452])
+
+    def plotHLSTrace(self): #could make into a function that takes in hls4ml_trace and keras_trace
+        numLayers = len(self.hls4ml_trace.keys())
+        plt.figure(figsize=(5,numLayers*2.5))
+        for idx, layer in enumerate(self.hls4ml_trace.keys()):
+            print(layer)
+            if '_alpha' in layer:
+                continue
+            # plt.figure()
+            plt.subplot(numLayers,1,idx+1)
+            klayer = layer
+            if '_linear' in layer:
+                klayer = layer.replace('_linear', '')
+            plt.scatter(self.hls4ml_trace[layer].flatten(), self.keras_trace[klayer].flatten(), s=0.2)
+            min_x = min(np.amin(self.hls4ml_trace[layer]), np.amin(self.keras_trace[klayer]))
+            max_x = max(np.amax(self.hls4ml_trace[layer]), np.amax(self.keras_trace[klayer]))
+            plt.plot([min_x, max_x], [min_x, max_x], c='gray')
+            plt.xlabel('hls4ml {}'.format(layer))
+            plt.ylabel('QKeras {}'.format(klayer))
+        plt.show()
+
+    def plotHLSVerification(self):
+        import matplotlib.colors as colors
+        predictionsTogether = np.array([self.hls_model_predictions,self.q_predictions,self.yTest]).transpose()
+        print(predictionsTogether[0][370])
+        # plt.scatter(self.hls_model_predictions,self.q_predictions,c = self.yTest,marker=",")
+        # plt.plot(self.hls_model_predictions,self.q_predictions,',')
+        # plt.hist2d((self.hls_model_predictions[:]),(self.q_predictions[:]))
+        plt.figure(figsize=(5,15))
+        plt.subplot(511)
+        plt.hist2d(self.hls_model_predictions[:,0],self.q_predictions[:,0],norm=colors.LogNorm(),bins=[100,100])
+        plt.xlabel("hls prediction")
+        plt.ylabel("qkeras prediction")
+        plt.colorbar()
+        # plt.show()
+        plt.subplot(512)
+        plt.hist2d(self.hls_model_predictions[:,0],self.yTest[:,0],norm=colors.LogNorm(),bins=[100,4])
+        plt.xlabel("hls prediction")
+        plt.ylabel("Truth label")
+        plt.colorbar()
+        # plt.show()
+        plt.subplot(513)
+        plt.hist2d(self.q_predictions[:,0],self.yTest[:,0],norm=colors.LogNorm(),bins=[100,4])
+        plt.xlabel("qkeras prediction")
+        plt.ylabel("Truth label")
+        plt.colorbar()
+        plt.tight_layout()
+        plt.subplot(514)
+        plt.title("matrix for true bib")
+        plt.hist2d(self.hls_model_predictions[self.yTest==0],self.q_predictions[self.yTest==0],norm=colors.LogNorm(),bins=[100,100])
+        plt.xlabel("hls prediction")
+        plt.ylabel("qkeras prediction")
+        plt.colorbar()
+        plt.subplot(515)
+        plt.title("matrix for true sig")
+        plt.hist2d(self.hls_model_predictions[self.yTest==1],self.q_predictions[self.yTest==1],norm=colors.LogNorm(),bins=[100,100])
+        plt.xlabel("hls prediction")
+        plt.ylabel("qkeras prediction")
+        plt.colorbar()
+        plt.show()
+        plt.hist(self.hls_model_predictions[:,0]-self.q_predictions[:,0],bins='auto')
+        plt.xlabel("hls prediction - qkeras prediction")
+        plt.title("Distribution of difference between hls prediction and qkeras prediction")
+        plt.ylabel("counts")
+        plt.yscale('log')
+        print(np.where(self.hls_model_predictions[:,0]-self.q_predictions[:,0]>0.2))
+        # hls_model_predictions[self.yTest==0]
+        # pd.DataFrame(predictionsTogether)
+
