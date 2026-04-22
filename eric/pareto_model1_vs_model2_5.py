@@ -133,7 +133,7 @@ def _setup_complement_log_y(ax, df):
 
 
 # ── Core drawing helpers ───────────────────────────────────────────────────────
-def _draw_scatter(ax, df, pareto_df, x_col, complement=False):
+def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
     for run_name in df["run_name"].unique():
         color  = RUN_COLORS.get(run_name, "gray")
         label  = RUN_LABELS.get(run_name, run_name)
@@ -152,29 +152,31 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False):
     ps = pareto_df.sort_values(x_col)
     style = {k: v for k, v in FAMILY_LINE["Combined"].items() if k not in ("label", "lw")}
     ax.plot(ps[x_col], _y(ps["primary_metric"], complement),
-            **style, alpha=0.75, zorder=2, lw=1.5)
+            **style, alpha=0.25, zorder=2, lw=1.2)
 
-    for _, row in pareto_df.iterrows():
-        short = RUN_LABELS.get(row["run_name"], row["run_name"])
-        short = short.replace("Model 1 ", "M1 ").replace("Model 2.5 ", "M2.5 ")
-        yval  = float(_y(row["primary_metric"], complement))
-        ax.annotate(f"{short}\n{row['trial_id']}",
-                    xy=(row[x_col], yval),
-                    xytext=(7, 7), textcoords="offset points",
-                    fontsize=6.5, fontweight="bold",
-                    bbox=dict(boxstyle="round,pad=0.25", facecolor="yellow",
-                              alpha=0.8, edgecolor="black", linewidth=0.8),
-                    zorder=4)
+    if annotate:
+        for _, row in pareto_df.iterrows():
+            short = RUN_LABELS.get(row["run_name"], row["run_name"])
+            short = short.replace("Model 1 ", "M1 ").replace("Model 2.5 ", "M2.5 ")
+            yval  = float(_y(row["primary_metric"], complement))
+            ax.annotate(f"{short}\n{row['trial_id']}",
+                        xy=(row[x_col], yval),
+                        xytext=(7, 7), textcoords="offset points",
+                        fontsize=6.5, fontweight="bold",
+                        bbox=dict(boxstyle="round,pad=0.25", facecolor="yellow",
+                                  alpha=0.8, edgecolor="black", linewidth=0.8),
+                        zorder=4)
 
 
 def _draw_subfronts(ax, pareto_m1, pareto_m25, pareto_all, x_col, complement=False):
-    for pareto, key in [(pareto_m1, "Model 1"), (pareto_m25, "Model 2.5"),
-                         (pareto_all, "Combined")]:
+    for pareto, key, alpha in [(pareto_m1,  "Model 1",   0.85),
+                                (pareto_m25, "Model 2.5", 0.85),
+                                (pareto_all, "Combined",  0.25)]:
         style = FAMILY_LINE[key]
         ps = pareto.sort_values(x_col)
         ax.plot(ps[x_col], _y(ps["primary_metric"], complement),
                 color=style["color"], lw=style["lw"], ls=style["ls"],
-                alpha=0.85, zorder=5, label=style["label"])
+                alpha=alpha, zorder=5, label=style["label"])
 
 
 def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=None):
@@ -215,10 +217,10 @@ def _finalize(ax, title, xscale="linear", complement=False):
 
 
 # ── Public plot functions ──────────────────────────────────────────────────────
-def make_plot_simple(df, pareto_df, output_dir, zoomed=False):
+def make_plot_simple(df, pareto_df, output_dir, zoomed=False, annotate=True):
     x_col = "luts_plus_ff"
     fig, ax = plt.subplots(figsize=(15, 9))
-    _draw_scatter(ax, df, pareto_df, x_col)
+    _draw_scatter(ax, df, pareto_df, x_col, annotate=annotate)
     if zoomed:
         ax.set_xlim(0, 1.5e5); ax.set_ylim(0.6, 1.0)
         suffix, title = "_zoomed", "Model 1 vs Model 2.5 — Pareto Front (Zoomed)"
@@ -228,20 +230,22 @@ def make_plot_simple(df, pareto_df, output_dir, zoomed=False):
     _finalize(ax, title)
     _add_legend_and_stats(ax, df, pareto_df)
     plt.tight_layout()
-    path = os.path.join(output_dir, f"pareto_model1_vs_model2_5{suffix}.png")
+    tag  = "" if annotate else "_nolabels"
+    path = os.path.join(output_dir, f"pareto_model1_vs_model2_5{suffix}{tag}.png")
     plt.savefig(path, dpi=300, bbox_inches="tight"); print(f"  ✓ {path}")
     plt.close()
 
 
 def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, output_dir,
-                        xscale="linear", complement=False):
+                        xscale="linear", complement=False, annotate=True):
     """
     xscale: 'linear' or 'log'
     complement: if True, plot 1−metric on log scale (inverted) for better y resolution
+    annotate: if True, add trial-ID labels on Pareto points
     """
     x_col = "luts_plus_ff"
     fig, ax = plt.subplots(figsize=(15, 9))
-    _draw_scatter(ax, df, pareto_df, x_col, complement=complement)
+    _draw_scatter(ax, df, pareto_df, x_col, complement=complement, annotate=annotate)
     _draw_subfronts(ax, pareto_m1, pareto_m25, pareto_df, x_col, complement=complement)
     if complement:
         _setup_complement_log_y(ax, df)
@@ -257,11 +261,10 @@ def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, output_dir,
     _add_legend_and_stats(ax, df, pareto_df, complement=complement, extra_handles=extra)
     plt.tight_layout()
 
-    # Build filename suffix
-    parts = []
-    parts.append("xlog" if xscale == "log" else "xlinear")
-    parts.append("ycomplog" if complement else ("ylog" if xscale == "loglog" else "ylinear"))
-    fname = "pareto_model1_vs_model2_5_subfronts_" + "_".join(parts) + ".png"
+    parts = ["xlog" if xscale == "log" else "xlinear",
+             "ycomplog" if complement else "ylinear"]
+    tag   = "" if annotate else "_nolabels"
+    fname = "pareto_model1_vs_model2_5_subfronts_" + "_".join(parts) + tag + ".png"
     path  = os.path.join(output_dir, fname)
     plt.savefig(path, dpi=300, bbox_inches="tight"); print(f"  ✓ {path}")
     plt.close()
@@ -313,23 +316,22 @@ def main():
 
     print("\nGenerating plots...")
 
-    # Original simple views
-    make_plot_simple(df, pareto_all, OUTPUT_DIR, zoomed=False)
-    make_plot_simple(df, pareto_all, OUTPUT_DIR, zoomed=True)
+    for annotate in (True, False):
+        # Simple views
+        make_plot_simple(df, pareto_all, OUTPUT_DIR, zoomed=False, annotate=annotate)
+        make_plot_simple(df, pareto_all, OUTPUT_DIR, zoomed=True,  annotate=annotate)
 
-    # Sub-fronts: standard scales
-    make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
-                        xscale="linear", complement=False)
-    make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
-                        xscale="log",    complement=False)
-    make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
-                        xscale="log",    complement=False)   # was loglog — kept as log-x
+        # Sub-fronts: standard scales
+        make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
+                            xscale="linear", complement=False, annotate=annotate)
+        make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
+                            xscale="log",    complement=False, annotate=annotate)
 
-    # Sub-fronts: complement-log y (best y-axis resolution near the top)
-    make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
-                        xscale="linear", complement=True)
-    make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
-                        xscale="log",    complement=True)
+        # Sub-fronts: complement-log y
+        make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
+                            xscale="linear", complement=True, annotate=annotate)
+        make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, OUTPUT_DIR,
+                            xscale="log",    complement=True, annotate=annotate)
 
     print(f"\nAll outputs in: {OUTPUT_DIR}")
 
