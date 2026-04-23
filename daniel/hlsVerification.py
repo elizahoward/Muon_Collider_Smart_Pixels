@@ -189,6 +189,7 @@ class hlsVerifier():
                 saveTestVectors = False,
                 buildModel = False,
                 customModel = False,
+                fullRunOnInit = True,
                 modelType = 2.5, #so far using 1 and 2.5, but in future will use the specification in hlsUtils
                 filepath = "",
                  ) -> None:
@@ -200,6 +201,7 @@ class hlsVerifier():
         self.buildModel = buildModel 
         self.customModel = customModel 
         self.modelType = modelType 
+        self.fullRunOnInit = fullRunOnInit
 
         #process input flags
         if self.doingCatapult:
@@ -242,7 +244,8 @@ class hlsVerifier():
 
         self.model = None
         self.history = None
-        self.runAllTheStuff()
+        if self.fullRunOnInit:
+            self.runAllTheStuff()
 
     def runAllTheStuff(self):
         self.getTestVectors()
@@ -253,11 +256,16 @@ class hlsVerifier():
         self.compileHLSModel()
         self.printInputHLSVars()
         self.predictFirstVector()
+        print("starting to predict all vectors")
         self.predictAllVectors()
+        print("starting to trace all vectors (this may take a bit)")
         self.traceAllVectors()
+        print("Done tracing all vectors")
         self.printHLSTrace()
         self.plotHLSTrace()
         self.plotHLSVerification()
+        if self.buildModel:
+            self.finishBuilding()
     
     def compileHLSModel(self):
         if self.doingCatapult:
@@ -474,3 +482,27 @@ class hlsVerifier():
         # hls_model_predictions[self.yTest==0]
         # pd.DataFrame(predictionsTogether)
 
+
+
+    def finishBuilding(self):
+        if not self.buildModel:
+            raise ValueError("Won't build model if buildModel is false")
+            return
+        if self.doingCatapult: 
+            self.hls_model_ccs.build()
+        if self.doingVitis: 
+            qq = self.hls_model.build(csim=False, synth=True, cosim=True, validation=False, export=True, vsynth=True, reset=True )
+        if self.doingCatapult:
+            summary_file = self.output_dir_catapult + '/firmware/layer_summary.txt'
+            print('Layer summary report: '+summary_file)
+            with open(summary_file,'r') as f:
+                print(f.read())
+        if self.doingCatapult:
+            import glob
+            #Show the contents of the last report generated
+            print(self.output_dir_catapult + '/Catapult*/myproject.v1/nnet_layer_results.txt')
+            rpt_files = glob.glob(self.output_dir_catapult + '/Catapult*/myproject.v1/nnet_layer_results.txt')
+            print('Latest report: '+rpt_files[-1])
+            with open(rpt_files[-1],'r') as f:
+                print(f.read())
+    
