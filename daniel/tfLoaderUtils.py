@@ -20,7 +20,7 @@ from model2_5 import Model2_5
 from ASICModel import ModelASIC
 import tensorflow as tf
 
-def flattenTfData(modelType, doTrain=True, tfRecordFolder=""):
+def flattenTfData(modelType, doTrain=True, tfRecordFolder="",includenPix=False):
     if tfRecordFolder=="":
         tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
         tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData"
@@ -39,6 +39,8 @@ def flattenTfData(modelType, doTrain=True, tfRecordFolder=""):
         model = ModelASIC(tfRecordFolder = tfRecordFolder)
     else:
         raise TypeError("Not supported model type")
+    if includenPix:        
+        model.x_feature_description = model.x_feature_description + ["nPix"]
     model.loadTfRecords()
     odgTrain = model.training_generator
     odgTest = model.validation_generator

@@ -29,6 +29,7 @@ import pickle
 from tfLoaderUtils import *
 
 from importlib import import_module
+import pathlib
 
 #end imports
 
@@ -138,7 +139,17 @@ class hlsVerifier():
             qkeras.utils._add_supported_quantized_objects(co)
             self.quantizedModel = tf.keras.models.load_model(self.filepath,custom_objects=co,compile=True)
             self.fixLayerActivation()
+
+    def printModelSummary(self):
+        
+        print("Summary of ")
         print(self.quantizedModel.summary())
+        for i, layer in enumerate (self.quantizedModel.layers):
+            print (i, layer)
+            try:
+                print ("    ",layer.activation)
+            except AttributeError:
+                print('   no activation attribute')
     
     def getTestVectors(self):
         if self.loadTestVectors:
@@ -183,15 +194,18 @@ class hlsVerifier():
             self.xTestList = self.xTestList[3]
 
     def __init__(self,
-                doingCatapult = True, #If using catapult, use the ccs_env python environment
-                doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
-                loadTestVectors = True,
-                saveTestVectors = False,
-                buildModel = False,
-                customModel = False,
-                fullRunOnInit = True,
+                doingCatapult: bool = True, #If using catapult, use the ccs_env python environment
+                doingVitis: bool = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
+                loadTestVectors: bool = True,
+                saveTestVectors: bool = False,
+                buildModel: bool = False,
+                customModel: bool = False,
+                fullRunOnInit: bool = True,
                 modelType = 2.5, #so far using 1 and 2.5, but in future will use the specification in hlsUtils
                 filepath = "",
+                baseSaveDir = "./hlsVerification",
+                interactivePlots = True,
+                PLOT_DIR = "",
                  ) -> None:
         
         self.doingCatapult = doingCatapult 
@@ -206,7 +220,7 @@ class hlsVerifier():
         #process input flags
         if self.doingCatapult:
             sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.1-1267132/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
-            self.catapult_ai_nn = import_module("self.catapult_ai_nn")
+            self.catapult_ai_nn = import_module("catapult_ai_nn")
         self.hls4ml = import_module("hls4ml")
         
 
@@ -237,10 +251,19 @@ class hlsVerifier():
                 filepath="/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/ryan/old_quantization_res/model1_quantized_4w0i_pareto/model_trial_034.h5"
         self.filepath = filepath
 
+        pathlib.Path(baseSaveDir).mkdir(parents=True,exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.output_dir_catapult = "./hlsCatapultModel2_"+timestamp
-        self.output_dir_vitis = "./hlsVitisModel2_"+timestamp
+        self.output_dir_catapult = os.path.join(baseSaveDir,"hlsCatapultModel2_"+timestamp)
+        self.output_dir_vitis = os.path.join(baseSaveDir,"hlsVitisModel2_"+timestamp)
         self.output_dir = self.output_dir_catapult if doingCatapult else self.output_dir_vitis
+
+        if PLOT_DIR == "":
+            self.PLOT_DIR = os.path.join(baseSaveDir,"plots_"+timestamp)
+        else:
+            self.PLOT_DIR = PLOT_DIR
+        self.interactivePlots = interactivePlots
+        pathlib.Path(self.PLOT_DIR).mkdir(parents=True,exist_ok=True)
+
 
         self.model = None
         self.history = None
@@ -251,8 +274,7 @@ class hlsVerifier():
         self.getTestVectors()
         self.verifyTestVectors()
         self.assignModel()
-        print("Summary of ")
-        self.quantizedModel.summary()
+        self.printModelSummary()
         self.compileHLSModel()
         self.printInputHLSVars()
         self.predictFirstVector()
@@ -432,7 +454,7 @@ class hlsVerifier():
             plt.plot([min_x, max_x], [min_x, max_x], c='gray')
             plt.xlabel('hls4ml {}'.format(layer))
             plt.ylabel('QKeras {}'.format(klayer))
-        plt.show()
+        self.closePlt("All layer traces")
 
     def plotHLSVerification(self):
         import matplotlib.colors as colors
@@ -472,13 +494,14 @@ class hlsVerifier():
         plt.xlabel("hls prediction")
         plt.ylabel("qkeras prediction")
         plt.colorbar()
-        plt.show()
+        self.closePlt("output verification")
         plt.hist(self.hls_model_predictions[:,0]-self.q_predictions[:,0],bins='auto')
         plt.xlabel("hls prediction - qkeras prediction")
         plt.title("Distribution of difference between hls prediction and qkeras prediction")
         plt.ylabel("counts")
         plt.yscale('log')
         print(np.where(self.hls_model_predictions[:,0]-self.q_predictions[:,0]>0.2))
+        self.closePlt("verification differences")
         # hls_model_predictions[self.yTest==0]
         # pd.DataFrame(predictionsTogether)
 
@@ -505,4 +528,17 @@ class hlsVerifier():
             print('Latest report: '+rpt_files[-1])
             with open(rpt_files[-1],'r') as f:
                 print(f.read())
+
+    def closePlot(PLOT_DIR, interactivePlots, plotName,printOutputDir=True,transparent = False):
+        plt.tight_layout()
+        plt.savefig(os.path.join(PLOT_DIR, plotName), dpi=300, bbox_inches='tight',transparent=transparent)
+        if interactivePlots:
+            plt.show()
+        else:
+            plt.close()
+        if printOutputDir:
+            print(f"Plot saved as: {os.path.join(PLOT_DIR, plotName)}")
+    def closePlt(self, plotName):
+        hlsVerifier.closePlot(self.PLOT_DIR, self.interactivePlots, plotName)
+
     
