@@ -165,20 +165,20 @@ def _parse_tfrecord_fn(example, feature_description=None):
 def build_tfrecord_dataset(tfrecord_dir, feature_description=None):
     """
     Build TensorFlow dataset from TFRecord files.
-    
+
     Args:
         tfrecord_dir: Directory containing TFRecord files
         feature_description: Feature description dict (required)
-    
+
     Returns:
         TensorFlow dataset
     """
     if feature_description is None:
         raise ValueError("feature_description is required. Use _detect_model_input_features() to get it from a model.")
-    
+
     # Create parse function with feature description
     parse_fn = lambda ex: _parse_tfrecord_fn(ex, feature_description)
-    
+
     pattern = os.path.join(tfrecord_dir, "*.tfrecord")
     files = tf.data.Dataset.list_files(pattern, shuffle=False)
     ds = files.interleave(
@@ -842,7 +842,7 @@ Examples:
         default=False,
         help='Disable separate sub-folders and save all models flat into output_dir (overrides default separate-folder behavior)'
     )
-    
+
     args = parser.parse_args()
     
     # Parse background rejection weights
