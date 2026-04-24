@@ -623,7 +623,7 @@ class Model1(SmartPixModel):
             )(x)
 
             ## output later
-            output = QActivation("quantized_tanh(8,0)")(x)
+            output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(x)
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
@@ -768,7 +768,7 @@ class Model1(SmartPixModel):
             
 
             ## output later
-            output = QActivation("quantized_tanh(8,0)")(x)
+            output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(x)
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
@@ -902,7 +902,7 @@ class Model1(SmartPixModel):
             
 
             ## output later
-            output = QActivation("quantized_tanh(8,0)")(x)
+            output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(x)
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
@@ -1015,7 +1015,7 @@ class Model1(SmartPixModel):
             
 
             ## output later
-            output = QActivation("quantized_tanh(8,0)")(x)
+            output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(x)
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
