@@ -52,6 +52,12 @@ def flattenTfData(modelType, doTrain=True, tfRecordFolder="",includenPix=False):
     else:
         return xTest, yTest, xTestList
 
+def getNpixYtest(model):
+    if "nPix" not in model.x_feature_description:
+        model.x_feature_description = model.x_feature_description + ["nPix"]
+        model.loadTfRecords()
+    xTest, yTest = odgToVect(model.validation_generator)
+    return xTest["nPix"], yTest
 
 def odgToVect(odg):
     qq = [odg.__getitem__(i) for i in range(odg.__len__())]
