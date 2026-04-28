@@ -6,9 +6,8 @@ so that every raw input tensor is passed through a QActivation(quantized_bits)
 layer before any Conv/Dense computation, and the tanh output is rescaled from
 [-1, 1] to [0, 1] via Lambda((x + 1) / 2).
 
-input_bits is set to weight_bits + 2 per config (same convention as Model2.5).
-input_bits / input_int_bits are also included as searchable hyperparameters
-inside the tuner.
+input_bits is fixed to weight_bits + 2 per config (same convention as Model2.5).
+input_int_bits is always 0 (purely fractional).
 
 Example
 -------
@@ -105,7 +104,7 @@ def main():
     print(f"  Objective:       {'val_weighted_bkg_rej' if args.weighted_br else 'val_binary_accuracy'}")
     if args.weighted_br:
         print(f"  BR weights:      95={args.br95} 98={args.br98} 99={args.br99}")
-    print(f"  Input bits:      weight_bits + 2 per config (also a tunable HP)")
+    print(f"  Input bits:      weight_bits + 2 per config (fixed, int_bits=0)")
     print("=" * 70)
 
     all_results = {}
@@ -136,12 +135,6 @@ def main():
             power=2,
             input_bits=input_bits,
             input_int_bits=input_int_bits,
-            hp_input_bits_min=4,
-            hp_input_bits_max=10,
-            hp_input_bits_step=2,
-            hp_input_int_bits_min=0,
-            hp_input_int_bits_max=0,
-            hp_input_int_bits_step=1,
         )
 
         results = model.runQuantizedHyperparameterTuning(

@@ -77,16 +77,7 @@ class Model2_5_QuantizedInputs(Model2_5):
                  nmodule_xlocal_int_bits: int = 0,
                  # ── input quantization ───────────────────────────────────────
                  input_bits: int = 8,       # total bits for every input (e.g. 8)
-                 input_int_bits: int = 0,   # integer bits (0 = purely fractional)
-                 # ── HP-search range for input_bits ────────────────────────────
-                 # used by makeUnquatizedModelHyperParameterTuning and
-                 # makeQuantizedModelHyperParameterTuning to bound the search
-                 hp_input_bits_min: int = 4,
-                 hp_input_bits_max: int = 16,
-                 hp_input_bits_step: int = 2,
-                 hp_input_int_bits_min: int = 0,
-                 hp_input_int_bits_max: int = 4,
-                 hp_input_int_bits_step: int = 1):
+                 input_int_bits: int = 0):  # integer bits (always 0, purely fractional)
 
         if bit_configs is None:
             bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]
@@ -110,17 +101,8 @@ class Model2_5_QuantizedInputs(Model2_5):
         )
         self.modelName = "Model2.5_QuantizedInputs"
 
-        # Fixed input precision (used when NOT running HP search)
         self.input_bits = input_bits
         self.input_int_bits = input_int_bits
-
-        # Bounds for the HP search over input precision
-        self.hp_input_bits_min  = hp_input_bits_min
-        self.hp_input_bits_max  = hp_input_bits_max
-        self.hp_input_bits_step = hp_input_bits_step
-        self.hp_input_int_bits_min  = hp_input_int_bits_min
-        self.hp_input_int_bits_max  = hp_input_int_bits_max
-        self.hp_input_int_bits_step = hp_input_int_bits_step
 
     # ──────────────────────────────────────────────────────────────────────────
     # Helper
@@ -196,20 +178,13 @@ class Model2_5_QuantizedInputs(Model2_5):
     def makeUnquatizedModelHyperParameterTuning(self, hp):
         """
         Build Model2.5 for hyperparameter tuning with quantized inputs and
-        unquantized weights.  input_bits / input_int_bits are also tunable.
+        unquantized weights.  input_bits is fixed to self.input_bits, int bits always 0.
         """
         if not QKERAS_AVAILABLE:
             raise ImportError("QKeras is required for input quantization")
 
-        # ── Hyperparameters ───────────────────────────────────────────────────
-        # Input precision – bounds driven by constructor args so you can narrow
-        # or widen the search without editing this method.
-        input_bits     = hp.Int('input_bits',     min_value=self.hp_input_bits_min,
-                                                  max_value=self.hp_input_bits_max,
-                                                  step=self.hp_input_bits_step)
-        input_int_bits = hp.Int('input_int_bits', min_value=self.hp_input_int_bits_min,
-                                                  max_value=self.hp_input_int_bits_max,
-                                                  step=self.hp_input_int_bits_step)
+        input_bits     = self.input_bits
+        input_int_bits = 0
 
         spatial_units          = hp.Int('spatial_units',          min_value=32, max_value=256, step=32)
         nmodule_xlocal_units   = hp.Int('nmodule_xlocal_units',   min_value=16, max_value=128, step=16)
@@ -382,19 +357,13 @@ class Model2_5_QuantizedInputs(Model2_5):
     def makeQuantizedModelHyperParameterTuning(self, hp, weight_bits, int_bits):
         """
         Build fully-quantized Model2.5 for hyperparameter tuning.
-        input_bits / input_int_bits are included in the hyperparameter search space.
+        input_bits is fixed to weight_bits + 2, input_int_bits is always 0.
         """
         if not QKERAS_AVAILABLE:
             raise ImportError("QKeras is required for quantized models")
 
-        # ── Hyperparameters ───────────────────────────────────────────────────
-        # Input precision – bounds driven by constructor args.
-        input_bits     = hp.Int('input_bits',     min_value=self.hp_input_bits_min,
-                                                  max_value=self.hp_input_bits_max,
-                                                  step=self.hp_input_bits_step)
-        input_int_bits = hp.Int('input_int_bits', min_value=self.hp_input_int_bits_min,
-                                                  max_value=self.hp_input_int_bits_max,
-                                                  step=self.hp_input_int_bits_step)
+        input_bits     = weight_bits + 2
+        input_int_bits = 0
 
         spatial_units        = hp.Int('spatial_units',        min_value=8,  max_value=128, step=8)
         nmodule_xlocal_units = hp.Int('nmodule_xlocal_units', min_value=2,  max_value=12,  step=2)

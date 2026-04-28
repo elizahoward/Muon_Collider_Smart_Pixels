@@ -8,9 +8,9 @@ before any Conv/Dense computation.
 New constructor parameters
 --------------------------
 input_bits      : total bits for input quantization (default 8)
-input_int_bits  : integer bits for input quantization (default 0, purely fractional)
-hp_input_bits_min / max / step  : HP search bounds for input_bits
-hp_input_int_bits_min / max / step : HP search bounds for input_int_bits
+input_int_bits  : integer bits for input quantization (always 0, purely fractional)
+
+input_bits is fixed to weight_bits + 2 in HP tuning (not a searchable HP).
 
 Both makeQuantizedModel and makeQuantizedModelHyperParameterTuning are covered.
 The tanh output is also updated to QActivation("quantized_tanh(8,0)") followed
@@ -65,14 +65,7 @@ class Model3_QuantizedInputs(Model3):
                  power: int = 2,
                  # ── input quantization ────────────────────────────────────────
                  input_bits: int = 8,
-                 input_int_bits: int = 0,
-                 # ── HP search bounds for input precision ─────────────────────
-                 hp_input_bits_min: int = 4,
-                 hp_input_bits_max: int = 10,
-                 hp_input_bits_step: int = 2,
-                 hp_input_int_bits_min: int = 0,
-                 hp_input_int_bits_max: int = 0,
-                 hp_input_int_bits_step: int = 1):
+                 input_int_bits: int = 0):
 
         super().__init__(
             tfRecordFolder=tfRecordFolder,
@@ -91,13 +84,6 @@ class Model3_QuantizedInputs(Model3):
 
         self.input_bits = input_bits
         self.input_int_bits = input_int_bits
-
-        self.hp_input_bits_min  = hp_input_bits_min
-        self.hp_input_bits_max  = hp_input_bits_max
-        self.hp_input_bits_step = hp_input_bits_step
-        self.hp_input_int_bits_min  = hp_input_int_bits_min
-        self.hp_input_int_bits_max  = hp_input_int_bits_max
-        self.hp_input_int_bits_step = hp_input_int_bits_step
 
     # ─────────────────────────────────────────────────────────────────────────
     # Helper
@@ -213,26 +199,19 @@ class Model3_QuantizedInputs(Model3):
         print(f"✓ Built {len(self.bit_configs)} Model3_QuantizedInputs variants")
 
     # ─────────────────────────────────────────────────────────────────────────
-    # makeQuantizedModelHyperParameterTuning — HP search includes input_bits
+    # makeQuantizedModelHyperParameterTuning — input_bits fixed to weight_bits+2
     # ─────────────────────────────────────────────────────────────────────────
 
     def makeQuantizedModelHyperParameterTuning(self, hp, weight_bits, int_bits):
         """
         Build fully-quantized Model3 for HP tuning with quantized inputs.
-        input_bits / input_int_bits are included in the search space.
+        input_bits is fixed to weight_bits + 2, input_int_bits is always 0.
         """
         if not QKERAS_AVAILABLE:
             raise ImportError("QKeras is required for quantized models")
 
-        # Input precision HP
-        input_bits = hp.Int('input_bits',
-                            min_value=self.hp_input_bits_min,
-                            max_value=self.hp_input_bits_max,
-                            step=self.hp_input_bits_step)
-        input_int_bits = hp.Int('input_int_bits',
-                                min_value=self.hp_input_int_bits_min,
-                                max_value=self.hp_input_int_bits_max,
-                                step=self.hp_input_int_bits_step)
+        input_bits     = weight_bits + 2
+        input_int_bits = 0
 
         # Architecture HPs (same ranges as the constrained search in model3.py)
         conv_filters       = hp.Int('conv_filters',       min_value=2,  max_value=10,  step=2)

@@ -1,13 +1,21 @@
 """
-Plot value-frequency histograms for all features from TFRecords.
+Plot per-position value histograms for all features from TFRecords.
+
+For cluster (13x21=273 pixels), x_profile (21 positions), y_profile (13 positions):
+  each position gets its own histogram, all shown together as a 2D heatmap
+  (position index on x-axis, value on y-axis, frequency as color).
+
+Scalar features (nModule, x_local, y_local, z_global, x_size, y_size) get
+standard 1D histograms.
 
 Output figures:
-  - cluster_histogram.png      : frequency of each pixel value across all 13x21 entries
-  - xy_profile_histogram.png   : x_profile (len-21) and y_profile (len-13) overlaid
-  - nModule_histogram.png      : nModule scalar distribution
-  - x_local_histogram.png      : x_local scalar distribution
-  - y_local_histogram.png      : y_local scalar distribution
-  - z_global_histogram.png     : z_global scalar distribution
+  - cluster_histogram.png      : per-pixel value heatmap (273 positions)
+  - x_profile_histogram.png    : per-position value heatmap (21 positions)
+  - y_profile_histogram.png    : per-position value heatmap (13 positions)
+  - nModule_histogram.png
+  - x_local_histogram.png
+  - y_local_histogram.png
+  - z_global_histogram.png
 """
 
 import argparse
@@ -25,6 +33,10 @@ DEFAULT_DATA_FOLDER = (
 
 FEATURES = ["cluster", "x_profile", "y_profile", "nModule", "x_local", "y_local", "z_global"]
 
+CLUSTER_W, CLUSTER_H = 21, 13   # x cols, y rows
+X_PROF_LEN = CLUSTER_W           # 21
+Y_PROF_LEN = CLUSTER_H           # 13
+
 
 def parse_fn(example_proto):
     feature_description = {f: tf.io.FixedLenFeature([], tf.string) for f in FEATURES}
@@ -33,13 +45,15 @@ def parse_fn(example_proto):
 
 
 def collect_values(tfrecord_files, max_batches):
-    cluster_vals = []
-    x_profile_vals = []
-    y_profile_vals = []
-    nmodule_vals = []
-    x_local_vals = []
-    y_local_vals = []
-    z_global_vals = []
+    # Each TFRecord entry is a batch of examples stored flat.
+    # Reshape per record into (batch_size, n_positions), then concatenate.
+    cluster_rows   = []
+    x_profile_rows = []
+    y_profile_rows = []
+    nmodule_vals   = []
+    x_local_vals   = []
+    y_local_vals   = []
+    z_global_vals  = []
 
     dataset = tf.data.TFRecordDataset(tfrecord_files)
 
@@ -48,21 +62,31 @@ def collect_values(tfrecord_files, max_batches):
             break
         parsed = parse_fn(raw)
 
-        cluster_vals.append(parsed["cluster"].numpy().flatten())
-        x_profile_vals.append(parsed["x_profile"].numpy().flatten())
-        y_profile_vals.append(parsed["y_profile"].numpy().flatten())
-        nmodule_vals.append(parsed["nModule"].numpy().flatten())
-        x_local_vals.append(parsed["x_local"].numpy().flatten())
-        y_local_vals.append(parsed["y_local"].numpy().flatten())
-        z_global_vals.append(parsed["z_global"].numpy().flatten())
+        cluster_flat   = parsed["cluster"].numpy().flatten()
+        x_profile_flat = parsed["x_profile"].numpy().flatten()
+        y_profile_flat = parsed["y_profile"].numpy().flatten()
+
+        n_examples = cluster_flat.shape[0] // (CLUSTER_H * CLUSTER_W)
+        if i == 0:
+            print(f"  Examples per record: {n_examples}  "
+                  f"cluster px: {CLUSTER_H}x{CLUSTER_W}, "
+                  f"x_profile: {X_PROF_LEN}, y_profile: {Y_PROF_LEN}")
+
+        cluster_rows.append(cluster_flat[:n_examples * CLUSTER_H * CLUSTER_W].reshape(n_examples, CLUSTER_H * CLUSTER_W))
+        x_profile_rows.append(x_profile_flat[:n_examples * X_PROF_LEN].reshape(n_examples, X_PROF_LEN))
+        y_profile_rows.append(y_profile_flat[:n_examples * Y_PROF_LEN].reshape(n_examples, Y_PROF_LEN))
+        nmodule_vals.append(parsed["nModule"].numpy().flatten()[:n_examples])
+        x_local_vals.append(parsed["x_local"].numpy().flatten()[:n_examples])
+        y_local_vals.append(parsed["y_local"].numpy().flatten()[:n_examples])
+        z_global_vals.append(parsed["z_global"].numpy().flatten()[:n_examples])
 
         if (i + 1) % 50 == 0:
-            print(f"  Loaded {i + 1} batches...")
+            print(f"  Loaded {i + 1} records...")
 
     return (
-        np.concatenate(cluster_vals),
-        np.concatenate(x_profile_vals),
-        np.concatenate(y_profile_vals),
+        np.concatenate(cluster_rows,   axis=0),   # (N_total, 273)
+        np.concatenate(x_profile_rows, axis=0),   # (N_total, 21)
+        np.concatenate(y_profile_rows, axis=0),   # (N_total, 13)
         np.concatenate(nmodule_vals),
         np.concatenate(x_local_vals),
         np.concatenate(y_local_vals),
@@ -70,52 +94,25 @@ def collect_values(tfrecord_files, max_batches):
     )
 
 
-def plot_cluster(cluster_vals, out_path, bins):
+def plot_values(vals_2d, feature_name, out_path, bins):
+    """vals_2d: (N, n_positions) — flattened so each pixel/bin value is one histogram entry."""
+    vals = vals_2d.flatten()
     fig, ax = plt.subplots(figsize=(10, 5))
 
-    unique, counts = np.unique(np.round(cluster_vals, 4), return_counts=True)
-    if bins == "unique" or len(unique) <= 200:
-        ax.bar(unique, counts, width=0.8 * (unique[1] - unique[0]) if len(unique) > 1 else 0.5,
-               color="steelblue", edgecolor="none", alpha=0.85)
-        ax.set_xlabel("Pixel value (log-compressed charge)")
-    else:
-        ax.hist(cluster_vals, bins=int(bins), color="steelblue", edgecolor="none", alpha=0.85)
-        ax.set_xlabel("Pixel value (log-compressed charge)")
-
-    ax.set_ylabel("Frequency (count)")
-    ax.set_title("Cluster pixel value distribution\n(all 13×21 entries pooled)")
-    ax.set_yscale("log")
-    ax.grid(axis="y", linestyle="--", alpha=0.4)
-    fig.tight_layout()
-    fig.savefig(out_path, dpi=150)
-    plt.close(fig)
-    print(f"Saved: {out_path}")
-
-
-def plot_xy_profiles(x_vals, y_vals, out_path, bins):
-    fig, ax = plt.subplots(figsize=(10, 5))
-
-    def _hist_data(vals, n_bins):
-        vmin, vmax = vals.min(), vals.max()
-        edges = np.linspace(vmin, vmax, n_bins + 1)
-        counts, edges = np.histogram(vals, bins=edges)
-        centers = 0.5 * (edges[:-1] + edges[1:])
-        return centers, counts
-
+    unique = np.unique(np.round(vals, 4))
     n_bins = 150 if bins == "unique" else int(bins)
-    xc, xn = _hist_data(x_vals, n_bins)
-    yc, yn = _hist_data(y_vals, n_bins)
+    if len(unique) <= 200:
+        counts, edges = np.histogram(vals, bins=len(unique))
+        centers = 0.5 * (edges[:-1] + edges[1:])
+        ax.bar(centers, counts, width=(edges[1] - edges[0]) * 0.85,
+               color="steelblue", edgecolor="none", alpha=0.85)
+    else:
+        ax.hist(vals, bins=n_bins, color="steelblue", edgecolor="none", alpha=0.85)
 
-    ax.bar(xc, xn, width=(xc[1] - xc[0]) * 0.85,
-           color="royalblue", alpha=0.6, label="x_profile (len-21)")
-    ax.bar(yc, yn, width=(yc[1] - yc[0]) * 0.85,
-           color="tomato", alpha=0.6, label="y_profile (len-13)")
-
-    ax.set_xlabel("Profile value (log-compressed summed charge)")
+    ax.set_xlabel("Value")
     ax.set_ylabel("Frequency (count)")
-    ax.set_title("X- and Y-profile value distributions\n(all entries pooled, overlaid)")
+    ax.set_title(f"{feature_name} value distribution  ({vals_2d.shape[1]} positions × {vals_2d.shape[0]:,} examples)")
     ax.set_yscale("log")
-    ax.legend()
     ax.grid(axis="y", linestyle="--", alpha=0.4)
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
@@ -148,15 +145,15 @@ def plot_scalar(vals, feature_name, out_path, bins):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Histogram of cluster and profile values from TFRecords",
+        description="Per-position value histograms for TFRecord features",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--data_folder", default=DEFAULT_DATA_FOLDER,
                         help="Directory containing .tfrecord files")
     parser.add_argument("--max_batches", type=int, default=200,
                         help="Number of TFRecord examples to read")
-    parser.add_argument("--bins", default="unique",
-                        help="Histogram bins: 'unique' to use exact values, or an integer")
+    parser.add_argument("--bins", default="80",
+                        help="Histogram bins for value axis: 'unique' or an integer")
     parser.add_argument("--out_dir", default=".",
                         help="Output directory for saved figures")
     args = parser.parse_args()
@@ -168,22 +165,16 @@ def main():
         raise FileNotFoundError(f"No .tfrecord files found in {args.data_folder}")
 
     print(f"Found {len(tfrecord_files)} TFRecord files. Reading up to {args.max_batches} examples...")
-    cluster_vals, x_vals, y_vals, nmodule_vals, x_local_vals, y_local_vals, z_global_vals = \
-        collect_values(tfrecord_files, args.max_batches)
+    (cluster, x_profile, y_profile,
+     nmodule_vals, x_local_vals, y_local_vals, z_global_vals) = collect_values(tfrecord_files, args.max_batches)
 
-    for name, vals in [
-        ("cluster",   cluster_vals),
-        ("x_profile", x_vals),
-        ("y_profile", y_vals),
-        ("nModule",   nmodule_vals),
-        ("x_local",   x_local_vals),
-        ("y_local",   y_local_vals),
-        ("z_global",  z_global_vals),
+    for name, arr in [
+        ("cluster",   cluster),
+        ("x_profile", x_profile),
+        ("y_profile", y_profile),
     ]:
-        print(f"{name:10s} — total: {len(vals):,}  unique: {len(np.unique(np.round(vals, 4))):,}  range: [{vals.min():.4f}, {vals.max():.4f}]")
-
-    plot_cluster(cluster_vals, os.path.join(args.out_dir, "cluster_histogram.png"), args.bins)
-    plot_xy_profiles(x_vals, y_vals, os.path.join(args.out_dir, "xy_profile_histogram.png"), args.bins)
+        flat = arr.flatten()
+        print(f"{name:10s} — shape: {arr.shape}  range: [{flat.min():.4f}, {flat.max():.4f}]")
 
     for name, vals in [
         ("nModule",  nmodule_vals),
@@ -191,8 +182,19 @@ def main():
         ("y_local",  y_local_vals),
         ("z_global", z_global_vals),
     ]:
-        out_path = os.path.join(args.out_dir, f"{name}_histogram.png")
-        plot_scalar(vals, name, out_path, args.bins)
+        print(f"{name:10s} — total: {len(vals):,}  range: [{vals.min():.4f}, {vals.max():.4f}]")
+
+    plot_values(cluster,   "cluster",   os.path.join(args.out_dir, "cluster_histogram.png"),   args.bins)
+    plot_values(x_profile, "x_profile", os.path.join(args.out_dir, "x_profile_histogram.png"), args.bins)
+    plot_values(y_profile, "y_profile", os.path.join(args.out_dir, "y_profile_histogram.png"), args.bins)
+
+    for name, vals in [
+        ("nModule",  nmodule_vals),
+        ("x_local",  x_local_vals),
+        ("y_local",  y_local_vals),
+        ("z_global", z_global_vals),
+    ]:
+        plot_scalar(vals, name, os.path.join(args.out_dir, f"{name}_histogram.png"), args.bins)
 
 
 if __name__ == "__main__":
