@@ -41,8 +41,8 @@ sys.path.append('../MuC_Smartpix_ML/')
 from model3_quantized_inputs import Model3_QuantizedInputs
 
 DEFAULT_DATA_FOLDER = (
-    "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/"
-    "filtering_records16384_data_shuffled_single_bigData"
+    "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/"
+    "filtering_records16384_data_shuffled_single_bigData_normalized"
 )
 
 

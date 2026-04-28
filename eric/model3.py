@@ -63,7 +63,7 @@ class Model3(SmartPixModel):
     """
     
     def __init__(self,
-                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,
@@ -1205,7 +1205,7 @@ def main():
     
     # Initialize Model3
     model3 = Model3(
-        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
         conv_filters=32,
         kernel_rows=3,
         kernel_cols=5,

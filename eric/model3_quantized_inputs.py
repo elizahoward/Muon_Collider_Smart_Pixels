@@ -52,7 +52,7 @@ class Model3_QuantizedInputs(Model3):
 
     def __init__(self,
                  # ── passthrough to Model3 ────────────────────────────────────
-                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
                  conv_filters: int = 8,
                  kernel_rows: int = 3,
                  kernel_cols: int = 3,

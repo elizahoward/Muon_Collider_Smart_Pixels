@@ -39,8 +39,8 @@ sys.path.append("../MuC_Smartpix_ML/")
 from model2_5_fixed_input_bits import Model2_5_FixedInputBits
 
 DEFAULT_DATA_FOLDER = (
-    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/"
-    "Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData"
+    "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/"
+    "filtering_records16384_data_shuffled_single_bigData_normalized"
 )
 
 # Fixed weight/bias quantization for all runs in this sweep

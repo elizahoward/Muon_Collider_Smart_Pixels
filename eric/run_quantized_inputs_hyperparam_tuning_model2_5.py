@@ -11,7 +11,7 @@ Example
 -------
     cd .../eric
     python run_quantized_inputs_hyperparam_tuning_model2_5.py \\
-        --data_folder /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData \\
+        --data_folder /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized \\
         --bit-config 4,0 --bit-config 6,0 --bit-config 8,0 --bit-config 10,0 \\
         --max-trials 1 \\
         --executions-per-trial 2 \\
@@ -31,8 +31,8 @@ sys.path.append("../MuC_Smartpix_ML/")
 from model2_5_quantized_inputs import Model2_5_QuantizedInputs
 
 DEFAULT_DATA_FOLDER = (
-    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/"
-    "Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData"
+    "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/"
+    "filtering_records16384_data_shuffled_single_bigData_normalized"
 )
 
 
