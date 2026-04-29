@@ -59,7 +59,7 @@ def main():
         help="Weight quantizer (total bits, int bits). Repeat for multiple sweeps. Default: 6,0",
     )
     parser.add_argument("--max-trials", type=int, default=120)
-    parser.add_argument("--executions-per-trial", type=int, default=2)
+    parser.add_argument("--executions-per-trial", type=int, default=1)
     parser.add_argument("--epochs", type=int, default=40, help="Epochs per tuner trial")
     parser.add_argument(
         "--tag",
