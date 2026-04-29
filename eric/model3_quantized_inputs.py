@@ -13,9 +13,8 @@ input_int_bits  : integer bits for input quantization (always 0, purely fraction
 input_bits is fixed to weight_bits + 2 in HP tuning (not a searchable HP).
 
 Both makeQuantizedModel and makeQuantizedModelHyperParameterTuning are covered.
-The tanh output is also updated to QActivation("quantized_tanh(8,0)") followed
-by a Lambda rescale from [-1, 1] → [0, 1], matching the Model2.5_QuantizedInputs
-convention.
+The output uses QActivation("quantized_sigmoid(8,0)"), producing scores in [0, 1]
+directly without any rescaling.
 
 Author: Eric
 Date: 2026
@@ -46,8 +45,8 @@ except ImportError:
 class Model3_QuantizedInputs(Model3):
     """
     Model3 variant where every input is quantized via QActivation before any
-    downstream Conv2D / Dense computation.  Tanh output is also rescaled from
-    [-1, 1] to [0, 1] via Lambda((x + 1) / 2), matching Model2.5_QuantizedInputs.
+    downstream Conv2D / Dense computation.  Output uses quantized_sigmoid(8,0),
+    producing scores in [0, 1] directly.
     """
 
     def __init__(self,
@@ -94,7 +93,7 @@ class Model3_QuantizedInputs(Model3):
         return QActivation(f"quantized_bits({bits},{int_bits})", name=f"q_input_{name_suffix}")
 
     # ─────────────────────────────────────────────────────────────────────────
-    # makeQuantizedModel — weights + inputs quantized, tanh rescaled
+    # makeQuantizedModel — weights + inputs quantized, sigmoid output
     # ─────────────────────────────────────────────────────────────────────────
 
     def makeQuantizedModel(self):
@@ -174,7 +173,6 @@ class Model3_QuantizedInputs(Model3):
             )(h)
             h = QActivation(activation_quantizer, name="merged_dense2_act")(h)
 
-            # Output: quantized_tanh(8,0) then rescale [-1,1] -> [0,1]
             output_dense = QDense(
                 1,
                 kernel_quantizer=weight_quantizer,
@@ -219,9 +217,9 @@ class Model3_QuantizedInputs(Model3):
         kernel_cols        = hp.Choice('kernel_cols',     values=[3, 3])
         scalar_dense_units = hp.Int('scalar_dense_units', min_value=8,  max_value=32,  step=8)
         merged_dense_1     = hp.Int('merged_dense_1',     min_value=8, max_value=128, step=16)
-        merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.4, max_value=0.8, step=0.2)
+        merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.2, max_value=0.8, step=0.1)
         merged_dense_2     = int(round(merged_dense_1 * merged_multiplier_2))
-        dropout_rate       = hp.Float('dropout_rate',     min_value=0.1, max_value=0.1, step=0.1)
+        dropout_rate       = 0.08
         learning_rate      = hp.Float('learning_rate',    min_value=1e-4, max_value=1e-2, sampling='log')
 
         weight_quantizer     = quantized_bits(weight_bits, int_bits, alpha=1.0)
@@ -287,7 +285,6 @@ class Model3_QuantizedInputs(Model3):
         )(h)
         h = QActivation(activation_quantizer, name="merged_dense2_act")(h)
 
-        # Output: quantized_tanh(8,0) then rescale [-1,1] -> [0,1]
         output_dense = QDense(
             1,
             kernel_quantizer=weight_quantizer,

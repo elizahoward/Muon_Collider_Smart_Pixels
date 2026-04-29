@@ -58,9 +58,9 @@ def main():
         metavar="W,I",
         help="Weight quantizer (total bits, int bits). Repeat for multiple sweeps. Default: 6,0",
     )
-    parser.add_argument("--max-trials", type=int, default=1)
+    parser.add_argument("--max-trials", type=int, default=120)
     parser.add_argument("--executions-per-trial", type=int, default=2)
-    parser.add_argument("--epochs", type=int, default=20, help="Epochs per tuner trial")
+    parser.add_argument("--epochs", type=int, default=40, help="Epochs per tuner trial")
     parser.add_argument(
         "--tag",
         type=str,
@@ -87,6 +87,8 @@ def main():
     bit_configs = args.bit_configs if args.bit_configs else [(4, 0), (6, 0), (8, 0), (10, 0)]
     bkg_rej_weights = {0.95: args.br95, 0.98: args.br98, 0.99: args.br99}
     tag = None if args.no_results_tag else args.tag
+    if tag is not None and args.weighted_br and "wbr" not in tag:
+        tag = tag + "_wbr"
 
     print("=" * 70)
     print("Model2.5_QuantizedInputs — quantized hyperparameter tuning")

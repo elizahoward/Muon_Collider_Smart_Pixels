@@ -196,7 +196,7 @@ class Model2_5_QuantizedInputs(Model2_5):
         dense3_ratio = hp.Float('dense3_ratio', min_value=0.2, max_value=1.0, step=0.05)
         dense3_units = max(16, int(dense2_units * dense3_ratio / 8) * 8)
 
-        dropout_rate   = hp.Float('dropout_rate',   min_value=0.0, max_value=0.3, step=0.05)
+        dropout_rate   = 0.08
         learning_rate  = hp.Float('learning_rate',  min_value=1e-4, max_value=1e-2, sampling='log')
 
         # ── Raw inputs ────────────────────────────────────────────────────────
@@ -375,7 +375,7 @@ class Model2_5_QuantizedInputs(Model2_5):
         dense3_ratio = hp.Float('dense3_ratio', min_value=0.2, max_value=0.7, step=0.1)
         dense3_units = max(4, int(dense2_units * dense3_ratio / 2) * 2)
 
-        dropout_rate  = hp.Float('dropout_rate',  min_value=0.0, max_value=0.1, step=0.05)
+        dropout_rate  = 0.08
         learning_rate = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
 
         # ── Quantizers ────────────────────────────────────────────────────────
