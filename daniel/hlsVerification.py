@@ -286,6 +286,7 @@ class hlsVerifier():
         self.printHLSTrace()
         self.plotHLSTrace()
         self.plotHLSVerification()
+        self.writeTrace()
         if self.buildModel:
             self.finishBuilding()
     
@@ -469,6 +470,7 @@ class hlsVerifier():
         plt.xlabel("hls prediction")
         plt.ylabel("qkeras prediction")
         plt.colorbar()
+        plt.title(self.filepath)
         # plt.show()
         plt.subplot(512)
         plt.hist2d(self.hls_model_predictions[:,0],self.yTest[:,0],norm=colors.LogNorm(),bins=[100,4])
@@ -542,3 +544,13 @@ class hlsVerifier():
         hlsVerifier.closePlot(self.PLOT_DIR, self.interactivePlots, plotName)
 
     
+    def writeTrace(self):
+        old_target = sys.stdout
+        logfilepath = os.path.join(self.PLOT_DIR, "traceLog.txt")
+        # with open('noslice_hls4ml_vivado_trace_prj/tb_data/vivado_outputs.dat', 'w') as f:
+        with open(logfilepath, 'w') as f:
+            sys.stdout = f
+            print(self.filepath)
+            self.printHLSTrace()
+            # f.write(' '.join(map(str, keras_trace['q_dense_2'][0].flatten())))
+        sys.stdout = old_target
