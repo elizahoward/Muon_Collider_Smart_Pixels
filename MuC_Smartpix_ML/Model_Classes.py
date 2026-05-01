@@ -18,6 +18,8 @@ sys.path.append("../MuC_Smartpix_Data_Production/tfRecords")
 import OptimizedDataGenerator4_data_shuffled_bigData_NewFormat as ODG2
 import pandas as pd
 from datetime import datetime
+sys.path.append("../daniel")
+# import dataRateUtils #Have to do in function to avoid circular imports
 
 class WarmupThenDecay(tf.keras.optimizers.schedules.LearningRateSchedule):
     """
@@ -587,7 +589,7 @@ class SmartPixModel(ABC):
         
         return results
     
-    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99]):
+    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99],verboseDataRate=False):
         """
         Evaluate the trained model with background rejection metrics.
         
@@ -625,7 +627,20 @@ class SmartPixModel(ABC):
         bkg_rejection_metrics = self.compute_background_rejection_at_signal_eff(
             fpr, tpr, signal_efficiencies
         )
-        
+
+        #Data rate calculation
+        sys.path.append("../daniel")
+        import dataRateUtils
+        numBackPixesPostFilter,numBackPixesTotal,numBackPixesRejRatio = [-99 for i in (signal_efficiencies)],[-99 for i in (signal_efficiencies)],[-99 for i in (signal_efficiencies)]
+        for idx, sig_eff in enumerate(signal_efficiencies):
+            fpr_val = bkg_rejection_metrics[f'fpr_at_{int(sig_eff*100)}pct']
+            threshVal = thresholds[fpr==fpr_val]
+            print(f"Data rate at fpr {fpr_val} and threshold {threshVal}")
+            if verboseDataRate:
+                numBackPixesPostFilter[idx],numBackPixesTotal[idx],numBackPixesRejRatio[idx] = dataRateUtils.genNpixAndGetDataRate(self,predictions.ravel(),cut=threshVal)
+            else:
+                numBackPixesPostFilter[idx],numBackPixesTotal[idx],numBackPixesRejRatio[idx] = dataRateUtils.genNpixAndGetDataRate(self,predictions.ravel(),cut=threshVal,doPrintExtra = False, doPrintData=False, doPlot = False)
+
         # Store results
         self.evaluation_results = {
             'test_loss': float(test_loss),
@@ -634,7 +649,10 @@ class SmartPixModel(ABC):
             'fpr': fpr.tolist(),
             'tpr': tpr.tolist(),
             'thresholds': thresholds.tolist(),
-            **bkg_rejection_metrics  # Add background rejection metrics
+            **bkg_rejection_metrics,  # Add background rejection metrics
+            'numBackPixesPostFilter': numBackPixesPostFilter,
+            'numBackPixesTotal': numBackPixesTotal,
+            'numBackPixesRejRatio': numBackPixesRejRatio,
         }
         
         print(f"✓ {self.modelName} evaluation completed!")
@@ -644,7 +662,7 @@ class SmartPixModel(ABC):
         
         # Print background rejection metrics
         print(f"\n  Background Rejection Metrics (Bkg Rej = 1 - FPR):")
-        for sig_eff in signal_efficiencies:
+        for idx,sig_eff in enumerate(signal_efficiencies):
             key = f'bkg_rej_at_{int(sig_eff*100)}pct'
             fpr_key = f'fpr_at_{int(sig_eff*100)}pct'
             
@@ -654,7 +672,11 @@ class SmartPixModel(ABC):
             if bg_rej is None:
                 print(f"    @ {sig_eff:.0%} signal efficiency: NOT REACHED")
             else:
-                print(f"    @ {sig_eff:.0%} signal efficiency: Bkg Rej = {bg_rej:.4f} (FPR = {fpr_val:.6f})")
+                if numBackPixesRejRatio is None:
+                    print(f"    @ {sig_eff:.0%} signal efficiency: Bkg Rej = {bg_rej:.4f} (FPR = {fpr_val:.6f})")
+                else:
+                    print(f"    @ {sig_eff:.0%} signal efficiency: Bkg Rej = {bg_rej:.4f} (FPR = {fpr_val:.6f}), Back Data Accep = {numBackPixesRejRatio[idx]:.4f}")
+
         
         return self.evaluation_results
     
