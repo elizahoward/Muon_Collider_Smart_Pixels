@@ -515,26 +515,29 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            input5 = tf.keras.layers.Input(shape=(1,), name="nModule")
+            input5 = tf.keras.layers.Input(shape=(1,), name="x_local")
 
             inputList = [input1, input2, input3, input4]
             
 
-            q_input1 = QActivation(activation=quantized_bits(6, 0), name="q_input_1")(input1)
-            q_input2 = QActivation(activation=quantized_bits(6, 0), name="q_input_2")(input2)
-            q_input3 = QActivation(activation=quantized_bits(6, 0), name="q_input_3")(input3)
+            q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(10, 0), name="q_input_3")(input3)
+            """
             q_input4 = QActivation(activation=quantized_bits(6, 0), name="q_input_4")(input4)
+            """
+            q_input5 = QActivation(activation=quantized_bits(10, 0), name="q_input_5")(input5)
+            q_input6 = QActivation(activation=quantized_bits(10, 0), name="q_input_6")(input6)
+
 
             
-
-
-
-            
-
 
             x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
-            x=x_concat3
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
+            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
+            x=x_concat4 
 
 
 
@@ -636,7 +639,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp5q_8w0i_i6_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp5q_8w0i_i10_nModXlocal_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -645,8 +648,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_5rows_8w0i_i6_quantized_matching",
-            directory="./hyperparameter_tuning_5q_8w0i_i6",   # keep KT logs in one place
+            project_name="hp_search_5rows_8w0i_i10_nModXlocal_quantized_matching",
+            directory="./hyperparameter_tuning_5q_8w0i_i10_nModXlocal",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -682,18 +685,30 @@ class Model1(SmartPixModel):
 
             inputList = [input1, input2, input3, input4]
             
-            q_input1 = QActivation(activation=quantized_bits(6, 0), name="q_input_1")(input1)
-            q_input2 = QActivation(activation=quantized_bits(6, 0), name="q_input_2")(input2)
-            q_input3 = QActivation(activation=quantized_bits(6, 0), name="q_input_3")(input3)
-            q_input4 = QActivation(activation=quantized_bits(6, 0), name="q_input_4")(input4)
+            q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(10, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(10, 0), name="q_input_4")(input4)
 
            
-
-
+            """
             x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
+            """
+
+            q_input5 = QActivation(activation=quantized_bits(10, 0), name="q_input_5")(input5)
+            q_input6 = QActivation(activation=quantized_bits(10, 0), name="q_input_6")(input6)
+
+
+            
+
+            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
+            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
+            x=x_concat4 
 
 
             ## here i will add the layers 
@@ -781,7 +796,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp4q_8w0i_i6_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp4q_8w0i_i10_nModXlocal_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -790,8 +805,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_4rows_8w0i_i6_quantized_matching",
-            directory="./hyperparameter_tuning_4q_8w0i_i6",   # keep KT logs in one place
+            project_name="hp_search_4rows_8w0i_i10_nModXlocal_quantized_matching",
+            directory="./hyperparameter_tuning_4q_8w0i_i10_nModXlocal",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -825,16 +840,27 @@ class Model1(SmartPixModel):
             inputList = [input1, input2, input3, input4]
 
 
-            q_input1 = QActivation(activation=quantized_bits(6, 0), name="q_input_1")(input1)
-            q_input2 = QActivation(activation=quantized_bits(6, 0), name="q_input_2")(input2)
-            q_input3 = QActivation(activation=quantized_bits(6, 0), name="q_input_3")(input3)
-            q_input4 = QActivation(activation=quantized_bits(6, 0), name="q_input_4")(input4)
+            q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(10, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(10, 0), name="q_input_4")(input4)
 
             
+            """
             x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
+            """
+            q_input5 = QActivation(activation=quantized_bits(10, 0), name="q_input_5")(input5)
+            q_input6 = QActivation(activation=quantized_bits(10, 0), name="q_input_6")(input6)
+
+
+            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
+            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
+            x=x_concat4 
 
 
             ## here i will add the layers 
@@ -909,7 +935,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp3q_8w0i_i6_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp3q_8w0i_i10_nModXlocal_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -918,8 +944,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_3rows_8w0i_i6_quantized_matching",
-            directory="./hyperparameter_tuning_3q_8w0i_i6",   # keep KT logs in one place
+            project_name="hp_search_3rows_8w0i_i10_nModXlocal_quantized_matching",
+            directory="./hyperparameter_tuning_3q_8w0i_i10_nModXlocal",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -952,18 +978,29 @@ class Model1(SmartPixModel):
             inputList = [input1, input2, input3, input4]
             
 
-            q_input1 = QActivation(activation=quantized_bits(6, 0), name="q_input_1")(input1)
-            q_input2 = QActivation(activation=quantized_bits(6, 0), name="q_input_2")(input2)
-            q_input3 = QActivation(activation=quantized_bits(6, 0), name="q_input_3")(input3)
-            q_input4 = QActivation(activation=quantized_bits(6, 0), name="q_input_4")(input4)
+            q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(10, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(10, 0), name="q_input_4")(input4)
 
 
 
-
+            """
             x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
+            """
+            q_input5 = QActivation(activation=quantized_bits(10, 0), name="q_input_5")(input5)
+            q_input6 = QActivation(activation=quantized_bits(10, 0), name="q_input_6")(input6)
+
+
+            
+            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
+            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
+            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
+            x=x_concat4 
 
 
             ## here i will add the layers 
@@ -1022,7 +1059,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp2q_8w0i_i6_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp2q_8w0i_i10_nModXlocal_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -1031,8 +1068,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_2rows_8w0i_i6_quantized_matching",
-            directory="./hyperparameter_tuning_2q_8w0i_i6",   # keep KT logs in one place
+            project_name="hp_search_2rows_8w0i_i10_nModXlocal_quantized_matching",
+            directory="./hyperparameter_tuning_2q_8w0i_i10_nModXlocal",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
