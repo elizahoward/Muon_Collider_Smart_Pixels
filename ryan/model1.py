@@ -125,7 +125,7 @@ class Model1(SmartPixModel):
         self.hyperparameterModel = None
         self.training_generator = None
         self.validation_generator = None
-        self.x_feature_description: list = ['z_global','x_size', 'y_size', 'y_local']
+        self.x_feature_description: list = ['z_global','x_size', 'y_size', 'y_local', 'nModule', 'x_local']
         # Learning rate parameters
         self.initial_lr = initial_lr
         self.end_lr = end_lr
@@ -516,9 +516,10 @@ class Model1(SmartPixModel):
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
             input5 = tf.keras.layers.Input(shape=(1,), name="nModule")
-            input5 = tf.keras.layers.Input(shape=(1,), name="x_local")
+            input6 = tf.keras.layers.Input(shape=(1,), name="x_local")
 
-            inputList = [input1, input2, input3, input4]
+            inputList = [input1, input2, input3, input4, input5, input6]
+
             
 
             q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
@@ -682,8 +683,11 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            input5 = tf.keras.layers.Input(shape=(1,), name="nModule")
+            input6 = tf.keras.layers.Input(shape=(1,), name="x_local")
 
-            inputList = [input1, input2, input3, input4]
+            
+            inputList = [input1, input2, input3, input4, input5, input6]
             
             q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
             q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
@@ -836,8 +840,11 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
+            input5 = tf.keras.layers.Input(shape=(1,), name="nModule")
+            input6 = tf.keras.layers.Input(shape=(1,), name="x_local")
 
-            inputList = [input1, input2, input3, input4]
+            inputList = [input1, input2, input3, input4, input5, input6]
+
 
 
             q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
@@ -975,7 +982,11 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
-            inputList = [input1, input2, input3, input4]
+            input5 = tf.keras.layers.Input(shape=(1,), name="nModule")
+            input6 = tf.keras.layers.Input(shape=(1,), name="x_local")
+
+            inputList = [input1, input2, input3, input4, input5, input6]
+
             
 
             q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
