@@ -110,7 +110,7 @@ class Model1(SmartPixModel):
             initial_lr: float = 1e-3,
             end_lr: float = 1e-4,
             power: int = 2,
-            bit_configs = [(6, 0)] # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            bit_configs = [(4, 0)] # Test 16, 8, 6, 4, 3, and 2-bit quantization
             ): 
         self.tfRecordFolder = tfRecordFolder
         self.modelName = "Model1" # for other models, e.g., Model 1, Model 2, etc.
@@ -130,7 +130,7 @@ class Model1(SmartPixModel):
         self.initial_lr = initial_lr
         self.end_lr = end_lr
         self.power = power
-        self.input_bits = 8
+        self.input_bits = 6
         return
  
 
