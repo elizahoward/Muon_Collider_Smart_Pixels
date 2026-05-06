@@ -646,7 +646,7 @@ class Model1(SmartPixModel):
             max_trials=120,
             executions_per_trial=2,
             project_name=f"hp_search_5rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_quantized_matching",
-            directory=f"./hyperparameter_tuning_5q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
+            directory=f"./hyperparameter_tuning_5q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -922,8 +922,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name=f"hp_search_3rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal_quantized_matching",
-            directory=f"./hyperparameter_tuning_3q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
+            project_name=f"hp_search_3rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_quantized_matching",
+            directory=f"./hyperparameter_tuning_3q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -1042,8 +1042,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name=f"hp_search_2rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal_quantized_matching",
-            directory=f"./hyperparameter_tuning_2q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
+            project_name=f"hp_search_2rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_quantized_matching",
+            directory=f"./hyperparameter_tuning_2q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
