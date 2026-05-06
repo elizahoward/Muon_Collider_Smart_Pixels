@@ -88,3 +88,55 @@ def modelSpecsToDataRate(modelType, quantizedModel,cut=0.138891,
     # print(predictions)
     # predictions = predictions.ravel()
     # return genNpixAndGetDataRate(model,predictions,cut=cut)
+
+
+def plotPredictVsAll(model,predictions):
+    xTest, yTest = tfLoaderUtils.getXYtest(model)
+
+
+    # print(xTest.keys())
+    from matplotlib import colors
+    keys = ["nModule","x_local","z_global","y_local","nPix"]
+    keys =  list(set(keys) & set(xTest.keys()))
+    print(keys)
+    for idk,key in enumerate(keys):
+        backX = (xTest[key][(yTest.numpy().ravel()==0)]).numpy()
+        sigX = (xTest[key][(yTest.numpy().ravel()==1)]).numpy()
+        predBack = predictions[(yTest.numpy().ravel()==0)]
+        predSig = predictions[(yTest.numpy().ravel()==1)]
+        plt.figure(figsize=(5,8))
+        plt.subplot(4,1,1)
+        plt.plot(predBack,backX,".",alpha=0.5,label="background",markersize=2)
+        plt.plot(predSig,sigX,".",alpha=0.5,label="Signal",markersize=2)
+        plt.legend()
+        plt.ylabel(key)
+        plt.title(f"{key} vs. neural network prediction")
+        plt.subplot(4,1,2)
+        plt.hist2d(predictions.ravel(),xTest[key].numpy(),norm=colors.LogNorm())
+        plt.colorbar()
+        plt.xlabel("prediction")
+        plt.ylabel(key)
+        plt.title("all test vectors")
+        # plt.show()
+        plt.subplot(4,1,3)
+        plt.hist2d(predBack.ravel(),backX,norm=colors.LogNorm())
+        plt.colorbar()
+        plt.xlabel("prediction")
+        plt.ylabel(key)
+        plt.title("just background")
+        # plt.show()
+        plt.subplot(4,1,4)
+        plt.hist2d(predSig.ravel(),sigX,norm=colors.LogNorm())
+        plt.colorbar()
+        plt.xlabel("prediction")
+        plt.ylabel(key)
+        plt.title("just signal")
+        plt.tight_layout()
+        plt.show()
+
+    plt.hist2d(predictions.ravel(),yTest.numpy().ravel(),norm=colors.LogNorm())
+    plt.xlabel("predictions")
+    plt.ylabel("Bib vs. signal")
+    plt.colorbar()
+    plt.show()
+    return

@@ -59,6 +59,13 @@ def getNpixYtest(model):
     xTest, yTest = odgToVect(model.validation_generator)
     return xTest["nPix"], yTest
 
+def getXYtest(model):
+    if "nPix" not in model.x_feature_description:
+        model.x_feature_description = model.x_feature_description + ["nPix"]
+        model.loadTfRecords()
+    xTest, yTest = odgToVect(model.validation_generator)
+    return xTest, yTest
+
 def odgToVect(odg):
     qq = [odg.__getitem__(i) for i in range(odg.__len__())]
     y_test = tf.concat([qq[i][1] for i in range(odg.__len__())],0)
