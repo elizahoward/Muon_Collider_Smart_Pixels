@@ -12,11 +12,11 @@ NUM_WORKERS=6
 MAX_THREADS=4   # per-worker host+HLS thread cap (6 workers × 4 threads = 24 max)
 
 declare -a INPUT_DIRS=(
-    "$BASE/model2.5_quantizedinputs_3w0i_pareto_roc_selected"
-    "$BASE/model2.5_quantizedinputs_4w0i_pareto_roc_selected"
-    "$BASE/model2.5_quantizedinputs_6w0i_pareto_roc_selected"
-    "$BASE/model2.5_quantizedinputs_8w0i_pareto_roc_selected"
-    "$BASE/model2.5_quantizedinputs_10w0i_pareto_roc_selected"
+    "$BASE/model2_5_3bit_normalised_selected"
+    "$BASE/model2.5_4bit_normalised_selected"
+    "$BASE/model2.5_6bit_normalised_selected"
+    "$BASE/model2.5_8bit_normalised_selected"
+    "$BASE/model2.5_10bit_normalised_selected"
 )
 
 for i in "${!INPUT_DIRS[@]}"; do

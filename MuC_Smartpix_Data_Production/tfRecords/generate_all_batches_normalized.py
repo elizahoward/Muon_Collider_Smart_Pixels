@@ -2,14 +2,6 @@
 """
 Generate TFRecords with cluster, x_profile, and y_profile normalized to [0, 1].
 
-Why this exists
----------------
-The existing TFRecords store cluster pixels as log2(1+|electrons|), which
-reaches ~17.5 for high-charge pixels.  x_profile and y_profile are sums of
-those log-compressed values, then log-compressed again, reaching ~7-8.
-None of these fit in [0, 1], so QActivation(quantized_bits(N, 0)) — which
-clips at ±1 — destroys the charge-magnitude information.
-
 This script generates a parallel set of TFRecords where those three features
 are divided by fixed physical-maximum divisors and clipped to [0, 1]:
 
@@ -113,8 +105,7 @@ class OptimizedDataGeneratorNormalized(ODG.OptimizedDataGeneratorDataShuffledBig
 
 
 # ---------------------------------------------------------------------------
-# Runner (mirrors generate_all_batches_shuffled_largeData_NewFormat.py)
-# ---------------------------------------------------------------------------
+# Runner 
 
 def create_normalized_tf_records(batch_size, is_single_timestamp,
                                  base_output_dir, data_directory_path,
