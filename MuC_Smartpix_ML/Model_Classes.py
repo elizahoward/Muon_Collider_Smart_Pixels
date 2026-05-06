@@ -589,7 +589,7 @@ class SmartPixModel(ABC):
         
         return results
     
-    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99],verboseDataRate=False):
+    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99],verboseDataRate=False,predictionPlots=True):
         """
         Evaluate the trained model with background rejection metrics.
         
@@ -677,6 +677,9 @@ class SmartPixModel(ABC):
                 else:
                     print(f"    @ {sig_eff:.0%} signal efficiency: Bkg Rej = {bg_rej:.4f} (FPR = {fpr_val:.6f}), Back Data Accep = {numBackPixesRejRatio[idx]:.4f}")
 
+
+        if predictionPlots:
+            dataRateUtils.plotPredictVsAll(self,predictions)
         
         return self.evaluation_results
     
