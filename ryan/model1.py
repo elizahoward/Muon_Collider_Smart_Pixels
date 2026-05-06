@@ -110,7 +110,7 @@ class Model1(SmartPixModel):
             initial_lr: float = 1e-3,
             end_lr: float = 1e-4,
             power: int = 2,
-            bit_configs = [(16, 0), (8, 0), (6, 0), (4, 0), (3, 0), (2, 0)]  # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            bit_configs = [(6, 0)] # Test 16, 8, 6, 4, 3, and 2-bit quantization
             ): 
         self.tfRecordFolder = tfRecordFolder
         self.modelName = "Model1" # for other models, e.g., Model 1, Model 2, etc.
@@ -130,6 +130,7 @@ class Model1(SmartPixModel):
         self.initial_lr = initial_lr
         self.end_lr = end_lr
         self.power = power
+        self.input_bits = 8
         return
  
 
@@ -515,29 +516,25 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
-            input5 = tf.keras.layers.Input(shape=(1,), name="nModule")
-            input5 = tf.keras.layers.Input(shape=(1,), name="x_local")
+    
 
             inputList = [input1, input2, input3, input4]
+
             
 
-            q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
-            q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
-            q_input3 = QActivation(activation=quantized_bits(10, 0), name="q_input_3")(input3)
-            """
-            q_input4 = QActivation(activation=quantized_bits(6, 0), name="q_input_4")(input4)
-            """
-            q_input5 = QActivation(activation=quantized_bits(10, 0), name="q_input_5")(input5)
-            q_input6 = QActivation(activation=quantized_bits(10, 0), name="q_input_6")(input6)
+            q_input1 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_4")(input4)
+        
 
 
             
 
             x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
-            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
-            x=x_concat4 
+            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
+            x=x_concat3
 
 
 
@@ -546,8 +543,8 @@ class Model1(SmartPixModel):
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -560,8 +557,8 @@ class Model1(SmartPixModel):
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -574,8 +571,8 @@ class Model1(SmartPixModel):
             ## layer 3
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -588,8 +585,8 @@ class Model1(SmartPixModel):
             ## layer 4
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -602,8 +599,8 @@ class Model1(SmartPixModel):
             ## layer 5
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -618,8 +615,8 @@ class Model1(SmartPixModel):
             ## output layer
             x = QDense(
             1,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -639,7 +636,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp5q_8w0i_i10_nModXlocal_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp5q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -648,8 +645,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_5rows_8w0i_i10_nModXlocal_quantized_matching",
-            directory="./hyperparameter_tuning_5q_8w0i_i10_nModXlocal",   # keep KT logs in one place
+            project_name=f"hp_search_5rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_quantized_matching",
+            directory=f"./hyperparameter_tuning_5q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -683,32 +680,21 @@ class Model1(SmartPixModel):
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
 
+            
             inputList = [input1, input2, input3, input4]
             
-            q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
-            q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
-            q_input3 = QActivation(activation=quantized_bits(10, 0), name="q_input_3")(input3)
-            q_input4 = QActivation(activation=quantized_bits(10, 0), name="q_input_4")(input4)
+            q_input1 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_4")(input4)
 
            
-            """
+            
             x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
-            """
-
-            q_input5 = QActivation(activation=quantized_bits(10, 0), name="q_input_5")(input5)
-            q_input6 = QActivation(activation=quantized_bits(10, 0), name="q_input_6")(input6)
-
-
-            
-
-            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
-            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
-            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
-            x=x_concat4 
+           
 
 
             ## here i will add the layers 
@@ -716,8 +702,8 @@ class Model1(SmartPixModel):
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -730,8 +716,8 @@ class Model1(SmartPixModel):
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -744,8 +730,8 @@ class Model1(SmartPixModel):
             ## layer 3
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -758,8 +744,8 @@ class Model1(SmartPixModel):
             ## layer 4
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -773,8 +759,8 @@ class Model1(SmartPixModel):
             ## output layer
             x = QDense(
             1,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -796,7 +782,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp4q_8w0i_i10_nModXlocal_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp4q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -805,8 +791,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_4rows_8w0i_i10_nModXlocal_quantized_matching",
-            directory="./hyperparameter_tuning_4q_8w0i_i10_nModXlocal",   # keep KT logs in one place
+            project_name=f"hp_search_4rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_quantized_matching",
+            directory=f"./hyperparameter_tuning_4q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -837,39 +823,31 @@ class Model1(SmartPixModel):
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
 
+
             inputList = [input1, input2, input3, input4]
 
 
-            q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
-            q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
-            q_input3 = QActivation(activation=quantized_bits(10, 0), name="q_input_3")(input3)
-            q_input4 = QActivation(activation=quantized_bits(10, 0), name="q_input_4")(input4)
+
+            q_input1 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_4")(input4)
 
             
-            """
+        
             x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
-            """
-            q_input5 = QActivation(activation=quantized_bits(10, 0), name="q_input_5")(input5)
-            q_input6 = QActivation(activation=quantized_bits(10, 0), name="q_input_6")(input6)
-
-
-            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
-            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
-            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
-            x=x_concat4 
-
+            
 
             ## here i will add the layers 
             
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -882,8 +860,8 @@ class Model1(SmartPixModel):
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -896,8 +874,8 @@ class Model1(SmartPixModel):
             ## layer 3
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -912,8 +890,8 @@ class Model1(SmartPixModel):
             ## output layer
             x = QDense(
             1,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -935,7 +913,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp3q_8w0i_i10_nModXlocal_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp3q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -944,8 +922,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_3rows_8w0i_i10_nModXlocal_quantized_matching",
-            directory="./hyperparameter_tuning_3q_8w0i_i10_nModXlocal",   # keep KT logs in one place
+            project_name=f"hp_search_3rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_quantized_matching",
+            directory=f"./hyperparameter_tuning_3q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -975,32 +953,28 @@ class Model1(SmartPixModel):
             input2 = tf.keras.layers.Input(shape=(1,), name="x_size")
             input3 = tf.keras.layers.Input(shape=(1,), name="y_size")
             input4 = tf.keras.layers.Input(shape=(1,), name="y_local")
-            inputList = [input1, input2, input3, input4]
             
 
-            q_input1 = QActivation(activation=quantized_bits(10, 0), name="q_input_1")(input1)
-            q_input2 = QActivation(activation=quantized_bits(10, 0), name="q_input_2")(input2)
-            q_input3 = QActivation(activation=quantized_bits(10, 0), name="q_input_3")(input3)
-            q_input4 = QActivation(activation=quantized_bits(10, 0), name="q_input_4")(input4)
+            inputList = [input1, input2, input3, input4]
+
+            
+
+            q_input1 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_1")(input1)
+            q_input2 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_2")(input2)
+            q_input3 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_3")(input3)
+            q_input4 = QActivation(activation=quantized_bits(self.input_bits, 0), name="q_input_4")(input4)
 
 
 
-            """
+        
             x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input4])
             x=x_concat3
-            """
-            q_input5 = QActivation(activation=quantized_bits(10, 0), name="q_input_5")(input5)
-            q_input6 = QActivation(activation=quantized_bits(10, 0), name="q_input_6")(input6)
+        
 
 
-            
-            x_concat1 = tf.keras.layers.Concatenate()([q_input1, q_input2])
-            x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input3])
-            x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
-            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
-            x=x_concat4 
+    
 
 
             ## here i will add the layers 
@@ -1008,8 +982,8 @@ class Model1(SmartPixModel):
             # layer 1
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -1022,8 +996,8 @@ class Model1(SmartPixModel):
             ## layer 2
             x = QDense(
             rownodes,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -1036,8 +1010,8 @@ class Model1(SmartPixModel):
              ## output layer
             x = QDense(
             1,
-            kernel_quantizer=quantized_bits(8, 0, alpha=1),
-            bias_quantizer=quantized_bits(8, 0, alpha=1),
+            kernel_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
+            bias_quantizer=quantized_bits(self.bit_configs[0][0], 0, alpha=1),
             #kernel_regularizer=tf.keras.regularizers.L1L2(0.0001),
             ## adds sum of the activations squared to the loss function 
             #activity_regularizer=tf.keras.regularizers.L2(0.0001),
@@ -1059,7 +1033,7 @@ class Model1(SmartPixModel):
             return model
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = f"{self.modelName.lower()}_quantized_hp2q_8w0i_i10_nModXlocal_results_{timestamp}"
+        save_dir = f"{self.modelName.lower()}_quantized_hp2q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_results_{timestamp}"
         os.makedirs(save_dir, exist_ok=True)
         print(f"\n✓ Trial artifacts will be saved in: {save_dir}/\n")
 
@@ -1068,8 +1042,8 @@ class Model1(SmartPixModel):
             objective="val_binary_accuracy",
             max_trials=120,
             executions_per_trial=2,
-            project_name="hp_search_2rows_8w0i_i10_nModXlocal_quantized_matching",
-            directory="./hyperparameter_tuning_2q_8w0i_i10_nModXlocal",   # keep KT logs in one place
+            project_name=f"hp_search_2rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid_quantized_matching",
+            directory=f"./hyperparameter_tuning_2q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_sigmoid",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
             save_dir=save_dir,
             objective_name="val_binary_accuracy",
@@ -1187,7 +1161,8 @@ class Model1(SmartPixModel):
 def main():
 
     m1 = Model1()                 # your subclass
-
+    print(m1.bit_configs[0][0])
+    print(m1.input_bits)
     m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
     m1.makeQuantizedModelHyperParameterTuning2()
     m1.makeQuantizedModelHyperParameterTuning3()
