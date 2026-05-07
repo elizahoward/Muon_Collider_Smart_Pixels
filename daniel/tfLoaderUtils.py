@@ -20,6 +20,8 @@ from model2_5 import Model2_5
 from ASICModel import ModelASIC
 import tensorflow as tf
 
+import pandas as pd
+
 def flattenTfData(modelType, doTrain=True, tfRecordFolder="",includenPix=False):
     if tfRecordFolder=="":
         tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData"
@@ -65,6 +67,24 @@ def getXYtest(model):
         model.loadTfRecords()
     xTest, yTest = odgToVect(model.validation_generator)
     return xTest, yTest
+
+#     allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule"]
+def getPredVarDF(model,predictions,keys=['x_size', 'y_size', "nModule","x_local","y_local", 'z_global',"nPix",]):
+    #, 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian', #potentially add these, also add pt once it's in the tfRecords
+    for key in keys:
+        if key not in model.x_feature_description:
+            model.x_feature_description = model.x_feature_description + [key]
+    model.loadTfRecords()
+    xTest, yTest = odgToVect(model.validation_generator)
+    predVarDF = pd.DataFrame.from_dict({key:xTest[key].numpy() for key in keys})
+    predVarDF["prediction"] = predictions.ravel()
+    predVarDF["trueY"] = yTest.numpy()
+    try:
+        predVarDF = predVarDF.rename(columns={"x_size": "xSize", "y_size": "ySize", "y_local": "y-local", "z_global":"z-global"})
+    except:
+        print("renaming columns of dataframe with xvariables, predictions, and ")
+    return predVarDF
+
 
 def odgToVect(odg):
     qq = [odg.__getitem__(i) for i in range(odg.__len__())]

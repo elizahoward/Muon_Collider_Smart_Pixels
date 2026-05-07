@@ -640,7 +640,9 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
 
 
 # --- Plot 3: 2x2 grid showing both x-size and y-size comparisons ---
-def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
+def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,
+                      binsZGlobal = 30,binsXSize = np.arange(0,22,1),binsYSize = np.arange(0,14,1),
+                      PLOT_DIR="./plots",interactivePlots=False):
     if not( 'z-global' in truthbib.columns and 'z-global' in truthsig.columns ):
         raise Exception("z-global not present in truthbib or truthsig dataframes")
     assert len(truthbib) == len(ySizesBib)
@@ -649,9 +651,6 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     pastel_red_cmap = create_pastel_red_cmap()
     pastel_red_cmap = 'Blues'
 
-    binsZGlobal = 30
-    binsXSize = np.arange(0,22,1)
-    binsYSize = np.arange(0,14,1)
     plot2by2BibSig2dHisto(truthbib,truthsig,'z-global','xSize','z-global','ySize',mask_bib,mask_sig,
                           binsZGlobal,binsXSize,binsZGlobal,binsYSize,pastel_red_cmap,'','x-size (# pixels)',
                           'z-global [mm]','y-size (# pixels)',"bib_signal_zglobal_vs_xysize_grid_comparison",
