@@ -69,7 +69,7 @@ def getXYtest(model):
     return xTest, yTest
 
 #     allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule"]
-def getPredVarDF(model,predictions,keys=['x_size', 'y_size', "nModule","x_local","y_local", 'z_global',"nPix",]):
+def getPredVarDF(model,predictions,keys=['x_size', 'y_size', "nModule","x_local","y_local", 'z_global',"nPix","pt"]):
     #, 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian', #potentially add these, also add pt once it's in the tfRecords
     for key in keys:
         if key not in model.x_feature_description:
