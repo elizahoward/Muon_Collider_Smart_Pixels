@@ -67,7 +67,7 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             random.seed(random_seed)
             np.random.seed(random_seed)
         self.file_offsets = [0]
-        allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule"]
+        allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule","pt"]
         if isinstance(x_feature_description, str) and x_feature_description == "all":
             self.x_feature_description=allowed_features
         elif isinstance(x_feature_description, str):
@@ -218,6 +218,7 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             hit_time = labelFileDF['adjusted_hit_time'].values
             hit_time_30 = labelFileDF['adjusted_hit_time_30ps_gaussian'].values
             hit_time_60 = labelFileDF['adjusted_hit_time_60ps_gaussian'].values
+            pt = labelFileDF['pt'].values
             nModules_raw = z_loc_df_raw/13
             nModules_raw = nModules_raw.apply(np.floor)
             xlocals_raw = z_loc_df_raw %13
@@ -326,6 +327,8 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
                 self.x_features['x_local'] = x_locs                
             if 'nModule' in self.x_feature_description:
                 self.x_features['nModule'] = nModules
+            if 'pt' in self.x_feature_description:
+                self.x_features['pt'] = pt
             #ADD pt, cotalpha, cotbeta, recalculated p; Add in some sort of event number
             # DATA-LEVEL SHUFFLING
             if shuffle_data:
