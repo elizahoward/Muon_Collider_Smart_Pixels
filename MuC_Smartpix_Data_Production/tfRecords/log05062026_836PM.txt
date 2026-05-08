@@ -1,0 +1,79 @@
+
+================================================================================
+GENERATING NORMALIZED TF RECORDS
+  Output dir        : /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records
+  Batch sizes       : [16384]
+  cluster  / 18.025  (3% headroom over observed max ~17.5)
+  x_profile / 8.071  (3% headroom over theoretical max ~7.836)
+  y_profile / 8.781  (3% headroom over theoretical max ~8.525)
+================================================================================
+
+============================================================
+CREATING: filtering_records16384_data_shuffled_single_bigData_normalized
+Batch size       : 16384
+Timestamps       : Single (19)
+Random seed      : 42
+Normalization    : cluster/18.025, x_profile/8.071, y_profile/8.781
+============================================================
+Directory /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized already exists. Cleaning...
+Files  mm : total=1752  train=1402  val=350
+Files  mp : total=1713  train=1370  val=343
+Files sig : total=3500  train=2800  val=700
+
+Creating training generator...
+Loading 5572 files (BIB mm: 1402, BIB mp: 1370, SIG: 2800)
+start reading all parquets in OptimizedDataGenerator4
+loaded all parquets into memory, now concatenating
+[1325916 1325917 1325918 1325919 1325920 1325921 1325922 1325923 1325924]
+finished pandas concatenation
+for debug
+labels signal counts: [1325915       0       0       0       0       0       0       0       0
+ 1325915] with bins [0.  0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1. ]
+x_profiles.shape: (2651830, 21)
+y_profiles.shape: (2651830, 13)
+[ 0.43423077  0.44692308  0.26384615 ... -0.91961538 -0.93576925
+ -0.92269232]
+[0.17115385 0.23461538 0.31923077 ... 0.40192308 0.32115377 0.38653838]
+Shuffling all data points (seed=42)...
+First 20 types after shuffling: ['sig', 'bib_mm', 'bib_mm', 'sig', 'bib_mm', 'sig', 'sig', 'bib_mp', 'bib_mp', 'sig', 'sig', 'sig', 'sig', 'bib_mm', 'sig', 'sig', 'bib_mm', 'bib_mp', 'bib_mm', 'bib_mm']
+Shuffling metrics:
+  - Alternations (switches between BIB/SIG): 1656518
+  - Longest contiguous run of same type: 20
+  - Alternation rate: 62.5%
+[normalize] cluster  / 18.025  -> range [0.0000, 0.9539]
+[normalize] x_profile / 8.071  -> range [0.0000, 0.9209]
+[normalize] y_profile / 8.781  -> range [0.0000, 0.8960]
+Training generator done in 957.3s
+
+Creating validation generator...
+Loading 1393 files (BIB mm: 350, BIB mp: 343, SIG: 700)
+start reading all parquets in OptimizedDataGenerator4
+loaded all parquets into memory, now concatenating
+[330742 330743 330744 330745 330746 330747 330748 330749 330750]
+finished pandas concatenation
+for debug
+labels signal counts: [330741      0      0      0      0      0      0      0      0 330741] with bins [0.  0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1. ]
+x_profiles.shape: (661482, 21)
+y_profiles.shape: (661482, 13)
+[-0.15538462 -0.16076923 -0.45461537 ...  0.67076923  0.42653846
+  0.21192308]
+[0.22307692 0.19615385 0.72692315 ... 0.35384615 0.13269231 0.05961538]
+Shuffling all data points (seed=43)...
+First 20 types after shuffling: ['bib_mm', 'bib_mp', 'sig', 'sig', 'sig', 'sig', 'bib_mp', 'sig', 'sig', 'bib_mm', 'bib_mp', 'sig', 'sig', 'sig', 'bib_mp', 'sig', 'bib_mp', 'sig', 'sig', 'bib_mp']
+Shuffling metrics:
+  - Alternations (switches between BIB/SIG): 413861
+  - Longest contiguous run of same type: 16
+  - Alternation rate: 62.6%
+[normalize] cluster  / 18.025  -> range [0.0000, 0.9510]
+[normalize] x_profile / 8.071  -> range [0.0000, 0.9196]
+[normalize] y_profile / 8.781  -> range [0.0000, 0.8973]
+Validation generator done in 251.1s
+
+✓ Normalized TFRecords written to:
+    train : /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized/tfrecords_train
+    val   : /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized/tfrecords_validation
+
+================================================================================
+DONE — 1 directory(ies) created in 1208.5s (20.1 min)
+  filtering_records16384_data_shuffled_single_bigData_normalized
+================================================================================
