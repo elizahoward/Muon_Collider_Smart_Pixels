@@ -19,6 +19,7 @@ from model3 import Model3
 from model2_5 import Model2_5
 from ASICModel import ModelASIC
 import tensorflow as tf
+import numpy as np
 
 import pandas as pd
 
@@ -81,8 +82,18 @@ def getPredVarDF(model,predictions,keys=['x_size', 'y_size', "nModule","x_local"
     predVarDF["trueY"] = yTest.numpy()
     try:
         predVarDF = predVarDF.rename(columns={"x_size": "xSize", "y_size": "ySize", "y_local": "y-local", "z_global":"z-global"})
-    except:
-        print("renaming columns of dataframe with xvariables, predictions, and ")
+    except Exception as e:
+        print("renaming columns of dataframe with xvariables, predictions, and truth failed because ")
+        print(e.message, e.args)
+    
+    predVarDF["xSize"] = 21*(predVarDF["xSize"])
+    predVarDF["ySize"] = 13*(predVarDF["ySize"])
+
+    predVarDF["y-local"] = 8.5*(predVarDF["y-local"])
+    predVarDF["z-global"] = 65*(predVarDF["z-global"])
+
+    theta = np.arctan2(30, predVarDF['z-global'])
+    predVarDF['eta'] = -np.log(np.tan(theta / 2))
     return predVarDF
 
 
