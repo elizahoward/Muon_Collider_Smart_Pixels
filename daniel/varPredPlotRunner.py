@@ -37,9 +37,9 @@ PLOT_DIR = ops.PLOT_DIR
 for e in os.scandir(paretoDir):
     if e.is_file():
         if ".h5" in e.path:
-            modelID = e.path[-10:-1]
+            modelID = e.path[-10:]
             print(e.path)
             print(modelID)
-            pltDir = PLOT_DIR+"_"+modelID
+            pltDir = PLOT_DIR+"/mdl_"+modelID
             Path(pltDir).mkdir(parents=True, exist_ok=True)
-            varPredPlotUtils.runModelPlots(filepath = e.path,PLOT_DIR=pltDir, interactivePlots=interactivePlots,extendTitle=e.path[20:])
+            varPredPlotUtils.runModelPlots(filepath = e.path,PLOT_DIR=pltDir, interactivePlots=interactivePlots,extendTitle=e.path[25:])
