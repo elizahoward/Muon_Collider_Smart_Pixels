@@ -33,10 +33,11 @@ import matplotlib.lines as mlines
 import matplotlib.ticker as mticker
 
 ERIC = os.path.dirname(os.path.abspath(__file__))
+ERICF = os.path.join(ERIC, "Final_Results")
 
-MODEL1_DIR  = os.path.join(ERIC, "model1_fin_results")
-MODEL25_DIR = os.path.join(ERIC, "model2.5_fin_results")
-MODEL3_DIR  = os.path.join(ERIC, "model3_fin_results")
+MODEL1_DIR  = os.path.join(ERICF, "model1_fin_results")
+MODEL25_DIR = os.path.join(ERICF, "model2.5_fin_results")
+MODEL3_DIR  = os.path.join(ERICF, "model3_fin_results")
 OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto")
 
 # ── Bit-width folder configs: (folder_name, run_name, label, color) ────────────
@@ -167,7 +168,7 @@ def _hls_resources_csynth_only(bit_dir, trial_id, search_prefixes):
 
 
 # ── Data loading ───────────────────────────────────────────────────────────────
-def _build_row(model_key, run_name, trial_id, csv_row, lut, ff, dsp, bram, src):
+def _build_row(model_key, run_name, trial_id, csv_row, lut, ff, dsp, bram, src,fullpath):
     return {
         "model":          model_key,
         "run_name":       run_name,
@@ -181,6 +182,7 @@ def _build_row(model_key, run_name, trial_id, csv_row, lut, ff, dsp, bram, src):
         "dsp":            dsp or 0,
         "bram":           bram or 0,
         "hls_source":     src,
+        "fullPath": fullpath, #added by Daniel to make it easier to load models
     }
 
 
@@ -197,8 +199,9 @@ def load_model1(base_dir):
             lut, ff, dsp, bram, src = _hls_resources_model1(bit_dir, trial_id)
             if lut is None:
                 continue
+            fullpath = os.path.join(bit_dir,trial_id[0:4]+"_model"+trial_id[4:]+".h5") #by hand edited it
             rows.append(_build_row("model1", run_name, trial_id, csv_row,
-                                   lut, ff, dsp, bram, src))
+                                   lut, ff, dsp, bram, src,fullpath))
     return pd.DataFrame(rows)
 
 
@@ -216,8 +219,9 @@ def load_model25(base_dir):
                 bit_dir, trial_id, ["hls_outputs"])
             if lut is None:
                 continue
+            fullpath = os.path.join(bit_dir,"model_trial_"+trial_id+".h5")
             rows.append(_build_row("model2_5", run_name, trial_id, csv_row,
-                                   lut, ff, dsp, bram, src))
+                                   lut, ff, dsp, bram, src,fullpath))
     return pd.DataFrame(rows)
 
 
@@ -238,8 +242,13 @@ def load_model3(base_dir):
                  "hls_outputs"])
             if lut is None:
                 continue
+            fullpath1 = os.path.join(bit_dir,"pareto_primary/")
+            fullpath2 = os.path.join(bit_dir,"pareto_secondary/")
+            fullpath = os.path.join(fullpath1,"model_trial_"+trial_id+'.h5')
+            if not os.path.isfile(fullpath):
+                fullpath = os.path.join(fullpath2,"model_trial_"+trial_id+'.h5')
             rows.append(_build_row("model3", run_name, trial_id, csv_row,
-                                   lut, ff, dsp, bram, src))
+                                   lut, ff, dsp, bram, src,fullpath))
     return pd.DataFrame(rows)
 
 
@@ -463,7 +472,7 @@ def main():
 
     df.to_csv(os.path.join(OUTPUT_DIR, "combined_all_detailed.csv"), index=False)
     cols = ["model", "run_name", "trial_id", "parameters", "auc", "primary_metric",
-            "luts", "registers", "luts_plus_ff", "dsp", "bram", "hls_source"]
+            "luts", "registers", "luts_plus_ff", "dsp", "bram", "hls_source","fullPath"]
     pareto_all[[c for c in cols if c in pareto_all.columns]].to_csv(
         os.path.join(OUTPUT_DIR, "pareto_primary.csv"), index=False)
     with open(os.path.join(OUTPUT_DIR, "summary.json"), "w") as f:
