@@ -175,11 +175,14 @@ def runModelPlots(filepath = "", modelType=2,
     
 
     fpr_val = model.evaluation_results[f'fpr_at_{int(sig_eff*100)}pct']
+    bg_rej = model.evaluation_results[f'bkg_rej_at_{int(sig_eff*100)}pct']
     fpr = model.evaluation_results["fpr"] #unfortunately once unwrap, no longer a np.array, so have to renp to index it
     thresholds = model.evaluation_results["thresholds"]
     fpr = np.array(fpr); thresholds = np.array(thresholds)
     threshVal = float(thresholds[fpr==fpr_val])
-    print(f"Cut prediction at {threshVal} corresponding to {sig_eff} signal efficiency and fpr of {fpr_val}")
+    perfSummary = f"Cut pred at {threshVal} which is sig effic: {sig_eff}, fpr: {fpr_val} and bckg rej: {bg_rej}"
+    print(perfSummary)
+    extendTitle = extendTitle + "\n" + perfSummary
     # print(fpr_val)
     # print(fpr)
     # print(thresholds)
