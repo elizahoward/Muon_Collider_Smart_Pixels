@@ -14,6 +14,8 @@ from typing import Callable, Any, Protocol
 import functools
 from validationPlots.plotUtils import * #double check this import will work if call from another folder
 import pandas as pd
+from pathlib import Path
+
 
 
 tf.config.set_visible_devices([], 'GPU') #needed for multiprocessing
@@ -161,6 +163,7 @@ def runModelPlots(filepath = "", modelType=2,
                   tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
                   #to pass through to later plotting functions:
                   sig_eff = 0.99,PLOT_DIR = "./ratePlots",interactivePlots = True,extendTitle = "",
+                  modifyPlotDir = True,
                   ):
     quantizedModel = loadQModel(filepath,modelType)
     model, predictions,modelType = getModelAndPredict(quantizedModel,tfRecordFolder)
@@ -187,6 +190,9 @@ def runModelPlots(filepath = "", modelType=2,
     # print(fpr)
     # print(thresholds)
     predVarDF = getPredVarDF(model,predictions)
+    if modifyPlotDir:
+        PLOT_DIR = PLOT_DIR[:-14]+f"b{bg_rej:.4f}"+PLOT_DIR[-14:]
+    Path(PLOT_DIR).mkdir(parents=True, exist_ok=True)
     runPredVarDFPlots(predVarDF,cut=threshVal, PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,extendTitle=extendTitle,cmap=cmap)
 
 
