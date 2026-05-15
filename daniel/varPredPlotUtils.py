@@ -16,6 +16,8 @@ from validationPlots.plotUtils import * #double check this import will work if c
 import pandas as pd
 
 
+tf.config.set_visible_devices([], 'GPU') #needed for multiprocessing
+
 #This is kind of general, the first cell in the notebook, maybe generalize to something else later
 def loadQModel(filepath = "", modelType=2):
     if filepath == "":
@@ -53,7 +55,7 @@ def getModelAndPredict(quantizedModel,
     model.models[configName] = quantizedModel
     model.evaluate(config_name=configName,predictionPlots=False)
     predictions = model.models[configName].predict(model.validation_generator, verbose=1)
-    return model, predictions
+    return model, predictions, modelType
 
 #########################################################################################################
 #### Plottters
@@ -62,7 +64,8 @@ def getModelAndPredict(quantizedModel,
 ###########template-like functions for general plotting
 def plotVarPrediction(truthDF,varKey, varLabel,varBins=50,predBins = np.linspace(-0.1,1,50), title="",logColor = True,cmap="Blues"):
     mask = [True for i in range(len(truthDF))]
-    plot2dHistFromTruth(truthDF, "prediction",varKey, mask, predBins, varBins, cmap, "prediction by model",varLabel,title,logColor = logColor)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF, "prediction",varKey, mask, predBins, varBins, cmap, "prediction by model",varLabel,title,logColor = logColor)
+    return counts, xedges, yedges, im
 class PlottingFunction(Protocol):
     def __call__(self, df: pd.DataFrame, title: str, *args: Any, **kwargs: Any) -> Any:
         ...
@@ -79,6 +82,7 @@ def plot3by3PredBibSig(
     extendTitle = "",
     PLOT_DIR = "./ratePlots",
     interactivePlots = True,
+    isHist2d = True, #means that plot_func should return counts, xedges, yedges, im
     *args: Any,
     **kwargs: Any
 ) -> None:
@@ -109,33 +113,37 @@ def plot3by3PredBibSig(
     closePlot(PLOT_DIR,interactivePlots,plotName = f"predStratPlot_{genTitle}.png")
 
 # a couple of declarations of plotters more explicitly
-def plotZglobalXsizeJust1(truthDF, title="",binsZGlobal = 30,binsXSize = np.arange(0,22,1)):
+def plotZglobalXsizeJust1(truthDF, title="",binsZGlobal = 30,binsXSize = np.arange(0,22,1),cmap="Blues"):
     mask = [True for i in range(len(truthDF))]
-    plot2dHistFromTruth(truthDF,  "z-global","xSize", mask, binsZGlobal, binsXSize, "Blues", 'z-global [mm]','x-size (# pixels)',title,logColor = True)
-def plotZglobalYsizeJust1(truthDF, title="",binsZGlobal = 30,binsYSize = np.arange(0,14,1),):
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","xSize", mask, binsZGlobal, binsXSize, cmap, 'z-global [mm]','x-size (# pixels)',title,logColor = True)
+    return counts, xedges, yedges, im
+def plotZglobalYsizeJust1(truthDF, title="",binsZGlobal = 30,binsYSize = np.arange(0,14,1),cmap="Blues"):
     mask = [True for i in range(len(truthDF))]
-    plot2dHistFromTruth(truthDF,  "z-global","ySize", mask, binsZGlobal, binsYSize, "Blues", 'z-global [mm]','y-size (# pixels)',title,logColor = True)
-def plotYlocalXsizeJust1(truthDF, title="",binsYlocal = 30,binsXSize = np.arange(0,22,1)):
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","ySize", mask, binsZGlobal, binsYSize, cmap, 'z-global [mm]','y-size (# pixels)',title,logColor = True)
+    return counts, xedges, yedges, im
+def plotYlocalXsizeJust1(truthDF, title="",binsYlocal = 30,binsXSize = np.arange(0,22,1),cmap="Blues"):
     mask = [True for i in range(len(truthDF))]
-    plot2dHistFromTruth(truthDF,  "y-local","xSize", mask, binsYlocal, binsXSize, "Blues", 'y-local [μm]','x-size (# pixels)',title,logColor = True)
-def plotYlocalYsizeJust1(truthDF, title="",binsYlocal = 30,binsYSize = np.arange(0,14,1),):
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","xSize", mask, binsYlocal, binsXSize, cmap, 'y-local [μm]','x-size (# pixels)',title,logColor = True)
+    return counts, xedges, yedges, im
+def plotYlocalYsizeJust1(truthDF, title="",binsYlocal = 30,binsYSize = np.arange(0,14,1),cmap="Blues",):
     mask = [True for i in range(len(truthDF))]
-    plot2dHistFromTruth(truthDF,  "y-local","ySize", mask, binsYlocal, binsYSize, "Blues", 'y-local [μm]','y-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","ySize", mask, binsYlocal, binsYSize, cmap, 'y-local [μm]','y-size (# pixels)',title,logColor = True)
+    return counts, xedges, yedges, im
 
 # Now to actually use the code
 def runPredVarDFPlots(predVarDF,
-                      cut = 0.51171875,PLOT_DIR = "./ratePlots",interactivePlots = True,extendTitle = "",):
+                      cut = 0.51171875,PLOT_DIR = "./ratePlots",interactivePlots = True,extendTitle = "",cmap="Blues"):
     #TODO: COMMENT how the fancy callable stuff works
-    varPredCallables = {"plotter": [functools.partial(plotVarPrediction,varKey = "pt", varLabel = "pT (MeV)"),
-                                    functools.partial(plotVarPrediction,varKey = "xSize", varLabel = "x-size (# pixels)",varBins=np.arange(0,22,1)),
-                                    functools.partial(plotVarPrediction,varKey = "ySize", varLabel = "y-size (# pixels)",varBins=np.arange(0,14,1)),
-                                    functools.partial(plotVarPrediction,varKey = "z-global", varLabel = "z-global [mm]",varBins = 20),
-                                    functools.partial(plotVarPrediction,varKey = "y-local", varLabel = "y-local [μm]",varBins = 20),
-                                    functools.partial(plotVarPrediction,varKey = "nPix", varLabel = "nPix [# pixels]",varBins = 20),
-                                    plotZglobalXsizeJust1,
-                                    plotZglobalYsizeJust1,
-                                    plotYlocalXsizeJust1,
-                                    plotYlocalYsizeJust1,
+    varPredCallables = {"plotter": [functools.partial(plotVarPrediction,varKey = "pt", varLabel = "pT (MeV)",cmap=cmap),
+                                    functools.partial(plotVarPrediction,varKey = "xSize", varLabel = "x-size (# pixels)",varBins=np.arange(0,22,1),cmap=cmap),
+                                    functools.partial(plotVarPrediction,varKey = "ySize", varLabel = "y-size (# pixels)",varBins=np.arange(0,14,1),cmap=cmap),
+                                    functools.partial(plotVarPrediction,varKey = "z-global", varLabel = "z-global [mm]",varBins = 20,cmap=cmap),
+                                    functools.partial(plotVarPrediction,varKey = "y-local", varLabel = "y-local [μm]",varBins = 20,cmap=cmap),
+                                    functools.partial(plotVarPrediction,varKey = "nPix", varLabel = "nPix [# pixels]",varBins = 20,cmap=cmap),
+                                    functools.partial(plotZglobalXsizeJust1,cmap=cmap),
+                                    functools.partial(plotZglobalYsizeJust1,cmap=cmap),
+                                    functools.partial(plotYlocalXsizeJust1,cmap=cmap),
+                                    functools.partial(plotYlocalYsizeJust1,cmap=cmap),
                                     ],
                         "genTitle":["PtVsPrediction","XSizeVsPrediction","YSizeVsPrediction","ZGlobalVsPrediction","YLocalVsPrediction",
                                     "nPixVsPrediction",
@@ -147,13 +155,24 @@ def runPredVarDFPlots(predVarDF,
     for i in range(len(varPredCallables["plotter"])):
         plot3by3PredBibSig(predVarDF,plot_func=varPredCallables["plotter"][i],genTitle=varPredCallables["genTitle"][i],extendTitle = extendTitle,cut=cut, PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 
+    plt.close()
+
 def runModelPlots(filepath = "", modelType=2,
                   tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
                   #to pass through to later plotting functions:
                   sig_eff = 0.99,PLOT_DIR = "./ratePlots",interactivePlots = True,extendTitle = "",
                   ):
     quantizedModel = loadQModel(filepath,modelType)
-    model, predictions = getModelAndPredict(quantizedModel,tfRecordFolder)
+    model, predictions,modelType = getModelAndPredict(quantizedModel,tfRecordFolder)
+    if modelType == 1:
+        cmap = "Purples"
+    elif modelType == 2:
+        cmap = "Blues"
+    elif modelType == 3:
+        cmap = "Greens"
+    else:
+        raise ValueError("why is modelType the wrong thing??? unrecognized model?")
+    
 
     fpr_val = model.evaluation_results[f'fpr_at_{int(sig_eff*100)}pct']
     fpr = model.evaluation_results["fpr"] #unfortunately once unwrap, no longer a np.array, so have to renp to index it
@@ -165,7 +184,7 @@ def runModelPlots(filepath = "", modelType=2,
     # print(fpr)
     # print(thresholds)
     predVarDF = getPredVarDF(model,predictions)
-    runPredVarDFPlots(predVarDF,cut=threshVal, PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,extendTitle=extendTitle)
+    runPredVarDFPlots(predVarDF,cut=threshVal, PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,extendTitle=extendTitle,cmap=cmap)
 
 
 
