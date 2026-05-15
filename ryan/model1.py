@@ -539,7 +539,7 @@ class Model1(SmartPixModel):
             x_concat1 = tf.keras.layers.Concatenate()([q_input2, q_input3])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1, q_input4])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2, q_input5])
-            x_concat4 = tf.keras.layers.Concatenate()([x_concat2, q_input6])
+            x_concat4 = tf.keras.layers.Concatenate()([x_concat3, q_input6])
             x=x_concat4
 
 
