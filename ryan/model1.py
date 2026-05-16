@@ -633,8 +633,12 @@ class Model1(SmartPixModel):
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
+            
+            lr = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+
+
             model.compile(
-            optimizer="adam",
+            optimizer=Adam(learning_rate = lr),
             loss="binary_crossentropy",
             metrics=["binary_accuracy"],
             run_eagerly  = True 
