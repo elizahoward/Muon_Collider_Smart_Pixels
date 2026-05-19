@@ -652,8 +652,8 @@ class Model1(SmartPixModel):
         tuner = SaveModelRandomSearch(
             hypermodel= model_builder,
             objective="val_binary_accuracy",
-            max_trials=120,
-            executions_per_trial=2,
+            max_trials=40,
+            executions_per_trial=1,
             project_name=f"hp_search_5rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal_quantized_matching",
             directory=f"./hyperparameter_tuning_5q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
@@ -804,8 +804,8 @@ class Model1(SmartPixModel):
         tuner = SaveModelRandomSearch(
             hypermodel= model_builder,
             objective="val_binary_accuracy",
-            max_trials=120,
-            executions_per_trial=2,
+            max_trials=40,
+            executions_per_trial=1,
             project_name=f"hp_search_4rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal_quantized_matching",
             directory=f"./hyperparameter_tuning_4q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
@@ -1193,8 +1193,8 @@ def main():
     print(m1.bit_configs[0][0])
     print(m1.input_bits)
     m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
-    m1.makeQuantizedModelHyperParameterTuning2()
-    m1.makeQuantizedModelHyperParameterTuning3()
+    #m1.makeQuantizedModelHyperParameterTuning2()
+    #m1.makeQuantizedModelHyperParameterTuning3()
     m1.makeQuantizedModelHyperParameterTuning4()
     m1.makeQuantizedModelHyperParameterTuning5()
 
