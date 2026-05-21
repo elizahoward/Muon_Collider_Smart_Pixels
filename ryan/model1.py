@@ -110,7 +110,7 @@ class Model1(SmartPixModel):
             initial_lr: float = 1e-3,
             end_lr: float = 1e-4,
             power: int = 2,
-            bit_configs = [(10, 0)] # Test 16, 8, 6, 4, 3, and 2-bit quantization
+            bit_configs = [(8, 0)] # Test 16, 8, 6, 4, 3, and 2-bit quantization
             ): 
         self.tfRecordFolder = tfRecordFolder
         self.modelName = "Model1" # for other models, e.g., Model 1, Model 2, etc.
@@ -130,7 +130,7 @@ class Model1(SmartPixModel):
         self.initial_lr = initial_lr
         self.end_lr = end_lr
         self.power = power
-        self.input_bits = 12
+        self.input_bits = self.bit_configs[0][0] + 2
         return
  
 
@@ -634,7 +634,7 @@ class Model1(SmartPixModel):
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
             
-            lr = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+            lr = hp.Choice('learning_rate', values=[1e-4, 3e-4, 1e-3, 3e-3, 1e-2])
 
             model.compile(
             optimizer=Adam(learning_rate=lr),
@@ -652,7 +652,7 @@ class Model1(SmartPixModel):
         tuner = SaveModelRandomSearch(
             hypermodel= model_builder,
             objective="val_binary_accuracy",
-            max_trials=40,
+            max_trials=80,
             executions_per_trial=1,
             project_name=f"hp_search_5rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal_quantized_matching",
             directory=f"./hyperparameter_tuning_5q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
@@ -786,7 +786,7 @@ class Model1(SmartPixModel):
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
-            lr = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+            lr = hp.Choice('learning_rate', values=[1e-4, 3e-4, 1e-3, 3e-3, 1e-2])
 
             model.compile(
             optimizer=Adam(learning_rate=lr),
@@ -804,7 +804,7 @@ class Model1(SmartPixModel):
         tuner = SaveModelRandomSearch(
             hypermodel= model_builder,
             objective="val_binary_accuracy",
-            max_trials=40,
+            max_trials=80,
             executions_per_trial=1,
             project_name=f"hp_search_4rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal_quantized_matching",
             directory=f"./hyperparameter_tuning_4q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
@@ -924,7 +924,7 @@ class Model1(SmartPixModel):
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
-            lr = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+            lr = hp.Choice('learning_rate', values=[1e-4, 3e-4, 1e-3, 3e-3, 1e-2])
 
             model.compile(
             optimizer=Adam(learning_rate=lr),
@@ -942,8 +942,8 @@ class Model1(SmartPixModel):
         tuner = SaveModelRandomSearch(
             hypermodel= model_builder,
             objective="val_binary_accuracy",
-            max_trials=120,
-            executions_per_trial=2,
+            max_trials=80,
+            executions_per_trial=1,
             project_name=f"hp_search_3rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal_quantized_matching",
             directory=f"./hyperparameter_tuning_3q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
@@ -1051,7 +1051,7 @@ class Model1(SmartPixModel):
 
             model = tf.keras.Model(inputs=inputList, outputs=output)
 
-            lr = hp.Float('learning_rate', min_value=1e-4, max_value=1e-2, sampling='log')
+            lr = hp.Choice('learning_rate', values=[1e-4, 3e-4, 1e-3, 3e-3, 1e-2])
 
             model.compile(
             optimizer=Adam(learning_rate=lr),
@@ -1069,8 +1069,8 @@ class Model1(SmartPixModel):
         tuner = SaveModelRandomSearch(
             hypermodel= model_builder,
             objective="val_binary_accuracy",
-            max_trials=120,
-            executions_per_trial=2,
+            max_trials=80,
+            executions_per_trial=1,
             project_name=f"hp_search_2rows_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal_quantized_matching",
             directory=f"./hyperparameter_tuning_2q_{self.bit_configs[0][0]}w0i_i{self.input_bits}_nModXlocal",   # keep KT logs in one place
             overwrite=True,                        # avoid weird resume behavior
@@ -1188,131 +1188,16 @@ class Model1(SmartPixModel):
 
 
 def main():
-    """
+
     m1 = Model1()                 # your subclass
     print(m1.bit_configs[0][0])
     print(m1.input_bits)
     m1.loadTfRecords()            # <-- IMPORTANT: load training/validation generators
-    #m1.makeQuantizedModelHyperParameterTuning2()
-    #m1.makeQuantizedModelHyperParameterTuning3()
+    m1.makeQuantizedModelHyperParameterTuning2()
+    m1.makeQuantizedModelHyperParameterTuning3()
     m1.makeQuantizedModelHyperParameterTuning4()
     m1.makeQuantizedModelHyperParameterTuning5()
-    """
-    """
-    Compare quantized models from ANY number of directories
-    """
-
-    import os, glob
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    import tensorflow as tf
-
-    from qkeras import QDense, QActivation
-    from qkeras.quantizers import quantized_bits, quantized_relu
-
-    # ---- put as many as you want here ----
-    MODEL_DIRS = [
-        ("/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/quantization_nModXlocal_results/quantized_10w0i_i12_nModXlocal_results", "nModXlocal"),
-        ("/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/quantization_sigmoid_results/quantized_10w0i_i12_sigmoid_results", "Z-global"),
-    ]
-
-    qkeras_custom_objects = {
-        "QDense": QDense,
-        "QActivation": QActivation,
-        "quantized_bits": quantized_bits,
-        "quantized_relu": quantized_relu,
-    }
-
-    m1 = Model1()
-    m1.loadTfRecords()
-
-
-    def evaluate_dir(base, label):
-        model_paths = sorted(glob.glob(os.path.join(base, "model_trial_*.h5")))
-        print(f"\n{label}: Found {len(model_paths)} models")
-
-        rows = []
-
-        for mp in model_paths:
-            trial_str = os.path.basename(mp).split("_")[-1].replace(".h5", "")
-            trial_id = int(trial_str)
-
-            try:
-                model = tf.keras.models.load_model(
-                    mp,
-                    compile=False,
-                    custom_objects=qkeras_custom_objects,
-                )
-
-                model.compile(
-                    optimizer="adam",
-                    loss="binary_crossentropy",
-                    metrics=["binary_accuracy"],
-                )
-
-                m1.models["Quantized"] = model
-                eval_res = m1.evaluate(config_name="Quantized", predictionPlots=False)
-
-                rows.append({
-                    "trial_id": trial_id,
-                    "params": model.count_params(),
-                    "accuracy": eval_res["test_accuracy"],
-                    "auc": eval_res["roc_auc"],
-                    "loss": eval_res["test_loss"],
-                    "label": label,
-                    "model_path": mp,
-                })
-
-            except Exception as e:
-                print(f"❌ Failed {mp}: {e}")
-
-        return pd.DataFrame(rows)
-
-
-    all_dfs = []
-    for base, label in MODEL_DIRS:
-        df_i = evaluate_dir(base, label)
-        all_dfs.append(df_i)
-
-    df = pd.concat(all_dfs, ignore_index=True)
-
-    print(df.head())
-    print("Total models:", len(df))
-    plt.figure(figsize=(9,6))
-
-    for label in df["label"].unique():
-        s = df[df["label"] == label]
-        plt.scatter(s["params"], s["auc"], label=label, alpha=0.8)
-
-    plt.xlabel("Parameters")
-    plt.ylabel("ROC AUC")
-    plt.title("ROC AUC vs Parameters")
-    plt.legend()
-    plt.grid(True)
-
-    plt.savefig("comparison_auc.png", dpi=300, bbox_inches="tight")
-    plt.show()
-
-
-    print(df.head())
-    print("Total models:", len(df))
-    plt.figure(figsize=(9,6))
-
-    for label in df["label"].unique():
-        s = df[df["label"] == label]
-        plt.scatter(s["params"], s["accuracy"], label=label, alpha=0.8)
-
-    plt.xlabel("Parameters")
-    plt.ylabel("Accuracy")
-    plt.title("Accuracy vs Parameters")
-    plt.legend()
-    plt.grid(True)
-
-    plt.savefig("comparison_acc.png", dpi=300, bbox_inches="tight")
-    plt.show()
-
     
-
 
 if __name__ == "__main__":
     main()
