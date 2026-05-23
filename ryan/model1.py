@@ -1188,7 +1188,7 @@ class Model1(SmartPixModel):
 
 
 def main():
-
+    """
     m1 = Model1()                 # your subclass
     print(m1.bit_configs[0][0])
     print(m1.input_bits)
@@ -1197,7 +1197,102 @@ def main():
     m1.makeQuantizedModelHyperParameterTuning3()
     m1.makeQuantizedModelHyperParameterTuning4()
     m1.makeQuantizedModelHyperParameterTuning5()
-    
+    """
+    """
+Compare quantized models from ANY number of directories
+"""
+
+    import os, glob
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import tensorflow as tf
+
+    from qkeras import QDense, QActivation
+    from qkeras.quantizers import quantized_bits, quantized_relu
+
+    # ---- put as many as you want here ----
+    MODEL_DIRS = [
+        ("/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/quantization_nModXlocal_results/quantized_8w0i_i10_nModXlocal_results", "nModXlocal_8w0i"),
+        ("/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/quantization_sigmoid_results/quantized_8w0i_i10_results", "Z-global_8w0i"),
+    ]
+
+    qkeras_custom_objects = {
+        "QDense": QDense,
+        "QActivation": QActivation,
+        "quantized_bits": quantized_bits,
+        "quantized_relu": quantized_relu,
+    }
+
+    m1 = Model1()
+    m1.loadTfRecords()
+
+
+    def evaluate_dir(base, label):
+        model_paths = sorted(glob.glob(os.path.join(base, "model_trial_*.h5")))
+        print(f"\n{label}: Found {len(model_paths)} models")
+
+        rows = []
+
+        for mp in model_paths:
+            trial_str = os.path.basename(mp).split("_")[-1].replace(".h5", "")
+            trial_id = int(trial_str)
+
+            try:
+                model = tf.keras.models.load_model(
+                    mp,
+                    compile=False,
+                    custom_objects=qkeras_custom_objects,
+                )
+
+                model.compile(
+                    optimizer="adam",
+                    loss="binary_crossentropy",
+                    metrics=["binary_accuracy"],
+                )
+
+                m1.models["Quantized"] = model
+                eval_res = m1.evaluate(config_name="Quantized", predictionPlots=False)
+
+                rows.append({
+                    "trial_id": trial_id,
+                    "params": model.count_params(),
+                    "accuracy": eval_res["test_accuracy"],
+                    "auc": eval_res["roc_auc"],
+                    "loss": eval_res["test_loss"],
+                    "label": label,
+                    "model_path": mp,
+                })
+
+            except Exception as e:
+                print(f"❌ Failed {mp}: {e}")
+
+        return pd.DataFrame(rows)
+
+
+    all_dfs = []
+    for base, label in MODEL_DIRS:
+        df_i = evaluate_dir(base, label)
+        all_dfs.append(df_i)
+
+    df = pd.concat(all_dfs, ignore_index=True)
+
+    print(df.head())
+    print("Total models:", len(df))
+    plt.figure(figsize=(9,6))
+
+    for label in df["label"].unique():
+        s = df[df["label"] == label]
+        plt.scatter(s["params"], s["auc"], label=label, alpha=0.8)
+
+    plt.xlabel("Parameters")
+    plt.ylabel("ROC AUC")
+    plt.title("ROC AUC vs Parameters")
+    plt.legend()
+    plt.grid(True)
+
+    plt.savefig("comparison_auc_8w0i.png", dpi=300, bbox_inches="tight")
+    plt.show()
+        
 
 if __name__ == "__main__":
     main()
