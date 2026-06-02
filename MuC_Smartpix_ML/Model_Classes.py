@@ -589,7 +589,7 @@ class SmartPixModel(ABC):
         
         return results
     
-    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99],verboseDataRate=False,predictionPlots=True):
+    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99],verboseDataRate=False,predictionPlots=False):
         """
         Evaluate the trained model with background rejection metrics.
         
