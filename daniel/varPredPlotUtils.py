@@ -21,7 +21,7 @@ from pathlib import Path
 tf.config.set_visible_devices([], 'GPU') #needed for multiprocessing
 
 #This is kind of general, the first cell in the notebook, maybe generalize to something else later
-def loadQModel(filepath = "", modelType=2):
+def loadQModel(filepath = "", modelType=2,co = {} ):
     if filepath == "":
         filepath="../../Muon_Collider_Smart_Pixels/eric/model2.5_quantized_4w0i_hyperparameter_results_20260222_004048/model_trial_000.h5"
         filepath="../../Muon_Collider_Smart_Pixels/eric/model2.5_quantized_8w0i_hyperparameter_results_20260228_020952/model_trial_0.h5"
@@ -34,7 +34,7 @@ def loadQModel(filepath = "", modelType=2):
         #Now trying an Ryan model
         if modelType==1:
             filepath="/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/ryan/old_quantization_res/model1_quantized_4w0i_pareto/model_trial_034.h5"
-    co = {}       
+          
     qkeras.utils._add_supported_quantized_objects(co)
     quantizedModel = tf.keras.models.load_model(filepath,custom_objects=co,compile=True)
     return quantizedModel

@@ -39,6 +39,13 @@ print(tf.test.is_built_with_gpu_support())
 print(tf.test.is_gpu_available())
 # os.system("echo $PATH")
 
+
+# #Imports for trainModel to work, once move out, should delete these 
+# from tensorflow.keras.optimizers import Adam
+# from tensorflow.keras.optimizers.schedules import PolynomialDecay, ExponentialDecay, CosineDecay
+# from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, Callback
+# from Model_Classes import GradientMonitor, WarmupThenDecay
+
 class ModelASIC(Model_Classes.SmartPixModel):
     def __init__(self,
             # tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
@@ -68,6 +75,11 @@ class ModelASIC(Model_Classes.SmartPixModel):
         self.histories = {}
         self.models = {"Unquantized": None}
         self.bit_configs = bit_configs
+        
+        self.loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), # default from_logits=False #From fermilab
+        self.metrics = [tf.keras.metrics.SparseCategoricalAccuracy()] #From fermilab https://github.com/smart-pix/filter/blob/main/model_pipeline/train.ipynb
+        self.training_generator = None
+        self.validation_generator = None
         for total_bits, int_bits in self.bit_configs:
             config_name = f"quantized_{total_bits}w{int_bits}i"
             self.models[config_name] = None
@@ -88,7 +100,7 @@ class ModelASIC(Model_Classes.SmartPixModel):
         # stack = tf.keras.layers.Dense(10)(stack)
         output = tf.keras.layers.Dense(1,activation='sigmoid')(stack)
 
-        model1 = tf.keras.Model(inputs=inputList, outputs=output)
+        model1 = tf.keras.Model(inputs=inputList, outputs=output, name="ModelASIC_unquantized")
 
         # model.summary()
 
@@ -151,7 +163,11 @@ class ModelASIC(Model_Classes.SmartPixModel):
             x_concat1 = tf.keras.layers.Concatenate()([input1,input2])
             x_concat2 = tf.keras.layers.Concatenate()([x_concat1,input3])
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
-            x=x_concat3
+            x=x_concat3                        
+
+            # input5 = tf.keras.layers.Input(shape=(16,),name="inVectAsic")
+            # inputList = [input5]
+            # x = input5;
             
             weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
             # x = x_in = Input(shape, name="input1")
@@ -162,24 +178,30 @@ class ModelASIC(Model_Classes.SmartPixModel):
                                 )(x)
             x = QActivation("quantized_relu(8,0)", name="relu1")(x)
             #Fermilab's output layer, not right for our dataset currently
-            # x = QDense(3,
-            #     kernel_quantizer=weight_quantizer,
-            #     bias_quantizer=weight_quantizer,
-            #     name="dense2")(x)
-            # x = QActivation("linear", name="linear")(x)
-
-            #Eric's Output layer
-            x = QDense(
-                1,
+            x = QDense(3,
                 kernel_quantizer=weight_quantizer,
                 bias_quantizer=weight_quantizer,
-                name="output_dense"
-            )(x)
-            output = QActivation("smooth_sigmoid", name="output")(x)
-            model = tf.keras.Model(inputs=inputList, outputs=x)
+                name="dense2")(x)
+            x = QActivation("linear", name="linear")(x)
+            output=x;
+
+            # #Eric's Output layer
+            # x = QDense(
+            #     1, #3
+            #     kernel_quantizer=weight_quantizer,
+            #     bias_quantizer=weight_quantizer,
+            #     name="output_dense"
+            # )(x)
+            # output = QActivation("smooth_sigmoid", name="output")(x)
+            # #NOOOO # output = QActivation("argmax", name="output")(x) #this is actually nonsense
+            model = tf.keras.Model(inputs=inputList, outputs=output, name=f"ModelASIC_quantized{weight_bits}")
 
             model.summary()
-            model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['binary_accuracy'])
+            # model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['binary_accuracy'])
+            # model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy']) #doesn't quite work, so instead use Fermilab's
+            model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), # default from_logits=False
+              metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
             self.models[config_name] = model
     # def trainQuantizedModel(self,numEpochs = 20):        
     #     callbacks = []
