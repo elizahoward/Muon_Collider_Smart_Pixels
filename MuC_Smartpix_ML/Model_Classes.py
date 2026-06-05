@@ -635,6 +635,15 @@ class SmartPixModel(ABC):
         for idx, sig_eff in enumerate(signal_efficiencies):
             fpr_val = bkg_rejection_metrics[f'fpr_at_{int(sig_eff*100)}pct']
             threshVal = thresholds[fpr==fpr_val]
+            if len(threshVal)>1:
+                print("Warning! threshVal is more than one thing!")
+                print(threshVal)
+                if len(threshVal) == 2:
+                    print("Looks like all predictions are constant?")
+                    threshVal = [threshVal[0]]
+                elif len(threshVal) == 3:
+                    print("looks like all predictions are one of 2 things")
+                    threshVal = [threshVal[1]]
             print(f"Data rate at fpr {fpr_val} and threshold {threshVal}")
             if verboseDataRate:
                 numBackPixesPostFilter[idx],numBackPixesTotal[idx],numBackPixesRejRatio[idx] = dataRateUtils.genNpixAndGetDataRate(self,predictions.ravel(),cut=threshVal)
@@ -683,7 +692,7 @@ class SmartPixModel(ABC):
         
         return self.evaluation_results
     
-    def runAllStuff(self,numEpochs = 6):
+    def runAllStuff(self,numEpochs = 6,runUnquantized=True):
         """
         Run the complete {self.modelName} pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
         """
@@ -713,38 +722,41 @@ class SmartPixModel(ABC):
         print("2a. Building Unquantized model...")
         self.buildModel("Unquantized")
         
-        print("2b. Training Unquantized model...")
-        self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
-        
-        print("2c. Evaluating Unquantized model...")
-        eval_results = self.evaluate()
-        
-        # Save non-quantized model
-        print("2d. Saving Unquantized model...")
-        model_save_path = os.path.join(models_dir, f"{self.modelName}_Unquantized.h5")
-        self.saveModel(file_path = model_save_path, config_name = "Unquantized")
-        print(f"Unquantized model saved to: {model_save_path}")
-        
-        # Store non-quantized results
-        results.append({
-            'model_type': 'non_quantized',
-            'weight_bits': 'N/A',
-            'integer_bits': 'N/A',
-            'test_accuracy': eval_results['test_accuracy'],
-            'test_loss': eval_results['test_loss'],
-            'roc_auc': eval_results['roc_auc'],
-            'bkg_rej_90pct': eval_results.get('bkg_rej_at_90pct'),
-            'bkg_rej_98pct': eval_results.get('bkg_rej_at_98pct'),
-            'bkg_rej_99pct': eval_results.get('bkg_rej_at_99pct'),
-            'model_path': model_save_path
-        })
-        
-        print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
-        
-        # Plot non-quantized results
-        print("2e. Plotting non-quantized results...")
-        plot_dir_unquant = os.path.join(plots_dir, "non_quantized")
-        self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
+        if runUnquantized:
+            print("2b. Training Unquantized model...")
+            self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
+            
+            print("2c. Evaluating Unquantized model...")
+            eval_results = self.evaluate()
+            
+            # Save non-quantized model
+            print("2d. Saving Unquantized model...")
+            model_save_path = os.path.join(models_dir, f"{self.modelName}_Unquantized.h5")
+            self.saveModel(file_path = model_save_path, config_name = "Unquantized")
+            print(f"Unquantized model saved to: {model_save_path}")
+            
+            # Store non-quantized results
+            results.append({
+                'model_type': 'non_quantized',
+                'weight_bits': 'N/A',
+                'integer_bits': 'N/A',
+                'test_accuracy': eval_results['test_accuracy'],
+                'test_loss': eval_results['test_loss'],
+                'roc_auc': eval_results['roc_auc'],
+                'bkg_rej_90pct': eval_results.get('bkg_rej_at_90pct'),
+                'bkg_rej_98pct': eval_results.get('bkg_rej_at_98pct'),
+                'bkg_rej_99pct': eval_results.get('bkg_rej_at_99pct'),
+                'model_path': model_save_path
+            })
+            
+            print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
+            
+            # Plot non-quantized results
+            print("2e. Plotting non-quantized results...")
+            plot_dir_unquant = os.path.join(plots_dir, "non_quantized")
+            self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
+        else:
+            print("runUnquantized set False, so skipping unquantized model")
         
         # Test quantized models
         
