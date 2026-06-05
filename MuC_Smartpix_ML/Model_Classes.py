@@ -430,11 +430,14 @@ class SmartPixModel(ABC):
         else:
             optimizer = Adam(learning_rate=learning_rate, clipnorm=clipnorm)
         
+        loss = getattr(self, "loss", "binary_crossentropy") #If you get an error from this line, slack Daniel
+        metrics = getattr(self, "metrics", ["binary_accuracy"]) #If you get an error from this line, slack Daniel
+
         # Compile model
-        self.models[config_name].compile(
+        self.models[config_name].compile( #If you get an error from this line, slack Daniel
             optimizer=optimizer,
-            loss="binary_crossentropy",
-            metrics=["binary_accuracy"],
+            loss=loss,
+            metrics=metrics,
             run_eagerly=run_eagerly
         )
         
@@ -506,10 +509,14 @@ class SmartPixModel(ABC):
         
         # Plot training history
         fig, axes = plt.subplots(1, 2, figsize=(15, 5))
+
+        metrics = getattr(self, "metrics", ["binary_accuracy"])
+        metric = metrics[0]
+        metricName = getattr(metric, "name", metric)
         
         # Plot accuracy
-        axes[0].plot(self.histories[config_name].history['binary_accuracy'], label='Training')
-        axes[0].plot(self.histories[config_name].history['val_binary_accuracy'], label='Validation')
+        axes[0].plot(self.histories[config_name].history[metricName], label='Training')
+        axes[0].plot(self.histories[config_name].history[f'val_{metricName}'], label='Validation')
         axes[0].set_title(f'{self.modelName} Accuracy')
         axes[0].set_xlabel('Epoch')
         axes[0].set_ylabel('Accuracy')
@@ -612,6 +619,10 @@ class SmartPixModel(ABC):
         
         # Get predictions
         predictions = self.models[config_name].predict(eval_generator, verbose=1)
+
+        #In case of ASIC model, need to do an argmax on top of it
+        if predictions.shape[1]>1: #If this throws an error, slack Daniel, and comment out these 2 lines
+            predictions = np.argmax(predictions,axis=1)
         
         # Get true labels
         true_labels = np.concatenate([y for _, y in eval_generator])
