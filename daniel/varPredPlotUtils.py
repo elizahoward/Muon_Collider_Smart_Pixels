@@ -46,6 +46,9 @@ def getModelAndPredict(quantizedModel,
     if "1" in quantizedModel.name[3:7]:
         modelType = 1
         model = Model1(tfRecordFolder = tfRecordFolder)   
+    elif "ASIC" in quantizedModel.name[3:9]:
+        modelType = 0
+        model = ModelASIC(tfRecordFolder=tfRecordFolder)   
     elif "2" in quantizedModel.name[3:7]:
         modelType = 2
         model = Model2_5(tfRecordFolder = tfRecordFolder)   
@@ -173,6 +176,8 @@ def runModelPlots(filepath = "", modelType=2,
         cmap = "Blues"
     elif modelType == 3:
         cmap = "Greens"
+    elif modelType == 0:
+        cmap = "Reds"
     else:
         raise ValueError("why is modelType the wrong thing??? unrecognized model?")
     
