@@ -203,6 +203,16 @@ class ModelASIC(Model_Classes.SmartPixModel):
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), # default from_logits=False
               metrics=[tf.keras.metrics.SparseCategoricalAccuracy()])
             self.models[config_name] = model
+    def reportQuantizedBrejSeff(self):
+        try:
+            brej = 1 - self.evaluation_results['fpr'][1]
+            sigeff = self.evaluation_results['tpr'][1]
+        except AttributeError:
+            print("can't find evaluation_results, did you run .evaluate yet?")
+        except Exception as e:
+            print(e)
+        print(f"Background rejection: {brej} at signal efficiency {sigeff}.")
+        print("Note: Since model is highly quantized, other signal efficiencies are not accessible, but can check roc_curve")
     # def trainQuantizedModel(self,numEpochs = 20):        
     #     callbacks = []
     #     self.historyQ = self.models["Quantized"].fit(x=self.training_generator,validation_data=self.validation_generator, callbacks=callbacks,epochs=numEpochs)
