@@ -33,14 +33,14 @@ def pixPredictToDataRate(yTest,nPixes,predictions,cut=0.138891,doPrintExtra = Tr
     # print(predictions.shape)
     # print(predictions[backGnd])
     backTotal = (predictions[backGnd]) #I think this can be cleaned up substantially?
-    backAccept = np.where(predictions[backGnd]>cut)
-    # backAccept = (np.logical_and(predictions>cut,(yTest.numpy().ravel()==0)))
+    backAccept = np.where(predictions[backGnd]>=cut)
+    # backAccept = (np.logical_and(predictions>=cut,(yTest.numpy().ravel()==0)))
     if doPlot:
         plt.hist(backTotal,bins=100,label="all background");
         plt.hist(predictions[backGnd][backAccept],alpha=0.4,label="accepted background")
         plt.legend()
         plt.yscale('log'); plt.vlines([cut],0,10000,"red")
-        plt.title(f"prediction of background sample with thresh cut {cut}")
+        plt.title(f"prediction of background sample with prediciton >= thresh cut {cut}")
         plt.ylabel("N background samples")
         plt.xlabel("prediction")
         plt.show()
