@@ -58,6 +58,7 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             max_workers: int = 1,
             shuffle_data: bool = True,
             random_seed: int = 42,
+            output3Category = False,#changes the signal/bib output of the test vectors to be a 3-dim vector for use with the ASIC model
             ):
         super().__init__() 
         if tf_records_dir is None:
@@ -67,7 +68,7 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             random.seed(random_seed)
             np.random.seed(random_seed)
         self.file_offsets = [0]
-        allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule","pt"]
+        allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule","pt","inVectAsic"]
         if isinstance(x_feature_description, str) and x_feature_description == "all":
             self.x_feature_description=allowed_features
         elif isinstance(x_feature_description, str):
@@ -296,6 +297,19 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             self.labels = labels_df_raw.values
             nModules = nModules_raw.values / 5
             x_locs = xlocals_raw.values / 13
+            #addition for ASIC model
+            print("Warning: BAD IMPLEMENTATION normalization should be moved out of subclass, then next line must be changed")
+            Y_PROFILE_NORM =  8.781
+            inVectAsic = np.concatenate((np.clip(y_profiles / Y_PROFILE_NORM, 0.0, 1.0),
+                                         x_sizes[:, np.newaxis],y_locals[:, np.newaxis],z_locs[:, np.newaxis]), axis=1)
+            print(inVectAsic)
+            print(f"inVectAsic.shape: {inVectAsic.shape}")   # Debug print
+            if output3Category:
+                print("It turns out this was a bad idea, the ASIC model doesn't actually use this kind of categorical label, so better not to use this")
+                self.modifyLabelsForAsic()
+                print(self.labels)
+                print("updated labels because of modifying for ASIC, but actually this was a bad idea and shouldn't be done")
+            print(self.labels)
             print(z_locs)
             print(x_locs)
             self.x_features = {}
@@ -329,6 +343,8 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
                 self.x_features['nModule'] = nModules
             if 'pt' in self.x_feature_description:
                 self.x_features['pt'] = pt
+            if 'inVectAsic' in self.x_feature_description:
+                self.x_features['inVectAsic'] = inVectAsic
             #ADD pt, cotalpha, cotbeta, recalculated p; Add in some sort of event number
             # DATA-LEVEL SHUFFLING
             if shuffle_data:
@@ -448,4 +464,16 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
         self.epoch_count += 1
         if self.epoch_count == 1:
             logging.warning(f"Quantization is {self.quantize} in data generator. This may affect model performance.") 
+
+    def modifyLabelsForAsic(self): 
+        raise ValueError("This output structure wasn't useful for the ASIC Model, so would advise against using it.\nIf you're really sure you want to use it, can comment out this error line")       
+        # Define the exact 3-column rows for 0 and 1
+        lookup_matrix = np.array([
+            [1, 0, 0],  # Row 0: selected when self.labels is 0
+            [0, 1, 0]   # Row 1: selected when self.labels is 1
+        ], dtype=np.int32)
+
+        # Vectorized fancy indexing mapping millions of rows instantly
+        categories = lookup_matrix[self.labels.squeeze()]
+        self.labels = categories
     

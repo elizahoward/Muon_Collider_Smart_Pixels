@@ -241,7 +241,7 @@ def create_normalized_tf_records(batch_size, is_single_timestamp,
 
 
 def main():
-    datasetName = "Data_Set_2026V3_May"
+    datasetName = "Data_Set_2026V4_June"
     data_root   = Path("/local/d1/smartpixML/2026Datasets/Data_Files/") / datasetName
     base_output_dir      = str(data_root / "TF_Records")
     data_directory_path  = str(data_root / "Parquet_Files") + "/"
