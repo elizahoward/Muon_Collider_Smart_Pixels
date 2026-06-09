@@ -66,7 +66,7 @@ class ModelASIC(Model_Classes.SmartPixModel):
         self.modelName = "ASIC Model" # for other models, e.g., Model 1, Model 2, etc.
         # self.models = {"Unquantized": None, "Quantized": None} # Maybe have a dictionary to store different versions of the model
         self.hyperparameterModel = None
-        self.x_feature_description: list = ['x_size','z_global','y_profile','x_profile','cluster','y_local','nPix',"x_local","nModule"]
+        self.x_feature_description: list = ['x_size','z_global','y_profile','x_profile','cluster','y_local','nPix',"x_local","nModule","inVectAsic"]
         # Learning rate parameters
         self.initial_lr = initial_lr
         self.end_lr = end_lr
@@ -165,9 +165,9 @@ class ModelASIC(Model_Classes.SmartPixModel):
             x_concat3 = tf.keras.layers.Concatenate()([x_concat2,input4])
             x=x_concat3                        
 
-            # input5 = tf.keras.layers.Input(shape=(16,),name="inVectAsic")
-            # inputList = [input5]
-            # x = input5;
+            input5 = tf.keras.layers.Input(shape=(16,),name="inVectAsic")
+            inputList = [input5]
+            x = input5;
             
             weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
             # x = x_in = Input(shape, name="input1")
