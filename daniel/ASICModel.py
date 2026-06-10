@@ -60,6 +60,7 @@ class ModelASIC(Model_Classes.SmartPixModel):
             bit_configs = [(4,0)], #I think this is the only quantization really used, but double check based off of paper/etc.
 
             ): 
+        super(ModelASIC, self).__init__() #I don't think it's actually necessary, but doesn't hurt
         # Do we want to specify model, modelType, bitSize, etc.
         # Decide here if we want to load a pre-trained model or create a new one from scratch
         self.tfRecordFolder = tfRecordFolder
@@ -168,6 +169,13 @@ class ModelASIC(Model_Classes.SmartPixModel):
             input5 = tf.keras.layers.Input(shape=(16,),name="inVectAsic")
             inputList = [input5]
             x = input5;
+
+            self.input_bits = 6;
+            self.input_int_bits = 0;
+            input_q_str = f"quantized_bits({self.input_bits},{self.input_int_bits})"            
+            input5_q  = QActivation(input_q_str, name="q_input_cluster")(input5)
+
+            x = input5_q
             
             weight_quantizer = quantized_bits(weight_bits, int_bits, alpha=1.0)
             # x = x_in = Input(shape, name="input1")
