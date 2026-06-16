@@ -103,31 +103,159 @@ class hlsVerifier():
         test_loss, test_accuracy = self.model.evaluate(self.xTest, self.yTest)
         print(test_loss,"that was loss, val accuracy  is",test_accuracy)
 
+    # def fixLayerActivation(self):
+    #     for layer in self.quantizedModel.layers:
+    #         if hasattr(layer, 'activation'):
+    #             act = layer.activation
+                
+    #             # 1. Handle QKeras strings like 'quantized_relu(8,0)'
+    #             if isinstance(act, str) and 'quantized_' in act:
+    #                 # This converts the string into a QKeras activation object
+    #                 # layer.activation = qkeras.get_quantized_activation(act)
+    #                 layer.activation = qkeras.get_quantizer(act)
+                
+    #             # 2. Handle standard Keras strings like 'relu' or 'linear'
+    #             elif isinstance(act, str):
+    #                 layer.activation = tf.keras.activations.get(act)
+
+    #             # 3. Final safety check: ensure the object has a __name__ for hls4ml
+    #             if not hasattr(layer.activation, '__name__'):
+    #                 # QKeras objects usually store their name in __name__ or we can use the class name
+    #                 name = getattr(layer.activation, '__name__', layer.activation.__class__.__name__)
+    #                 # If it's still an object we can't edit, we can force a name attribute 
+    #                 # by wrapping it or using setattr if the object allows it
+    #                 try:
+    #                     setattr(layer.activation, '__name__', name)
+    #                 except AttributeError:
+    #                     pass 
+
+    #Rewritten by AI to handle QDenseBatchNorm from ASICModel
+    # def fixLayerActivation(self):
+    #     for layer in self.quantizedModel.layers:
+    #         if hasattr(layer, 'activation'):
+    #             act = layer.activation
+                
+    #             # 1. Skip if it is already a healthy Keras Tuner dictionary
+    #             if isinstance(act, dict) and 'class_name' in act and act['class_name'] != 'linear':
+    #                 continue
+
+    #             # 2. Extract structural string name from function objects or references
+    #             if not isinstance(act, str):
+    #                 name = getattr(act, '__name__', act.__class__.__name__)
+    #             else:
+    #                 name = act
+
+    #             # 3. Clean up serialized parameterized strings like "quantized_relu(8,0)"
+    #             if '(' in name:
+    #                 name = name.split('(')[0]
+
+    #             # 4. Route accurately to satisfy both to_json() and hls4ml
+    #             if 'quantized_' in name or name in ['binary', 'ternary']:
+    #                 layer.activation = {
+    #                     'class_name': name,
+    #                     'config': {
+    #                         'bits': 8, 
+    #                         'integer': 0
+    #                     }
+    #                 }
+    #             elif name == 'linear':
+    #                 # UNIVERSAL FIX: Use the resolved activation function object.
+    #                 # This serializes safely to 'linear' string inside Keras json 
+    #                 # AND yields a valid .__name__ property to satisfy hls4ml.
+    #                 layer.activation = tf.keras.activations.get('linear')
+    #             else:
+    #                 layer.activation = name
+    # def fixLayerActivation(self):
+    #     # Define a robust dummy class that acts like a functional QKeras quantizer object 
+    #     # to perfectly satisfy hls4ml's internal get_activation_quantizer routine
+    #     class Hls4mlCompatibleQuantizer:
+    #         def __init__(self, name):
+    #             self.__name__ = name
+    #             self.class_name = name
+
+    #         def __call__(self, x):
+    #             return x
+
+    #         def get_config(self):
+    #             # Returns a default configuration to keep downstream dictionaries happy
+    #             return {'bits': 8, 'integer': 0, 'negative_slope': 0.0}
+
+    #     # Instantiate custom fake quantizer trackers for hls4ml routing paths
+    #     dummy_linear = Hls4mlCompatibleQuantizer('quantized_bits')
+    #     dummy_relu = Hls4mlCompatibleQuantizer('quantized_relu')
+
+    #     for layer in self.quantizedModel.layers:
+    #         if hasattr(layer, 'activation'):
+    #             act = layer.activation
+                
+    #             # Extract basic text identity identifier
+    #             if isinstance(act, dict):
+    #                 name = act.get('class_name', str(act))
+    #             else:
+    #                 name = getattr(act, '__name__', str(act))
+
+    #             if '(' in name:
+    #                 name = name.split('(')[0]
+    #             if 'function linear' in name or 'builtins' in name:
+    #                 name = 'linear'
+
+    #             # Force route the underlying configuration references to our robust dummy tracking objects
+    #             if 'quantized_relu' in name:
+    #                 layer.activation = dummy_relu
+    #             elif name == 'linear' or 'quantized_bits' in name:
+    #                 layer.activation = dummy_linear
+    #             else:
+    #                 # Standard non-quantized activations can safely default to strings
+    #                 layer.activation = name
+
     def fixLayerActivation(self):
+        from qkeras.quantizers import quantized_bits, quantized_relu
+        # 1. Create true instantiated QKeras Quantizer objects
+        # These objects possess the 'get_config' attribute hls4ml checks for!
+        qk_bits_8_0 = quantized_bits(bits=8, integer=0)
+        qk_relu_8_0 = quantized_relu(bits=8, integer=0)
+
         for layer in self.quantizedModel.layers:
             if hasattr(layer, 'activation'):
                 act = layer.activation
+                layer_type = layer.__class__.__name__
                 
-                # 1. Handle QKeras strings like 'quantized_relu(8,0)'
-                if isinstance(act, str) and 'quantized_' in act:
-                    # This converts the string into a QKeras activation object
-                    # layer.activation = qkeras.get_quantized_activation(act)
-                    layer.activation = qkeras.get_quantizer(act)
-                
-                # 2. Handle standard Keras strings like 'relu' or 'linear'
-                elif isinstance(act, str):
-                    layer.activation = tf.keras.activations.get(act)
+                # Skip if it's already an active Keras Tuner structured layout dict
+                if isinstance(act, dict) and 'class_name' in act and act['class_name'] != 'linear':
+                    continue
 
-                # 3. Final safety check: ensure the object has a __name__ for hls4ml
-                if not hasattr(layer.activation, '__name__'):
-                    # QKeras objects usually store their name in __name__ or we can use the class name
-                    name = getattr(layer.activation, '__name__', layer.activation.__class__.__name__)
-                    # If it's still an object we can't edit, we can force a name attribute 
-                    # by wrapping it or using setattr if the object allows it
-                    try:
-                        setattr(layer.activation, '__name__', name)
-                    except AttributeError:
-                        pass 
+                # Extract basic string name 
+                if not isinstance(act, str):
+                    name = getattr(act, '__name__', act.__class__.__name__)
+                else:
+                    name = act
+
+                if '(' in name:
+                    name = name.split('(')[0]
+                if 'function linear' in name or 'builtins' in name:
+                    name = 'linear'
+
+                # 2. Route layers directly to fully-instantiated QKeras object classes
+                if 'quantized_bits' in name:
+                    layer.activation = qk_bits_8_0
+                    
+                elif 'quantized_relu' in name:
+                    layer.activation = qk_relu_8_0
+                    
+                elif name == 'linear':
+                    if layer_type == 'QActivation':
+                        # Standalone QActivation layers acting as a pass-through 
+                        # must use an instantiated quantized_bits instance to trigger 'linear'
+                        layer.activation = qk_bits_8_0
+                    else:
+                        # Inline properties on QDense / QDenseBatchnorm can safely accept 
+                        # standard native Keras functional pointers
+                        layer.activation = tf.keras.activations.linear
+                else:
+                    layer.activation = name
+
+
+
     def assignModel(self):
         if self.customModel:
             self.makeCustomModel()
@@ -135,9 +263,11 @@ class hlsVerifier():
             self.plotCustomModel()
             self.quantizedModel = self.model
         else:
-            co = {}       
-            qkeras.utils._add_supported_quantized_objects(co)
-            self.quantizedModel = tf.keras.models.load_model(self.filepath,custom_objects=co,compile=True)
+            from Model_Classes import loadQuantizedModel
+            # co = {}       
+            # qkeras.utils._add_supported_quantized_objects(co)
+            # self.quantizedModel = tf.keras.models.load_model(self.filepath,custom_objects=co,compile=True)
+            self.quantizedModel = loadQuantizedModel(self.filepath,compile=True)
             self.fixLayerActivation()
 
     def printModelSummary(self):
@@ -159,7 +289,7 @@ class hlsVerifier():
             # [yTest, xTestList] = pickle.load(open(f"./testVectors.pkl",'rb'))
             # xTest = pickle.load(open(f"./tfTestVectors.pkl",'rb'))
         else:
-            self.xTest, self.yTest, self.xTestList, self.xTrain, self.yTrain = flattenTfData(self.modelType)
+            self.xTest, self.yTest, self.xTestList, self.xTrain, self.yTrain = flattenTfData(self.modelType,tfRecordFolder=self.tfRecordFolder)
             if self.saveTestVectors:
                 pickle.dump([self.yTest, self.xTestList],open(f"./testVectors{self.modelType}.pkl","wb"))
                 pickle.dump(self.xTest,open(f"./tfTestVectors{self.modelType}.pkl","wb"))
@@ -174,6 +304,13 @@ class hlsVerifier():
             print(self.xTest['y_size'][(np.random.randint(0,len(self.xTest["y_local"])))])
             print(self.xTest['x_size'][(np.random.randint(0,len(self.xTest["y_local"])))])
             print(self.xTest['z_global'][(np.random.randint(0,len(self.xTest["y_local"])))])
+        if self.modelType in [0,"ASIC"]:
+            print(self.xTest['x_size'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['y_profile'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['z_global'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['nModule'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['x_local'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['inVectAsic'][(np.random.randint(0,len(self.xTest["y_local"])))])
 
         print(self.xTest['y_local'][(np.random.randint(0,len(self.xTest["y_local"])))])
 
@@ -192,6 +329,10 @@ class hlsVerifier():
         print(len(self.xTestList[0]))
         if self.customModel:
             self.xTestList = self.xTestList[3]
+        if self.modelType in [0,"ASIC"]:
+            self.xTestList = self.xTestList[-1]            
+        print(len(self.xTestList))
+        print(len(self.xTestList[0]))
 
     def __init__(self,
                 doingCatapult: bool = True, #If using catapult, use the ccs_env python environment
@@ -201,11 +342,12 @@ class hlsVerifier():
                 buildModel: bool = False,
                 customModel: bool = False,
                 fullRunOnInit: bool = True,
-                modelType = 2.5, #so far using 1 and 2.5, but in future will use the specification in hlsUtils
+                modelType = 2.5, #so far using 1 and 2.5, but in future will use the specification in hlsUtils -> Update June 10, 2026, seems okay now? and follows tfLoaderUtils, there is no hlsUtils
                 filepath = "",
                 baseSaveDir = "./hlsVerification",
                 interactivePlots = True,
                 PLOT_DIR = "",
+                tfRecordFolder = "", #this is the default used by tfLoaderUtils, which if unchanged will pass to the default directories of tfLoaderUtils
                  ) -> None:
         
         self.doingCatapult = doingCatapult 
@@ -216,6 +358,7 @@ class hlsVerifier():
         self.customModel = customModel 
         self.modelType = modelType 
         self.fullRunOnInit = fullRunOnInit
+        self.tfRecordFolder = tfRecordFolder
 
         #process input flags
         if self.doingCatapult:
