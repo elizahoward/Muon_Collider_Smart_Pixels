@@ -163,6 +163,16 @@ class GradientMonitor(Callback):
                 # Silently skip if gradient computation fails
                 pass
 
+#static function to load a quantized model, which should really be living in this file
+def loadQuantizedModel(filePath: str, compile = True):
+    # from Model_Classes import GradientMonitor, WarmupThenDecay
+    import qkeras
+    co = {"GradientMonitor": GradientMonitor, "WarmupThenDecay": WarmupThenDecay}
+    qkeras.utils._add_supported_quantized_objects(co)
+    return tf.keras.models.load_model(filePath,custom_objects=co,compile=compile)
+
+
+
 class SmartPixModel(ABC):
     def __init__(self,                 
             # tfRecordFolder: str = "/local/d1/smartpixML/filtering_models/shuffling_data/all_batches_shuffled_bigData_try2/filtering_records16384_data_shuffled_single_bigData/",
