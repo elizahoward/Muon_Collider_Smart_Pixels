@@ -40,29 +40,40 @@ MODEL25_DIR = os.path.join(ERICF, "model2.5_fin_results")
 MODEL3_DIR  = os.path.join(ERICF, "model3_fin_results")
 OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto")
 
+PRIMARY_METRIC = "primary_metric"
+
+PRIMARY_METRIC = "bkg_rej_@99%"
+
+if PRIMARY_METRIC == "primary_metric":
+    METRIC_NAME = "Weighted Bkg Rejection"
+elif PRIMARY_METRIC == "bkg_rej_@99%":
+    METRIC_NAME = "Bkg Rejection @ 99% Sig. Eff."
+else:
+    raise ValueError("invalid PRIMARY_METRIC")
+
 # ── Bit-width folder configs: (folder_name, run_name, label, color) ────────────
 MODEL1_CONFIGS = [
-    ("3w0i_i5_sigmoid",   "model1_3w5i",   "Model 1 (3w/5i)",   "#ff6b6b"),
-    ("4w0i_i6_sigmoid",   "model1_4w6i",   "Model 1 (4w/6i)",   "#ee5a24"),
-    ("6w0i_i8_sigmoid",   "model1_6w8i",   "Model 1 (6w/8i)",   "#c0392b"),
-    ("8w0i_i10_sigmoid",  "model1_8w10i",  "Model 1 (8w/10i)",  "#922b21"),
-    ("10w0i_i12_sigmoid", "model1_10w12i", "Model 1 (10w/12i)", "#641e16"),
+    ("3w0i_i5_sigmoid",   "model1_3w5i",   "Model 1 (3-bit)",   "#ff6b6b"),
+    ("4w0i_i6_sigmoid",   "model1_4w6i",   "Model 1 (4-bit)",   "#ee5a24"),
+    ("6w0i_i8_sigmoid",   "model1_6w8i",   "Model 1 (6-bit)",   "#c0392b"),
+    ("8w0i_i10_sigmoid",  "model1_8w10i",  "Model 1 (8-bit)",  "#922b21"),
+    ("10w0i_i12_sigmoid", "model1_10w12i", "Model 1 (10-bit)", "#641e16"),
 ]
 
 MODEL25_CONFIGS = [
-    ("model2_5_3bit_normalised_selected",  "model25_3bit",  "Model 2.5 (3-bit)",  "#74b9ff"),
-    ("model2.5_4bit_normalised_selected",  "model25_4bit",  "Model 2.5 (4-bit)",  "#0984e3"),
-    ("model2.5_6bit_normalised_selected",  "model25_6bit",  "Model 2.5 (6-bit)",  "#2980b9"),
-    ("model2.5_8bit_normalised_selected",  "model25_8bit",  "Model 2.5 (8-bit)",  "#1a5276"),
-    ("model2.5_10bit_normalised_selected", "model25_10bit", "Model 2.5 (10-bit)", "#154360"),
+    ("model2_5_3bit_normalised_selected",  "model25_3bit",  "Model 2 (3-bit)",  "#74b9ff"),
+    ("model2.5_4bit_normalised_selected",  "model25_4bit",  "Model 2 (4-bit)",  "#0984e3"),
+    ("model2.5_6bit_normalised_selected",  "model25_6bit",  "Model 2 (6-bit)",  "#2980b9"),
+    ("model2.5_8bit_normalised_selected",  "model25_8bit",  "Model 2 (8-bit)",  "#1a5276"),
+    ("model2.5_10bit_normalised_selected", "model25_10bit", "Model 2 (10-bit)", "#154360"),
 ]
 
 MODEL3_CONFIGS = [
-    ("model3_3bit_normalised_selected",  "model3_3bit",  "Model 3 (3-bit)",  "#a29bfe"),
-    ("model3_4bit_normalised_selected",  "model3_4bit",  "Model 3 (4-bit)",  "#6c5ce7"),
-    ("model3_6bit_normalised_selected",  "model3_6bit",  "Model 3 (6-bit)",  "#00b894"),
-    ("model3_8bit_normalised_selected",  "model3_8bit",  "Model 3 (8-bit)",  "#00897b"),
-    ("model3_10bit_normalised_selected", "model3_10bit", "Model 3 (10-bit)", "#2ecc71"),
+    ("model3_3bit_normalised_selected",  "model3_3bit",  "Model 3 (3-bit)",  "#9bfea5"),
+    ("model3_4bit_normalised_selected",  "model3_4bit",  "Model 3 (4-bit)",  "#2ecc31"),
+    ("model3_6bit_normalised_selected",  "model3_6bit",  "Model 3 (6-bit)",  "#3bad58"),
+    ("model3_8bit_normalised_selected",  "model3_8bit",  "Model 3 (8-bit)",  "#00b8ac"),
+    ("model3_10bit_normalised_selected", "model3_10bit", "Model 3 (10-bit)", "#00745D"),
 ]
 
 _ALL_CONFIGS = MODEL1_CONFIGS + MODEL25_CONFIGS + MODEL3_CONFIGS
@@ -175,7 +186,7 @@ def _build_row(model_key, run_name, trial_id, csv_row, lut, ff, dsp, bram, src,f
         "trial_id":       trial_id,
         "parameters":     csv_row.get("parameters", np.nan),
         "auc":            csv_row.get("auc", np.nan),
-        "primary_metric": csv_row.get("primary_metric", np.nan),
+        PRIMARY_METRIC: csv_row.get(PRIMARY_METRIC, np.nan),
         "luts":           lut,
         "registers":      ff,
         "luts_plus_ff":   lut + ff,
@@ -255,9 +266,9 @@ def load_model3(base_dir):
 # ── Pareto helpers ─────────────────────────────────────────────────────────────
 def _is_dominated(point, others):
     for _, other in others.iterrows():
-        if (other["primary_metric"] >= point["primary_metric"] and
+        if (other[PRIMARY_METRIC] >= point[PRIMARY_METRIC] and
                 other["luts_plus_ff"]   <= point["luts_plus_ff"] and
-                (other["primary_metric"] > point["primary_metric"] or
+                (other[PRIMARY_METRIC] > point[PRIMARY_METRIC] or
                  other["luts_plus_ff"]  < point["luts_plus_ff"])):
             return True
     return False
@@ -267,7 +278,7 @@ def find_pareto_front(df):
     idx = [i for i, row in df.iterrows()
            if not _is_dominated(row, df.drop(index=i))]
     return (df.loc[idx].copy()
-              .sort_values(by=["primary_metric", "luts_plus_ff"],
+              .sort_values(by=[PRIMARY_METRIC, "luts_plus_ff"],
                            ascending=[False, True]))
 
 
@@ -282,14 +293,14 @@ def _setup_complement_log_y(ax, df):
     ax.set_yscale("log")
     ax.invert_yaxis()
     ticks_actual = [t for t in COMP_LOG_TICKS
-                    if t < df["primary_metric"].max() + 0.05]
+                    if t < df[PRIMARY_METRIC].max() + 0.05]
     ticks_comp   = np.clip(1.0 - np.array(ticks_actual, dtype=float), 1e-4, None)
     ax.set_yticks(ticks_comp)
     ax.yaxis.set_major_formatter(
         mticker.FuncFormatter(lambda v, _: f"{1 - v:.2f}"))
     ax.yaxis.set_minor_formatter(mticker.NullFormatter())
-    y_min = max(1e-4, float(np.min(_y(df["primary_metric"], True))) * 0.5)
-    y_max = float(np.max(_y(df["primary_metric"], True))) * 2.0
+    y_min = max(1e-4, float(np.min(_y(df[PRIMARY_METRIC], True))) * 0.5)
+    y_max = float(np.max(_y(df[PRIMARY_METRIC], True))) * 2.0
     ax.set_ylim(y_max, y_min)
 
 
@@ -299,21 +310,21 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
         color  = RUN_COLORS.get(run_name, "gray")
         label  = RUN_LABELS.get(run_name, run_name)
         subset = df[df["run_name"] == run_name]
-        ax.scatter(subset[x_col], _y(subset["primary_metric"], complement),
+        ax.scatter(subset[x_col], _y(subset[PRIMARY_METRIC], complement),
                    alpha=0.30, s=25, c=color, edgecolors="none",
                    label=label, zorder=1)
 
     for run_name in pareto_df["run_name"].unique():
         color = RUN_COLORS.get(run_name, "gray")
         p_sub = pareto_df[pareto_df["run_name"] == run_name]
-        ax.scatter(p_sub[x_col], _y(p_sub["primary_metric"], complement),
+        ax.scatter(p_sub[x_col], _y(p_sub[PRIMARY_METRIC], complement),
                    alpha=0.90, s=60, c=color, edgecolors="black",
                    linewidth=1.2, marker="D", zorder=3)
 
     ps    = pareto_df.sort_values(x_col)
     style = {k: v for k, v in FAMILY_LINE["Combined"].items()
              if k not in ("label", "lw")}
-    ax.plot(ps[x_col], _y(ps["primary_metric"], complement),
+    ax.plot(ps[x_col], _y(ps[PRIMARY_METRIC], complement),
             **style, alpha=0.25, zorder=2, lw=1.2)
 
     if annotate:
@@ -322,7 +333,7 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
                      .replace("Model 1 ", "M1 ")
                      .replace("Model 2.5 ", "M2.5 ")
                      .replace("Model 3 ", "M3 "))
-            yval = float(_y(row["primary_metric"], complement))
+            yval = float(_y(row[PRIMARY_METRIC], complement))
             ax.annotate(f"{short}\n{row['trial_id']}",
                         xy=(row[x_col], yval),
                         xytext=(7, 7), textcoords="offset points",
@@ -341,7 +352,7 @@ def _draw_subfronts(ax, pareto_m1, pareto_m25, pareto_m3, pareto_all,
             (pareto_all, "Combined",  0.25)]:
         style = FAMILY_LINE[key]
         ps = pareto.sort_values(x_col)
-        ax.plot(ps[x_col], _y(ps["primary_metric"], complement),
+        ax.plot(ps[x_col], _y(ps[PRIMARY_METRIC], complement),
                 color=style["color"], lw=style["lw"], ls=style["ls"],
                 alpha=alpha, zorder=5, label=style["label"])
 
@@ -360,7 +371,7 @@ def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=Non
 
     stats = (f"Total models: {len(df)}\n"
              f"Pareto optimal: {len(pareto_df)} ({100*len(pareto_df)/len(df):.1f}%)\n"
-             f"Metric range: {df['primary_metric'].min():.4f} – {df['primary_metric'].max():.4f}")
+             f"Metric range: {df[PRIMARY_METRIC].min():.4f} – {df[PRIMARY_METRIC].max():.4f}")
     ax.text(0.02, 0.02 if complement else 0.98, stats,
             transform=ax.transAxes, fontsize=9,
             va="bottom" if complement else "top",
@@ -375,8 +386,8 @@ def _finalize(ax, title, xscale="linear", complement=False):
     ax.set_title(title + tag, fontsize=13, fontweight="bold", pad=14)
     ax.set_xlabel("LUTs + FF (registers)", fontsize=12, fontweight="bold")
     ax.set_ylabel(
-        "Weighted Bkg Rejection  (1−metric, log scale)" if complement
-        else "Weighted Background Rejection",
+        f"{METRIC_NAME}  (1−metric, log scale)" if complement
+        else METRIC_NAME,
         fontsize=12, fontweight="bold")
     ax.grid(True, alpha=0.28, linestyle="--", which="both")
     if xscale == "log":
@@ -398,10 +409,10 @@ def make_plot_simple(df, pareto_df, output_dir, zoomed=False, annotate=True):
     if zoomed:
         ax.set_xlim(0, 1.5e5); ax.set_ylim(0.6, 1.0)
         suffix = "_zoomed"
-        title  = "Model 1 vs Model 2.5 vs Model 3 — Pareto Front (Zoomed)"
+        title  = "Model 1 vs Model 2 vs Model 3 — Pareto Front (Zoomed)"
     else:
         suffix = "_full"
-        title  = "Model 1 vs Model 2.5 vs Model 3 — Combined Pareto Front\nWeighted Bkg Rejection vs LUTs + FF"
+        title  = f"Model 1 vs Model 2 vs Model 3 — Combined Pareto Front\n{METRIC_NAME} vs LUTs + FF"
     _finalize(ax, title)
     _add_legend_and_stats(ax, df, pareto_df)
     plt.tight_layout()
@@ -419,8 +430,8 @@ def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, pareto_m3,
     if complement:
         _setup_complement_log_y(ax, df)
 
-    title = ("Model 1 vs Model 2.5 vs Model 3 — Sub-fronts + Combined Pareto\n"
-             "Weighted Bkg Rejection vs LUTs + FF")
+    title = ("Model 1 vs Model 2 vs Model 3 — Sub-fronts + Combined Pareto\n"
+             f"{METRIC_NAME} vs LUTs + FF")
     _finalize(ax, title, xscale=xscale, complement=complement)
 
     extra = [mlines.Line2D([], [], color=FAMILY_LINE[k]["color"],
@@ -444,6 +455,9 @@ def main():
     print(f"  {len(df1)} trials with HLS resources "
           f"({(df1['hls_source'] == 'vsynth').sum()} vsynth, "
           f"{(df1['hls_source'] == 'csynth').sum()} csynth)")
+    # print(df1)
+    # print([df1[key].head() for key in df1.keys()])
+    # print(df1.keys())
 
     print("Loading Model 2.5...")
     df25 = load_model25(MODEL25_DIR)
@@ -452,12 +466,15 @@ def main():
     print("Loading Model 3...")
     df3 = load_model3(MODEL3_DIR)
     print(f"  {len(df3)} trials with HLS resources (all csynth)")
+    # print([df3[key].head() for key in df1.keys()])
 
     df = pd.concat([df1, df25, df3], ignore_index=True)
     print(f"\nCombined total: {len(df)} trials")
-    print(f"Primary metric range: {df['primary_metric'].min():.4f} – {df['primary_metric'].max():.4f}")
+    print(f"Primary metric range: {df[PRIMARY_METRIC].min():.4f} – {df[PRIMARY_METRIC].max():.4f}")
     print(f"LUTs+FF range:        {df['luts_plus_ff'].min()} – {df['luts_plus_ff'].max()}")
 
+    # print(df)
+    # raise ValueError("Stop now")
     print("\nComputing Pareto fronts...")
     pareto_all = find_pareto_front(df)
     pareto_m1  = find_pareto_front(df1)
@@ -471,7 +488,7 @@ def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     df.to_csv(os.path.join(OUTPUT_DIR, "combined_all_detailed.csv"), index=False)
-    cols = ["model", "run_name", "trial_id", "parameters", "auc", "primary_metric",
+    cols = ["model", "run_name", "trial_id", "parameters", "auc", PRIMARY_METRIC,
             "luts", "registers", "luts_plus_ff", "dsp", "bram", "hls_source","fullPath"]
     pareto_all[[c for c in cols if c in pareto_all.columns]].to_csv(
         os.path.join(OUTPUT_DIR, "pareto_primary.csv"), index=False)
@@ -485,8 +502,8 @@ def main():
             "model3_pareto":      len(pareto_m3),
             "model1_vsynth":      int((df1["hls_source"] == "vsynth").sum()),
             "model1_csynth":      int((df1["hls_source"] == "csynth").sum()),
-            "metric_range":       {"min": float(df["primary_metric"].min()),
-                                   "max": float(df["primary_metric"].max())},
+            "metric_range":       {"min": float(df[PRIMARY_METRIC].min()),
+                                   "max": float(df[PRIMARY_METRIC].max())},
             "luts_plus_ff_range": {"min": int(df["luts_plus_ff"].min()),
                                    "max": int(df["luts_plus_ff"].max())},
         }, f, indent=2)
