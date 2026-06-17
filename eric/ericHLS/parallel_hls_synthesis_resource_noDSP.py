@@ -126,7 +126,6 @@ def synthesize_model(
     max_threads,
     tf_threads,
     create_tarball,
-    noDSP = True,
 ):
     """Synthesize a single H5 model, then prune output to KEEP_FILES."""
     result = {
@@ -167,19 +166,19 @@ def synthesize_model(
             f"[{model_name}] Resource profile: conv RF={conv_reuse_factor}, "
             f"dense RF={dense_reuse_factor}"
         )
-        if noDSP:
-            print("Setting the DSPs to be unused")
-            config['Model']['use_dsp'] = False
-            # Force the Vitis HLS backend compiler to strictly enforce 0 DSPs globally
-            #Seems to do nothing
-            if 'HLSConfig' not in config:
-                config['HLSConfig'] = {}
-            config['HLSConfig']['CompilerOptions'] = '-max_dsp 0'
 
-            # VERIFIED HLS4ML API: Force a global optimization strategy 
-            # This forces activation layers to utilize standard LUT logic mappings
-            # config['Model']['Strategy'] = 'Resource'
-            config['Model']['BramFactor'] = 0 
+        print("Setting the DSPs to be unused")
+        config['Model']['use_dsp'] = False
+        # Force the Vitis HLS backend compiler to strictly enforce 0 DSPs globally
+        #Seems to do nothing
+        if 'HLSConfig' not in config:
+            config['HLSConfig'] = {}
+        config['HLSConfig']['CompilerOptions'] = '-max_dsp 0'
+
+        # VERIFIED HLS4ML API: Force a global optimization strategy 
+        # This forces activation layers to utilize standard LUT logic mappings
+        # config['Model']['Strategy'] = 'Resource'
+        config['Model']['BramFactor'] = 0 
 
         print(f"[{model_name}] Converting to HLS model (io_type={io_type})...")
         hls_model = hls4ml.converters.convert_from_keras_model(
@@ -196,31 +195,31 @@ def synthesize_model(
         patch_build_tcl_for_thread_limit(output_dir)
 
 
-        if noDSP:
-            # Force the Vitis HLS 2024.1 backend to map all operations to standard fabric logic
-            tcl_path = os.path.join(output_dir, "build_prj.tcl")
-            if os.path.exists(tcl_path):
-                with open(tcl_path, "r") as f:
-                    tcl_content = f.read()
-                
-                # 1. Clean up the deprecated array partition warning/error line
-                tcl_content = tcl_content.replace(
-                    "config_array_partition -maximum_size 4096", 
-                    "# config_array_partition -maximum_size 4096"
+
+        # Force the Vitis HLS 2024.1 backend to map all operations to standard fabric logic
+        tcl_path = os.path.join(output_dir, "build_prj.tcl")
+        if os.path.exists(tcl_path):
+            with open(tcl_path, "r") as f:
+                tcl_content = f.read()
+            
+            # 1. Clean up the deprecated array partition warning/error line
+            tcl_content = tcl_content.replace(
+                "config_array_partition -maximum_size 4096", 
+                "# config_array_partition -maximum_size 4096"
+            )
+            
+            # 2. Inject valid Vitis HLS 2024.1 global operator fabric overrides
+            if "csynth_design" in tcl_content:
+                patch_directives = (
+                    "config_op mul -impl fabric\n"  # Maps all inferred multiplications to LUTs
+                    "config_op add -impl fabric\n"  # Maps all inferred additions to LUTs
+                    "csynth_design"
                 )
+                tcl_content = tcl_content.replace("csynth_design", patch_directives)
                 
-                # 2. Inject valid Vitis HLS 2024.1 global operator fabric overrides
-                if "csynth_design" in tcl_content:
-                    patch_directives = (
-                        "config_op mul -impl fabric\n"  # Maps all inferred multiplications to LUTs
-                        "config_op add -impl fabric\n"  # Maps all inferred additions to LUTs
-                        "csynth_design"
-                    )
-                    tcl_content = tcl_content.replace("csynth_design", patch_directives)
-                    
-                    with open(tcl_path, "w") as f:
-                        f.write(tcl_content)
-                    print(f"[{model_name}] Patched build_prj.tcl to force Vitis 2024.1 operator fabric mapping.")
+                with open(tcl_path, "w") as f:
+                    f.write(tcl_content)
+                print(f"[{model_name}] Patched build_prj.tcl to force Vitis 2024.1 operator fabric mapping.")
 
 
 
