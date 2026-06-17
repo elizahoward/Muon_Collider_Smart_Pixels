@@ -33,12 +33,20 @@ import matplotlib.lines as mlines
 import matplotlib.ticker as mticker
 
 ERIC = os.path.dirname(os.path.abspath(__file__))
-ERICF = os.path.join(ERIC, "Final_Results")
+newFolderStructure = True; #for the consistent folder structure when you have pareto_primary and pareto_secondary for everyone
+if newFolderStructure:
+    ERICF = os.path.join(ERIC, "Results_June2026_99SigEff") 
+else:
+    ERICF = os.path.join(ERIC, "Final_Results")
 
 MODEL1_DIR  = os.path.join(ERICF, "model1_fin_results")
 MODEL25_DIR = os.path.join(ERICF, "model2.5_fin_results")
 MODEL3_DIR  = os.path.join(ERICF, "model3_fin_results")
-OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto")
+MODEL3_DIR  = os.path.join(os.path.join(ERIC, "Final_Results"), "model3_fin_results")
+if newFolderStructure:
+    OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto_newJune2026")
+else:
+    OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto")
 
 PRIMARY_METRIC = "primary_metric"
 
@@ -52,21 +60,39 @@ else:
     raise ValueError("invalid PRIMARY_METRIC")
 
 # ── Bit-width folder configs: (folder_name, run_name, label, color) ────────────
-MODEL1_CONFIGS = [
-    ("3w0i_i5_sigmoid",   "model1_3w5i",   "Model 1 (3-bit)",   "#ff6b6b"),
-    ("4w0i_i6_sigmoid",   "model1_4w6i",   "Model 1 (4-bit)",   "#ee5a24"),
-    ("6w0i_i8_sigmoid",   "model1_6w8i",   "Model 1 (6-bit)",   "#c0392b"),
-    ("8w0i_i10_sigmoid",  "model1_8w10i",  "Model 1 (8-bit)",  "#922b21"),
-    ("10w0i_i12_sigmoid", "model1_10w12i", "Model 1 (10-bit)", "#641e16"),
-]
+if newFolderStructure:
+    MODEL1_CONFIGS = [
+        ("model1_3bit_normalised_selected",   "model1_3w5i",   "Model 1 (3-bit)",   "#ff6b6b"),
+        ("model1_4bit_normalised_selected",   "model1_4w6i",   "Model 1 (4-bit)",   "#ee5a24"),
+        ("model1_6bit_normalised_selected",   "model1_6w8i",   "Model 1 (6-bit)",   "#c0392b"),
+        ("model1_8bit_normalised_selected",  "model1_8w10i",  "Model 1 (8-bit)",  "#922b21"),
+        ("model1_10bit_normalised_selected", "model1_10w12i", "Model 1 (10-bit)", "#641e16"),
+    ]
+else:
+    MODEL1_CONFIGS = [
+        ("3w0i_i5_sigmoid",   "model1_3w5i",   "Model 1 (3-bit)",   "#ff6b6b"),
+        ("4w0i_i6_sigmoid",   "model1_4w6i",   "Model 1 (4-bit)",   "#ee5a24"),
+        ("6w0i_i8_sigmoid",   "model1_6w8i",   "Model 1 (6-bit)",   "#c0392b"),
+        ("8w0i_i10_sigmoid",  "model1_8w10i",  "Model 1 (8-bit)",  "#922b21"),
+        ("10w0i_i12_sigmoid", "model1_10w12i", "Model 1 (10-bit)", "#641e16"),
+    ]
 
-MODEL25_CONFIGS = [
-    ("model2_5_3bit_normalised_selected",  "model25_3bit",  "Model 2 (3-bit)",  "#74b9ff"),
-    ("model2.5_4bit_normalised_selected",  "model25_4bit",  "Model 2 (4-bit)",  "#0984e3"),
-    ("model2.5_6bit_normalised_selected",  "model25_6bit",  "Model 2 (6-bit)",  "#2980b9"),
-    ("model2.5_8bit_normalised_selected",  "model25_8bit",  "Model 2 (8-bit)",  "#1a5276"),
-    ("model2.5_10bit_normalised_selected", "model25_10bit", "Model 2 (10-bit)", "#154360"),
-]
+if newFolderStructure:
+    MODEL25_CONFIGS = [
+        ("model2_5_3bit_normalised_selected",  "model25_3bit",  "Model 2 (3-bit)",  "#74b9ff"),
+        ("model2_5_4bit_normalised_selected",  "model25_4bit",  "Model 2 (4-bit)",  "#0984e3"),
+        ("model2_5_6bit_normalised_selected",  "model25_6bit",  "Model 2 (6-bit)",  "#2980b9"),
+        ("model2_5_8bit_normalised_selected",  "model25_8bit",  "Model 2 (8-bit)",  "#1a5276"),
+        ("model2_5_10bit_normalised_selected", "model25_10bit", "Model 2 (10-bit)", "#154360"),
+    ]
+else:
+    MODEL25_CONFIGS = [
+        ("model2_5_3bit_normalised_selected",  "model25_3bit",  "Model 2 (3-bit)",  "#74b9ff"),
+        ("model2.5_4bit_normalised_selected",  "model25_4bit",  "Model 2 (4-bit)",  "#0984e3"),
+        ("model2.5_6bit_normalised_selected",  "model25_6bit",  "Model 2 (6-bit)",  "#2980b9"),
+        ("model2.5_8bit_normalised_selected",  "model25_8bit",  "Model 2 (8-bit)",  "#1a5276"),
+        ("model2.5_10bit_normalised_selected", "model25_10bit", "Model 2 (10-bit)", "#154360"),
+    ]
 
 MODEL3_CONFIGS = [
     ("model3_3bit_normalised_selected",  "model3_3bit",  "Model 3 (3-bit)",  "#9bfea5"),
@@ -262,6 +288,47 @@ def load_model3(base_dir):
                                    lut, ff, dsp, bram, src,fullpath))
     return pd.DataFrame(rows)
 
+def load_modelNEW(base_dir,modelNum):
+    if modelNum ==1:
+        modelName = "model1"
+        modelConfig = MODEL1_CONFIGS
+    elif modelNum == 2 or modelNum == 2.5:
+        modelName = "model2_5"
+        modelConfig = MODEL25_CONFIGS
+    elif modelNum == 3:
+        modelName = "model3"
+        modelConfig = MODEL3_CONFIGS
+    else:
+        raise ValueError("Not supported model number")
+    if modelName not in ["model1", "model2_5", "model3"]:
+        raise ValueError("Not supported modelName")
+    rows = []
+    for folder, run_name, _, _ in modelConfig:
+        bit_dir  = os.path.join(base_dir, folder)
+        csv_path = os.path.join(bit_dir, "roc_based_analysis_detailed.csv")
+        if not os.path.isfile(csv_path):
+            print(f"\n\n  [WARN] Missing: {csv_path}\n\n")
+            continue
+        for _, csv_row in pd.read_csv(csv_path).iterrows():
+            trial_id = str(int(csv_row["trial_id"])).zfill(3)
+            lut, ff, dsp, bram, src = _hls_resources_csynth_only(
+                bit_dir, trial_id,
+                ["pareto_primary/hls_outputs",
+                 "pareto_secondary/hls_outputs",
+                 "hls_outputs"])
+            if lut is None:
+                continue
+            if dsp != 0:
+                print(f"\n\n  [WARN] NONZERO DSPs !!!: {bit_dir}, {trial_id}\n\n")
+            fullpath1 = os.path.join(bit_dir,"pareto_primary/")
+            fullpath2 = os.path.join(bit_dir,"pareto_secondary/")
+            fullpath = os.path.join(fullpath1,"model_trial_"+trial_id+'.h5')
+            if not os.path.isfile(fullpath):
+                fullpath = os.path.join(fullpath2,"model_trial_"+trial_id+'.h5')
+            rows.append(_build_row(modelName, run_name, trial_id, csv_row,
+                                   lut, ff, dsp, bram, src,fullpath))
+    return pd.DataFrame(rows)
+
 
 # ── Pareto helpers ─────────────────────────────────────────────────────────────
 def _is_dominated(point, others):
@@ -384,7 +451,7 @@ def _finalize(ax, title, xscale="linear", complement=False):
     if complement:          tags.append("y: 1−metric log")
     tag = f" [{', '.join(tags)}]" if tags else ""
     ax.set_title(title + tag, fontsize=13, fontweight="bold", pad=14)
-    ax.set_xlabel("LUTs + FF (registers)", fontsize=12, fontweight="bold")
+    ax.set_xlabel("LUTs + FF (registers) (csynth)", fontsize=12, fontweight="bold")
     ax.set_ylabel(
         f"{METRIC_NAME}  (1−metric, log scale)" if complement
         else METRIC_NAME,
@@ -451,24 +518,38 @@ def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, pareto_m3,
 # ── Main ───────────────────────────────────────────────────────────────────────
 def main():
     print("Loading Model 1...")
-    df1 = load_model1(MODEL1_DIR)
+    if newFolderStructure:
+        df1 = load_modelNEW(MODEL1_DIR,1)
+    else:
+        df1 = load_model1(MODEL1_DIR)
     print(f"  {len(df1)} trials with HLS resources "
           f"({(df1['hls_source'] == 'vsynth').sum()} vsynth, "
           f"{(df1['hls_source'] == 'csynth').sum()} csynth)")
-    # print(df1)
+    # print(df1["dsp"])
+    # print(df1["bram"])
     # print([df1[key].head() for key in df1.keys()])
     # print(df1.keys())
 
     print("Loading Model 2.5...")
-    df25 = load_model25(MODEL25_DIR)
+    if newFolderStructure:
+        df25 = load_modelNEW(MODEL25_DIR,2)
+    else:
+        df25 = load_model25(MODEL25_DIR)
     print(f"  {len(df25)} trials with HLS resources (all csynth)")
 
     print("Loading Model 3...")
-    df3 = load_model3(MODEL3_DIR)
+    if newFolderStructure:
+        df3 = load_modelNEW(MODEL3_DIR,3)
+    else:
+        df3 = load_model3(MODEL3_DIR)
     print(f"  {len(df3)} trials with HLS resources (all csynth)")
     # print([df3[key].head() for key in df1.keys()])
 
     df = pd.concat([df1, df25, df3], ignore_index=True)
+    
+    print("dsps",df["dsp"])
+    print("bram", df["bram"])
+
     print(f"\nCombined total: {len(df)} trials")
     print(f"Primary metric range: {df[PRIMARY_METRIC].min():.4f} – {df[PRIMARY_METRIC].max():.4f}")
     print(f"LUTs+FF range:        {df['luts_plus_ff'].min()} – {df['luts_plus_ff'].max()}")
