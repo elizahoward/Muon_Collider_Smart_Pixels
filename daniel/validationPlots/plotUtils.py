@@ -551,9 +551,9 @@ def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColo
     else:
         counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],bins=[binsX,binsY],cmap=cmap)
     plt.colorbar(im,ax=plt.gca())
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    plt.title(title, fontsize = 20)
+    plt.xlabel(xlabel, fontsize = 16)
+    plt.ylabel(ylabel, fontsize = 16)
     return counts, xedges, yedges, im
     # ax[0].tick_params(axis='both', which='major',)
 
