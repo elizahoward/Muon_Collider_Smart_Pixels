@@ -103,31 +103,32 @@ class hlsVerifier():
         test_loss, test_accuracy = self.model.evaluate(self.xTest, self.yTest)
         print(test_loss,"that was loss, val accuracy  is",test_accuracy)
 
-    # def fixLayerActivation(self):
-    #     for layer in self.quantizedModel.layers:
-    #         if hasattr(layer, 'activation'):
-    #             act = layer.activation
+    # no longer works for some reason
+    def fixLayerActivationRegular(self):
+        for layer in self.quantizedModel.layers:
+            if hasattr(layer, 'activation'):
+                act = layer.activation
                 
-    #             # 1. Handle QKeras strings like 'quantized_relu(8,0)'
-    #             if isinstance(act, str) and 'quantized_' in act:
-    #                 # This converts the string into a QKeras activation object
-    #                 # layer.activation = qkeras.get_quantized_activation(act)
-    #                 layer.activation = qkeras.get_quantizer(act)
+                # 1. Handle QKeras strings like 'quantized_relu(8,0)'
+                if isinstance(act, str) and 'quantized_' in act:
+                    # This converts the string into a QKeras activation object
+                    # layer.activation = qkeras.get_quantized_activation(act)
+                    layer.activation = qkeras.get_quantizer(act)
                 
-    #             # 2. Handle standard Keras strings like 'relu' or 'linear'
-    #             elif isinstance(act, str):
-    #                 layer.activation = tf.keras.activations.get(act)
+                # 2. Handle standard Keras strings like 'relu' or 'linear'
+                elif isinstance(act, str):
+                    layer.activation = tf.keras.activations.get(act)
 
-    #             # 3. Final safety check: ensure the object has a __name__ for hls4ml
-    #             if not hasattr(layer.activation, '__name__'):
-    #                 # QKeras objects usually store their name in __name__ or we can use the class name
-    #                 name = getattr(layer.activation, '__name__', layer.activation.__class__.__name__)
-    #                 # If it's still an object we can't edit, we can force a name attribute 
-    #                 # by wrapping it or using setattr if the object allows it
-    #                 try:
-    #                     setattr(layer.activation, '__name__', name)
-    #                 except AttributeError:
-    #                     pass 
+                # 3. Final safety check: ensure the object has a __name__ for hls4ml
+                if not hasattr(layer.activation, '__name__'):
+                    # QKeras objects usually store their name in __name__ or we can use the class name
+                    name = getattr(layer.activation, '__name__', layer.activation.__class__.__name__)
+                    # If it's still an object we can't edit, we can force a name attribute 
+                    # by wrapping it or using setattr if the object allows it
+                    try:
+                        setattr(layer.activation, '__name__', name)
+                    except AttributeError:
+                        pass 
 
     #Rewritten by AI to handle QDenseBatchNorm from ASICModel
     # def fixLayerActivation(self):
@@ -208,52 +209,262 @@ class hlsVerifier():
     #                 # Standard non-quantized activations can safely default to strings
     #                 layer.activation = name
 
-    def fixLayerActivation(self):
+    # #Working version for ASIC Model, up to doing the hls tracing
+    # def fixLayerActivation(self):
+    #     from qkeras.quantizers import quantized_bits, quantized_relu
+    #     # 1. Create true instantiated QKeras Quantizer objects
+    #     # These objects possess the 'get_config' attribute hls4ml checks for!
+    #     qk_bits_8_0 = quantized_bits(bits=8, integer=0)
+    #     qk_relu_8_0 = quantized_relu(bits=8, integer=0)
+
+    #     for layer in self.quantizedModel.layers:
+    #         if hasattr(layer, 'activation'):
+    #             act = layer.activation
+    #             layer_type = layer.__class__.__name__
+                
+    #             # Skip if it's already an active Keras Tuner structured layout dict
+    #             if isinstance(act, dict) and 'class_name' in act and act['class_name'] != 'linear':
+    #                 continue
+
+    #             # Extract basic string name 
+    #             if not isinstance(act, str):
+    #                 name = getattr(act, '__name__', act.__class__.__name__)
+    #             else:
+    #                 name = act
+
+    #             if '(' in name:
+    #                 name = name.split('(')[0]
+    #             if 'function linear' in name or 'builtins' in name:
+    #                 name = 'linear'
+
+    #             # 2. Route layers directly to fully-instantiated QKeras object classes
+    #             if 'quantized_bits' in name:
+    #                 layer.activation = qk_bits_8_0
+                    
+    #             elif 'quantized_relu' in name:
+    #                 layer.activation = qk_relu_8_0
+                    
+    #             elif name == 'linear':
+    #                 if layer_type == 'QActivation':
+    #                     # Standalone QActivation layers acting as a pass-through 
+    #                     # must use an instantiated quantized_bits instance to trigger 'linear'
+    #                     layer.activation = qk_bits_8_0
+    #                 else:
+    #                     # Inline properties on QDense / QDenseBatchnorm can safely accept 
+    #                     # standard native Keras functional pointers
+    #                     layer.activation = tf.keras.activations.linear
+    #             else:
+    #                 layer.activation = name
+
+
+    #Update to resolve tracing error with ASIC Model, this works for ASIC Model
+    # def fixLayerActivation(self):
+    #     from qkeras.quantizers import quantized_bits, quantized_relu
+    #     import tensorflow as tf
+        
+    #     # 1. Create true instantiated qkeras quantizer objects
+    #     qk_bits_8_0 = quantized_bits(bits=8, integer=0)
+    #     qk_relu_8_0 = quantized_relu(bits=8, integer=0)
+        
+    #     # Inject dynamic __name__ strings directly to intercept the hls4ml profiler.
+    #     # This prevents the AttributeError without altering native Keras object serialization.
+    #     qk_bits_8_0.__name__ = "quantized_bits"
+    #     qk_relu_8_0.__name__ = "quantized_relu"
+        
+    #     for layer in self.quantizedModel.layers:
+    #         if hasattr(layer, 'activation'):
+    #             act = layer.activation
+    #             layer_type = layer.__class__.__name__
+                
+    #             # Skip if it's already an active keras tuner structured layout dict
+    #             if isinstance(act, dict) and 'class_name' in act and act['class_name'] != 'linear':
+    #                 continue
+                    
+    #             # Extract basic string name
+    #             if not isinstance(act, str):
+    #                 name = getattr(act, '__name__', act.__class__.__name__)
+    #             else:
+    #                 name = act
+                    
+    #             # RESTORED: Fixed the split array-index cutoff bug from the previous attempt
+    #             if '(' in name:
+    #                 name = name.split('(')[0]
+                    
+    #             if 'function linear' in name or 'builtins' in name or 'linear' in name:
+    #                 name = 'linear'
+                    
+    #             # 2. Route layers directly to fully-instantiated qkeras object classes
+    #             if 'quantized_bits' in name:
+    #                 layer.activation = qk_bits_8_0
+
+    #             elif 'quantized_relu' in name:
+    #                 layer.activation = qk_relu_8_0
+
+    #             elif name == 'linear':
+    #                 if layer_type in ['QActivation', 'Activation']:
+    #                     # Standalone pass-through layers get the patched quantizer object
+    #                     layer.activation = qk_bits_8_0
+    #                 else:
+    #                     # Inline properties on QDense / QConv2D drop back safely to a Keras linear function
+    #                     layer.activation = tf.keras.activations.linear
+    #             else:
+    #                 # Catch-all fallback for standard activations
+    #                 layer.activation = name
+
+    #Update to work for Fermilab model qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    def fixLayerActivationASIC(self):
         from qkeras.quantizers import quantized_bits, quantized_relu
-        # 1. Create true instantiated QKeras Quantizer objects
-        # These objects possess the 'get_config' attribute hls4ml checks for!
+        from qkeras.qlayers import QActivation
+        import tensorflow as tf
+        
+        # 1. Create true instantiated qkeras quantizer objects
         qk_bits_8_0 = quantized_bits(bits=8, integer=0)
         qk_relu_8_0 = quantized_relu(bits=8, integer=0)
-
+        
+        # Inject dynamic __name__ strings directly to satisfy the hls4ml profiling trace.
+        qk_bits_8_0.__name__ = "quantized_bits"
+        qk_relu_8_0.__name__ = "quantized_relu"
+        
         for layer in self.quantizedModel.layers:
             if hasattr(layer, 'activation'):
                 act = layer.activation
                 layer_type = layer.__class__.__name__
                 
-                # Skip if it's already an active Keras Tuner structured layout dict
+                # Skip if it's already an active keras tuner structured layout dict
                 if isinstance(act, dict) and 'class_name' in act and act['class_name'] != 'linear':
                     continue
-
-                # Extract basic string name 
+                    
+                # Extract basic string name
                 if not isinstance(act, str):
                     name = getattr(act, '__name__', act.__class__.__name__)
                 else:
                     name = act
-
+                    
                 if '(' in name:
-                    name = name.split('(')[0]
-                if 'function linear' in name or 'builtins' in name:
+                    name = name.split('(')
+                    
+                if 'function linear' in name or 'builtins' in name or 'linear' in name:
                     name = 'linear'
-
-                # 2. Route layers directly to fully-instantiated QKeras object classes
+                    
+                # TRANSFORM STEP: Convert vanilla Activation layers into native QActivation layers
+                if layer_type == 'Activation':
+                    layer.__class__ = QActivation
+                    layer_type = 'QActivation'
+                    
+                # 2. Route layers directly to fully-instantiated qkeras object classes
                 if 'quantized_bits' in name:
                     layer.activation = qk_bits_8_0
-                    
+                    if layer_type == 'QActivation':
+                        layer.quantizer = qk_bits_8_0  # Fixes execution loop initialization
+
                 elif 'quantized_relu' in name:
                     layer.activation = qk_relu_8_0
-                    
+                    if layer_type == 'QActivation':
+                        layer.quantizer = qk_relu_8_0  # Fixes execution loop initialization
+
                 elif name == 'linear':
                     if layer_type == 'QActivation':
-                        # Standalone QActivation layers acting as a pass-through 
-                        # must use an instantiated quantized_bits instance to trigger 'linear'
                         layer.activation = qk_bits_8_0
+                        layer.quantizer = qk_bits_8_0  # Fixes execution loop initialization
                     else:
-                        # Inline properties on QDense / QDenseBatchnorm can safely accept 
-                        # standard native Keras functional pointers
+                        # Inline properties on QDense / QDenseBatchnorm drop back safely to a Keras linear function
                         layer.activation = tf.keras.activations.linear
                 else:
+                    # Catch-all fallback for standard activations (relu, sigmoid, etc.)
                     layer.activation = name
 
+    def fixLayerActivationRegularNOTTHIS(self):
+        from qkeras.quantizers import quantized_bits, quantized_relu, quantized_sigmoid
+        from qkeras.qlayers import QActivation
+        import tensorflow as tf
+        import types
+        
+        # 1. Create true instantiated qkeras quantizer objects
+        qk_bits_8_0 = quantized_bits(bits=8, integer=0)
+        qk_relu_8_0 = quantized_relu(bits=8, integer=0)
+        qk_sigmoid_8_0 = quantized_sigmoid(bits=8, integer=0)
+        
+        # Inject dynamic __name__ strings directly to satisfy the hls4ml profiling trace.
+        qk_bits_8_0.__name__ = "quantized_bits"
+        qk_relu_8_0.__name__ = "quantized_relu"
+        qk_sigmoid_8_0.__name__ = "quantized_sigmoid"
+        
+        for layer in self.quantizedModel.layers:
+            if hasattr(layer, 'activation'):
+                act = layer.activation
+                layer_type = layer.__class__.__name__
+                
+                # Skip if it's already an active keras tuner structured layout dict
+                if isinstance(act, dict) and 'class_name' in act and act['class_name'] != 'linear':
+                    continue
+                    
+                # Extract basic string name
+                if not isinstance(act, str):
+                    if isinstance(act, (list, tuple)) or act.__class__.__name__ == 'ListWrapper':
+                        name = str(act)
+                    else:
+                        name = getattr(act, '__name__', act.__class__.__name__)
+                else:
+                    name = act
+                    
+                if '(' in name:
+                    name = name.split('(')[0]
+                    
+                if 'function linear' in name or 'builtins' in name or 'linear' in name:
+                    name = 'linear'
+                    
+                # TRANSFORM STEP: Convert vanilla Activation layers into native QActivation layers
+                if layer_type == 'Activation':
+                    layer.__class__ = QActivation
+                    layer_type = 'QActivation'
+                    
+                # 2. Route layers directly to fully-instantiated qkeras object classes
+                target_quantizer = None
+                if 'quantized_bits' in name:
+                    target_quantizer = qk_bits_8_0
+                elif 'quantized_relu' in name:
+                    target_quantizer = qk_relu_8_0
+                elif 'quantized_sigmoid' in name:
+                    target_quantizer = qk_sigmoid_8_0
+                elif name == 'linear' and layer_type == 'QActivation':
+                    target_quantizer = qk_bits_8_0
+
+                # 3. Apply the routing parameters and force serialization overrides
+                if target_quantizer is not None:
+                    layer.activation = target_quantizer
+                    if layer_type == 'QActivation':
+                        layer.quantizer = target_quantizer
+                        
+                        # PURE ADDITION: Override get_config dynamically to force clean 
+                        # dictionary serialization and bypass Keras ListWrapper bugs.
+                        def make_forced_get_config(l, q):
+                            original_get_config = l.get_config
+                            def forced_get_config():
+                                config = original_get_config()
+                                # Build the native dictionary layout hls4ml expects
+                                config['activation'] = {
+                                    'class_name': q.__class__.__name__,
+                                    'config': q.get_config()
+                                }
+                                return config
+                            return forced_get_config
+                            
+                        layer.get_config = make_forced_get_config(layer, target_quantizer)
+                else:
+                    if name == 'linear':
+                        # Inline properties on QDense / QConv2D drop back safely to a Keras linear function
+                        layer.activation = tf.keras.activations.linear
+                    else:
+                        # Catch-all fallback for standard activations (relu, sigmoid, etc.)
+                        layer.activation = name
+
+
+
+    def fixLayerActivation(self):
+        if self.modelType in [0, "ASIC"]:
+            self.fixLayerActivationASIC()
+        else:
+            self.fixLayerActivationRegular()
 
 
     def assignModel(self):
@@ -345,9 +556,10 @@ class hlsVerifier():
                 modelType = 2.5, #so far using 1 and 2.5, but in future will use the specification in hlsUtils -> Update June 10, 2026, seems okay now? and follows tfLoaderUtils, there is no hlsUtils
                 filepath = "",
                 baseSaveDir = "./hlsVerification",
-                interactivePlots = True,
+                interactivePlots: bool = True,
                 PLOT_DIR = "",
                 tfRecordFolder = "", #this is the default used by tfLoaderUtils, which if unchanged will pass to the default directories of tfLoaderUtils
+                doTrace: bool = True,
                  ) -> None:
         
         self.doingCatapult = doingCatapult 
@@ -359,11 +571,14 @@ class hlsVerifier():
         self.modelType = modelType 
         self.fullRunOnInit = fullRunOnInit
         self.tfRecordFolder = tfRecordFolder
+        self.doTrace = doTrace
 
         #process input flags
         if self.doingCatapult:
             sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.1-1267132/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
             self.catapult_ai_nn = import_module("catapult_ai_nn")
+            if self.doTrace:
+                print("SO FAR CATAPULT DOES NOT FULLY SUPPORT THE TRACE STUFF!!!!\n\n")
         self.hls4ml = import_module("hls4ml")
         
 
@@ -423,13 +638,14 @@ class hlsVerifier():
         self.predictFirstVector()
         print("starting to predict all vectors")
         self.predictAllVectors()
-        print("starting to trace all vectors (this may take a bit)")
-        self.traceAllVectors()
-        print("Done tracing all vectors")
-        self.printHLSTrace()
-        self.plotHLSTrace()
+        if self.doTrace:
+            print("starting to trace all vectors (this may take a bit)")
+            self.traceAllVectors()
+            print("Done tracing all vectors")
+            self.printHLSTrace()
+            self.plotHLSTrace()
+            self.writeTrace()
         self.plotHLSVerification()
-        self.writeTrace()
         if self.buildModel:
             self.finishBuilding()
     
@@ -497,7 +713,7 @@ class hlsVerifier():
         print(self.xTest.keys())
         # print(hls_model_ccs.get_input_variables())
         firstInput = [self.xTestList[i][1:2] for i in range(len(self.xTestList))]
-        if self.customModel:
+        if self.customModel or (self.modelType in [0,"ASIC"]):
             firstInput = self.xTestList[1:2]
         print(firstInput)
         # firstInputFlat = np.concatenate([firstInput[0][0],firstInput[1],firstInput[2],firstInput[3][0],firstInput[4]])
@@ -525,6 +741,15 @@ class hlsVerifier():
         else:    
             self.hls_model_predictions = self.hls_model_ccs.predict(self.multiInput)
         self.q_predictions = self.quantizedModel.predict(self.multiInput)
+        if self.q_predictions.shape[1]>1: #In case of ASIC model
+            print("applying argmax")
+            assert self.modelType in [0,"ASIC"]
+            self.q_predictions = np.argmax(self.q_predictions,axis=1)
+            self.hls_model_predictions = np.argmax(self.hls_model_predictions,axis=1)
+            #reshape to be consistent with other cases
+            self.hls_model_predictions = self.hls_model_predictions.reshape(-1, 1)
+            self.q_predictions = self.q_predictions.reshape(-1, 1)        
+        print(self.hls_model_predictions.shape,self.q_predictions.shape,self.yTest.shape)
 
     def traceAllVectors(self):
         if self.doingVitis:
@@ -602,6 +827,7 @@ class hlsVerifier():
 
     def plotHLSVerification(self):
         import matplotlib.colors as colors
+        print(self.hls_model_predictions.shape,self.q_predictions.shape,self.yTest.shape)
         predictionsTogether = np.array([self.hls_model_predictions,self.q_predictions,self.yTest]).transpose()
         print(predictionsTogether[0][370])
         # plt.scatter(self.hls_model_predictions,self.q_predictions,c = self.yTest,marker=",")

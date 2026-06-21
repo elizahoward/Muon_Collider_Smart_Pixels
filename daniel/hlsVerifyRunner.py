@@ -18,20 +18,26 @@ tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V4_Jun
 
 singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/model2.5_quantizedinputs_quantized_6w0i_qi2_hyperparameter_results_20260424_112349/model_trial_0.h5",
 singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
+qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+singleFilepath = qmodel_file
+modelType = "ASIC"
+singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results/model2_5_8bit_normalised_selected/pareto_primary/model_trial_077.h5"
+modelType = 2.5
 if runSingleVerification:
     hlsGuy = hlsVerification.hlsVerifier(
-        doingCatapult = False, #If using catapult, use the ccs_env python environment
-        doingVitis = True, #If using vitis, use the hls4ml "default" environment that works with Vitis      
+        doingCatapult = True, #If using catapult, use the ccs_env python environment
+        doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
         loadTestVectors = True,
         saveTestVectors = False,
         buildModel = True,
         # customModel = False,
-        modelType = "ASIC",
+        modelType = modelType,
         # filepath = "",
         interactivePlots = False,
         fullRunOnInit = True,
         filepath = singleFilepath,
         tfRecordFolder=tfRecordFolder,
+        doTrace = False
     )
     print("finished with hls verification of a single file")
 
