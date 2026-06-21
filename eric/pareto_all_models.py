@@ -42,7 +42,7 @@ else:
 MODEL1_DIR  = os.path.join(ERICF, "model1_fin_results")
 MODEL25_DIR = os.path.join(ERICF, "model2.5_fin_results")
 MODEL3_DIR  = os.path.join(ERICF, "model3_fin_results")
-MODEL3_DIR  = os.path.join(os.path.join(ERIC, "Final_Results"), "model3_fin_results")
+# MODEL3_DIR  = os.path.join(os.path.join(ERIC, "Final_Results"), "model3_fin_results")
 if newFolderStructure:
     OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto_newJune2026")
 else:
@@ -115,6 +115,22 @@ FAMILY_LINE = {
 
 COMP_LOG_TICKS = [0.9, 0.85, 0.80, 0.75, 0.70, 0.60, 0.50, 0.30, 0.10, 0.0]
 
+
+#References from synthesizing some different models
+#of format (ff_plus_lut, label,color,labelYHeight,textOffset) in HARDWARE_REFS
+#for filtering model, reference DOI 10.1088/2632-2153/ad6a00
+
+HARDWARE_REFS = [
+    (34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (26376,"Smartpixel Filtering Model (vsynth)","teal",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
+    # (24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
+    (106400+53200,"FPGA: Xilinx Zynq (xc7z020clg400-1), featured on PYNQ-Z2","fuchsia",0.05,0),
+    # (20736+15552,"FPGA: Tang Nano 20k","pink",0.05,0.1),
+    (14400+28800,"FPGA: Xilinx Zynq 7007S (xc7z007z)","purple",0.05,0.1),#https://www.mouser.com/datasheet/2/903/ds190-Zynq-7000-Overview-1595492.pdf
+    # (10000+20000,'Small FPGA: "Pink Board" Tang Nano 20k', ), #accroding to https://deepwiki.com/sipeed/sipeed_wiki/4.1-tang-nano-20k
+    (3456000,"FPGA: Xilinx Alveo U250 (xcu250-figd2104-2L-e)","goldenrod",0.05,0) #https://pcbsync.com/xilinx-alveo-u200/ says 1341000+2682000, but https://docs.amd.com/r/en-US/ds962-u200-u250/Summary says 3456000
+]
 
 # ── HLS resource extraction ────────────────────────────────────────────────────
 def _lut_ff_from_vsynth_log(log_path):
@@ -348,6 +364,48 @@ def find_pareto_front(df):
               .sort_values(by=[PRIMARY_METRIC, "luts_plus_ff"],
                            ascending=[False, True]))
 
+# Added to make vertical lines for reference points for FF+LUT
+#textOffset is a ratio
+def add_threshold_line(ax, x_val, label, color='gray', linestyle='--', linewidth=1.5,labelYHeight = 0.5,textOffset = 0):
+
+    """Adds a vertical line with a vertical text label at the top of the axis."""
+    if textOffset ==0:
+        textOffset = 0.05
+    if x_val < 2000000:
+        ax.axvline(x=x_val, color=color, linestyle=linestyle, linewidth=linewidth, zorder=2,
+                label='_nolegend_',  # Keeps the script's legend logic from breaking
+                )
+        #doesn't work for too big x vals
+        # # 1. Grab current y-limits so the line spans the full height of the plot
+        # ymin, ymax = ax.get_ylim()
+        
+        # from matplotlib.lines import Line2D
+        # line = Line2D(
+        #     [x_val, x_val], [ymin, ymax],
+        #     color=color, 
+        #     linestyle=linestyle, 
+        #     linewidth=linewidth, 
+        #     zorder=2
+        # )
+        # ax.add_line(line) # Forces line onto plot without registering it to the legend subsystem
+
+
+        # Transform: x is data coordinates, y is axis fraction (0 to 1)
+        transform = ax.get_xaxis_transform()
+        ax.text(
+            x=x_val+x_val*textOffset, 
+            y=labelYHeight,               
+            s=label,
+            rotation=90,          # Vertical text
+            transform=transform, 
+            color=color, 
+            va='bottom',         
+            ha='left',        
+            fontsize=12,
+            zorder=3
+        )
+    else:
+        print(f"Not plotting vertical line for {label} because {x_val} is too big")
 
 # ── Y-axis transform helpers ───────────────────────────────────────────────────
 def _y(v, complement):
@@ -423,7 +481,18 @@ def _draw_subfronts(ax, pareto_m1, pareto_m25, pareto_m3, pareto_all,
                 color=style["color"], lw=style["lw"], ls=style["ls"],
                 alpha=alpha, zorder=5, label=style["label"])
 
+#modified from https://www.statology.org/matplotlib-legend-order/
+#to swap order of items in legend
+def reorderLegend(handles, labels, legendOrder=[]):
+    #get handles and labels
+    assert len(handles) == len(labels)
 
+    #specify order of items in legend
+    if len(legendOrder) != len(handles):
+        print(f"Legend reordering is invalid since length {len(legendOrder), len(handles)} mismatch, so doing nothing")
+        return handles, labels
+    return [handles[idx] for idx in legendOrder],[labels[idx] for idx in legendOrder]
+  
 def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=None):
     handles, labels = ax.get_legend_handles_labels()
     if extra_handles:
@@ -433,8 +502,11 @@ def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=Non
     for h, l in zip(handles, labels):
         if l not in seen:
             seen.add(l); h2.append(h); l2.append(l)
-    loc = "upper left" if complement else "lower right"
-    ax.legend(h2, l2, loc=loc, fontsize=7, framealpha=0.9, ncol=3, columnspacing=0.6)
+    # loc = "upper left" if complement else "lower right"
+    loc = "lower right"
+    legendOrder = [0,1,2,3,4,15,18,5,6,7,8,9,16,10,11,12,13,14,17]
+    h2, l2 = reorderLegend(h2, l2, legendOrder=legendOrder)
+    ax.legend(h2, l2, loc=loc, fontsize=11, framealpha=0.9, ncol=3, columnspacing=0.6)
 
     stats = (f"Total models: {len(df)}\n"
              f"Pareto optimal: {len(pareto_df)} ({100*len(pareto_df)/len(df):.1f}%)\n"
@@ -450,13 +522,19 @@ def _finalize(ax, title, xscale="linear", complement=False):
     if xscale != "linear": tags.append("x-log")
     if complement:          tags.append("y: 1−metric log")
     tag = f" [{', '.join(tags)}]" if tags else ""
-    ax.set_title(title + tag, fontsize=13, fontweight="bold", pad=14)
-    ax.set_xlabel("LUTs + FF (registers) (csynth)", fontsize=12, fontweight="bold")
+    ax.set_title(title + tag, fontsize=18, fontweight="bold", pad=14)
+    ax.set_xlabel("LUTs + FF (registers) (csynth)", fontsize=16, fontweight="bold")
     ax.set_ylabel(
         f"{METRIC_NAME}  (1−metric, log scale)" if complement
         else METRIC_NAME,
-        fontsize=12, fontweight="bold")
+        fontsize=16, fontweight="bold")
     ax.grid(True, alpha=0.28, linestyle="--", which="both")
+    for (ff_plus_lut, label,color,labelYHeight,textOffset) in HARDWARE_REFS:
+        add_threshold_line(ax,ff_plus_lut,label,color=color,labelYHeight=labelYHeight,textOffset = textOffset)
+    # add_threshold_line(ax,34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00",color="teal",labelYHeight=0.9)
+    # add_threshold_line(ax,26376,"Smartpixel Filtering Model (vsynth) DOI 10.1088/2632-2153/ad6a00",color="teal",labelYHeight=0.9)
+    # add_threshold_line(ax,35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer",color="teal",labelYHeight=0.95)
+    # add_threshold_line(ax,24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer",color="teal",labelYHeight=0.95)
     if xscale == "log":
         ax.set_xscale("log")
 
