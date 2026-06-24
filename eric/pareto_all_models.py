@@ -123,11 +123,12 @@ COMP_LOG_TICKS = [0.9, 0.85, 0.80, 0.75, 0.70, 0.60, 0.50, 0.30, 0.10, 0.0]
 HARDWARE_REFS = [
     (34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     (26376,"Smartpixel Filtering Model (vsynth)","teal",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (14289+57398,"Smartpixel Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     (106400+53200,"FPGA: Xilinx Zynq (xc7z020clg400-1), featured on PYNQ-Z2","fuchsia",0.05,0),
     # (20736+15552,"FPGA: Tang Nano 20k","pink",0.05,0.1),
-    (14400+28800,"FPGA: Xilinx Zynq 7007S (xc7z007z)","purple",0.05,0.1),#https://www.mouser.com/datasheet/2/903/ds190-Zynq-7000-Overview-1595492.pdf
+    # (14400+28800,"FPGA: Xilinx Zynq 7007S (xc7z007z)","purple",0.05,0.1),#https://www.mouser.com/datasheet/2/903/ds190-Zynq-7000-Overview-1595492.pdf
     # (10000+20000,'Small FPGA: "Pink Board" Tang Nano 20k', ), #accroding to https://deepwiki.com/sipeed/sipeed_wiki/4.1-tang-nano-20k
     (3456000,"FPGA: Xilinx Alveo U250 (xcu250-figd2104-2L-e)","goldenrod",0.05,0) #https://pcbsync.com/xilinx-alveo-u200/ says 1341000+2682000, but https://docs.amd.com/r/en-US/ds962-u200-u250/Summary says 3456000
 ]
@@ -338,9 +339,13 @@ def load_modelNEW(base_dir,modelNum):
                 print(f"\n\n  [WARN] NONZERO DSPs !!!: {bit_dir}, {trial_id}\n\n")
             fullpath1 = os.path.join(bit_dir,"pareto_primary/")
             fullpath2 = os.path.join(bit_dir,"pareto_secondary/")
+            fullpath3 = os.path.join(fullpath1,"finishedTrials") #added for model3, which has moved files once finished
             fullpath = os.path.join(fullpath1,"model_trial_"+trial_id+'.h5')
             if not os.path.isfile(fullpath):
                 fullpath = os.path.join(fullpath2,"model_trial_"+trial_id+'.h5')
+                if not os.path.isfile(fullpath):
+                    # print("using fullpath3\n\n\n")
+                    fullpath = os.path.join(fullpath3,"model_trial_"+trial_id+'.h5')
             rows.append(_build_row(modelName, run_name, trial_id, csv_row,
                                    lut, ff, dsp, bram, src,fullpath))
     return pd.DataFrame(rows)
@@ -523,7 +528,7 @@ def _finalize(ax, title, xscale="linear", complement=False):
     if complement:          tags.append("y: 1−metric log")
     tag = f" [{', '.join(tags)}]" if tags else ""
     ax.set_title(title + tag, fontsize=18, fontweight="bold", pad=14)
-    ax.set_xlabel("LUTs + FF (registers) (csynth)", fontsize=16, fontweight="bold")
+    ax.set_xlabel("LUTs + FFs (registers) (csynth)", fontsize=16, fontweight="bold")
     ax.set_ylabel(
         f"{METRIC_NAME}  (1−metric, log scale)" if complement
         else METRIC_NAME,
