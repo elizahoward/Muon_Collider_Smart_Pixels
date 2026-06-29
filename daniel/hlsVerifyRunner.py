@@ -74,11 +74,11 @@ if runParetoVerification:
                 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{e.path[-20:-1]}"
                 print(hlsDir)
                 hlsGuy = hlsVerification.hlsVerifier(
-                    doingCatapult = False, #If using catapult, use the ccs_env python environment
-                    doingVitis = True, #If using vitis, use the hls4ml "default" environment that works with Vitis      
+                    doingCatapult = True, #If using catapult, use the ccs_env python environment
+                    doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
                     # loadTestVectors = True,
                     # saveTestVectors = False,
-                    buildModel = False,
+                    buildModel = True,
                     # customModel = False,
                     modelType = modelType,
                     # filepath = "",
@@ -87,4 +87,5 @@ if runParetoVerification:
                     fullRunOnInit = True,
                     filepath = e.path,
                     tfRecordFolder=tfRecordFolder,
+                    doTrace = False,
                 )
