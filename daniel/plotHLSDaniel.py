@@ -396,7 +396,7 @@ def plotCombinedDf4(combinedDf: pd.DataFrame, savePath = "./hlsComparison/hls_cs
 
 def plotParasitically(xList: list[Any], yList:list[Any], xLabel:str, yLabels:list, colors: list = ["red", "blue", "green"], 
                       offsets:list = [0, 80], legendLabels:list = None, doLegend: bool = False, isSubplot:bool = False, subPlotNum = 0,
-                      markers:list = None,title: str = "",figsize = [20,5],yScales:list = None):
+                      markers:list = None,title: str = "",figsize = [20,5],yScales:list = None,alphas:list = None):
     """
     plot several dataseries with common axis, using the parasitic stuff dynamically
     xList and yList are the x/y series that is plotted
@@ -423,6 +423,9 @@ def plotParasitically(xList: list[Any], yList:list[Any], xLabel:str, yLabels:lis
     if yScales is None:
         yScales = ['linear' for i in range(numPlots)]
     assert len(yScales) == numPlots
+    if alphas is None:
+        alphas = [0.8 for i in range(numPlots)]
+    assert len(alphas) == numPlots
     
     if not isSubplot:
         plt.figure(figsize = figsize)
@@ -437,7 +440,7 @@ def plotParasitically(xList: list[Any], yList:list[Any], xLabel:str, yLabels:lis
 
     #do the plotttting
     for idx in range(numPlots):
-        pars[idx].plot(xList[idx], yList[idx], label = legendLabels[idx], color=colors[idx],marker=markers[idx],markersize=10,linewidth=2.5)
+        pars[idx].plot(xList[idx], yList[idx], label = legendLabels[idx], color=colors[idx],marker=markers[idx],markersize=10,linewidth=2.5,alpha=alphas[idx])
         pars[idx].axis["left" if idx==0 else "right"].label.set_color(colors[idx])
         pars[idx].axis["left" if idx==0 else "right"].major_ticklabels.set_color(colors[idx])
         pars[idx].set(ylabel=yLabels[idx],yscale = yScales[idx])

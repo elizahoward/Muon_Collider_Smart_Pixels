@@ -10,8 +10,8 @@ if enviroModelAsic:
 import hlsVerification
 import re
 
-runParetoVerification = True
-runSingleVerification = False
+runParetoVerification = False
+runSingleVerification = True
 
 tfRecordFolder = "" #The default, which will go to tfLoaderUtils defaults, which are not normalized actually, 
 # that default appropriate for some older models or for model1, but not great for the newest (as of May/June2026) models 2/3
@@ -25,19 +25,26 @@ modelType = "ASIC"
 singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results/model2_5_8bit_normalised_selected/pareto_primary/model_trial_077.h5"
 singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results/model2_5_10bit_normalised_selected/pareto_primary/model_trial_057.h5"
 modelType = 2.5
+singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
+singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_8bit_normalised_selected_pareto_primary__model_trial_100.h5"
+singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_8bit_normalised_selected_pareto_primary__model_trial_090.h5"#current, need to do 90 8 bit
+modelType = 3
+bitNumber = 8
+hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{singleFilepath[-20:-1]}"
 if runSingleVerification:
     hlsGuy = hlsVerification.hlsVerifier(
         doingCatapult = True, #If using catapult, use the ccs_env python environment
         doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
-        loadTestVectors = True,
-        saveTestVectors = False,
+        loadTestVectors = False,
+        saveTestVectors = True,
         buildModel = True,
         # customModel = False,
-        modelType = modelType,
+        modelType = modelType,        
         # filepath = "",
         interactivePlots = False,
         fullRunOnInit = True,
         filepath = singleFilepath,
+        baseSaveDir = hlsDir,
         tfRecordFolder=tfRecordFolder,
         doTrace = False
     )

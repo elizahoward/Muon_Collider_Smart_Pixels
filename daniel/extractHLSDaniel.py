@@ -386,9 +386,12 @@ def main() -> None:
     print(combinedDf.keys())
     plotCombinedDf(combinedDf)
     plotCombinedDf2(combinedDf)
+    plotCombinedDf2(combinedDf[5:],savePath = "./hlsComparison/hls_variable_correlations_noModel3.png")
     plotCombinedDF3(combinedDf)
     plotCombinedDf3v2(combinedDf)
+    plotCombinedDf3v2(combinedDf[5:],savePath = "./hlsComparison/hls_parasite_multi_axis_trendsV2_noModel3.png")
     plotCombinedDf4(combinedDf)
+    plotCombinedDf4(combinedDf[5:], savePath = "./hlsComparison/hls_csynthVsAreascore_noModel3.png")
 
 # The proper Python entry point condition
 if __name__ == "__main__":
