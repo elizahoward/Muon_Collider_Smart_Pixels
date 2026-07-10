@@ -108,7 +108,7 @@ RUN_LABELS   = {rn: lbl for _, rn, lbl, _ in _ALL_CONFIGS}
 
 FAMILY_LINE = {
     "Model 1":   dict(color="#c0392b", lw=1.4, ls="--", label="Model 1 Pareto front"),
-    "Model 2.5": dict(color="#1a5276", lw=1.4, ls="-.", label="Model 2.5 Pareto front"),
+    "Model 2.5": dict(color="#1a5276", lw=1.4, ls="-.", label="Model 2 Pareto front"),
     "Model 3":   dict(color="#27ae60", lw=1.4, ls=":",  label="Model 3 Pareto front"),
     "Combined":  dict(color="black",   lw=1.8, ls="-",  label="Combined Pareto front"),
 }
