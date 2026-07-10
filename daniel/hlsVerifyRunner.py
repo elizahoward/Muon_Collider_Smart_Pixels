@@ -27,9 +27,12 @@ singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_
 modelType = 2.5
 singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
 singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_8bit_normalised_selected_pareto_primary__model_trial_100.h5"
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_8bit_normalised_selected_pareto_primary__model_trial_090.h5"#current, need to do 90 8 bit
+singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_10bit_normalised_selected_pareto_primary__model_trial_110.h5"#current 110 10,
+#need to do 110 8 bit
+# need to do 009 8 bit
+#need to do 084 10 bit
 modelType = 3
-bitNumber = 8
+bitNumber = 10
 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{singleFilepath[-20:-1]}"
 if runSingleVerification:
     hlsGuy = hlsVerification.hlsVerifier(
