@@ -182,7 +182,7 @@ def find_operating_points(sweep_df, target_efficiencies, bkg_rej_weights):
     return op_df
 
 
-def plot_roc(sweep_df, op_df, output_path):
+def plot_roc(sweep_df, op_df, output_path,timingCutLabel="Timing cut |t| < T",title  = "ROC curve — adjusted_hit_time_30ps_gaussian window cut"):
     """
     ROC curve: x = FPR (background acceptance), y = signal efficiency.
     Operating points at target signal efficiencies are marked.
@@ -190,16 +190,16 @@ def plot_roc(sweep_df, op_df, output_path):
     fig, ax = plt.subplots(figsize=(7, 6))
 
     ax.plot(sweep_df["fpr"], sweep_df["sig_eff"], lw=1.5, color="steelblue",
-            label="Timing cut |t| < T")
+            label=timingCutLabel)
 
-    colors = {0.95: "tab:orange", 0.98: "tab:green", 0.99: "tab:red"}
+    colors = {0.95: "tab:cyan", 0.98: "tab:red", 0.99: "tab:green"}
     for _, row in op_df.iterrows():
         if row["fpr"] is None:
             continue
         target = row["target_sig_eff"]
         label = (
-            f"{int(target*100)}% sig. eff.  |  "
-            f"bkg rej = {row['bkg_rej']:.4f}  |  "
+            f"{int(target*100)}% Signal Efficiency  |  "
+            f"Background Rejection = {row['bkg_rej']:.4f}  |  "
             f"T = {row['threshold_ns']:.4f} ns"
         )
         ax.scatter(row["fpr"], row["actual_sig_eff"],
@@ -207,16 +207,16 @@ def plot_roc(sweep_df, op_df, output_path):
                    s=60, label=label)
 
     weighted = op_df["weighted_bkg_rej"].iloc[0]
-    if weighted is not None:
-        ax.text(0.97, 0.05,
-                f"Weighted bkg rej = {weighted:.4f}",
-                transform=ax.transAxes, ha="right", va="bottom",
-                fontsize=9, bbox=dict(boxstyle="round,pad=0.3", fc="white", alpha=0.8))
+    # if weighted is not None:
+    #     ax.text(0.97, 0.05,
+    #             f"Weighted bkg rej = {weighted:.4f}",
+    #             transform=ax.transAxes, ha="right", va="bottom",
+    #             fontsize=9, bbox=dict(boxstyle="round,pad=0.3", fc="white", alpha=0.8))
 
-    ax.set_xlabel("False Positive Rate (background acceptance)", fontsize=11)
-    ax.set_ylabel("Signal Efficiency (TPR)", fontsize=11)
-    ax.set_title("ROC curve — adjusted_hit_time_30ps_gaussian window cut", fontsize=11)
-    ax.legend(fontsize=8, loc="lower right")
+    ax.set_xlabel("Background Acceptance (FPR)", fontsize=12)
+    ax.set_ylabel("Signal Efficiency (TPR)", fontsize=12)
+    ax.set_title(title, fontsize=14)
+    ax.legend(fontsize=10, loc="lower right")
     ax.grid(True, alpha=0.3)
     ax.set_xlim(0, 1)
     ax.set_ylim(0, 1)
