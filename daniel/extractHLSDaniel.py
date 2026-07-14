@@ -316,26 +316,14 @@ def check_deterministic_pipeline(rpt_path):
     # 1. Extract min and max latency using the precise column order patterns
     min_lat = find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|', rpt_path, int)
     max_lat = find_in_text(r'\|\s*\d+\s*\|\s*(\d+)\s*\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|', rpt_path, int)
-    
     # 2. Check the end of the data row to see if the pipeline type column is 'yes' or 'function'
     is_pipelined = find_in_text(r'\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[^\|]+\s*\|\s*[^\|]+\s*\|\s*(yes|function)\s*\|', rpt_path, str, default="") != ""
-    
     # 3. Design is verified deterministic if pipelined and min equals max
     return bool(is_pipelined and min_lat == max_lat and min_lat != -1)
-def get_hls_metrics(base_dir: str, doPrint = False):
+def getVsynthMetrics(base_dir: str, doPrint = False):
     """Extracts true Vitis timing/latency and Vivado area metrics via text reports."""
     rpt_csynth = os.path.join(base_dir, "myproject_prj/solution1/syn/report/myproject_csynth.rpt")
     rpt_vsynth = os.path.join(base_dir, "vivado_synth.rpt")
-    # metrics = dict[str, Any] = {
-    #     "Target Clock (ns)": -1.0,
-    #     "Achieved Clock (ns)": -1.0,
-    #     "Latency (cycles)": -1,
-    #     "Interval (cycles)": -1,
-    #     "Post-Synth LUTs": -1,
-    #     "Post-Synth FFs": -1,
-    #     "Post-Synth DSPs": -1,
-    #     "Verified Deterministic": -1,
-    # }
     metrics = {
         "Target Clock (ns)": find_in_text(r'ap_clk\s*\|\s*([\d\.]+)\s*ns', rpt_csynth),
         "Achieved Clock (ns)": find_in_text(r'ap_clk\s*\|\s*[\d\.]+\s*ns\s*\|\s*([\d\.]+)\s*ns', rpt_csynth),
@@ -352,22 +340,11 @@ def get_hls_metrics(base_dir: str, doPrint = False):
     if doPrint:
         print(metrics)
     return metrics
-    # return pd.DataFrame([
-    #     ["Target Clock (ns)", find_in_text(r'ap_clk\s*\|\s*([\d\.]+)\s*ns', rpt_csynth)],
-    #     ["Achieved Clock (ns)", find_in_text(r'ap_clk\s*\|\s*[\d\.]+\s*ns\s*\|\s*([\d\.]+)\s*ns', rpt_csynth)],
-    #     # ["Slack (ns)", -1],  # Placeholder since csynth doesn't explicitly display slack as a column here
-    #     ["Latency (cycles)", find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*[\d\.]+\s*us', rpt_csynth, int)],
-    #     ["Interval (cycles)", find_in_text(r'us\s*\|\s*(\d+)\s*\|\s*\d+\s*\|', rpt_csynth, int)],
-    #     ["Post-Synth LUTs", find_in_text(r'Slice LUTs\*\s*\|\s*(\d+)', rpt_vsynth, int)],
-    #     ["Post-Synth FFs", find_in_text(r'Slice Registers\s*\|\s*(\d+)', rpt_vsynth, int)],
-    #     ["Post-Synth DSPs", find_in_text(r'DSPs\s*\|\s*(\d+)', rpt_vsynth, int)],
-    #     ["Verified Deterministic", check_deterministic_pipeline(rpt_csynth)]
-    # ])
 
-# print(get_hls_metrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m1_b6___model_trial_836.h/hlsVitisModel2_20260714_050318"))
-assert get_hls_metrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m1_b6___model_trial_836.h/hlsVitisModel2_20260714_050318") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.302, 'Latency (cycles)': 23, 'Latency (str)': '0.115 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 2051, 'Post-Synth FFs': 1762, 'Post-Synth DSPs': 2, "Post-Synth BRAMs":0,'Verified Deterministic': True}
-assert get_hls_metrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b8___model_trial_063.h/hlsVitisModel2_20260714_062921") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.362, 'Latency (cycles)': 42, 'Latency (str)': '0.210 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 234454, 'Post-Synth FFs': 223056, 'Post-Synth DSPs': 220, "Post-Synth BRAMs":0,'Verified Deterministic': True}
-assert get_hls_metrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b8___model_trial_063.h/hlsVitisModel2_20260714_062921") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.362, 'Latency (cycles)': 42, 'Latency (str)': '0.210 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 234454, 'Post-Synth FFs': 223056, 'Post-Synth DSPs': 220, "Post-Synth BRAMs":0,'Verified Deterministic': True}
+# print(getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m1_b6___model_trial_836.h/hlsVitisModel2_20260714_050318"))
+assert getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m1_b6___model_trial_836.h/hlsVitisModel2_20260714_050318") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.302, 'Latency (cycles)': 23, 'Latency (str)': '0.115 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 2051, 'Post-Synth FFs': 1762, 'Post-Synth DSPs': 2, "Post-Synth BRAMs":0,'Verified Deterministic': True}
+assert getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b8___model_trial_063.h/hlsVitisModel2_20260714_062921") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.362, 'Latency (cycles)': 42, 'Latency (str)': '0.210 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 234454, 'Post-Synth FFs': 223056, 'Post-Synth DSPs': 220, "Post-Synth BRAMs":0,'Verified Deterministic': True}
+assert getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b8___model_trial_063.h/hlsVitisModel2_20260714_062921") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.362, 'Latency (cycles)': 42, 'Latency (str)': '0.210 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 234454, 'Post-Synth FFs': 223056, 'Post-Synth DSPs': 220, "Post-Synth BRAMs":0,'Verified Deterministic': True}
 ###################################################################################
 
 def saveMetrics(allMetrics, savePath = "./hlsComparison/hls_synthesis_metrics.csv"):
@@ -464,7 +441,7 @@ def main() -> None:
     allMetrics = processTargetDirectories(extractProjectMetrics, doPrint=doPrint)
     assert len(allMetrics) > 0, "Assertion failed: No metrics were extracted from the target directories."
     saveMetrics(allMetrics)
-    vitisMetrics = processTargetDirectories(get_hls_metrics, doPrint=doPrint,typeCatapult = False)
+    vitisMetrics = processTargetDirectories(getVsynthMetrics, doPrint=doPrint,typeCatapult = False)
     saveMetrics(vitisMetrics,savePath = "./hlsComparison/vsynth_metrics.csv")
     print(f"Successfully processed {len(allMetrics)} project run configurations.")
     print("\n\n\n")
