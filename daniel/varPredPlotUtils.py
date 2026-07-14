@@ -15,6 +15,7 @@ import functools
 from validationPlots.plotUtils import * #double check this import will work if call from another folder
 import pandas as pd
 from pathlib import Path
+import json
 
 
 
@@ -58,7 +59,7 @@ def getModelAndPredict(quantizedModel,
     else:
         raise ValueError("Error processing model type")
     model.models[configName] = quantizedModel
-    model.evaluate(config_name=configName,predictionPlots=False)
+    model.evaluate(config_name=configName,predictionPlots=False,signal_efficiencies=[0.95, 0.98, 0.99])
     predictions = model.models[configName].predict(model.validation_generator, verbose=1)
     return model, predictions, modelType
 
@@ -161,7 +162,18 @@ def runPredVarDFPlots(predVarDF,
         plot3by3PredBibSig(predVarDF,plot_func=varPredCallables["plotter"][i],genTitle=varPredCallables["genTitle"][i],extendTitle = extendTitle,cut=cut, PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 
     plt.close()
+# import numpy as np
 
+def to_python(obj):
+    if isinstance(obj, np.generic):
+        return obj.item()
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, dict):
+        return {k: to_python(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [to_python(x) for x in obj]
+    return obj
 def runModelPlots(filepath = "", modelType=2,
                   tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
                   #to pass through to later plotting functions:
@@ -200,7 +212,8 @@ def runModelPlots(filepath = "", modelType=2,
     Path(PLOT_DIR).mkdir(parents=True, exist_ok=True)
     runPredVarDFPlots(predVarDF,cut=threshVal, PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,extendTitle=extendTitle,cmap=cmap)
 
-
+    with open(os.path.join(PLOT_DIR,"evaluation_results.json"), "w") as file:
+        json.dump(to_python(model.evaluation_results), file)
 
 
 ################end of usefulness
