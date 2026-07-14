@@ -201,9 +201,10 @@ assert (mapSingleHlsToH5File("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Col
 assert (mapSingleHlsToH5File("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m3_b10__model_trial_110.h/hlsCatapultModel2_20260625_asdflkadsf/Catapult/myproject.v1")== "./CrossParetoModels_June2026/model3_10bit_normalised_selected_pareto_primary__model_trial_110.h5")
 # print(mapSingleHlsToH5File("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b6__model_trial_088.h/hlsCatapultModel2_20260625_120405/Catapult/myproject.v1"))
 assert (mapSingleHlsToH5File("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b6__model_trial_088.h/hlsCatapultModel2_20260625_120405/Catapult/myproject.v1")== "./CrossParetoModels_June2026/model2.5_fin_results_model2_5_6bit_normalised_selected__model_trial_088.h5")
+assert (mapSingleHlsToH5File("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b6__model_trial_088.h/hlsVitisModel2_blablabla")== "./CrossParetoModels_June2026/model2.5_fin_results_model2_5_6bit_normalised_selected__model_trial_088.h5")
 assert (mapSingleHlsToH5File("./hlsVerification/m1_b6___model_trial_836.h/hl...") == "./CrossParetoModels_June2026/model1_fin_results_model1_6bit_normalised_selected__model_trial_836.h5")
 
-def processTargetDirectories(processFunction: Callable[[str], dict], baseDir: str = "./hlsVerification",doPrint = True) -> list[Any]:
+def processTargetDirectories(processFunction: Callable[[str], dict], baseDir: str = "./hlsVerification",doPrint = True,typeCatapult = True) -> list[Any]:
     """
     Scans baseDir for trial folders, isolates the newest hlsCatapultModel2 folder,
     executes processFunction passing the absolute path of 'Catapult/myproject.v1',
@@ -221,25 +222,35 @@ def processTargetDirectories(processFunction: Callable[[str], dict], baseDir: st
             continue
 
         catapultPattern = os.path.join(modelDir, "hlsCatapultModel*")
-        catapultRuns = glob.glob(catapultPattern)
-        catapultRunDirs = [d for d in catapultRuns if os.path.isdir(d)]
+        vivadoPattern = os.path.join(modelDir, "hlsVitisModel*")
+        if typeCatapult:
+            allRuns = glob.glob(catapultPattern)
+        else:
+            allRuns = glob.glob(vivadoPattern)
+        allRunDirs = [d for d in allRuns if os.path.isdir(d)]
         
-        if not catapultRunDirs:
+        if not allRunDirs:
             continue
 
         # Alphanumeric sorting places the newest ISO-style timestamp folder at the end
-        catapultRunDirs.sort()
-        newestCatapultDir = catapultRunDirs[-1]
+        allRunDirs.sort()
+        newestRunDir = allRunDirs[-1]
 
         # Construct the path to the target project directory
-        targetProjectDir = os.path.join(newestCatapultDir, "Catapult", "myproject.v1")
+        if typeCatapult:
+            targetProjectDir = os.path.join(newestRunDir, "Catapult", "myproject.v1")
+        else:
+            targetProjectDir = newestRunDir
 
         if os.path.isdir(targetProjectDir):
             # Execute the user-provided callback function and capture its output
             if doPrint:
                 print("\nExecuting", processFunction.__name__, "on", targetProjectDir)
             output = processFunction(targetProjectDir,doPrint=doPrint)
-            output["hlsDir"] = targetProjectDir
+            if typeCatapult:
+                output["hlsDir"] = targetProjectDir
+            else:
+                output["hlsDirVitis"] = targetProjectDir
             output["h5Path"] = mapSingleHlsToH5File(targetProjectDir)
             
             # Save the captured result to the master list
@@ -253,6 +264,7 @@ def processTargetDirectories(processFunction: Callable[[str], dict], baseDir: st
 def extractProjectMetrics(projectDir: str, doPrint = True) -> dict:
     """
     Callback function that parses both report files inside a given project directory.
+    Works for Catapult directories
     """
     # print(f"\nProcessing project run: {os.path.basename(os.path.dirname(os.path.dirname(os.path.dirname(projectDir))))}")
     if doPrint:
@@ -289,9 +301,83 @@ assert extractProjectMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Col
 # Execution example:
 # processTargetDirectories("/path/to/your/base/workspace", extractProjectMetrics)
 
+###################################################################################
+#Vivado report processing
+def find_in_text(pattern, file_path, cast_type=float, default=-1):
+    """Safely extracts a regex match from a text file, defaulting to -1 on failure."""
+    if not os.path.exists(file_path):
+        return default
+    with open(file_path, 'r') as f:
+        match = re.search(pattern, f.read())
+    return cast_type(match.group(1)) if match else default
+
+def check_deterministic_pipeline(rpt_path):
+    """Verifies if the pipeline is enabled and min latency equals max latency."""
+    # 1. Extract min and max latency using the precise column order patterns
+    min_lat = find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|', rpt_path, int)
+    max_lat = find_in_text(r'\|\s*\d+\s*\|\s*(\d+)\s*\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|', rpt_path, int)
+    
+    # 2. Check the end of the data row to see if the pipeline type column is 'yes' or 'function'
+    is_pipelined = find_in_text(r'\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[^\|]+\s*\|\s*[^\|]+\s*\|\s*(yes|function)\s*\|', rpt_path, str, default="") != ""
+    
+    # 3. Design is verified deterministic if pipelined and min equals max
+    return bool(is_pipelined and min_lat == max_lat and min_lat != -1)
+def get_hls_metrics(base_dir: str, doPrint = False):
+    """Extracts true Vitis timing/latency and Vivado area metrics via text reports."""
+    rpt_csynth = os.path.join(base_dir, "myproject_prj/solution1/syn/report/myproject_csynth.rpt")
+    rpt_vsynth = os.path.join(base_dir, "vivado_synth.rpt")
+    # metrics = dict[str, Any] = {
+    #     "Target Clock (ns)": -1.0,
+    #     "Achieved Clock (ns)": -1.0,
+    #     "Latency (cycles)": -1,
+    #     "Interval (cycles)": -1,
+    #     "Post-Synth LUTs": -1,
+    #     "Post-Synth FFs": -1,
+    #     "Post-Synth DSPs": -1,
+    #     "Verified Deterministic": -1,
+    # }
+    metrics = {
+        "Target Clock (ns)": find_in_text(r'ap_clk\s*\|\s*([\d\.]+)\s*ns', rpt_csynth),
+        "Achieved Clock (ns)": find_in_text(r'ap_clk\s*\|\s*[\d\.]+\s*ns\s*\|\s*([\d\.]+)\s*ns', rpt_csynth),
+        "Latency (cycles)": find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*[\d\.]+\s*[a-z]+', rpt_csynth, int),        
+        # Captures the full string block of the second time column (e.g., "0.115 us" or "12.4 ms")
+        "Latency (str)": find_in_text(r'\|\s*[\d\.]+\s*[a-z]+\s*\|\s*([\d\.]+\s*[a-z]+)\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*(?:yes|no)\s*\|', rpt_csynth, str),
+        "Interval (cycles)": find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*(?:yes|no)\s*\|', rpt_csynth, int),
+        "Post-Synth LUTs": find_in_text(r'Slice LUTs\*\s*\|\s*(\d+)', rpt_vsynth, int),
+        "Post-Synth FFs": find_in_text(r'Slice Registers\s*\|\s*(\d+)', rpt_vsynth, int),
+        "Post-Synth DSPs": find_in_text(r'DSPs\s*\|\s*(\d+)', rpt_vsynth, int),
+        "Post-Synth BRAMs": find_in_text(r'Block RAM Tile\s*\|\s*(\d+)', rpt_vsynth, int),
+        "Verified Deterministic": check_deterministic_pipeline(rpt_csynth),
+    }
+    if doPrint:
+        print(metrics)
+    return metrics
+    # return pd.DataFrame([
+    #     ["Target Clock (ns)", find_in_text(r'ap_clk\s*\|\s*([\d\.]+)\s*ns', rpt_csynth)],
+    #     ["Achieved Clock (ns)", find_in_text(r'ap_clk\s*\|\s*[\d\.]+\s*ns\s*\|\s*([\d\.]+)\s*ns', rpt_csynth)],
+    #     # ["Slack (ns)", -1],  # Placeholder since csynth doesn't explicitly display slack as a column here
+    #     ["Latency (cycles)", find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*[\d\.]+\s*us', rpt_csynth, int)],
+    #     ["Interval (cycles)", find_in_text(r'us\s*\|\s*(\d+)\s*\|\s*\d+\s*\|', rpt_csynth, int)],
+    #     ["Post-Synth LUTs", find_in_text(r'Slice LUTs\*\s*\|\s*(\d+)', rpt_vsynth, int)],
+    #     ["Post-Synth FFs", find_in_text(r'Slice Registers\s*\|\s*(\d+)', rpt_vsynth, int)],
+    #     ["Post-Synth DSPs", find_in_text(r'DSPs\s*\|\s*(\d+)', rpt_vsynth, int)],
+    #     ["Verified Deterministic", check_deterministic_pipeline(rpt_csynth)]
+    # ])
+
+# print(get_hls_metrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m1_b6___model_trial_836.h/hlsVitisModel2_20260714_050318"))
+assert get_hls_metrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m1_b6___model_trial_836.h/hlsVitisModel2_20260714_050318") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.302, 'Latency (cycles)': 23, 'Latency (str)': '0.115 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 2051, 'Post-Synth FFs': 1762, 'Post-Synth DSPs': 2, "Post-Synth BRAMs":0,'Verified Deterministic': True}
+assert get_hls_metrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b8___model_trial_063.h/hlsVitisModel2_20260714_062921") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.362, 'Latency (cycles)': 42, 'Latency (str)': '0.210 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 234454, 'Post-Synth FFs': 223056, 'Post-Synth DSPs': 220, "Post-Synth BRAMs":0,'Verified Deterministic': True}
+assert get_hls_metrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b8___model_trial_063.h/hlsVitisModel2_20260714_062921") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.362, 'Latency (cycles)': 42, 'Latency (str)': '0.210 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 234454, 'Post-Synth FFs': 223056, 'Post-Synth DSPs': 220, "Post-Synth BRAMs":0,'Verified Deterministic': True}
+###################################################################################
+
 def saveMetrics(allMetrics, savePath = "./hlsComparison/hls_synthesis_metrics.csv"):
     df = pd.DataFrame(allMetrics)
-    df.sort_values(by="hlsDir", inplace=True)
+    if "hlsDir" in df.keys():
+        df.sort_values(by="hlsDir", inplace=True)
+    elif "hlsDirVitis" in df.keys():
+        df.sort_values(by="hlsDirVitis", inplace=True)
+    else:
+        print("No hlsDir or hlsDirVitis key to sort by, so saving unsorted")
     df.to_csv(savePath, index=False)
     print(df)
     print("Metrics successfully saved to ",savePath)
@@ -378,6 +464,8 @@ def main() -> None:
     allMetrics = processTargetDirectories(extractProjectMetrics, doPrint=doPrint)
     assert len(allMetrics) > 0, "Assertion failed: No metrics were extracted from the target directories."
     saveMetrics(allMetrics)
+    vitisMetrics = processTargetDirectories(get_hls_metrics, doPrint=doPrint,typeCatapult = False)
+    saveMetrics(vitisMetrics,savePath = "./hlsComparison/vsynth_metrics.csv")
     print(f"Successfully processed {len(allMetrics)} project run configurations.")
     print("\n\n\n")
     combinedDf = mergeTwoCsvFiles("../eric/combined_all_models_pareto_newJune2026/pareto_primary.csv","./hlsComparison/hls_synthesis_metrics.csv")
@@ -386,12 +474,12 @@ def main() -> None:
     print(combinedDf.keys())
     plotCombinedDf(combinedDf)
     plotCombinedDf2(combinedDf)
-    plotCombinedDf2(combinedDf[5:],savePath = "./hlsComparison/hls_variable_correlations_noModel3.png")
+    plotCombinedDf2(combinedDf[7:],savePath = "./hlsComparison/hls_variable_correlations_noModel3.png")
     plotCombinedDF3(combinedDf)
     plotCombinedDf3v2(combinedDf)
-    plotCombinedDf3v2(combinedDf[5:],savePath = "./hlsComparison/hls_parasite_multi_axis_trendsV2_noModel3.png")
+    plotCombinedDf3v2(combinedDf[7:],savePath = "./hlsComparison/hls_parasite_multi_axis_trendsV2_noModel3.png")
     plotCombinedDf4(combinedDf)
-    plotCombinedDf4(combinedDf[5:], savePath = "./hlsComparison/hls_csynthVsAreascore_noModel3.png")
+    plotCombinedDf4(combinedDf[7:], savePath = "./hlsComparison/hls_csynthVsAreascore_noModel3.png")
 
 # The proper Python entry point condition
 if __name__ == "__main__":
