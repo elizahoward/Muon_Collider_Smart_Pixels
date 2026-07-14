@@ -133,6 +133,19 @@ HARDWARE_REFS = [
     (3456000,"FPGA: Xilinx Alveo U250 (xcu250-figd2104-2L-e)","goldenrod",0.05,0) #https://pcbsync.com/xilinx-alveo-u200/ says 1341000+2682000, but https://docs.amd.com/r/en-US/ds962-u200-u250/Summary says 3456000
 ]
 
+SELECTED_MODELS = [
+("model3_10bit","110"),
+("model3_10bit","046"),
+("model25_8bit","063"),
+("model25_10bit","087"),
+("model25_10bit","057"),
+("model25_8bit","051"),
+("model1_8w10i","1046"),
+("model1_6w8i","836"),
+("model1_10w12i","1224"),
+("model1_8w10i","1028"),
+]
+
 # ── HLS resource extraction ────────────────────────────────────────────────────
 def _lut_ff_from_vsynth_log(log_path):
     """Parse Vivado synthesis cell-usage table from vitis_hls.log. Returns (lut, ff) or None."""
@@ -450,6 +463,13 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
         ax.scatter(p_sub[x_col], _y(p_sub[PRIMARY_METRIC], complement),
                    alpha=0.90, s=60, c=color, edgecolors="black",
                    linewidth=1.2, marker="D", zorder=3)
+    for _, row in pareto_df.iterrows():
+        if (row['run_name'],row['trial_id']) in SELECTED_MODELS:
+            color = RUN_COLORS.get(row['run_name'], "gray")
+            ax.scatter(row[x_col], _y(row[PRIMARY_METRIC], complement),
+                   alpha=0.90, s=400, c=color, edgecolors="black",
+                   linewidth=1.2, marker="*", zorder=3)
+
 
     ps    = pareto_df.sort_values(x_col)
     style = {k: v for k, v in FAMILY_LINE["Combined"].items()
@@ -467,7 +487,7 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
             ax.annotate(f"{short}\n{row['trial_id']}",
                         xy=(row[x_col], yval),
                         xytext=(7, 7), textcoords="offset points",
-                        fontsize=6.5, fontweight="bold",
+                        fontsize=4, fontweight="bold",
                         bbox=dict(boxstyle="round,pad=0.25", facecolor="yellow",
                                   alpha=0.8, edgecolor="black", linewidth=0.8),
                         zorder=4)
