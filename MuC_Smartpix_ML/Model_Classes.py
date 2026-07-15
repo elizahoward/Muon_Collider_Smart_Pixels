@@ -775,7 +775,7 @@ class SmartPixModel(ABC):
             # Save quantized model
             print(f"3f. Saving {weight_bits}-bit quantized model...")
             model_save_path = os.path.join(models_dir, f"{self.modelName}_quantized_{weight_bits}bit.h5")
-            self.saveModel(file_path = model_save_path, config_name = config_name)
+            self.saveModel(file_path = model_save_path, config_name = config_name, save_format='h5')
             # quantized_model.save(model_save_path)
             print(f"{weight_bits}-bit model saved to: {model_save_path}")
             
