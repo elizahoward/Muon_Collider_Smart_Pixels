@@ -560,6 +560,7 @@ class hlsVerifier():
                 PLOT_DIR = "",
                 tfRecordFolder = "", #this is the default used by tfLoaderUtils, which if unchanged will pass to the default directories of tfLoaderUtils
                 doTrace: bool = True,
+                noDSP: bool = False,
                  ) -> None:
         
         self.doingCatapult = doingCatapult 
@@ -572,6 +573,7 @@ class hlsVerifier():
         self.fullRunOnInit = fullRunOnInit
         self.tfRecordFolder = tfRecordFolder
         self.doTrace = doTrace
+        self.noDSP = noDSP
 
         #process input flags
         if self.doingCatapult:
@@ -688,6 +690,10 @@ class hlsVerifier():
                 print('Enable tracing for layer:', layer)
                 config['LayerName'][layer]['Trace'] = True
 
+            #added to get more latency tracing
+            # Add this line to force Co-simulation tracking
+            config['TraceLevel'] = 'port' # Options: 'all', 'port', or 'none'
+
             # Convert to an hls model
 
             hls_model = self.hls4ml.converters.convert_from_keras_model(self.quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=self.output_dir_vitis,backend="Vitis")
@@ -695,6 +701,33 @@ class hlsVerifier():
             ##Part number input in above line as part='xcu
             # part='xcu250-figd2104-2L-e',
             hls_model.compile()
+            if self.noDSP:
+                # Force the Vitis HLS 2024.1 backend to map all operations to standard fabric logic
+                tcl_path = os.path.join(self.output_dir_vitis, "build_prj.tcl")
+                if os.path.exists(tcl_path):
+                    with open(tcl_path, "r") as f:
+                        tcl_content = f.read()
+                    
+                    # 1. Clean up the deprecated array partition warning/error line
+                    tcl_content = tcl_content.replace(
+                        "config_array_partition -maximum_size 4096", 
+                        "# config_array_partition -maximum_size 4096"
+                    )
+                    
+                    # 2. Inject valid Vitis HLS 2024.1 global operator fabric overrides
+                    if "csynth_design" in tcl_content:
+                        patch_directives = (
+                            "config_op mul -impl fabric\n"  # Maps all inferred multiplications to LUTs
+                            "config_op add -impl fabric\n"  # Maps all inferred additions to LUTs
+                            "csynth_design"
+                        )
+                        tcl_content = tcl_content.replace("csynth_design", patch_directives)
+                        
+                        with open(tcl_path, "w") as f:
+                            f.write(tcl_content)
+                        print(f"[{self.output_dir_vitis}] Patched build_prj.tcl to force Vitis 2024.1 operator fabric mapping.")
+
+
             self.hls_model = hls_model
     def printInputHLSVars(self):
         if self.doingCatapult:
