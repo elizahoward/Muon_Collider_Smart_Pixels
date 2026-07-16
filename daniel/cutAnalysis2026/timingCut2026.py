@@ -99,7 +99,7 @@ def computeSweep2(truthBib=truthBib, truthSig=truthSig, thresholds = defaultThre
 
 def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0.09,0.15], cutColors = ["green"],
                       PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHist",
-                      bins = np.linspace(-0.5, 15, 100),standalone=True):
+                      bins = np.linspace(-0.5, 15, 100),standalone=True,cutLabels = None):
     if standalone:
         plt.figure()
     plotUtils.plotManyHisto(
@@ -115,11 +115,15 @@ def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0
         legendLoc = "upper right"
     )
     # plt.ylim([0,1e4])
-    plt.vlines(cutLocations,0,10e5,color=cutColors)
+    if cutLabels is None:
+        cutLabels = ["" for _ in cutLocations]
+    plt.vlines(cutLocations,0,10e5,color=cutColors,label=cutLabels)
+    # plt.legend()
     if standalone:
         plotUtils.closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
 
 from timing_cut_analysis import find_operating_points,TARGET_EFFICIENCIES,plot_roc
+#perhaps add 0.9806268960028482 SE to target efficiencies.. 
 
 def doEricsSweepAnalysis(sweep_df,outputDir = "."):
     print("\nFinding operating points...")
@@ -164,9 +168,10 @@ def main():
     plotHistoWithCuts(cutColors=["black","purple"])
     sweepDf = computeSweep2()
     print(sweepDf)
+    sweepDf.to_csv("sweepDf.csv")
     doEricsSweepAnalysis(sweepDf)
     plotHistoWithCuts(cutLocations=[-0.09,0.15,0.063705,0.142950,0.369645],cutColors=["black","purple","cyan","red","green"],
-                      bins = np.linspace(-0.2, 1, 100),saveTitle="cutHistPost")
+                      bins = np.linspace(-0.2, 1, 100),saveTitle="cutHistPost",cutLabels=["-3 \sigma ","5\sigma","95% SE","98% SE","99% SE",])
     plotHistosTogether()
 
 
