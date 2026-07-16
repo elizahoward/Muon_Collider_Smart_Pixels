@@ -32,6 +32,7 @@ def flattenTfData(modelType, doTrain=True, tfRecordFolder="",includenPix=False):
         raise TypeError("Not supported model type")
     if modelType in ["1", 1]:
         model = Model1(tfRecordFolder = tfRecordFolder)
+        model.x_feature_description: list = ['z_global','x_size', 'y_size', 'y_local'] #remove nModule and x_local
     elif modelType in ["2",2]:
         model = Model2(tfRecordFolder = tfRecordFolder)    
     elif modelType in ["2.5", 2.5]:

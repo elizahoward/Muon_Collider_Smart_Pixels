@@ -9,9 +9,13 @@ if enviroModelAsic:
     os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
 import hlsVerification
 import re
+import shutil
 
-runParetoVerification = True
-runSingleVerification = False
+print("Current MGC_HOME:", os.environ.get("MGC_HOME"))
+print("Resolved Catapult Binary:", shutil.which("catapult"))
+
+runParetoVerification = False
+runSingleVerification = True
 
 tfRecordFolder = "" #The default, which will go to tfLoaderUtils defaults, which are not normalized actually, 
 # that default appropriate for some older models or for model1, but not great for the newest (as of May/June2026) models 2/3
@@ -31,6 +35,8 @@ singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_
 #need to do 110 8 bit
 # need to do 009 8 bit
 #need to do 084 10 bit
+singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model1_fin_results_model1_8bit_normalised_selected__model_trial_1046.h5"
+singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
 modelType = 3
 bitNumber = 10
 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{singleFilepath[-20:-1]}"
@@ -38,8 +44,8 @@ if runSingleVerification:
     hlsGuy = hlsVerification.hlsVerifier(
         doingCatapult = True, #If using catapult, use the ccs_env python environment
         doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
-        loadTestVectors = False,
-        saveTestVectors = True,
+        loadTestVectors = True,
+        saveTestVectors = False,
         buildModel = True,
         # customModel = False,
         modelType = modelType,        

@@ -541,7 +541,12 @@ class hlsVerifier():
         if self.customModel:
             self.xTestList = self.xTestList[3]
         if self.modelType in [0,"ASIC"]:
-            self.xTestList = self.xTestList[-1]            
+            self.xTestList = self.xTestList[-1]   
+        # if self.modelType in [1, "1"]:
+        #     #Not sure why this hasn't been fixed already?? but need to get rid of nModule and xLocal
+        #     if len(self.xTestList) == 6:
+        #         print("getting rid of last 2 list elements since assuming they are nModule and xlocal")
+        #         self.xTestList = self.xTestList[0:4]     
         print(len(self.xTestList))
         print(len(self.xTestList[0]))
 
@@ -577,7 +582,8 @@ class hlsVerifier():
 
         #process input flags
         if self.doingCatapult:
-            sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.1-1267132/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
+            # sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.1-1267132/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
+            sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.2-1292347/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
             self.catapult_ai_nn = import_module("catapult_ai_nn")
             if self.doTrace:
                 print("SO FAR CATAPULT DOES NOT FULLY SUPPORT THE TRACE STUFF!!!!\n\n")
