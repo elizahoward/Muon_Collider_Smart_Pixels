@@ -98,10 +98,10 @@ def computeSweep2(truthBib=truthBib, truthSig=truthSig, thresholds = defaultThre
     })
 
 def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0.09,0.15], cutColors = ["green"],
-                      PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHist",
+                      PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHist",figsize = (5,3),
                       bins = np.linspace(-0.5, 15, 100),standalone=True,cutLabels = None):
     if standalone:
-        plt.figure()
+        plt.figure(figsize =figsize)
     plotUtils.plotManyHisto(
         [truthSig[key], truthBib[key]],
         title=f"Signal and BIB Timing Distribution (30 ps smearing)",
