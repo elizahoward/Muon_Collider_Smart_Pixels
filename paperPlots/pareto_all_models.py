@@ -21,7 +21,6 @@ Outputs (same variants as pareto_model1_vs_model2_5.py):
     summary.json
 """
 
-raise ValueError("This version is now being replaced by paperPlots/pareto_all_models.py. We will move to have all final paper plots in that folder, so this version is old now.")
 import os
 import re
 import json
@@ -33,11 +32,13 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 import matplotlib.ticker as mticker
 
-ERIC = os.path.dirname(os.path.abspath(__file__))
+ERIC = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"eric")
 newFolderStructure = True; #for the consistent folder structure when you have pareto_primary and pareto_secondary for everyone
 if newFolderStructure:
     ERICF = os.path.join(ERIC, "Results_June2026_99SigEff") 
 else:
+    print("WARNING!!!!!!!!! WHY ARE YOU USING THE OLD FOLDER STRUCTURE FOR PAPER PLOTS?????")
+    raise ValueError("Are you sure you want to do that? If so, comment out this line")
     ERICF = os.path.join(ERIC, "Final_Results")
 
 MODEL1_DIR  = os.path.join(ERICF, "model1_fin_results")
@@ -45,7 +46,8 @@ MODEL25_DIR = os.path.join(ERICF, "model2.5_fin_results")
 MODEL3_DIR  = os.path.join(ERICF, "model3_fin_results")
 # MODEL3_DIR  = os.path.join(os.path.join(ERIC, "Final_Results"), "model3_fin_results")
 if newFolderStructure:
-    OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto_newJune2026")
+    # OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto_newJune2026")
+    OUTPUT_DIR  = os.path.join(os.path.dirname(os.path.abspath(__file__)), "combined_all_models_pareto_newJune2026")
 else:
     OUTPUT_DIR  = os.path.join(ERIC, "combined_all_models_pareto")
 
@@ -122,7 +124,8 @@ COMP_LOG_TICKS = [0.9, 0.85, 0.80, 0.75, 0.70, 0.60, 0.50, 0.30, 0.10, 0.0]
 #for filtering model, reference DOI 10.1088/2632-2153/ad6a00
 
 HARDWARE_REFS = [
-    (34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (34568,"Smartpixel Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (26376,"Smartpixel Filtering Model (vsynth)","teal",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     (14289+57398,"Smartpixel Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
@@ -135,18 +138,19 @@ HARDWARE_REFS = [
 ]
 
 SELECTED_MODELS = [
-("model3_10bit","110"),
+# ("model3_10bit","110"),
 ("model3_10bit","046"),
-("model25_8bit","063"),
+# ("model25_8bit","063"),
 ("model25_10bit","087"),
 ("model25_10bit","057"),
-("model25_8bit","051"),
+# ("model25_8bit","051"),
 ("model1_8w10i","1046"),
-("model1_6w8i","836"),
-("model1_10w12i","1224"),
-("model1_8w10i","1028"),
+# ("model1_6w8i","836"),
+# ("model1_10w12i","1224"),
+# ("model1_8w10i","1028"),
 ]
-
+styleSheet = "seaborn-v0_8-colorblind"
+plt.style.use(styleSheet)
 # ── HLS resource extraction ────────────────────────────────────────────────────
 def _lut_ff_from_vsynth_log(log_path):
     """Parse Vivado synthesis cell-usage table from vitis_hls.log. Returns (lut, ff) or None."""
@@ -468,7 +472,7 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
         if (row['run_name'],row['trial_id']) in SELECTED_MODELS:
             color = RUN_COLORS.get(row['run_name'], "gray")
             ax.scatter(row[x_col], _y(row[PRIMARY_METRIC], complement),
-                   alpha=0.90, s=400, c=color, edgecolors="black",
+                   alpha=0.90, s=700, c=color, edgecolors="black",
                    linewidth=1.2, marker="*", zorder=3)
 
 
@@ -534,7 +538,7 @@ def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=Non
     h2, l2 = reorderLegend(h2, l2, legendOrder=legendOrder)
     ax.legend(h2, l2, loc=loc, fontsize=11, framealpha=0.9, ncol=3, columnspacing=0.6)
 
-    stats = (f"Total models: {len(df)}\n"
+    stats = (f"Total models plotted: {len(df)}\n"
              f"Pareto optimal: {len(pareto_df)} ({100*len(pareto_df)/len(df):.1f}%)\n"
              f"Metric range: {df[PRIMARY_METRIC].min():.4f} – {df[PRIMARY_METRIC].max():.4f}")
     ax.text(0.02, 0.02 if complement else 0.98, stats,
@@ -584,6 +588,7 @@ def make_plot_simple(df, pareto_df, output_dir, zoomed=False, annotate=True):
     else:
         suffix = "_full"
         title  = f"Model 1 vs Model 2 vs Model 3 — Combined Pareto Front\n{METRIC_NAME} vs LUTs + FF"
+        title  = f"Model 1 vs Model 2 vs Model 3 — Combined Pareto Front"
     _finalize(ax, title)
     _add_legend_and_stats(ax, df, pareto_df)
     plt.tight_layout()
@@ -595,14 +600,15 @@ def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, pareto_m3,
                         output_dir, xscale="linear", complement=False, annotate=True):
     x_col = "luts_plus_ff"
     fig, ax = plt.subplots(figsize=(16, 9))
+    fig, ax = plt.subplots(figsize=(14, 9*14/16))
     _draw_scatter(ax, df, pareto_df, x_col, complement=complement, annotate=annotate)
     _draw_subfronts(ax, pareto_m1, pareto_m25, pareto_m3, pareto_df,
                     x_col, complement=complement)
     if complement:
         _setup_complement_log_y(ax, df)
 
-    title = ("Model 1 vs Model 2 vs Model 3 — Sub-fronts + Combined Pareto\n"
-             f"{METRIC_NAME} vs LUTs + FF")
+    title = ("Model 1 vs Model 2 vs Model 3 — Sub-fronts + Combined Pareto")
+            #  f"\n{METRIC_NAME} vs LUTs + FF")
     _finalize(ax, title, xscale=xscale, complement=complement)
 
     extra = [mlines.Line2D([], [], color=FAMILY_LINE[k]["color"],
