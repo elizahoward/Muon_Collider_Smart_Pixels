@@ -99,11 +99,13 @@ def load_and_merge_data(resource_csv, pareto_csv,bits):
     print(merged_df)
     return merged_df
 
-def loadDataNew(resource_csv, bits):
+def loadDataNew(resource_csv, bits,modelNum='25'):
     resource_df = pd.read_csv(resource_csv)
     # print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
-    resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
+    # resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
+    resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}bit'")
     resource_df["total_resources"] = resource_df["luts_plus_ff"]
+    resource_df["total_resources"] = resource_df["luts"] + resource_df["registers"]
     print(resource_df)
     return resource_df
 
@@ -394,7 +396,8 @@ Examples:
         df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
         df = loadDataNew(info["resource_csv"],info["bit"])
         #filtering out points that look like outliers
-        df = df.query("total_resources < 400000")
+        # df = df.query("total_resources < 400000")
+        df = df.query("total_resources < 4000000")
         ##################
         print(f"  ✓ Merged {len(df)} models")
         regression_stats = fit_linear_regression(
