@@ -17,6 +17,7 @@ You can also explicitly specify which subdirectories (bit-widths) to include.
 
 Author: Eric (multi-bit overlay helper)
 Date: March 2026
+Updates July 2026 by Daniel for newer versions
 
 UPDATED VERSION IS IN paperPlots
 """
@@ -64,22 +65,23 @@ def infer_bit_width_from_name(name: str) -> str:
     return name
 
 
-def load_and_merge_data(resource_csv, pareto_csv):
+def load_and_merge_data(resource_csv, pareto_csv,bits):
     """
     Load resource utilization and parameter data, then merge them.
 
     This mirrors the logic from plot_parameters_vs_resources.py.
     """
     resource_df = pd.read_csv(resource_csv)
-    resource_df["trial_id"] = resource_df["model_name"].str.extract(
-        r"model_trial_(\d+)"
-    )[0]
-
+    # resource_df["trial_id"] = resource_df["model_name"].str.extract(
+    #     r"model_trial_(\d+)"
+    # )[0]
+    print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
+    resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
     param_df = pd.read_csv(pareto_csv)
 
     resource_df["trial_id"] = resource_df["trial_id"].astype(str)
     param_df["trial_id"] = param_df["trial_id"].astype(str).str.zfill(3)
-
+    print(param_df.keys())
     merged_df = pd.merge(
         resource_df,
         param_df[["trial_id", "parameters"]],
@@ -87,11 +89,24 @@ def load_and_merge_data(resource_csv, pareto_csv):
         how="inner",
     )
 
-    merged_df["total_resources"] = (
-        merged_df["luts_used"] + merged_df["registers_used"]
-    )
+    # merged_df["total_resources"] = (
+    #     merged_df["luts_used"] + merged_df["registers_used"]
+    # )
+    merged_df["total_resources"] = merged_df["luts_plus_ff"]
+    merged_df["parameters"] = merged_df["parameters_y"] 
+    print(merged_df.keys())
 
+    print(merged_df)
     return merged_df
+
+def loadDataNew(resource_csv, bits):
+    resource_df = pd.read_csv(resource_csv)
+    print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
+    resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
+    resource_df["total_resources"] = resource_df["luts_plus_ff"]
+    print(resource_df)
+    return resource_df
+
 
 
 def fit_linear_regression(x, y):
@@ -138,18 +153,22 @@ def collect_bit_width_runs(runs_dir, subdirs=None):
         for p in runs_path.iterdir():
             if not p.is_dir():
                 continue
-            res = p / "resource_utilization.csv"
+            # res = p / "resource_utilization.csv"
+            res = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
             par = p / "pareto_optimal_models_roc_combined.csv"
             if res.is_file() and par.is_file():
                 candidates.append(p)
 
     runs = []
     for p in sorted(candidates):
-        res = p / "resource_utilization.csv"
+        # res = p / "resource_utilization.csv"
+        res = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
         par = p / "pareto_optimal_models_roc_combined.csv"
         if not res.is_file() or not par.is_file():
             continue
         bit_label = infer_bit_width_from_name(p.name)
+        if bit_label != '10':
+            continue
         runs.append(
             {
                 "bit": bit_label,
@@ -283,8 +302,10 @@ Examples:
     )
 
     default_runs_dir = (
-        Path(__file__).resolve().parent.parent / "New_hyperparameter_runs"
+        # Path(__file__).resolve().parent.parent / "New_hyperparameter_runs"
+        # 
     )
+    default_runs_dir = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results")
 
     parser.add_argument(
         "--runs_dir",
@@ -341,18 +362,20 @@ Examples:
         output_path = args.output
     else:
         output_path = os.path.join(
-            runs_dir, "parameters_vs_resources_multi_bits.png"
+            # runs_dir, "parameters_vs_resources_multi_bits.png"
+            ".", "parameters_vs_resources_multi_bits.png"
         )
 
     if args.slopes_csv:
         slopes_csv_path = args.slopes_csv
     else:
         slopes_csv_path = os.path.join(
-            runs_dir, "parameters_vs_resources_multi_bits_slopes.csv"
+            ".", "parameters_vs_resources_multi_bits_slopes.csv"
         )
 
     # Collect runs
     runs_info = collect_bit_width_runs(runs_dir, args.subdirs)
+    # runs_info = runs_info.query("bit == 10")
     if not runs_info:
         print("Error: No valid bit-width runs found with required CSV files.")
         sys.exit(1)
@@ -360,14 +383,18 @@ Examples:
     print("\nFound the following runs:")
     for info in runs_info:
         print(
-            f"  - {info['bit']}-bit: {info['dir']} "
-            f"(resource_utilization.csv + pareto_optimal_models_roc_combined.csv)"
+            f"  - {info['bit']}-bit: {info['dir']} ",
+            # f"(resource_utilization.csv + pareto_optimal_models_roc_combined.csv)"
+            info["resource_csv"],info["pareto_csv"]
         )
 
     # Load, merge, and fit regression for each run
     for info in runs_info:
         print(f"\nProcessing {info['bit']}-bit run in {info['dir']}...")
-        df = load_and_merge_data(info["resource_csv"], info["pareto_csv"])
+        df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
+        df = loadDataNew(info["resource_csv"],info["bit"])
+        #filtering out points that look like outliers
+        
         print(f"  ✓ Merged {len(df)} models")
         regression_stats = fit_linear_regression(
             df["parameters"].values, df["total_resources"].values
