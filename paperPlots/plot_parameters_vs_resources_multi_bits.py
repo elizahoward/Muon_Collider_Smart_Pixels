@@ -75,13 +75,14 @@ def load_and_merge_data(resource_csv, pareto_csv,bits):
     # resource_df["trial_id"] = resource_df["model_name"].str.extract(
     #     r"model_trial_(\d+)"
     # )[0]
-    print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
+    # print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
     resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
     param_df = pd.read_csv(pareto_csv)
 
-    resource_df["trial_id"] = resource_df["trial_id"].astype(str)
+    resource_df["trial_id"] = resource_df["trial_id"].astype(str).str.zfill(3)
     param_df["trial_id"] = param_df["trial_id"].astype(str).str.zfill(3)
-    print(param_df.keys())
+    print(param_df)
+    print(resource_df)
     merged_df = pd.merge(
         resource_df,
         param_df[["trial_id", "parameters"]],
@@ -394,7 +395,7 @@ Examples:
     for info in runs_info:
         print(f"\nProcessing {info['bit']}-bit run in {info['dir']}...")
         df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
-        df = loadDataNew(info["resource_csv"],info["bit"])
+        # df = loadDataNew(info["resource_csv"],info["bit"]) #either works
         #filtering out points that look like outliers
         # df = df.query("total_resources < 400000")
         df = df.query("total_resources < 4000000")
