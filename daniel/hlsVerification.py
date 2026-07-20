@@ -708,6 +708,7 @@ class hlsVerifier():
             # part='xcu250-figd2104-2L-e',
             hls_model.compile()
             if self.noDSP:
+                print("TURNING OFF DSPS")
                 # Force the Vitis HLS 2024.1 backend to map all operations to standard fabric logic
                 tcl_path = os.path.join(self.output_dir_vitis, "build_prj.tcl")
                 if os.path.exists(tcl_path):
@@ -732,6 +733,31 @@ class hlsVerifier():
                         with open(tcl_path, "w") as f:
                             f.write(tcl_content)
                         print(f"[{self.output_dir_vitis}] Patched build_prj.tcl to force Vitis 2024.1 operator fabric mapping.")
+                    # if "csynth_design" in tcl_content:
+                    #     patch_directives = (
+                    #         # 1. Globally configure the RTL generation tool to enforce 0 DSP architectures
+                    #         "config_rtl -max_dsp 0\n"
+                            
+                    #         # 2. Prevent memory array and multiplier multi-pumping optimizations
+                    #         "config_bind -force_array_dsp off\n"
+                            
+                    #         # 3. Explicitly tell the global operator framework to bind math functions to LUT fabric
+                    #         "config_op mul -impl fabric\n"
+                    #         "config_op mac -impl fabric\n"
+                            
+                    #         # 4. Enforce strict budget limits on standard structural sub-cores
+                    #         "alloc_use_core mul_dsp 0\n"
+                    #         "alloc_use_core mac_dsp 0\n"
+                            
+                    #         "csynth_design"
+                    #     )
+                    #     tcl_content = tcl_content.replace("csynth_design", patch_directives)
+                    #     tcl_content = tcl_content.replace("csynth_design", patch_directives)
+                        
+                    #     with open(tcl_path, "w") as f:
+                    #         f.write(tcl_content)
+                    #     print(f"[{self.output_dir_vitis}] Applied structural core block to wipe out Instance DSPs.")
+
 
 
             self.hls_model = hls_model

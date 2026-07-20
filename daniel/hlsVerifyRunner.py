@@ -37,15 +37,15 @@ singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_
 #need to do 084 10 bit
 singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model1_fin_results_model1_8bit_normalised_selected__model_trial_1046.h5"
 singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_057.h5"
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5"
-modelType = 2.5
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_057.h5"
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5"
+modelType = 3
 bitNumber = 10
 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{singleFilepath[-20:-1]}"
 if runSingleVerification:
     hlsGuy = hlsVerification.hlsVerifier(
-        doingCatapult = True, #If using catapult, use the ccs_env python environment
-        doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
+        doingCatapult = False, #If using catapult, use the ccs_env python environment
+        doingVitis = True, #If using vitis, use the hls4ml "default" environment that works with Vitis      
         loadTestVectors = True,
         saveTestVectors = False,
         buildModel = True,
@@ -57,7 +57,8 @@ if runSingleVerification:
         filepath = singleFilepath,
         baseSaveDir = hlsDir,
         tfRecordFolder=tfRecordFolder,
-        doTrace = False
+        doTrace = False,
+        noDSP = True,
     )
     print("finished with hls verification of a single file")
 
@@ -88,8 +89,8 @@ if runParetoVerification:
                         # continue
                     if "model3" in e.path:
                         modelType = 3
-                        # print("skipping model 3 type")
-                        # continue
+                        print("skipping model 3 type")
+                        continue
                 match = re.search(r'(\d+)bit', e.path)
                 bitNumber = int(match.group(1)) if match else -1
                 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{e.path[-20:-1]}"
@@ -108,5 +109,6 @@ if runParetoVerification:
                     fullRunOnInit = True,
                     filepath = e.path,
                     tfRecordFolder=tfRecordFolder,
-                    doTrace = True,
+                    doTrace = False,
+                    noDSP = True,
                 )
