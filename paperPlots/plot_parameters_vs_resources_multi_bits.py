@@ -101,7 +101,7 @@ def load_and_merge_data(resource_csv, pareto_csv,bits):
 
 def loadDataNew(resource_csv, bits):
     resource_df = pd.read_csv(resource_csv)
-    print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
+    # print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
     resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
     resource_df["total_resources"] = resource_df["luts_plus_ff"]
     print(resource_df)
@@ -167,8 +167,8 @@ def collect_bit_width_runs(runs_dir, subdirs=None):
         if not res.is_file() or not par.is_file():
             continue
         bit_label = infer_bit_width_from_name(p.name)
-        if bit_label != '10':
-            continue
+        # if bit_label != '10':
+        #     continue
         runs.append(
             {
                 "bit": bit_label,
@@ -394,7 +394,8 @@ Examples:
         df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
         df = loadDataNew(info["resource_csv"],info["bit"])
         #filtering out points that look like outliers
-        
+        df = df.query("total_resources < 400000")
+        ##################
         print(f"  ✓ Merged {len(df)} models")
         regression_stats = fit_linear_regression(
             df["parameters"].values, df["total_resources"].values
