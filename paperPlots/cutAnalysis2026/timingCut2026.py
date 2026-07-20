@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 sys.path.append("../../MuC_Smartpix_ML")
 sys.path.append("../../eric")
-sys.path.append("../validationPlots")
+sys.path.append("../../daniel/validationPlots")
 import plotUtils
 from plot_hit_time import *
 
@@ -98,8 +98,8 @@ def computeSweep2(truthBib=truthBib, truthSig=truthSig, thresholds = defaultThre
     })
 
 def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0.09,0.15], cutColors = ["green"],
-                      PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHist",figsize = (5,3),
-                      bins = np.linspace(-0.5, 15, 100),standalone=True,cutLabels = None):
+                      PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHist",figsize = (6.5,3),
+                      bins = np.linspace(-0.5, 15, 100),standalone=True,cutLabels = None,customLegendFunc = None):
     if standalone:
         plt.figure(figsize =figsize)
     plotUtils.plotManyHisto(
@@ -110,7 +110,7 @@ def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0
         showNums=False,
         # figsize=(7, 2),
         yscale="log",
-        xlabel="time (ns)",
+        xlabel="Time (ns)",
         pltStandalone=False,
         legendLoc = "upper right"
     )
@@ -118,6 +118,8 @@ def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0
     if cutLabels is None:
         cutLabels = ["" for _ in cutLocations]
     plt.vlines(cutLocations,0,10e5,color=cutColors,label=cutLabels)
+    if customLegendFunc is not None:
+        customLegendFunc()
     # plt.legend()
     if standalone:
         plotUtils.closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
@@ -161,6 +163,28 @@ def plotHistosTogether(PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutH
                       bins = np.linspace(-0.2, 1, 100),standalone=False)    
     plotUtils.closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
 
+def customPaperLegend(cutLocations=[-0.215,0.15,0.063705,0.142950,0.369645],cutColors=["black","purple","cyan","red","green"],
+                      cutNames = ["start of \n cut",r"$5\sigma$ cut","99%  SE cut","98% SE cut","95% SE cut",],
+                      cutYs = [1.5e5,5e4,6e5,2e5,6e5],
+                      xOff = [0,0.01,0.0035,0.01,0.005]):
+    # from matplotlib.lines import Line2D
+    # custom_lines = [Line2D([0], [0], color='teal', linestyle='--'),
+    #             Line2D([0], [0], color='gold', linestyle='-.')]
+    # plt.legend(custom_lines, ['Dashed Line', 'Dash-dot Line'], facecolor='lightgrey', title='Line Styles', fontsize='medium', title_fontsize='large')
+
+    # plt.legend()
+    assert len(cutLocations)==len(cutColors)
+    assert len(cutLocations)==len(cutNames)
+    assert len(cutLocations)==len(cutYs)
+    assert len(cutLocations)==len(xOff)
+    for idx in range(len(cutLocations)):
+        plt.text(cutLocations[idx]+xOff[idx],cutYs[idx],cutNames[idx],color=cutColors[idx])
+    # plt.text(-0.2,1e5,,color="black")
+    # plt.text(0.15,1e4,,color="purple")
+    # plt.text(0.063705,1e6,,color="cyan")
+    # plt.text(0.142950,1e5,,color="red")
+    # plt.text(0.369645,1e5,color="green")
+
 def main():
     key = "adjusted_hit_time_30ps_gaussian"
     fullTotal, cutTotal = numEvents(truthBib,key,-0.5,15)
@@ -171,7 +195,8 @@ def main():
     sweepDf.to_csv("sweepDf.csv")
     doEricsSweepAnalysis(sweepDf)
     plotHistoWithCuts(cutLocations=[-0.09,0.15,0.063705,0.142950,0.369645],cutColors=["black","purple","cyan","red","green"],
-                      bins = np.linspace(-0.2, 1, 100),saveTitle="cutHistPost",cutLabels=["-3 \sigma ","5\sigma","95% SE","98% SE","99% SE",])
+                      bins = np.linspace(-0.2, 1, 100),saveTitle="cutHistPost_forPaper",
+                      cutLabels=["-3 \sigma ","5\sigma","95% SE","98% SE","99% SE",],customLegendFunc=customPaperLegend)
     plotHistosTogether()
 
 
