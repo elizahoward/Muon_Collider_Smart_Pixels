@@ -42,6 +42,7 @@ except ImportError:
 
 CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
 CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
+CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1vsynth.csv")
 MODEL_NUM = '1' #'1', '25', or '3'
 def infer_bit_width_from_name(name: str) -> str:
     """

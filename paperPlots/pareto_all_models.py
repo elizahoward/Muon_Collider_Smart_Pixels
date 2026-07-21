@@ -238,6 +238,27 @@ def _hls_resources_csynth_only(bit_dir, trial_id, search_prefixes):
                 return res[0], res[1], res[2], res[3], "csynth"
     return None, None, None, None, None
 
+def _hls_resources_csynth_or_vsynth(bit_dir, trial_id, search_prefixes):
+    """
+    trial_id e.g. "063" → folder "hls_model_trial_063"
+    Searches each prefix in order for the csynth report.
+    Returns (lut, ff, dsp, bram, "csynth") or all-None tuple.
+    """
+    hls_name = f"hls_model_trial_{trial_id}"
+    csynth_rel = os.path.join(hls_name, "myproject_prj", "solution1",
+                              "syn", "report", "myproject_csynth.rpt")
+    for prefix in search_prefixes:
+        vlog = os.path.join(bit_dir, prefix, hls_name, "vitis_hls.log")
+        if os.path.isfile(vlog):
+            res = _lut_ff_from_vsynth_log(vlog)
+            if res:
+                return res[0], res[1], None, None, "vsynth"
+        rpt = os.path.join(bit_dir, prefix, csynth_rel)
+        if os.path.isfile(rpt):
+            res = _lut_ff_from_csynth_rpt(rpt)
+            if res:
+                return res[0], res[1], res[2], res[3], "csynth"
+    return None, None, None, None, None
 
 # ── Data loading ───────────────────────────────────────────────────────────────
 def _build_row(model_key, run_name, trial_id, csv_row, lut, ff, dsp, bram, src,fullpath):
@@ -347,6 +368,7 @@ def load_modelNEW(base_dir,modelNum):
         for _, csv_row in pd.read_csv(csv_path).iterrows():
             trial_id = str(int(csv_row["trial_id"])).zfill(3)
             lut, ff, dsp, bram, src = _hls_resources_csynth_only(
+            # lut, ff, dsp, bram, src = _hls_resources_csynth_or_vsynth(
                 bit_dir, trial_id,
                 ["pareto_primary/hls_outputs",
                  "pareto_secondary/hls_outputs",

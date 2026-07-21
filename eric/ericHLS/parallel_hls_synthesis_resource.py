@@ -52,6 +52,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # myproject_csynth.rpt is the top-level Vitis HLS C-synth report with
 # FF/LUT/DSP/BRAM *estimates* (no Vivado synthesis needed).
 KEEP_FILES = [
+    'vivado_synth.rpt'
     'project.tcl',
     'vitis_hls.log',
     'myproject_csynth.rpt',
