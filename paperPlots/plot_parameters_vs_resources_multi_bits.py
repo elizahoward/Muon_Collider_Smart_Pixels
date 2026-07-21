@@ -84,8 +84,8 @@ def load_and_merge_data(resource_csv, pareto_csv,bits):
 
     resource_df["trial_id"] = resource_df["trial_id"].astype(str).str.zfill(3)
     param_df["trial_id"] = param_df["trial_id"].astype(str).str.zfill(3)
-    print(param_df)
-    print(resource_df)
+    # print(param_df)
+    # print(resource_df)
     merged_df = pd.merge(
         resource_df,
         param_df[["trial_id", "parameters"]],
@@ -98,9 +98,9 @@ def load_and_merge_data(resource_csv, pareto_csv,bits):
     # )
     merged_df["total_resources"] = merged_df["luts_plus_ff"]
     merged_df["parameters"] = merged_df["parameters_y"] 
-    print(merged_df.keys())
+    # print(merged_df.keys())
 
-    print(merged_df)
+    # print(merged_df)
     return merged_df
 
 def loadDataNew(resource_csv, bits,modelNum='25'):
@@ -113,7 +113,7 @@ def loadDataNew(resource_csv, bits,modelNum='25'):
         resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}bit'") #works for model 25 or 3
     resource_df["total_resources"] = resource_df["luts_plus_ff"]
     resource_df["total_resources"] = resource_df["luts"] + resource_df["registers"]
-    print(resource_df)
+    # print(resource_df)
     return resource_df
 
 
@@ -190,14 +190,17 @@ def collect_bit_width_runs(runs_dir, subdirs=None):
     return runs
 
 
-def plot_multi_bit(runs_info, output_path, slopes_csv_path=None):
+def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6)):
     """
     Create a single plot with scatter + regression line for each bit-width.
     Also optionally save a CSV summarizing slopes and fit metrics.
     """
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=figsize)
 
     colors = plt.cm.viridis(np.linspace(0, 1, len(runs_info)))  # distinct colors
+    if len(runs_info) == 5:
+        print(colors)
+        # colors[4] = []
 
     slopes_summary = []
 
@@ -247,8 +250,8 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None):
     ax.set_xlabel("Number of Parameters", fontsize=14, fontweight="bold")
     ax.set_ylabel("Total Hardware Resources (FF + LUT)", fontsize=14, fontweight="bold")
     ax.set_title(
-        f"Model {MODEL_NUM} Parameters vs Hardware Resources\n"
-        "Multi-bit Comparison with Linear Regression",
+        f"Model {MODEL_NUM} Parameters vs Hardware Resources",#\n"
+        # "Multi-bit Comparison with Linear Regression",
         fontsize=16,
         fontweight="bold",
         pad=20,
@@ -257,7 +260,8 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None):
     ax.grid(True, alpha=0.3, linestyle="--", zorder=1)
 
     # Place legend outside to reduce clutter
-    ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=10, framealpha=0.9)
+    # ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=10, framealpha=0.9)
+    ax.legend(framealpha=0.9)
 
     # Small summary table of slopes vs bit-width inside the plot
     slopes_df = pd.DataFrame(slopes_summary).sort_values("bit_width")
@@ -394,7 +398,7 @@ Examples:
         print(
             f"  - {info['bit']}-bit: {info['dir']} ",
             # f"(resource_utilization.csv + pareto_optimal_models_roc_combined.csv)"
-            info["resource_csv"],info["pareto_csv"]
+            # info["resource_csv"],info["pareto_csv"]
         )
 
     # Load, merge, and fit regression for each run
@@ -419,6 +423,8 @@ Examples:
 
     # Plot and save summary
     print("\nGenerating multi-bit plot...")
+    if len(runs_info)==5:
+        runs_info = [runs_info[1],runs_info[2],runs_info[3],runs_info[4],runs_info[0],]
     plot_multi_bit(runs_info, output_path, slopes_csv_path=slopes_csv_path)
 
     print("\n" + "=" * 80)
