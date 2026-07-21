@@ -1060,6 +1060,8 @@ def main_SingleFile(
         features: str = None,#        help='Comma-separated list of feature names to parse (default: auto-detect from first model))
         no_secondary: bool =False,#        help='Disable the secondary (tier-2) Pareto front — only primary models are selected and saved)
         no_separate_folders:bool = False,#        help='Disable separate sub-folders and save all models flat into output_dir (overrides default separate-folder behavior)',
+        saveH5:bool = False,
+        saveArchitectures:bool = False,
     ):
     # Parse background rejection weights
     bkg_rej_weights = {}
@@ -1198,14 +1200,15 @@ def main_SingleFile(
     metric_name = df.iloc[0]['metric_name']
     plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name, modelPltName)
 
-    # Copy model files
-    copy_model_files(pareto_df, pareto_df_secondary, output_dir, separate_folders=not no_separate_folders)
-
+    if saveH5:
+        # Copy model files
+        copy_model_files(pareto_df, pareto_df_secondary, output_dir, separate_folders=not no_separate_folders)
     # Save results
     save_results(df, pareto_df, pareto_df_secondary, output_dir, metric_name, bkg_rej_weights)
 
-    # Save layer structure for each selected model
-    save_model_architectures(pareto_df, pareto_df_secondary, output_dir)
+    if saveArchitectures:
+        # Save layer structure for each selected model
+        save_model_architectures(pareto_df, pareto_df_secondary, output_dir)
 
     # Final summary
     print("\n" + "=" * 80)
@@ -1224,20 +1227,51 @@ def main_SingleFile(
     print(f"  - {len(pareto_df) + (len(pareto_df_secondary) if pareto_df_secondary is not None else 0)} H5 model files")
     print(f"  - architectures/<model>_architecture.json  (per-model layer structure)")
     print(f"  - architectures/all_architectures_summary.json")
+    print(f"architectures were saved: {saveArchitectures}, h5 were saved: {saveH5}")
     print("\n" + "=" * 80)
 
 def mainNew():
     modelConfs = [{"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_3w0i_i5_sigmoid_results",
-                   "data_dir": "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
+                #    "data_dir": "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
                    "output_dir": "./individualHyperparams/model1_fin_results/model1_3bit_normalised_selected", 
-                   "signal_efficiency": 0.99, 
-                   "modelPltName": "1 (3 bit)",}
+                #    "signal_efficiency": 0.99, 
+                   "modelPltName": "1 (3 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_4w0i_i6_sigmoid_results",
+                #    "output_dir": "./individualHyperparams/model1_fin_results/model1_4bit_normalised_selected", 
+                #    "modelPltName": "1 (4 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_6w0i_i8_sigmoid_results",
+                #    "output_dir": "./individualHyperparams/model1_fin_results/model1_6bit_normalised_selected", 
+                #    "modelPltName": "1 (6 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_8w0i_i10_sigmoid_results",
+                #    "output_dir": "./individualHyperparams/model1_fin_results/model1_8bit_normalised_selected", 
+                #    "modelPltName": "1 (8 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_10w0i_i12_sigmoid_results",
+                #    "output_dir": "./individualHyperparams/model1_fin_results/model1_10bit_normalised_selected", 
+                #    "modelPltName": "1 (10 bit)",},
+
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_3w0i_normalized",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_3bit_normalised_selected", 
+                #    "modelPltName": "2 (3 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_4w0i_normalized",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_4bit_normalised_selected", 
+                #    "modelPltName": "2 (4 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_6w0i_normalized",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_6bit_normalised_selected", 
+                #    "modelPltName": "2 (6 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_8w0i_normalized",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_8bit_normalised_selected", 
+                #    "modelPltName": "2 (8 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_10w0i_normalized",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_10bit_normalised_selected", 
+                #    "modelPltName": "2 (10 bit)",},
                    ]
+    globalSigEff = 0.99
+    globalDataDir = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized"
     for conf in modelConfs:
         main_SingleFile(input_dir = conf["input_dir"], 
-                        data_dir = conf["data_dir"], 
+                        data_dir = globalDataDir, 
                         output_dir = conf["output_dir"], 
-                        signal_efficiency=conf["signal_efficiency"],
+                        signal_efficiency=globalSigEff,
                         modelPltName=conf["modelPltName"])
     
 def main():
