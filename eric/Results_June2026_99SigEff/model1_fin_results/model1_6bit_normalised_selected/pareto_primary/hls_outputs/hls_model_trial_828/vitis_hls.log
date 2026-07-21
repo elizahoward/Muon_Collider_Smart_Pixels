@@ -3,12 +3,12 @@
   **** SW Build 5069499 on May 21 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Tue Jul 21 07:22:57 2026
+  **** Start of session at: Tue Jul 21 09:58:42 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 
 source /code/Xilinx_2024.1/Vitis_HLS/2024.1/scripts/vitis_hls/hls.tcl -notrace
-INFO: [HLS 200-10] For user 'dabadjiev' on host 'kdplab01' (Linux_x86_64 version 5.14.0-687.17.1.el9_8.x86_64) on Tue Jul 21 07:22:58 CDT 2026
+INFO: [HLS 200-10] For user 'dabadjiev' on host 'kdplab01' (Linux_x86_64 version 5.14.0-687.17.1.el9_8.x86_64) on Tue Jul 21 09:58:44 CDT 2026
 INFO: [HLS 200-10] In directory '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828'
 WARNING: [HLS 200-2053] The vitis_hls executable is deprecated. Consider using vitis-run --mode hls --tcl
 Sourcing Tcl script 'build_prj.tcl'
@@ -35,17 +35,17 @@ INFO: [HLS 200-1510] Running: set_part xc7z020clg400-1
 INFO: [HLS 200-1611] Setting target device to 'xc7z020-clg400-1'
 INFO: [XFORM 203-1161] The maximum of name length is set to 80.
 INFO: [HLS 200-1510] Running: config_schedule -enable_dsp_full_reg=false 
-INFO: [HLS 200-1510] Running: create_clock -period 10 -name default 
-INFO: [SYN 201-201] Setting up clock 'default' with a period of 10ns.
+INFO: [HLS 200-1510] Running: create_clock -period 20 -name default 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 20ns.
 INFO: [HLS 200-1510] Running: set_clock_uncertainty 12.5% default 
-INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 1.25ns.
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 2.5ns.
 ***** C/RTL SYNTHESIS *****
 INFO: [HLS 200-1510] Running: config_op mul -impl fabric 
 INFO: [HLS 200-1445] Configure operator 'mul' with implementation style 'fabric'.
 INFO: [HLS 200-1510] Running: config_op add -impl fabric 
 INFO: [HLS 200-1445] Configure operator 'add' with implementation style 'fabric'.
 INFO: [HLS 200-1510] Running: csynth_design 
-INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 333.254 MB.
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0.07 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.09 seconds; current allocated memory: 333.254 MB.
 INFO: [HLS 200-10] Analyzing design file 'firmware/myproject.cpp' ... 
 WARNING: [HLS 207-5292] unused parameter 'keep' (firmware/nnet_utils/nnet_helpers.h:285:99)
 WARNING: [HLS 207-5292] unused parameter 'data' (firmware/nnet_utils/nnet_code_gen.h:11:36)
@@ -54,7 +54,7 @@ WARNING: [HLS 207-5292] unused parameter 'partition' (firmware/nnet_utils/nnet_c
 WARNING: [HLS 207-5292] unused parameter 'data' (firmware/nnet_utils/nnet_code_gen.h:21:24)
 WARNING: [HLS 207-5292] unused parameter 'buffer' (firmware/nnet_utils/nnet_code_gen.h:22:24)
 WARNING: [HLS 207-5292] unused parameter 'partition' (firmware/nnet_utils/nnet_code_gen.h:23:32)
-INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 7.17 seconds. CPU system time: 0.86 seconds. Elapsed time: 8.05 seconds; current allocated memory: 339.926 MB.
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 7.2 seconds. CPU system time: 0.87 seconds. Elapsed time: 8.09 seconds; current allocated memory: 339.918 MB.
 INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
 INFO: [HLS 200-1995] There were 6,639 instructions in the design after the 'Compile/Link' phase of compilation. See the Design Size Report for more details: /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/report/csynth_design_size.rpt
 INFO: [HLS 200-1995] There were 1,284 instructions in the design after the 'Unroll/Inline (step 1)' phase of compilation. See the Design Size Report for more details: /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/report/csynth_design_size.rpt
@@ -140,12 +140,12 @@ INFO: [HLS 214-248] Applying array_reshape to 'z_global': Complete reshaping on 
 INFO: [HLS 214-248] Applying array_reshape to 'x_size': Complete reshaping on dimension 1. (firmware/myproject.cpp:15:0)
 INFO: [HLS 214-248] Applying array_reshape to 'y_size': Complete reshaping on dimension 1. (firmware/myproject.cpp:15:0)
 INFO: [HLS 214-248] Applying array_reshape to 'y_local': Complete reshaping on dimension 1. (firmware/myproject.cpp:15:0)
-INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 4.1 seconds. CPU system time: 0.69 seconds. Elapsed time: 8.48 seconds; current allocated memory: 349.309 MB.
-INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0 seconds; current allocated memory: 349.309 MB.
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 4.01 seconds. CPU system time: 0.73 seconds. Elapsed time: 8.46 seconds; current allocated memory: 349.281 MB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0 seconds; current allocated memory: 349.281 MB.
 INFO: [HLS 200-10] Starting code transformations ...
-INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.04 seconds; current allocated memory: 351.609 MB.
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 351.582 MB.
 INFO: [HLS 200-10] Checking synthesizability ...
-INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 355.879 MB.
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 355.852 MB.
 INFO: [XFORM 203-712] Applying dataflow to function 'myproject' (firmware/myproject.cpp:43:1), detected/extracted 13 process function(s): 
 	 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config3>'
 	 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config4>'
@@ -169,14 +169,14 @@ INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet
 INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:449:9) to (firmware/nnet_utils/nnet_activation.h:459:1) in function 'nnet::hard_sigmoid<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, hard_sigmoid_config20>'... converting 3 basic blocks.
 INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_dense_resource.h:125:9) to (firmware/nnet_utils/nnet_dense_resource.h:124:5) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>'... converting 6 basic blocks.
 INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_dense_resource.h:124:25) to (firmware/nnet_utils/nnet_dense_resource.h:124:5) in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>'... converting 6 basic blocks.
-INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0.2 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.21 seconds; current allocated memory: 382.176 MB.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0.19 seconds. CPU system time: 0 seconds. Elapsed time: 0.2 seconds; current allocated memory: 382.148 MB.
 INFO: [XFORM 203-531] Rewinding loop 'ReuseLoop' (firmware/nnet_utils/nnet_dense_resource.h:42) in function 'dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config18>'.
 INFO: [XFORM 203-531] Rewinding loop 'ReuseLoop' (firmware/nnet_utils/nnet_dense_resource.h:124) in function 'dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config15>'.
 INFO: [XFORM 203-531] Rewinding loop 'ReuseLoop' (firmware/nnet_utils/nnet_dense_resource.h:124) in function 'dense_resource<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>'.
 WARNING: [HLS 200-1449] Process dense_resource<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12> has both a predecessor and reads an input from its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this input via a predecessor process.
 WARNING: [HLS 200-1449] Process dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config15> has both a predecessor and reads an input from its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this input via a predecessor process.
 WARNING: [HLS 200-1449] Process dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config18> has both a predecessor and reads an input from its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this input via a predecessor process.
-INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0.13 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.16 seconds; current allocated memory: 500.309 MB.
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0.13 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.15 seconds; current allocated memory: 500.281 MB.
 INFO: [HLS 200-10] Starting hardware synthesis ...
 INFO: [HLS 200-10] Synthesizing 'myproject' ...
 WARNING: [SYN 201-103] Legalizing function name 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config3>' to 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s'.
@@ -199,13 +199,13 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config3>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config3>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.07 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.1 seconds; current allocated memory: 500.309 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.06 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.11 seconds; current allocated memory: 500.281 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.01 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 500.309 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.01 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.06 seconds; current allocated memory: 500.281 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -213,13 +213,13 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config4>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config4>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 500.312 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 500.285 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.01 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 500.469 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 500.441 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -227,13 +227,13 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config6>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config6>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 500.648 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 500.621 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 500.699 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 500.672 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -241,13 +241,13 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 501.125 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 501.039 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 501.242 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.02 seconds; current allocated memory: 501.180 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -255,13 +255,13 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config9>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config9>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 501.500 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 501.469 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.01 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 501.566 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 501.535 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -269,13 +269,13 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config10>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config10>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 501.883 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 501.859 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.04 seconds; current allocated memory: 502.070 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 502.039 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -283,127 +283,97 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config11>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config11>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 502.281 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 502.305 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 502.312 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 502.305 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
-INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 3, loop 'ReuseLoop'
-WARNING: [HLS 200-871] Estimated clock period (10.909 ns) exceeds the target (target clock period: 10.000 ns, clock uncertainty: 1.250 ns, effective delay budget: 8.750 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' consists of the following:
-	'phi' operation 11 bit ('p_read20_rewind', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_12', firmware/nnet_utils/nnet_dense_resource.h:235) [13]  (0.000 ns)
-	multiplexor before 'phi' operation 11 bit ('p_read20_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_12', firmware/nnet_utils/nnet_dense_resource.h:235) [37]  (1.588 ns)
-	'phi' operation 11 bit ('p_read20_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_12', firmware/nnet_utils/nnet_dense_resource.h:235) [37]  (0.000 ns)
-	'sparsemux' operation 11 bit ('a', firmware/nnet_utils/nnet_dense_resource.h:235) [48]  (1.827 ns)
-	'mul' operation 17 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:134->firmware/nnet_utils/nnet_dense_resource.h:242) [53]  (7.494 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'ReuseLoop'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 503.695 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.06 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 503.965 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 503.695 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 503.965 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 504.043 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 503.965 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 504.043 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.02 seconds; current allocated memory: 503.965 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
-INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 3, loop 'ReuseLoop'
-WARNING: [HLS 200-871] Estimated clock period (9.262 ns) exceeds the target (target clock period: 10.000 ns, clock uncertainty: 1.250 ns, effective delay budget: 8.750 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' consists of the following:
-	'phi' operation 8 bit ('p_read16_rewind', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read16', firmware/nnet_utils/nnet_dense_resource.h:235) [11]  (0.000 ns)
-	multiplexor before 'phi' operation 8 bit ('p_read16_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read16', firmware/nnet_utils/nnet_dense_resource.h:235) [31]  (1.588 ns)
-	'phi' operation 8 bit ('p_read16_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read16', firmware/nnet_utils/nnet_dense_resource.h:235) [31]  (0.000 ns)
-	'select' operation 8 bit ('a', firmware/nnet_utils/nnet_dense_resource.h:140->firmware/nnet_utils/nnet_dense_resource.h:242) [39]  (1.248 ns)
-	'mul' operation 14 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:134->firmware/nnet_utils/nnet_dense_resource.h:242) [44]  (6.426 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'ReuseLoop'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 505.059 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 504.914 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 505.059 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 504.914 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config17>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config17>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config17>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 505.402 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 504.914 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 505.402 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 504.988 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
-INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 3, loop 'ReuseLoop'
-WARNING: [HLS 200-871] Estimated clock period (9.262 ns) exceeds the target (target clock period: 10.000 ns, clock uncertainty: 1.250 ns, effective delay budget: 8.750 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' consists of the following:
-	'phi' operation 8 bit ('p_read9_rewind', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_7', firmware/nnet_utils/nnet_dense_resource.h:235) [9]  (0.000 ns)
-	multiplexor before 'phi' operation 8 bit ('p_read9_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_7', firmware/nnet_utils/nnet_dense_resource.h:235) [23]  (1.588 ns)
-	'phi' operation 8 bit ('p_read9_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_7', firmware/nnet_utils/nnet_dense_resource.h:235) [23]  (0.000 ns)
-	'select' operation 8 bit ('a', firmware/nnet_utils/nnet_dense_resource.h:42->firmware/nnet_utils/nnet_dense_resource.h:240) [30]  (1.248 ns)
-	'mul' operation 14 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:54->firmware/nnet_utils/nnet_dense_resource.h:240) [35]  (6.426 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'ReuseLoop'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 506.211 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 506.031 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 506.211 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 506.031 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config20>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config20>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config20>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 506.496 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 506.031 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 506.496 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 506.031 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'myproject' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -411,92 +381,86 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-11] Finished scheduling.
 WARNING: [HLS 200-1020] Increasing the depth of FIFO layer7_out (from linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_U0 to concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_U0) to 3 to improve performance and/or avoid deadlocks.
 WARNING: [HLS 200-1020] Increasing the depth of FIFO layer10_out (from linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_U0 to concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_U0) to 4 to improve performance and/or avoid deadlocks.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 506.879 MB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 506.766 MB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 506.879 MB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 506.766 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 506.945 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 506.809 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 508.145 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 508.012 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 509.105 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 508.977 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 509.695 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 509.582 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 510.707 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 510.598 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 511.367 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 511.262 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 512.441 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 512.340 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SYN 201-210] Renamed object name 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64_ROM_AUTO_1R' to 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb' due to the length limit 80
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
 INFO: [RTGEN 206-100] Generating core module 'mul_11s_6s_17_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Generating core module 'sparsemux_9_2_11_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s'.
 INFO: [RTMG 210-279] Implementing memory 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb' using auto ROMs.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.08 seconds; current allocated memory: 513.484 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 513.293 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.08 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 515.434 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.1 seconds; current allocated memory: 515.148 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SYN 201-210] Renamed object name 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROM_AUTO_1R' to 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud' due to the length limit 80
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
 INFO: [RTGEN 206-100] Generating core module 'mul_8ns_6s_14_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s'.
 INFO: [RTMG 210-279] Implementing memory 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud' using auto ROMs.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.1 seconds; current allocated memory: 517.191 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.08 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 516.836 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config17>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.08 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 518.945 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.08 seconds; current allocated memory: 518.941 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
 INFO: [RTGEN 206-100] Generating core module 'mul_8ns_6s_14_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.08 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.1 seconds; current allocated memory: 520.477 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 520.391 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' pipeline 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config20>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 521.598 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 521.457 MB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'myproject' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -537,14 +501,14 @@ INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_1_U(myproject_fifo_w16_d2_S)
 INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_U(myproject_fifo_w8_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_1_U(myproject_fifo_w8_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_U(myproject_fifo_w13_d2_S)' using Shift Registers.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.17 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.2 seconds; current allocated memory: 523.938 MB.
-INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 0.25 seconds. CPU system time: 0.05 seconds. Elapsed time: 0.29 seconds; current allocated memory: 527.047 MB.
-INFO: [HLS 200-111] Finished Updating report files: CPU user time: 1.04 seconds. CPU system time: 0.03 seconds. Elapsed time: 1.08 seconds; current allocated memory: 538.121 MB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.16 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.2 seconds; current allocated memory: 523.805 MB.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 0.24 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.28 seconds; current allocated memory: 526.816 MB.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 1.08 seconds. CPU system time: 0.05 seconds. Elapsed time: 1.13 seconds; current allocated memory: 537.977 MB.
 INFO: [VHDL 208-304] Generating VHDL RTL for myproject.
 INFO: [VLOG 209-307] Generating Verilog RTL for myproject.
 INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were satisfied.
-INFO: [HLS 200-789] **** Estimated Fmax: 91.67 MHz
-INFO: [HLS 200-2161] Finished Command csynth_design Elapsed time: 00:00:20; Allocated memory: 205.379 MB.
+INFO: [HLS 200-789] **** Estimated Fmax: 59.87 MHz
+INFO: [HLS 200-2161] Finished Command csynth_design Elapsed time: 00:00:20; Allocated memory: 205.141 MB.
 ***** C/RTL SYNTHESIS COMPLETED IN 0h0m20s *****
 ***** C/RTL SIMULATION *****
 INFO: [HLS 200-1510] Running: add_files -tb myproject_test.cpp -cflags -std=c++0x -DRTL_SIM 
@@ -566,7 +530,7 @@ INFO: [COSIM 212-333] Generating C post check test bench ...
 INFO: [COSIM 212-12] Generating RTL test bench ...
 INFO: [COSIM 212-1] *** C/RTL co-simulation file generation completed. ***
 INFO: [COSIM 212-211] II is measurable only when transaction number is greater than 1 in RTL simulation. Otherwise, they will be marked as all NA. If user wants to calculate them, please make sure there are at least 2 transactions in RTL simulation.
-INFO: [HLS 200-2161] Finished Command cosim_design Elapsed time: 00:00:16; Allocated memory: 10.645 MB.
+INFO: [HLS 200-2161] Finished Command cosim_design Elapsed time: 00:00:17; Allocated memory: 10.645 MB.
 INFO: [HLS 200-1510] Running: source ./project.tcl
 INFO: [HLS 200-1510] Running: source run_sim.tcl
 INFO: [HLS 200-1510] Running: source check_sim.tcl
@@ -626,8 +590,6 @@ INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/dabadjiev/smartpixels_m
 INFO: [VRFC 10-311] analyzing module myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/sim/verilog/myproject.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module myproject
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/sim/verilog/myproject_flow_control_loop_pipe.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module myproject_flow_control_loop_pipe
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/sim/verilog/myproject_sparsemux_9_2_11_1_1.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module myproject_sparsemux_9_2_11_1_1
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/sim/verilog/myproject_mul_11s_6s_17_1_1.v" into library xil_defaultlib
@@ -675,7 +637,6 @@ Compiling module xil_defaultlib.myproject_concatenate1d_ap_fixed...
 Compiling module xil_defaultlib.myproject_dense_resource_ap_fixe...
 Compiling module xil_defaultlib.myproject_sparsemux_9_2_11_1_1(d...
 Compiling module xil_defaultlib.myproject_mul_11s_6s_17_1_1(NUM_...
-Compiling module xil_defaultlib.myproject_flow_control_loop_pipe
 Compiling module xil_defaultlib.myproject_dense_resource_ap_fixe...
 Compiling module xil_defaultlib.myproject_relu_ap_fixed_16_6_5_3...
 Compiling module xil_defaultlib.myproject_dense_resource_ap_ufix...
@@ -717,7 +678,7 @@ Compiling module xil_defaultlib.AESL_deadlock_detector_2
 Compiling module xil_defaultlib.df_fifo_intf_default
 Compiling module xil_defaultlib.df_process_intf_default
 Compiling module xil_defaultlib.nodf_module_intf_default
-Compiling module xil_defaultlib.upc_loop_intf(FSM_WIDTH=1)
+Compiling module xil_defaultlib.rewind_loop_intf_default
 Compiling module xil_defaultlib.dataflow_monitor_1
 Compiling module xil_defaultlib.apatb_myproject_top
 Compiling module work.glbl
@@ -727,7 +688,7 @@ Built simulation snapshot myproject
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Tue Jul 21 07:23:47 2026
+  **** Start of session at: Tue Jul 21 09:59:33 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 
@@ -889,18 +850,18 @@ source myproject.tcl
 //
 // RTL Simulation : "Inter-Transaction Progress" ["Intra-Transaction Progress"] @ "Simulation Time"
 ////////////////////////////////////////////////////////////////////////////////////
-// RTL Simulation : 0 / 1 [0.00%] @ "125000"
-// RTL Simulation : 1 / 1 [100.00%] @ "435000"
+// RTL Simulation : 0 / 1 [0.00%] @ "150000"
+// RTL Simulation : 1 / 1 [100.00%] @ "710000"
 ////////////////////////////////////////////////////////////////////////////////////
-$finish called at time : 495 ns : File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/sim/verilog/myproject.autotb.v" Line 990
+$finish called at time : 830 ns : File "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/sim/verilog/myproject.autotb.v" Line 990
 ## quit
-INFO: [Common 17-206] Exiting xsim at Tue Jul 21 07:23:50 2026...
+INFO: [Common 17-206] Exiting xsim at Tue Jul 21 09:59:36 2026...
 INFO: [COSIM 212-316] Starting C post checking ...
 INFO: Unable to open input/predictions file, using default input.
 0.5 
 INFO: Saved inference results to file: tb_data/rtl_cosim_results.log
 INFO:
-Report time       : Tue Jul 21 07:23:37 AM CDT 2026.
+Report time       : Tue Jul 21 09:59:23 AM CDT 2026.
 Solution          : solution1.
 Simulation tool   : xsim.
 
@@ -913,7 +874,7 @@ Simulation tool   : xsim.
 |   Verilog|      Pass|             NA|             NA|             NA|             NA|             NA|             NA|                    NA|
 +----------+----------+-----------------------------------------------+-----------------------------------------------+----------------------+
 
-***** C/RTL SIMULATION COMPLETED IN 0h0m29s *****
+***** C/RTL SIMULATION COMPLETED IN 0h0m30s *****
 ***** EXPORT IP *****
 INFO: [HLS 200-1510] Running: export_design -format ip_catalog -version 1.0.0 
 INFO: [IMPL 213-8] Exporting RTL as a Vivado IP.
@@ -922,16 +883,16 @@ INFO: [IMPL 213-8] Exporting RTL as a Vivado IP.
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Tue Jul 21 07:23:54 2026
+  **** Start of session at: Tue Jul 21 09:59:40 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 
 source run_ippack.tcl -notrace
 INFO: calling package_hls_ip ip_types=vitis sysgen json_file=/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/solution1_data.json outdir=/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip srcdir=/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1 sort_interfaces_ports=false
 INFO: Copied 1 ipmisc file(s) to /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip/misc
-INFO: Copied 31 verilog file(s) to /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip/hdl/verilog
-INFO: Copied 26 vhdl file(s) to /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip/hdl/vhdl
-ipx::create_core: Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1708.219 ; gain = 44.805 ; free physical = 65925 ; free virtual = 211534
+INFO: Copied 30 verilog file(s) to /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip/hdl/verilog
+INFO: Copied 25 vhdl file(s) to /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip/hdl/vhdl
+ipx::create_core: Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1708.156 ; gain = 44.805 ; free physical = 75998 ; free virtual = 210264
 INFO: Import ports from HDL: /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip/hdl/vhdl/myproject.vhd (myproject)
 INFO: Add data interface z_global
 INFO: Add data interface x_size
@@ -972,17 +933,17 @@ INFO: Calling post_process_sysgen to specialize IP
 Generating sysgen info xml from json file
 INFO: Created IP /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip/component.xml
 INFO: Created IP archive /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/impl/ip/xilinx_com_hls_myproject_1_0.zip
-INFO: [Common 17-206] Exiting Vivado at Tue Jul 21 07:24:06 2026...
+INFO: [Common 17-206] Exiting Vivado at Tue Jul 21 09:59:52 2026...
 INFO: [HLS 200-802] Generated output file myproject_prj/solution1/impl/export.zip
-INFO: [HLS 200-2161] Finished Command export_design Elapsed time: 00:00:16; Allocated memory: 0.473 MB.
-***** EXPORT IP COMPLETED IN 0h0m16s *****
+INFO: [HLS 200-2161] Finished Command export_design Elapsed time: 00:00:25; Allocated memory: 0.672 MB.
+***** EXPORT IP COMPLETED IN 0h0m25s *****
 ***** VIVADO SYNTHESIS *****
 
 ****** Vivado v2024.1 (64-bit)
   **** SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Tue Jul 21 07:24:09 2026
+  **** Start of session at: Tue Jul 21 10:00:04 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 
@@ -996,13 +957,13 @@ source vivado_synth.tcl
 ## variable part
 ## set part "xc7z020clg400-1"
 ## variable clock_period
-## set clock_period 10
+## set clock_period 20
 ## variable clock_uncertainty
 ## set clock_uncertainty 12.5%
 ## variable version
 ## set version "1.0.0"
 # add_files ${project_name}_prj/solution1/syn/vhdl
-add_files: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1674.070 ; gain = 38.836 ; free physical = 66608 ; free virtual = 212237
+add_files: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1674.039 ; gain = 40.836 ; free physical = 76438 ; free virtual = 210729
 # synth_design -top ${project_name} -part $part
 Command: synth_design -top myproject -part xc7z020clg400-1
 Starting synth_design
@@ -1010,38 +971,38 @@ Attempting to get a license for feature 'Synthesis' and/or device 'xc7z020'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z020'
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 3012540
+INFO: [Synth 8-7075] Helper process launched with PID 3194399
 ---------------------------------------------------------------------------------
-Starting Synthesize : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 2105.660 ; gain = 425.609 ; free physical = 63536 ; free virtual = 209167
+Starting Synthesize : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2105.629 ; gain = 425.609 ; free physical = 75064 ; free virtual = 209364
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-638] synthesizing module 'myproject' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:67]
-INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:11' bound to instance 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_U0' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:683]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:11' bound to instance 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_U0' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:686]
 INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:26]
 INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:26]
-INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:11' bound to instance 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_U0' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:696]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:11' bound to instance 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_U0' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:699]
 INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:26]
 INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:26]
-INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:11' bound to instance 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_U0' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:709]
-INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:27]
-INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:27]
-INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:11' bound to instance 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_U0' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:723]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:11' bound to instance 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_U0' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:712]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:28]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:28]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:11' bound to instance 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_U0' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:727]
 INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:26]
 INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:26]
-INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:11' bound to instance 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_U0' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:736]
-INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:29]
-INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:29]
-INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:11' bound to instance 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_U0' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:752]
-INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:26]
-INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:26]
-INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:11' bound to instance 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_U0' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:765]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:11' bound to instance 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_U0' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:740]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:30]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:30]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:11' bound to instance 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_U0' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:757]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:27]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:27]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:11' bound to instance 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_U0' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:771]
 INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:32]
 INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:32]
-INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:11' bound to instance 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_U0' of component 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:784]
+INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:11' bound to instance 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_U0' of component 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:790]
 INFO: [Synth 8-638] synthesizing module 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:34]
 	Parameter DataWidth bound to: 1 - type: integer 
 	Parameter AddressRange bound to: 8 - type: integer 
 	Parameter AddressWidth bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb.vhd:10' bound to instance 'outidx_i_64_U' of component 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:234]
+INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb.vhd:10' bound to instance 'outidx_i_64_U' of component 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:206]
 INFO: [Synth 8-638] synthesizing module 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb.vhd:28]
 	Parameter DataWidth bound to: 1 - type: integer 
 	Parameter AddressWidth bound to: 3 - type: integer 
@@ -1060,7 +1021,7 @@ INFO: [Synth 8-256] done synthesizing module 'myproject_dense_resource_ap_fixed_
 	Parameter def_WIDTH bound to: 11 - type: integer 
 	Parameter sel_WIDTH bound to: 2 - type: integer 
 	Parameter dout_WIDTH bound to: 11 - type: integer 
-INFO: [Synth 8-3491] module 'myproject_sparsemux_9_2_11_1_1' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_sparsemux_9_2_11_1_1.vhd:12' bound to instance 'sparsemux_9_2_11_1_1_U14' of component 'myproject_sparsemux_9_2_11_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:246]
+INFO: [Synth 8-3491] module 'myproject_sparsemux_9_2_11_1_1' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_sparsemux_9_2_11_1_1.vhd:12' bound to instance 'sparsemux_9_2_11_1_1_U14' of component 'myproject_sparsemux_9_2_11_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:218]
 INFO: [Synth 8-638] synthesizing module 'myproject_sparsemux_9_2_11_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_sparsemux_9_2_11_1_1.vhd:55]
 	Parameter din0_WIDTH bound to: 11 - type: integer 
 	Parameter din1_WIDTH bound to: 11 - type: integer 
@@ -1082,7 +1043,7 @@ INFO: [Synth 8-256] done synthesizing module 'myproject_sparsemux_9_2_11_1_1' (0
 	Parameter din0_WIDTH bound to: 11 - type: integer 
 	Parameter din1_WIDTH bound to: 6 - type: integer 
 	Parameter dout_WIDTH bound to: 17 - type: integer 
-INFO: [Synth 8-3491] module 'myproject_mul_11s_6s_17_1_1' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_11s_6s_17_1_1.vhd:7' bound to instance 'mul_11s_6s_17_1_1_U15' of component 'myproject_mul_11s_6s_17_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:270]
+INFO: [Synth 8-3491] module 'myproject_mul_11s_6s_17_1_1' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_11s_6s_17_1_1.vhd:7' bound to instance 'mul_11s_6s_17_1_1_U15' of component 'myproject_mul_11s_6s_17_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:242]
 INFO: [Synth 8-638] synthesizing module 'myproject_mul_11s_6s_17_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_11s_6s_17_1_1.vhd:26]
 	Parameter ID bound to: 1 - type: integer 
 	Parameter NUM_STAGE bound to: 1 - type: integer 
@@ -1090,19 +1051,16 @@ INFO: [Synth 8-638] synthesizing module 'myproject_mul_11s_6s_17_1_1' [/home/dab
 	Parameter din1_WIDTH bound to: 6 - type: integer 
 	Parameter dout_WIDTH bound to: 17 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'myproject_mul_11s_6s_17_1_1' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_11s_6s_17_1_1.vhd:26]
-INFO: [Synth 8-3491] module 'myproject_flow_control_loop_pipe' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_flow_control_loop_pipe.vhd:13' bound to instance 'flow_control_loop_pipe_U' of component 'myproject_flow_control_loop_pipe' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:282]
-INFO: [Synth 8-638] synthesizing module 'myproject_flow_control_loop_pipe' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_flow_control_loop_pipe.vhd:40]
-INFO: [Synth 8-256] done synthesizing module 'myproject_flow_control_loop_pipe' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_flow_control_loop_pipe.vhd:40]
 INFO: [Synth 8-256] done synthesizing module 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:34]
-INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:11' bound to instance 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_U0' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:805]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:11' bound to instance 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_U0' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:811]
 INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:28]
 INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:28]
-INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:11' bound to instance 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0' of component 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:820]
+INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:11' bound to instance 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0' of component 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:826]
 INFO: [Synth 8-638] synthesizing module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:32]
 	Parameter DataWidth bound to: 1 - type: integer 
 	Parameter AddressRange bound to: 4 - type: integer 
 	Parameter AddressWidth bound to: 2 - type: integer 
-INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud.vhd:10' bound to instance 'outidx_i_U' of component 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:189]
+INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud.vhd:10' bound to instance 'outidx_i_U' of component 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:161]
 INFO: [Synth 8-638] synthesizing module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud.vhd:28]
 	Parameter DataWidth bound to: 1 - type: integer 
 	Parameter AddressWidth bound to: 2 - type: integer 
@@ -1113,7 +1071,7 @@ INFO: [Synth 8-256] done synthesizing module 'myproject_dense_resource_ap_ufixed
 	Parameter din0_WIDTH bound to: 8 - type: integer 
 	Parameter din1_WIDTH bound to: 6 - type: integer 
 	Parameter dout_WIDTH bound to: 14 - type: integer 
-INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_1' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_1.vhd:7' bound to instance 'mul_8ns_6s_14_1_1_U28' of component 'myproject_mul_8ns_6s_14_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:201]
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_1' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_1.vhd:7' bound to instance 'mul_8ns_6s_14_1_1_U28' of component 'myproject_mul_8ns_6s_14_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:173]
 INFO: [Synth 8-638] synthesizing module 'myproject_mul_8ns_6s_14_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_1.vhd:26]
 	Parameter ID bound to: 1 - type: integer 
 	Parameter NUM_STAGE bound to: 1 - type: integer 
@@ -1121,25 +1079,23 @@ INFO: [Synth 8-638] synthesizing module 'myproject_mul_8ns_6s_14_1_1' [/home/dab
 	Parameter din1_WIDTH bound to: 6 - type: integer 
 	Parameter dout_WIDTH bound to: 14 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'myproject_mul_8ns_6s_14_1_1' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_1.vhd:26]
-INFO: [Synth 8-3491] module 'myproject_flow_control_loop_pipe' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_flow_control_loop_pipe.vhd:13' bound to instance 'flow_control_loop_pipe_U' of component 'myproject_flow_control_loop_pipe' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:213]
 INFO: [Synth 8-256] done synthesizing module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:32]
-INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:11' bound to instance 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_U0' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:839]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:11' bound to instance 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_U0' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:845]
 INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:28]
 INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:28]
-INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:11' bound to instance 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_U0' of component 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:854]
+INFO: [Synth 8-3491] module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:11' bound to instance 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_U0' of component 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:860]
 INFO: [Synth 8-638] synthesizing module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:30]
 	Parameter ID bound to: 1 - type: integer 
 	Parameter NUM_STAGE bound to: 1 - type: integer 
 	Parameter din0_WIDTH bound to: 8 - type: integer 
 	Parameter din1_WIDTH bound to: 6 - type: integer 
 	Parameter dout_WIDTH bound to: 14 - type: integer 
-INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_1' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_1.vhd:7' bound to instance 'mul_8ns_6s_14_1_1_U38' of component 'myproject_mul_8ns_6s_14_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:145]
-INFO: [Synth 8-3491] module 'myproject_flow_control_loop_pipe' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_flow_control_loop_pipe.vhd:13' bound to instance 'flow_control_loop_pipe_U' of component 'myproject_flow_control_loop_pipe' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:157]
+INFO: [Synth 8-3491] module 'myproject_mul_8ns_6s_14_1_1' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_mul_8ns_6s_14_1_1.vhd:7' bound to instance 'mul_8ns_6s_14_1_1_U38' of component 'myproject_mul_8ns_6s_14_1_1' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:119]
 INFO: [Synth 8-256] done synthesizing module 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:30]
-INFO: [Synth 8-3491] module 'myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s.vhd:11' bound to instance 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_U0' of component 'myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:871]
+INFO: [Synth 8-3491] module 'myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s.vhd:11' bound to instance 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_U0' of component 'myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:877]
 INFO: [Synth 8-638] synthesizing module 'myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s.vhd:26]
 INFO: [Synth 8-256] done synthesizing module 'myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s.vhd:26]
-INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer3_out_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:884]
+INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer3_out_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:890]
 INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:40]
 	Parameter DATA_WIDTH bound to: 8 - type: integer 
 	Parameter ADDR_WIDTH bound to: 2 - type: integer 
@@ -1151,8 +1107,8 @@ INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w8_d2_S_ShiftReg' [/home
 	Parameter DEPTH bound to: 2 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w8_d2_S_ShiftReg' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:179]
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w8_d2_S' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:40]
-INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer4_out_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:899]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer6_out_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:914]
+INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer4_out_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:905]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer6_out_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:920]
 INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:40]
 	Parameter DATA_WIDTH bound to: 11 - type: integer 
 	Parameter ADDR_WIDTH bound to: 2 - type: integer 
@@ -1164,8 +1120,8 @@ INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w11_d2_S_ShiftReg' [/hom
 	Parameter DEPTH bound to: 2 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w11_d2_S_ShiftReg' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:179]
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w11_d2_S' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:40]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer6_out_1_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:929]
-INFO: [Synth 8-3491] module 'myproject_fifo_w8_d3_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d3_S.vhd:13' bound to instance 'layer7_out_U' of component 'myproject_fifo_w8_d3_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:944]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer6_out_1_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:935]
+INFO: [Synth 8-3491] module 'myproject_fifo_w8_d3_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d3_S.vhd:13' bound to instance 'layer7_out_U' of component 'myproject_fifo_w8_d3_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:950]
 INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w8_d3_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d3_S.vhd:40]
 	Parameter DATA_WIDTH bound to: 8 - type: integer 
 	Parameter ADDR_WIDTH bound to: 2 - type: integer 
@@ -1177,10 +1133,10 @@ INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w8_d3_S_ShiftReg' [/home
 	Parameter DEPTH bound to: 3 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w8_d3_S_ShiftReg' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d3_S.vhd:179]
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w8_d3_S' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d3_S.vhd:40]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer9_out_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:959]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer9_out_1_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:974]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer9_out_2_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:989]
-INFO: [Synth 8-3491] module 'myproject_fifo_w8_d4_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d4_S.vhd:13' bound to instance 'layer10_out_U' of component 'myproject_fifo_w8_d4_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1004]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer9_out_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:965]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer9_out_1_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:980]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer9_out_2_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:995]
+INFO: [Synth 8-3491] module 'myproject_fifo_w8_d4_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d4_S.vhd:13' bound to instance 'layer10_out_U' of component 'myproject_fifo_w8_d4_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1010]
 INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w8_d4_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d4_S.vhd:40]
 	Parameter DATA_WIDTH bound to: 8 - type: integer 
 	Parameter ADDR_WIDTH bound to: 2 - type: integer 
@@ -1192,11 +1148,11 @@ INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w8_d4_S_ShiftReg' [/home
 	Parameter DEPTH bound to: 4 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w8_d4_S_ShiftReg' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d4_S.vhd:179]
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w8_d4_S' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d4_S.vhd:40]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer11_out_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1019]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer11_out_1_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1034]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer11_out_2_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1049]
-INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer11_out_3_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1064]
-INFO: [Synth 8-3491] module 'myproject_fifo_w16_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:13' bound to instance 'layer12_out_U' of component 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1079]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer11_out_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1025]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer11_out_1_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1040]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer11_out_2_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1055]
+INFO: [Synth 8-3491] module 'myproject_fifo_w11_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w11_d2_S.vhd:13' bound to instance 'layer11_out_3_U' of component 'myproject_fifo_w11_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1070]
+INFO: [Synth 8-3491] module 'myproject_fifo_w16_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:13' bound to instance 'layer12_out_U' of component 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1085]
 INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:40]
 	Parameter DATA_WIDTH bound to: 16 - type: integer 
 	Parameter ADDR_WIDTH bound to: 2 - type: integer 
@@ -1208,14 +1164,14 @@ INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w16_d2_S_ShiftReg' [/hom
 	Parameter DEPTH bound to: 2 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w16_d2_S_ShiftReg' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:179]
 INFO: [Synth 8-256] done synthesizing module 'myproject_fifo_w16_d2_S' (0#1) [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:40]
-INFO: [Synth 8-3491] module 'myproject_fifo_w16_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:13' bound to instance 'layer12_out_1_U' of component 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1094]
-INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer14_out_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1109]
-INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer14_out_1_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1124]
-INFO: [Synth 8-3491] module 'myproject_fifo_w16_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:13' bound to instance 'layer15_out_U' of component 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1139]
-INFO: [Synth 8-3491] module 'myproject_fifo_w16_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:13' bound to instance 'layer15_out_1_U' of component 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1154]
-INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer17_out_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1169]
-INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer17_out_1_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1184]
-INFO: [Synth 8-3491] module 'myproject_fifo_w13_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w13_d2_S.vhd:13' bound to instance 'layer18_out_U' of component 'myproject_fifo_w13_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1199]
+INFO: [Synth 8-3491] module 'myproject_fifo_w16_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:13' bound to instance 'layer12_out_1_U' of component 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1100]
+INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer14_out_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1115]
+INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer14_out_1_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1130]
+INFO: [Synth 8-3491] module 'myproject_fifo_w16_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:13' bound to instance 'layer15_out_U' of component 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1145]
+INFO: [Synth 8-3491] module 'myproject_fifo_w16_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w16_d2_S.vhd:13' bound to instance 'layer15_out_1_U' of component 'myproject_fifo_w16_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1160]
+INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer17_out_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1175]
+INFO: [Synth 8-3491] module 'myproject_fifo_w8_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w8_d2_S.vhd:13' bound to instance 'layer17_out_1_U' of component 'myproject_fifo_w8_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1190]
+INFO: [Synth 8-3491] module 'myproject_fifo_w13_d2_S' declared at '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w13_d2_S.vhd:13' bound to instance 'layer18_out_U' of component 'myproject_fifo_w13_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject.vhd:1205]
 INFO: [Synth 8-638] synthesizing module 'myproject_fifo_w13_d2_S' [/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model1_fin_results/model1_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_828/myproject_prj/solution1/syn/vhdl/myproject_fifo_w13_d2_S.vhd:40]
 	Parameter DATA_WIDTH bound to: 13 - type: integer 
 	Parameter ADDR_WIDTH bound to: 2 - type: integer 
@@ -1283,7 +1239,6 @@ WARNING: [Synth 8-7129] Port addr[1] in module myproject_fifo_w13_d2_S_ShiftReg 
 WARNING: [Synth 8-7129] Port addr[1] in module myproject_fifo_w8_d2_S_ShiftReg is either unconnected or has no load
 WARNING: [Synth 8-7129] Port addr[1] in module myproject_fifo_w16_d2_S_ShiftReg is either unconnected or has no load
 WARNING: [Synth 8-7129] Port addr[1] in module myproject_fifo_w11_d2_S_ShiftReg is either unconnected or has no load
-WARNING: [Synth 8-7129] Port ap_done_int in module myproject_flow_control_loop_pipe is either unconnected or has no load
 WARNING: [Synth 8-7129] Port reset in module myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud is either unconnected or has no load
 WARNING: [Synth 8-7129] Port def[10] in module myproject_sparsemux_9_2_11_1_1 is either unconnected or has no load
 WARNING: [Synth 8-7129] Port def[9] in module myproject_sparsemux_9_2_11_1_1 is either unconnected or has no load
@@ -1316,10 +1271,10 @@ WARNING: [Synth 8-7129] Port w18_q1[2] in module myproject is either unconnected
 WARNING: [Synth 8-7129] Port w18_q1[1] in module myproject is either unconnected or has no load
 WARNING: [Synth 8-7129] Port w18_q1[0] in module myproject is either unconnected or has no load
 ---------------------------------------------------------------------------------
-Finished Synthesize : Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 2199.629 ; gain = 519.578 ; free physical = 63648 ; free virtual = 209282
+Finished Synthesize : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2197.598 ; gain = 517.578 ; free physical = 74035 ; free virtual = 208337
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2217.441 ; gain = 537.391 ; free physical = 63428 ; free virtual = 209068
+Finished Constraint Validation : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2215.410 ; gain = 535.391 ; free physical = 73823 ; free virtual = 208124
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
@@ -1327,10 +1282,16 @@ Start Loading Part and Timing Information
 Loading part: xc7z020clg400-1
 ---------------------------------------------------------------------------------
 INFO: [Device 21-403] Loading part xc7z020clg400-1
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2225.445 ; gain = 545.395 ; free physical = 63428 ; free virtual = 209068
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2223.414 ; gain = 543.395 ; free physical = 73820 ; free virtual = 208122
 ---------------------------------------------------------------------------------
+INFO: [Synth 8-4490] FSM extraction disabled for register 'ap_CS_fsm_reg' through user attribute
+INFO: [Synth 8-4490] FSM extraction disabled for register 'ap_CS_fsm_reg' through user attribute
+INFO: [Synth 8-4490] FSM extraction disabled for register 'ap_CS_fsm_reg' through user attribute
+INFO: [Synth 8-4490] FSM extraction disabled for register 'ap_CS_fsm_reg' through user attribute
+INFO: [Synth 8-4490] FSM extraction disabled for register 'ap_CS_fsm_reg' through user attribute
+INFO: [Synth 8-4490] FSM extraction disabled for register 'ap_CS_fsm_reg' through user attribute
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 2243.258 ; gain = 563.207 ; free physical = 63185 ; free virtual = 208831
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 2240.328 ; gain = 560.309 ; free physical = 73623 ; free virtual = 207925
 ---------------------------------------------------------------------------------
 No constraint files found.
 ---------------------------------------------------------------------------------
@@ -1338,7 +1299,7 @@ Start RTL Component Statistics
 ---------------------------------------------------------------------------------
 Detailed RTL Component Info : 
 +---Adders : 
-	   2 Input   16 Bit       Adders := 2     
+	   2 Input   17 Bit       Adders := 2     
 	   2 Input   15 Bit       Adders := 1     
 	   2 Input   13 Bit       Adders := 1     
 	   2 Input    8 Bit       Adders := 9     
@@ -1348,28 +1309,29 @@ Detailed RTL Component Info :
 	   2 Input      1 Bit         XORs := 82    
 +---Registers : 
 	               16 Bit    Registers := 20    
-	               14 Bit    Registers := 1     
-	               13 Bit    Registers := 4     
-	               12 Bit    Registers := 3     
-	               11 Bit    Registers := 36    
-	                8 Bit    Registers := 33    
-	                3 Bit    Registers := 25    
-	                2 Bit    Registers := 26    
-	                1 Bit    Registers := 142   
+	               13 Bit    Registers := 3     
+	               12 Bit    Registers := 2     
+	               11 Bit    Registers := 35    
+	                8 Bit    Registers := 29    
+	                3 Bit    Registers := 24    
+	                2 Bit    Registers := 28    
+	                1 Bit    Registers := 104   
 +---Multipliers : 
 	               6x11  Multipliers := 1     
 	                6x9  Multipliers := 2     
 +---Muxes : 
-	   2 Input   16 Bit        Muxes := 30    
+	   2 Input   16 Bit        Muxes := 32    
 	   2 Input   13 Bit        Muxes := 2     
 	   3 Input   13 Bit        Muxes := 1     
+	   2 Input   12 Bit        Muxes := 1     
 	   2 Input   11 Bit        Muxes := 31    
 	   4 Input   11 Bit        Muxes := 1     
 	   2 Input    8 Bit        Muxes := 68    
 	   3 Input    8 Bit        Muxes := 8     
 	   2 Input    3 Bit        Muxes := 2     
-	   2 Input    2 Bit        Muxes := 48    
-	   2 Input    1 Bit        Muxes := 150   
+	   5 Input    2 Bit        Muxes := 3     
+	   2 Input    2 Bit        Muxes := 49    
+	   2 Input    1 Bit        Muxes := 154   
 	   9 Input    1 Bit        Muxes := 1     
 	   5 Input    1 Bit        Muxes := 1     
 ---------------------------------------------------------------------------------
@@ -1459,20 +1421,20 @@ WARNING: [Synth 8-7129] Port w18_q1[2] in module myproject is either unconnected
 WARNING: [Synth 8-7129] Port w18_q1[1] in module myproject is either unconnected or has no load
 WARNING: [Synth 8-7129] Port w18_q1[0] in module myproject is either unconnected or has no load
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:15 ; elapsed = 00:00:14 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61681 ; free virtual = 207339
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:15 ; elapsed = 00:00:15 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 71486 ; free virtual = 205809
 ---------------------------------------------------------------------------------
 No constraint files found.
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:15 ; elapsed = 00:00:15 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61648 ; free virtual = 207305
+Finished Timing Optimization : Time (s): cpu = 00:00:15 ; elapsed = 00:00:15 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 71252 ; free virtual = 205577
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:15 ; elapsed = 00:00:15 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61628 ; free virtual = 207285
+Finished Technology Mapping : Time (s): cpu = 00:00:16 ; elapsed = 00:00:15 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 71118 ; free virtual = 205444
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -1490,37 +1452,37 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:18 ; elapsed = 00:00:18 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61245 ; free virtual = 206915
+Finished IO Insertion : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 70228 ; free virtual = 204572
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:18 ; elapsed = 00:00:18 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61244 ; free virtual = 206914
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 70227 ; free virtual = 204571
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:19 ; elapsed = 00:00:18 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61230 ; free virtual = 206900
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 70206 ; free virtual = 204549
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61230 ; free virtual = 206900
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 70205 ; free virtual = 204549
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61227 ; free virtual = 206897
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 70194 ; free virtual = 204543
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61226 ; free virtual = 206896
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 70189 ; free virtual = 204538
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1552,16 +1514,16 @@ Report Cell Usage:
 |      |Cell   |Count |
 +------+-------+------+
 |1     |BUFG   |     1|
-|2     |CARRY4 |    61|
-|3     |LUT1   |     3|
-|4     |LUT2   |   140|
-|5     |LUT3   |   386|
-|6     |LUT4   |   154|
-|7     |LUT5   |   337|
-|8     |LUT6   |   398|
+|2     |CARRY4 |    74|
+|3     |LUT1   |     2|
+|4     |LUT2   |   165|
+|5     |LUT3   |   366|
+|6     |LUT4   |   157|
+|7     |LUT5   |   345|
+|8     |LUT6   |   489|
 |9     |SRL16E |    16|
-|10    |FDRE   |  1137|
-|11    |FDSE   |    22|
+|10    |FDRE   |  1025|
+|11    |FDSE   |    25|
 |12    |IBUF   |   119|
 |13    |OBUF   |    72|
 +------+-------+------+
@@ -1570,97 +1532,94 @@ Report Instance Areas:
 +------+---------------------------------------------------------------------+-------------------------------------------------------------------------------------------+------+
 |      |Instance                                                             |Module                                                                                     |Cells |
 +------+---------------------------------------------------------------------+-------------------------------------------------------------------------------------------+------+
-|1     |top                                                                  |                                                                                           |  2846|
+|1     |top                                                                  |                                                                                           |  2856|
 |2     |  concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_U0    |myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s                   |    43|
-|3     |  concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_U0     |myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s                    |    18|
+|3     |  concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_U0     |myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s                    |    20|
 |4     |  concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_U0     |myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s                    |    27|
-|5     |  dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_U0 |myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s                |   440|
-|6     |    flow_control_loop_pipe_U                                         |myproject_flow_control_loop_pipe_34                                                        |    19|
-|7     |    mul_11s_6s_17_1_1_U15                                            |myproject_mul_11s_6s_17_1_1                                                                |   122|
-|8     |    outidx_i_64_U                                                    |myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb |     1|
-|9     |  dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 |myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s                |   372|
-|10    |    flow_control_loop_pipe_U                                         |myproject_flow_control_loop_pipe_32                                                        |    13|
-|11    |    mul_8ns_6s_14_1_1_U28                                            |myproject_mul_8ns_6s_14_1_1_33                                                             |    82|
-|12    |    outidx_i_U                                                       |myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud |     1|
-|13    |  dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_U0 |myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s                |   284|
-|14    |    flow_control_loop_pipe_U                                         |myproject_flow_control_loop_pipe                                                           |    10|
-|15    |    mul_8ns_6s_14_1_1_U38                                            |myproject_mul_8ns_6s_14_1_1                                                                |    81|
-|16    |  hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_U0 |myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s                |    41|
-|17    |  layer10_out_U                                                      |myproject_fifo_w8_d4_S                                                                     |    38|
-|18    |    U_myproject_fifo_w8_d4_S_ShiftReg                                |myproject_fifo_w8_d4_S_ShiftReg                                                            |    21|
-|19    |  layer11_out_1_U                                                    |myproject_fifo_w11_d2_S                                                                    |    40|
-|20    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_31                                                        |    24|
-|21    |  layer11_out_2_U                                                    |myproject_fifo_w11_d2_S_0                                                                  |    39|
-|22    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_30                                                        |    24|
-|23    |  layer11_out_3_U                                                    |myproject_fifo_w11_d2_S_1                                                                  |    38|
-|24    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_29                                                        |    24|
-|25    |  layer11_out_U                                                      |myproject_fifo_w11_d2_S_2                                                                  |    43|
-|26    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_28                                                        |    25|
-|27    |  layer12_out_1_U                                                    |myproject_fifo_w16_d2_S                                                                    |    89|
-|28    |    U_myproject_fifo_w16_d2_S_ShiftReg                               |myproject_fifo_w16_d2_S_ShiftReg_27                                                        |    75|
-|29    |  layer12_out_U                                                      |myproject_fifo_w16_d2_S_3                                                                  |    89|
-|30    |    U_myproject_fifo_w16_d2_S_ShiftReg                               |myproject_fifo_w16_d2_S_ShiftReg_26                                                        |    75|
-|31    |  layer14_out_1_U                                                    |myproject_fifo_w8_d2_S                                                                     |    39|
-|32    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_25                                                         |    24|
-|33    |  layer14_out_U                                                      |myproject_fifo_w8_d2_S_4                                                                   |    38|
-|34    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_24                                                         |    24|
-|35    |  layer15_out_1_U                                                    |myproject_fifo_w16_d2_S_5                                                                  |    90|
-|36    |    U_myproject_fifo_w16_d2_S_ShiftReg                               |myproject_fifo_w16_d2_S_ShiftReg_23                                                        |    75|
-|37    |  layer15_out_U                                                      |myproject_fifo_w16_d2_S_6                                                                  |    91|
-|38    |    U_myproject_fifo_w16_d2_S_ShiftReg                               |myproject_fifo_w16_d2_S_ShiftReg                                                           |    75|
-|39    |  layer17_out_1_U                                                    |myproject_fifo_w8_d2_S_7                                                                   |    38|
-|40    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_22                                                         |    24|
-|41    |  layer17_out_U                                                      |myproject_fifo_w8_d2_S_8                                                                   |    38|
-|42    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_21                                                         |    24|
-|43    |  layer18_out_U                                                      |myproject_fifo_w13_d2_S                                                                    |    64|
-|44    |    U_myproject_fifo_w13_d2_S_ShiftReg                               |myproject_fifo_w13_d2_S_ShiftReg                                                           |    52|
-|45    |  layer3_out_U                                                       |myproject_fifo_w8_d2_S_9                                                                   |    60|
-|46    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_20                                                         |    45|
-|47    |  layer4_out_U                                                       |myproject_fifo_w8_d2_S_10                                                                  |    64|
-|48    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg                                                            |    45|
-|49    |  layer6_out_1_U                                                     |myproject_fifo_w11_d2_S_11                                                                 |    46|
-|50    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_19                                                        |    33|
-|51    |  layer6_out_U                                                       |myproject_fifo_w11_d2_S_12                                                                 |    48|
-|52    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_18                                                        |    33|
-|53    |  layer7_out_U                                                       |myproject_fifo_w8_d3_S                                                                     |    47|
-|54    |    U_myproject_fifo_w8_d3_S_ShiftReg                                |myproject_fifo_w8_d3_S_ShiftReg                                                            |    29|
-|55    |  layer9_out_1_U                                                     |myproject_fifo_w11_d2_S_13                                                                 |    48|
-|56    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_17                                                        |    33|
-|57    |  layer9_out_2_U                                                     |myproject_fifo_w11_d2_S_14                                                                 |    54|
-|58    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_16                                                        |    37|
-|59    |  layer9_out_U                                                       |myproject_fifo_w11_d2_S_15                                                                 |    51|
-|60    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg                                                           |    33|
-|61    |  linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_U0   |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s                  |    21|
-|62    |  linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_U0    |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s                   |    21|
-|63    |  linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_U0    |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s                   |    19|
-|64    |  linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_U0    |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s                   |    20|
-|65    |  relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_U0      |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s                     |    66|
-|66    |  relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_U0      |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s                     |    66|
+|5     |  dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_U0 |myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s                |   491|
+|6     |    mul_11s_6s_17_1_1_U15                                            |myproject_mul_11s_6s_17_1_1                                                                |   174|
+|7     |    outidx_i_64_U                                                    |myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_64bkb |   106|
+|8     |  dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 |myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s                |   425|
+|9     |    mul_8ns_6s_14_1_1_U28                                            |myproject_mul_8ns_6s_14_1_1_32                                                             |   132|
+|10    |    outidx_i_U                                                       |myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_outidx_i_ROcud |   107|
+|11    |  dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_U0 |myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s                |   248|
+|12    |    mul_8ns_6s_14_1_1_U38                                            |myproject_mul_8ns_6s_14_1_1                                                                |   115|
+|13    |  hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_U0 |myproject_hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config20_s                |    11|
+|14    |  layer10_out_U                                                      |myproject_fifo_w8_d4_S                                                                     |    39|
+|15    |    U_myproject_fifo_w8_d4_S_ShiftReg                                |myproject_fifo_w8_d4_S_ShiftReg                                                            |    21|
+|16    |  layer11_out_1_U                                                    |myproject_fifo_w11_d2_S                                                                    |    39|
+|17    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_31                                                        |    24|
+|18    |  layer11_out_2_U                                                    |myproject_fifo_w11_d2_S_0                                                                  |    40|
+|19    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_30                                                        |    25|
+|20    |  layer11_out_3_U                                                    |myproject_fifo_w11_d2_S_1                                                                  |    39|
+|21    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_29                                                        |    25|
+|22    |  layer11_out_U                                                      |myproject_fifo_w11_d2_S_2                                                                  |    42|
+|23    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_28                                                        |    25|
+|24    |  layer12_out_1_U                                                    |myproject_fifo_w16_d2_S                                                                    |    94|
+|25    |    U_myproject_fifo_w16_d2_S_ShiftReg                               |myproject_fifo_w16_d2_S_ShiftReg_27                                                        |    80|
+|26    |  layer12_out_U                                                      |myproject_fifo_w16_d2_S_3                                                                  |    95|
+|27    |    U_myproject_fifo_w16_d2_S_ShiftReg                               |myproject_fifo_w16_d2_S_ShiftReg_26                                                        |    80|
+|28    |  layer14_out_1_U                                                    |myproject_fifo_w8_d2_S                                                                     |    39|
+|29    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_25                                                         |    25|
+|30    |  layer14_out_U                                                      |myproject_fifo_w8_d2_S_4                                                                   |    40|
+|31    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_24                                                         |    25|
+|32    |  layer15_out_1_U                                                    |myproject_fifo_w16_d2_S_5                                                                  |    94|
+|33    |    U_myproject_fifo_w16_d2_S_ShiftReg                               |myproject_fifo_w16_d2_S_ShiftReg_23                                                        |    80|
+|34    |  layer15_out_U                                                      |myproject_fifo_w16_d2_S_6                                                                  |    97|
+|35    |    U_myproject_fifo_w16_d2_S_ShiftReg                               |myproject_fifo_w16_d2_S_ShiftReg                                                           |    80|
+|36    |  layer17_out_1_U                                                    |myproject_fifo_w8_d2_S_7                                                                   |    40|
+|37    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_22                                                         |    25|
+|38    |  layer17_out_U                                                      |myproject_fifo_w8_d2_S_8                                                                   |    39|
+|39    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_21                                                         |    25|
+|40    |  layer18_out_U                                                      |myproject_fifo_w13_d2_S                                                                    |    96|
+|41    |    U_myproject_fifo_w13_d2_S_ShiftReg                               |myproject_fifo_w13_d2_S_ShiftReg                                                           |    84|
+|42    |  layer3_out_U                                                       |myproject_fifo_w8_d2_S_9                                                                   |    59|
+|43    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg_20                                                         |    45|
+|44    |  layer4_out_U                                                       |myproject_fifo_w8_d2_S_10                                                                  |    60|
+|45    |    U_myproject_fifo_w8_d2_S_ShiftReg                                |myproject_fifo_w8_d2_S_ShiftReg                                                            |    45|
+|46    |  layer6_out_1_U                                                     |myproject_fifo_w11_d2_S_11                                                                 |    47|
+|47    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_19                                                        |    33|
+|48    |  layer6_out_U                                                       |myproject_fifo_w11_d2_S_12                                                                 |    47|
+|49    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_18                                                        |    33|
+|50    |  layer7_out_U                                                       |myproject_fifo_w8_d3_S                                                                     |    47|
+|51    |    U_myproject_fifo_w8_d3_S_ShiftReg                                |myproject_fifo_w8_d3_S_ShiftReg                                                            |    29|
+|52    |  layer9_out_1_U                                                     |myproject_fifo_w11_d2_S_13                                                                 |    48|
+|53    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_17                                                        |    33|
+|54    |  layer9_out_2_U                                                     |myproject_fifo_w11_d2_S_14                                                                 |    52|
+|55    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg_16                                                        |    35|
+|56    |  layer9_out_U                                                       |myproject_fifo_w11_d2_S_15                                                                 |    50|
+|57    |    U_myproject_fifo_w11_d2_S_ShiftReg                               |myproject_fifo_w11_d2_S_ShiftReg                                                           |    33|
+|58    |  linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_U0   |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s                  |    20|
+|59    |  linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_U0    |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s                   |    21|
+|60    |  linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_U0    |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s                   |    21|
+|61    |  linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_U0    |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s                   |    22|
+|62    |  relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_U0      |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s                     |    24|
+|63    |  relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_U0      |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s                     |    24|
 +------+---------------------------------------------------------------------+-------------------------------------------------------------------------------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61224 ; free virtual = 206894
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 70188 ; free virtual = 204532
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 0 critical warnings and 157 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2407.742 ; gain = 727.691 ; free physical = 61221 ; free virtual = 206891
-Synthesis Optimization Complete : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2407.750 ; gain = 727.691 ; free physical = 61220 ; free virtual = 206890
+Synthesis finished with 0 errors, 0 critical warnings and 156 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.773 ; gain = 732.754 ; free physical = 70187 ; free virtual = 204531
+Synthesis Optimization Complete : Time (s): cpu = 00:00:19 ; elapsed = 00:00:19 . Memory (MB): peak = 2412.781 ; gain = 732.754 ; free physical = 70187 ; free virtual = 204531
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2410.711 ; gain = 0.000 ; free physical = 61421 ; free virtual = 207091
-INFO: [Netlist 29-17] Analyzing 61 Unisim elements for replacement
+Netlist sorting complete. Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2415.742 ; gain = 0.000 ; free physical = 70484 ; free virtual = 204838
+INFO: [Netlist 29-17] Analyzing 74 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2526.520 ; gain = 0.000 ; free physical = 60633 ; free virtual = 206303
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2526.551 ; gain = 0.000 ; free physical = 70175 ; free virtual = 204528
 INFO: [Project 1-111] Unisim Transformation Summary:
 No Unisim elements were transformed.
 
-Synth Design complete | Checksum: 4a519c18
+Synth Design complete | Checksum: 37eda842
 INFO: [Common 17-83] Releasing license: Synthesis
-129 Infos, 155 Warnings, 0 Critical Warnings and 0 Errors encountered.
+130 Infos, 154 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:00:25 ; elapsed = 00:00:22 . Memory (MB): peak = 2526.520 ; gain = 852.449 ; free physical = 60535 ; free virtual = 206205
-INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 1557.530; main = 1342.743; forked = 322.385
-INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 4020.191; main = 2526.523; forked = 1656.492
+synth_design: Time (s): cpu = 00:00:26 ; elapsed = 00:00:23 . Memory (MB): peak = 2526.551 ; gain = 852.512 ; free physical = 70175 ; free virtual = 204523
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 1581.371; main = 1334.681; forked = 351.315
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 4019.227; main = 2526.555; forked = 1656.488
 # report_utilization -file vivado_synth.rpt
-INFO: [Common 17-206] Exiting Vivado at Tue Jul 21 07:24:40 2026...
-***** VIVADO SYNTHESIS COMPLETED IN 0h0m40s *****
-INFO: [HLS 200-112] Total CPU user time: 109.43 seconds. Total CPU system time: 7.89 seconds. Total elapsed time: 111.02 seconds; peak allocated memory: 549.750 MB.
+INFO: [Common 17-206] Exiting Vivado at Tue Jul 21 10:00:35 2026...
+***** VIVADO SYNTHESIS COMPLETED IN 0h0m36s *****
+INFO: [HLS 200-112] Total CPU user time: 109.63 seconds. Total CPU system time: 7.96 seconds. Total elapsed time: 116.37 seconds; peak allocated memory: 549.711 MB.
