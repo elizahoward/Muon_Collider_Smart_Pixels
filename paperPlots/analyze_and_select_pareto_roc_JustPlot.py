@@ -786,7 +786,7 @@ def save_model_architectures(pareto_df, pareto_df_secondary, output_dir):
 # MAIN FUNCTION
 # ============================================================================
 
-def main():
+def main_old():
     parser = argparse.ArgumentParser(
         description='Pareto Selection using ROC-based Background Rejection Metrics',
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -871,23 +871,211 @@ Examples:
     )
 
     args = parser.parse_args()
+    main_SingleFile(input_dir = args.input_dir,
+                    data_dir = args.data_dir,
+                    modelPltName = args.modelPltName,
+                    output_dir = args.output_dir,
+                    use_weighted=args.use_weighted,
+                    signal_efficiency = args.signal_efficiency,
+                    bkg_rej_weights = args.bkg_rej_weights,
+                    features = args.features,
+                    no_secondary = args.no_secondary,
+                    no_separate_folders = args.no_separate_folders,
+                    )
     
-    modelPltName = args.modelPltName
+    # modelPltName = args.modelPltName
+    # # Parse background rejection weights
+    # bkg_rej_weights = {}
+    # if args.use_weighted:
+    #     for pair in args.bkg_rej_weights.split(','):
+    #         sig_eff, weight = pair.split(':')
+    #         bkg_rej_weights[float(sig_eff)] = float(weight)
+    #     signal_efficiencies = list(bkg_rej_weights.keys())
+    # else:
+    #     signal_efficiencies = [args.signal_efficiency]
+    #     bkg_rej_weights = None
+    
+    # # Parse feature description if provided
+    # feature_description = None
+    # if args.features:
+    #     feature_list = [f.strip() for f in args.features.split(',')]
+    #     # Always include 'y' for labels
+    #     if 'y' not in feature_list:
+    #         feature_list.append('y')
+    #     feature_description = {name: tf.io.FixedLenFeature([], tf.string) for name in feature_list}
+    #     print(f"Using specified features: {sorted(feature_list)}")
+    
+    # # Validate directories
+    # if not os.path.isdir(args.input_dir):
+    #     print(f"Error: Input directory does not exist: {args.input_dir}")
+    #     sys.exit(1)
+    
+    # if not os.path.isdir(args.data_dir):
+    #     print(f"Error: Data directory does not exist: {args.data_dir}")
+    #     sys.exit(1)
+    
+    # # Create output directory
+    # os.makedirs(args.output_dir, exist_ok=True)
+    
+    # model_name = os.path.basename(args.input_dir.rstrip('/'))
+    
+    # print("\n" + "=" * 80)
+    # print("PARETO SELECTION USING ROC-BASED METRICS")
+    # print("=" * 80)
+    # print(f"\nInput directory: {args.input_dir}")
+    # print(f"Data directory: {args.data_dir}")
+    # print(f"Output directory: {args.output_dir}")
+    # print(f"Model name: {model_name}")
+    # if args.use_weighted:
+    #     print(f"Metric: Weighted background rejection")
+    #     print(f"Weights: {bkg_rej_weights}")
+    # else:
+    #     print(f"Metric: Background rejection @ {args.signal_efficiency:.0%} signal efficiency")
+    
+    # # Find all H5 files first
+    # print("\n" + "=" * 80)
+    # print("FINDING MODEL FILES")
+    # print("=" * 80)
+    
+    # h5_files = sorted([os.path.join(args.input_dir, f) 
+    #                   for f in os.listdir(args.input_dir) 
+    #                   if f.endswith('.h5') and f.startswith('model_trial_')])
+    
+    # if not h5_files:
+    #     print(f"\nError: No H5 model files found in {args.input_dir}")
+    #     sys.exit(1)
+    
+    # print(f"Found {len(h5_files)} models to evaluate")
+    
+    # # Detect features from first model if not specified
+    # if feature_description is None:
+    #     print("\n" + "=" * 80)
+    #     print("DETECTING INPUT FEATURES FROM MODEL")
+    #     print("=" * 80)
+    #     print(f"Inspecting first model: {os.path.basename(h5_files[0])}")
+    #     feature_description = _detect_model_input_features(h5_files[0])
+    
+    # # Load validation data
+    # print("\n" + "=" * 80)
+    # print("LOADING VALIDATION DATA")
+    # print("=" * 80)
+    # val_dir = os.path.join(args.data_dir, "tfrecords_validation/")
+    
+    # if not os.path.exists(val_dir):
+    #     print(f"Error: Validation directory not found: {val_dir}")
+    #     sys.exit(1)
+    
+    # print(f"Loading validation data from: {val_dir}")
+    # validation_dataset = build_tfrecord_dataset(val_dir, feature_description=feature_description)
+    # print("✓ Validation dataset loaded")
+    
+    # # Evaluate all models
+    # print("\n" + "=" * 80)
+    # print("EVALUATING MODELS WITH ROC METRICS")
+    # print("=" * 80)
+    
+    # results = []
+    # for model_file in h5_files:
+    #     result = evaluate_model_roc(
+    #         model_file,
+    #         validation_dataset,
+    #         signal_efficiencies,
+    #         use_weighted=args.use_weighted,
+    #         bkg_rej_weights=bkg_rej_weights
+    #     )
+    #     if result is not None:
+    #         # Extract trial ID
+    #         trial_id = Path(model_file).stem.replace('model_trial_', '')
+    #         result['trial_id'] = trial_id
+    #         results.append(result)
+    
+    # if not results:
+    #     print("\nError: No models were successfully evaluated")
+    #     sys.exit(1)
+    
+    # # Create results DataFrame
+    # df = pd.DataFrame(results)
+    
+    # print(f"\n✓ Successfully evaluated {len(df)} models")
+    # print(f"  Parameters range: {df['parameters'].min():,} - {df['parameters'].max():,}")
+    # print(f"  Primary metric range: {df['primary_metric'].min():.4f} - {df['primary_metric'].max():.4f}")
+    # print(f"  AUC range: {df['auc'].min():.4f} - {df['auc'].max():.4f}")
+    
+    # # Pareto selection
+    # print("\n" + "=" * 80)
+    # print("PARETO SELECTION")
+    # print("=" * 80)
+    
+    # pareto_df, pareto_df_secondary = select_pareto_models(df)
+
+    # # Suppress secondary tier if requested
+    # if args.no_secondary:
+    #     print("\n  [--no_secondary] Secondary Pareto front disabled — skipping tier 2.")
+    #     pareto_df_secondary = None
+
+    # # Generate Pareto front plot
+    # print("\n" + "=" * 80)
+    # print("GENERATING PLOTS")
+    # print("=" * 80)
+
+    # metric_name = df.iloc[0]['metric_name']
+    # plot_pareto_front(df, pareto_df, pareto_df_secondary, args.output_dir, model_name, metric_name, modelPltName)
+
+    # # Copy model files
+    # copy_model_files(pareto_df, pareto_df_secondary, args.output_dir, separate_folders=not args.no_separate_folders)
+
+    # # Save results
+    # save_results(df, pareto_df, pareto_df_secondary, args.output_dir, metric_name, bkg_rej_weights)
+
+    # # Save layer structure for each selected model
+    # save_model_architectures(pareto_df, pareto_df_secondary, args.output_dir)
+
+    # # Final summary
+    # print("\n" + "=" * 80)
+    # print("COMPLETE - PARETO SELECTION FINISHED!")
+    # print("=" * 80)
+    # print(f"\nOutput directory: {args.output_dir}")
+    # print(f"\nSelected models:")
+    # print(f"  Primary Pareto: {len(pareto_df)}")
+    # if pareto_df_secondary is not None:
+    #     print(f"  Secondary Pareto: {len(pareto_df_secondary)}")
+    # print(f"  Total: {len(pareto_df) + (len(pareto_df_secondary) if pareto_df_secondary is not None else 0)}")
+    # print(f"\nFiles created:")
+    # print(f"  - Pareto front plot")
+    # print(f"  - CSV files with results")
+    # print(f"  - JSON summary")
+    # print(f"  - {len(pareto_df) + (len(pareto_df_secondary) if pareto_df_secondary is not None else 0)} H5 model files")
+    # print(f"  - architectures/<model>_architecture.json  (per-model layer structure)")
+    # print(f"  - architectures/all_architectures_summary.json")
+    # print("\n" + "=" * 80)
+
+def main_SingleFile(    
+        input_dir: str =True, #        help='Directory containing hyperparameter tuning results (with H5 files))
+        data_dir: str =True, #        help='Directory containing TFRecords (with tfrecords_validation/ subdirectory))
+        modelPltName: str =True, #        help='Name of the model in plot title)
+        output_dir: str =True, #        help='Output directory for Pareto-selected models and plots)
+        use_weighted:bool=False, #        help='Use weighted background rejection metric (default: False))
+        signal_efficiency: float=0.99, #        help='Signal efficiency for bacound rejection (if not using weighted, default: 0.99)'
+        bkg_rej_weights: str = '0.95:0.1,0.98:0.7,0.99:0.2',#        help='Weights for backgrounejection (format: "sig_eff:weight,..." default: "0.95:0.1,0.98:0.7,0.99:0.2")'
+        features: str = None,#        help='Comma-separated list of feature names to parse (default: auto-detect from first model))
+        no_secondary: bool =False,#        help='Disable the secondary (tier-2) Pareto front — only primary models are selected and saved)
+        no_separate_folders:bool = False,#        help='Disable separate sub-folders and save all models flat into output_dir (overrides default separate-folder behavior)',
+    ):
     # Parse background rejection weights
     bkg_rej_weights = {}
-    if args.use_weighted:
-        for pair in args.bkg_rej_weights.split(','):
+    if use_weighted:
+        for pair in bkg_rej_weights.split(','):
             sig_eff, weight = pair.split(':')
             bkg_rej_weights[float(sig_eff)] = float(weight)
         signal_efficiencies = list(bkg_rej_weights.keys())
     else:
-        signal_efficiencies = [args.signal_efficiency]
+        signal_efficiencies = [signal_efficiency]
         bkg_rej_weights = None
     
     # Parse feature description if provided
     feature_description = None
-    if args.features:
-        feature_list = [f.strip() for f in args.features.split(',')]
+    if features:
+        feature_list = [f.strip() for f in features.split(',')]
         # Always include 'y' for labels
         if 'y' not in feature_list:
             feature_list.append('y')
@@ -895,43 +1083,43 @@ Examples:
         print(f"Using specified features: {sorted(feature_list)}")
     
     # Validate directories
-    if not os.path.isdir(args.input_dir):
-        print(f"Error: Input directory does not exist: {args.input_dir}")
+    if not os.path.isdir(input_dir):
+        print(f"Error: Input directory does not exist: {input_dir}")
         sys.exit(1)
     
-    if not os.path.isdir(args.data_dir):
-        print(f"Error: Data directory does not exist: {args.data_dir}")
+    if not os.path.isdir(data_dir):
+        print(f"Error: Data directory does not exist: {data_dir}")
         sys.exit(1)
     
     # Create output directory
-    os.makedirs(args.output_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
     
-    model_name = os.path.basename(args.input_dir.rstrip('/'))
+    model_name = os.path.basename(input_dir.rstrip('/'))
     
     print("\n" + "=" * 80)
     print("PARETO SELECTION USING ROC-BASED METRICS")
     print("=" * 80)
-    print(f"\nInput directory: {args.input_dir}")
-    print(f"Data directory: {args.data_dir}")
-    print(f"Output directory: {args.output_dir}")
+    print(f"\nInput directory: {input_dir}")
+    print(f"Data directory: {data_dir}")
+    print(f"Output directory: {output_dir}")
     print(f"Model name: {model_name}")
-    if args.use_weighted:
+    if use_weighted:
         print(f"Metric: Weighted background rejection")
         print(f"Weights: {bkg_rej_weights}")
     else:
-        print(f"Metric: Background rejection @ {args.signal_efficiency:.0%} signal efficiency")
+        print(f"Metric: Background rejection @ {signal_efficiency:.0%} signal efficiency")
     
     # Find all H5 files first
     print("\n" + "=" * 80)
     print("FINDING MODEL FILES")
     print("=" * 80)
     
-    h5_files = sorted([os.path.join(args.input_dir, f) 
-                      for f in os.listdir(args.input_dir) 
+    h5_files = sorted([os.path.join(input_dir, f) 
+                      for f in os.listdir(input_dir) 
                       if f.endswith('.h5') and f.startswith('model_trial_')])
     
     if not h5_files:
-        print(f"\nError: No H5 model files found in {args.input_dir}")
+        print(f"\nError: No H5 model files found in {input_dir}")
         sys.exit(1)
     
     print(f"Found {len(h5_files)} models to evaluate")
@@ -948,7 +1136,7 @@ Examples:
     print("\n" + "=" * 80)
     print("LOADING VALIDATION DATA")
     print("=" * 80)
-    val_dir = os.path.join(args.data_dir, "tfrecords_validation/")
+    val_dir = os.path.join(data_dir, "tfrecords_validation/")
     
     if not os.path.exists(val_dir):
         print(f"Error: Validation directory not found: {val_dir}")
@@ -969,7 +1157,7 @@ Examples:
             model_file,
             validation_dataset,
             signal_efficiencies,
-            use_weighted=args.use_weighted,
+            use_weighted=use_weighted,
             bkg_rej_weights=bkg_rej_weights
         )
         if result is not None:
@@ -998,7 +1186,7 @@ Examples:
     pareto_df, pareto_df_secondary = select_pareto_models(df)
 
     # Suppress secondary tier if requested
-    if args.no_secondary:
+    if no_secondary:
         print("\n  [--no_secondary] Secondary Pareto front disabled — skipping tier 2.")
         pareto_df_secondary = None
 
@@ -1008,22 +1196,22 @@ Examples:
     print("=" * 80)
 
     metric_name = df.iloc[0]['metric_name']
-    plot_pareto_front(df, pareto_df, pareto_df_secondary, args.output_dir, model_name, metric_name, modelPltName)
+    plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name, modelPltName)
 
     # Copy model files
-    copy_model_files(pareto_df, pareto_df_secondary, args.output_dir, separate_folders=not args.no_separate_folders)
+    copy_model_files(pareto_df, pareto_df_secondary, output_dir, separate_folders=not no_separate_folders)
 
     # Save results
-    save_results(df, pareto_df, pareto_df_secondary, args.output_dir, metric_name, bkg_rej_weights)
+    save_results(df, pareto_df, pareto_df_secondary, output_dir, metric_name, bkg_rej_weights)
 
     # Save layer structure for each selected model
-    save_model_architectures(pareto_df, pareto_df_secondary, args.output_dir)
+    save_model_architectures(pareto_df, pareto_df_secondary, output_dir)
 
     # Final summary
     print("\n" + "=" * 80)
     print("COMPLETE - PARETO SELECTION FINISHED!")
     print("=" * 80)
-    print(f"\nOutput directory: {args.output_dir}")
+    print(f"\nOutput directory: {output_dir}")
     print(f"\nSelected models:")
     print(f"  Primary Pareto: {len(pareto_df)}")
     if pareto_df_secondary is not None:
@@ -1038,6 +1226,21 @@ Examples:
     print(f"  - architectures/all_architectures_summary.json")
     print("\n" + "=" * 80)
 
-
+def mainNew():
+    modelConfs = [{"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_3w0i_i5_sigmoid_results",
+                   "data_dir": "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
+                   "output_dir": "./individualHyperparams/model1_fin_results/model1_3bit_normalised_selected", 
+                   "signal_efficiency": 0.99, 
+                   "modelPltName": "1 (3 bit)",}
+                   ]
+    for conf in modelConfs:
+        main_SingleFile(input_dir = conf["input_dir"], 
+                        data_dir = conf["data_dir"], 
+                        output_dir = conf["output_dir"], 
+                        signal_efficiency=conf["signal_efficiency"],
+                        modelPltName=conf["modelPltName"])
+    
+def main():
+    mainNew()
 if __name__ == "__main__":
     main()
