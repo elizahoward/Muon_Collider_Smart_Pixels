@@ -517,12 +517,8 @@ class hlsVerifier():
 
             #added to get more latency tracing
             # Add this line to force Co-simulation tracking
-            config['TraceLevel'] = 'port' # Options: 'all', 'port', or 'none'
-
-            # Convert to an hls model
-            config['ClockPeriod'] = 10 # <--- Set clock period in nanoseconds here
-
-            hls_model = self.hls4ml.converters.convert_from_keras_model(self.quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=self.output_dir_vitis,backend="Vitis")
+            # config['TraceLevel'] = 'port' # Options: 'all', 'port', or 'none'
+            hls_model = self.hls4ml.converters.convert_from_keras_model(self.quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=self.output_dir_vitis,backend="Vitis",clock_period=10)
             # hls_model = self.hls4ml.converters.convert_from_keras_model(quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=output_dir,backend="Catapult")
             ##Part number input in above line as part='xcu
             # part='xcu250-figd2104-2L-e',
