@@ -189,6 +189,7 @@ def synthesize_model(
             output_dir=output_dir,
             backend="Vitis",
             io_type=io_type,
+            clock_period = 10,
         )
 
         print(f"[{model_name}] Writing HLS files...")

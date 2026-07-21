@@ -40,7 +40,9 @@ except ImportError:
     print("Install with: pip install matplotlib scipy")
     sys.exit(1)
 
-
+CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
+CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
+MODEL_NUM = '1' #'1', '25', or '3'
 def infer_bit_width_from_name(name: str) -> str:
     """
     Try to infer the bit-width from a directory name.
@@ -104,7 +106,10 @@ def loadDataNew(resource_csv, bits,modelNum='25'):
     resource_df = pd.read_csv(resource_csv)
     # print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
     # resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
-    resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}bit'")
+    if modelNum == '1':
+        resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}w{str(int(bits)+2)}i'") # works for model1
+    else:
+        resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}bit'") #works for model 25 or 3
     resource_df["total_resources"] = resource_df["luts_plus_ff"]
     resource_df["total_resources"] = resource_df["luts"] + resource_df["registers"]
     print(resource_df)
@@ -157,7 +162,7 @@ def collect_bit_width_runs(runs_dir, subdirs=None):
             if not p.is_dir():
                 continue
             # res = p / "resource_utilization.csv"
-            res = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
+            res = CROSS_PARETO_CSV
             par = p / "pareto_optimal_models_roc_combined.csv"
             if res.is_file() and par.is_file():
                 candidates.append(p)
@@ -165,7 +170,7 @@ def collect_bit_width_runs(runs_dir, subdirs=None):
     runs = []
     for p in sorted(candidates):
         # res = p / "resource_utilization.csv"
-        res = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
+        res = CROSS_PARETO_CSV
         par = p / "pareto_optimal_models_roc_combined.csv"
         if not res.is_file() or not par.is_file():
             continue
@@ -241,8 +246,8 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None):
     ax.set_xlabel("Number of Parameters", fontsize=14, fontweight="bold")
     ax.set_ylabel("Total Hardware Resources (FF + LUT)", fontsize=14, fontweight="bold")
     ax.set_title(
-        "Model Parameters vs Hardware Resources\n"
-        "Multi-bit Comparison with Linear Regression (OLS)",
+        f"Model {MODEL_NUM} Parameters vs Hardware Resources\n"
+        "Multi-bit Comparison with Linear Regression",
         fontsize=16,
         fontweight="bold",
         pad=20,
@@ -394,11 +399,11 @@ Examples:
     # Load, merge, and fit regression for each run
     for info in runs_info:
         print(f"\nProcessing {info['bit']}-bit run in {info['dir']}...")
-        df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
-        # df = loadDataNew(info["resource_csv"],info["bit"]) #either works
+        # df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
+        df = loadDataNew(info["resource_csv"],info["bit"],modelNum=MODEL_NUM) #either works
         #filtering out points that look like outliers
         # df = df.query("total_resources < 400000")
-        df = df.query("total_resources < 4000000")
+        # df = df.query("total_resources < 4000000")
         ##################
         print(f"  ✓ Merged {len(df)} models")
         regression_stats = fit_linear_regression(
