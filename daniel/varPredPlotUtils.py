@@ -214,6 +214,7 @@ def runModelPlots(filepath = "", modelType=2,
 
     with open(os.path.join(PLOT_DIR,"evaluation_results.json"), "w") as file:
         json.dump(to_python(model.evaluation_results), file)
+    return predVarDF, model, predictions, threshVal
 
 
 ################end of usefulness

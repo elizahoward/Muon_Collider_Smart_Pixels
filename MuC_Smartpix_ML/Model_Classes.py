@@ -711,6 +711,7 @@ class SmartPixModel(ABC):
         if predictionPlots:
             dataRateUtils.plotPredictVsAll(self,predictions)
         
+        self.predictions = predictions
         return self.evaluation_results
     
     def runAllStuff(self,numEpochs = 6,runUnquantized=True):
