@@ -24,7 +24,7 @@ def plotParetosTogether(allParetoDfs,saveTitle="./Model2ParetosTogether.png",
     plt.ylabel("Background Rejectiona at 99% Signal Efficiency")
     
     plt.savefig(saveTitle)
-def main(paretoCsvPath = "../eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv"):    
+def main(paretoCsvPath = "./combined_all_models_pareto_newJune2026/combined_all_detailed.csv"):    
     paretoCsv = pd.read_csv(paretoCsvPath)
     pareto2 = paretoCsv.query("model == 'model2_5'")
     pareto2["pareto_type"] = pareto2["fullPath"].apply(
