@@ -13,8 +13,10 @@ from pathlib import Path
 
 
 baseDir = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ratePlots/CrossPareto_June2026_selected"
-
+baseDir = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/evaluationPlots"
 singleFileJson = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ratePlots/CrossPareto_June2026_selected/b0.5299mdl_al_1028.h5/evaluation_results.json"
+verbose=False
+
 
 def readSingleJson(singleFilePath,doPrint=False):
     with open(singleFilePath, 'r') as f:
@@ -25,7 +27,8 @@ def readSingleJson(singleFilePath,doPrint=False):
     df = pd.DataFrame(data)
     folderName = singleFilePath[(-27-18):-27]
     df.insert(0, "evalFolderName", folderName)
-    # df["evalFolderName"] = folderName
+    df["evalFolderNameRepeated"] = folderName
+    df["brejatqq"] = [df["bkg_rej_at_95pct"][0],df["bkg_rej_at_98pct"][0],df["bkg_rej_at_99pct"][0],]
     if doPrint:
         print(data)
         print(df)
@@ -46,6 +49,7 @@ def readAllEvalRes(baseDir,savePath = "./selectedEvaluationResults.csv",doPrint=
 
     allEvalDf = pd.concat(allEvalDfList)
     allEvalDf.sort_values(by="evalFolderName",inplace = True)
+    allEvalDf["brejDataAcceptanceRate"] = 1 - allEvalDf["numBackPixesRejRatio"]
     if doPrint:
         print(allEvalDf)
     allEvalDf.to_csv(savePath, index=False)
@@ -53,6 +57,6 @@ def readAllEvalRes(baseDir,savePath = "./selectedEvaluationResults.csv",doPrint=
     return allEvalDf
 
 
-allEvalDf = readAllEvalRes(baseDir)
+allEvalDf = readAllEvalRes(baseDir,doPrint=False)
 # df = 
 # df

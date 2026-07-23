@@ -6,10 +6,13 @@ import matplotlib.pyplot as plt
 
 from scipy import stats
 
+selection = 'model3_3bit'
+selection = 'model25_8bit'
+
 df = pd.read_csv("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
 # print(df)
 # df = df.query("run_name == 'model25_3bit'")
-df = df.query("run_name == 'model3_3bit'")
+df = df.query("run_name == @selection")
 # df = df.query("luts_plus_ff < 400000")
 df = df.query("luts_plus_ff < 4000000")
 x = df["parameters"]
@@ -28,6 +31,9 @@ print(f"intercept: {res.intercept:.4f}")
 
 # Plot using the slope and intercept from the result
 plt.plot(x, y, ".")
-plt.plot(x, res.slope * x + res.intercept, "-", label=f"R² = {res.rvalue**2:.3f}\nslope={res.slope}")
+plt.plot(x, res.slope * x + res.intercept, "-", label=f"R² = {res.rvalue**2:.3f}\nslope={res.slope}\nintercept: {res.intercept:.4f}")
+plt.xlabel("parameters")
+plt.ylabel("ff+lut")
+plt.title(selection)
 plt.legend()
 plt.savefig("randomGuy2.png")
