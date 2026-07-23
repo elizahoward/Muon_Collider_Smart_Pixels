@@ -13,8 +13,10 @@ from pathlib import Path
 
 
 baseDir = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ratePlots/CrossPareto_June2026_selected"
-
+baseDir = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/evaluationPlots"
 singleFileJson = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ratePlots/CrossPareto_June2026_selected/b0.5299mdl_al_1028.h5/evaluation_results.json"
+verbose=False
+
 
 def readSingleJson(singleFilePath,doPrint=False):
     with open(singleFilePath, 'r') as f:
@@ -53,6 +55,6 @@ def readAllEvalRes(baseDir,savePath = "./selectedEvaluationResults.csv",doPrint=
     return allEvalDf
 
 
-allEvalDf = readAllEvalRes(baseDir)
+allEvalDf = readAllEvalRes(baseDir,doPrint=False)
 # df = 
 # df

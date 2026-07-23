@@ -22,7 +22,7 @@ PLOT_DIR = "./evaluationPlots"
 interactivePlots = False
 styleSheet = "seaborn-v0_8-colorblind"
 N_CPU = 4
-loadPredVarPkl = False #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
+loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
 FILTER_TIME = True #add the -0.5 to 15 ns filter
 # if not loadPredVarPkl:
 #     import tensorflow as tf 
