@@ -361,7 +361,8 @@ def load_modelNEW(base_dir,modelNum):
     rows = []
     for folder, run_name, _, _ in modelConfig:
         bit_dir  = os.path.join(base_dir, folder)
-        csv_path = os.path.join(bit_dir, "roc_based_analysis_detailed.csv")
+        csv_path = os.path.join(bit_dir, "roc_based_analysis_detailed.csv") #TODO: replace with paperPlots version of this directory
+        print("TODO: want to replace ",csv_path," with version in paperPlots after fix brej nums")
         if not os.path.isfile(csv_path):
             print(f"\n\n  [WARN] Missing: {csv_path}\n\n")
             continue
