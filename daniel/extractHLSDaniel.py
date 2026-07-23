@@ -5,7 +5,8 @@ Description: script to extract resources from new folder structure
 """
 
 import sys
-sys.path.append("../eric")
+# sys.path.append("../eric")
+sys.path.append("../paperPlots")
 from pareto_all_models import *
 import re
 import os
