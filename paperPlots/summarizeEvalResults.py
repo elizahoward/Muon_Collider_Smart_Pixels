@@ -27,7 +27,8 @@ def readSingleJson(singleFilePath,doPrint=False):
     df = pd.DataFrame(data)
     folderName = singleFilePath[(-27-18):-27]
     df.insert(0, "evalFolderName", folderName)
-    # df["evalFolderName"] = folderName
+    df["evalFolderNameRepeated"] = folderName
+    df["brejatqq"] = [df["bkg_rej_at_95pct"][0],df["bkg_rej_at_98pct"][0],df["bkg_rej_at_99pct"][0],]
     if doPrint:
         print(data)
         print(df)
@@ -48,6 +49,7 @@ def readAllEvalRes(baseDir,savePath = "./selectedEvaluationResults.csv",doPrint=
 
     allEvalDf = pd.concat(allEvalDfList)
     allEvalDf.sort_values(by="evalFolderName",inplace = True)
+    allEvalDf["brejDataAcceptanceRate"] = 1 - allEvalDf["numBackPixesRejRatio"]
     if doPrint:
         print(allEvalDf)
     allEvalDf.to_csv(savePath, index=False)
