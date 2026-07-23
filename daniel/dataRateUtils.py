@@ -70,6 +70,15 @@ def genNpixAndGetDataRate(model,predictions,cut=0.138891,doPrintExtra = True, do
     # predictions = predictions.ravel() #Doesn't hurt to do it again
     # print(predictions)
     nPixes, yTest = tfLoaderUtils.getNpixYtest(model)
+    filteredTime = getattr(model, 'filteredTime', False)
+    if filteredTime:
+        #should have the filteredTimeMask
+        nPixes = nPixes[model.filterTimeMask] #shouldn't error if filteredTime is True
+        yTest = yTest[model.filterTimeMask]
+        if len(predictions) != len(yTest):
+            predictions = predictions[model.filterTimeMask]
+        assert len(predictions)==len(yTest)
+        assert len(predictions)==len(nPixes)
     return pixPredictToDataRate(yTest,nPixes,predictions,cut=cut,doPrintExtra=doPrintExtra, doPrintData=doPrintData, doPlot=doPlot)
 
 

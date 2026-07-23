@@ -606,7 +606,8 @@ class SmartPixModel(ABC):
         
         return results
     
-    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99],verboseDataRate=False,predictionPlots=False):
+    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99],
+                verboseDataRate=False,predictionPlots=False,filterTime=False,timeStart=-0.5,timeEnd=15):
         """
         Evaluate the trained model with background rejection metrics.
         
@@ -614,6 +615,7 @@ class SmartPixModel(ABC):
             test_generator: Optional test data generator
             config_name: Name of the model configuration to evaluate
             signal_efficiencies: List of target signal efficiencies for background rejection
+            update July 23, 2026 (if something breaks, go to commit before this), added filterTime and timeStart and timeEnd defaults for that
         """
         if self.models[config_name] is None:
             raise ValueError("No model to evaluate. Train a model first.")
@@ -636,6 +638,29 @@ class SmartPixModel(ABC):
         
         # Get true labels
         true_labels = np.concatenate([y for _, y in eval_generator])
+
+        #update July 23, 2026, hopefully doesn't break anything
+        filterTime = filterTime or getattr(self,"filteredTime",False)
+        if filterTime:
+            print(f"filtering based on time to {timeStart} ns to {timeEnd} ns")
+            self.filteredTime = filterTime;# same as setting it to True
+            if "adjusted_hit_time_30ps_gaussian" not in self.x_feature_description:
+                self.x_feature_description = self.x_feature_description + ["adjusted_hit_time_30ps_gaussian"]
+            self.loadTfRecords()
+            if test_generator:
+                raise ValueError("Not supported to do time filtering with inputted odg validation generator")
+            import tfLoaderUtils
+            xTest, _ = tfLoaderUtils.odgToVect(self.validation_generator)
+            assert "adjusted_hit_time_30ps_gaussian" in xTest.keys()
+            filterTimeMask = (xTest["adjusted_hit_time_30ps_gaussian"] > timeStart) & (xTest["adjusted_hit_time_30ps_gaussian"] < timeEnd)
+            preFilterLen = len(true_labels)
+            true_labels = true_labels[filterTimeMask]
+            postFilterLen = len(true_labels)
+            print(f"time filtering reduced length from {preFilterLen} to {postFilterLen}")
+            predictions = predictions.ravel()[filterTimeMask] #doesn't hurt to ravel multiple times since flattened flat is flat
+            assert len(true_labels)==len(predictions)
+            self.filterTimeMask = filterTimeMask
+
         
         # Calculate metrics
         test_loss, test_accuracy = self.models[config_name].evaluate(eval_generator, verbose=0)

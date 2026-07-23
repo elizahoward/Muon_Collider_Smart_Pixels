@@ -42,7 +42,8 @@ def loadQModel(filepath = "", modelType=2,co = {} ):
 
 def getModelAndPredict(quantizedModel,
                         tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
-                        configName = "justThisOne"
+                        configName = "justThisOne",
+                        filterTime = False
                        ):
     if "1" in quantizedModel.name[3:7]:
         modelType = 1
@@ -59,8 +60,9 @@ def getModelAndPredict(quantizedModel,
     else:
         raise ValueError("Error processing model type")
     model.models[configName] = quantizedModel
-    model.evaluate(config_name=configName,predictionPlots=False,signal_efficiencies=[0.95, 0.98, 0.99])
-    predictions = model.models[configName].predict(model.validation_generator, verbose=1)
+    model.evaluate(config_name=configName,predictionPlots=False,signal_efficiencies=[0.95, 0.98, 0.99],filterTime = filterTime)
+    # predictions = model.models[configName].predict(model.validation_generator, verbose=1)
+    predictions = model.predictions #will respect filterTime. Ultimately want to remove this return and just have it wrapped in model.predictions
     return model, predictions, modelType
 
 #########################################################################################################
@@ -178,10 +180,10 @@ def runModelPlots(filepath = "", modelType=2,
                   tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
                   #to pass through to later plotting functions:
                   sig_eff = 0.99,PLOT_DIR = "./ratePlots",interactivePlots = True,extendTitle = "",
-                  modifyPlotDir = True,
+                  modifyPlotDir = True,filterTime = False
                   ):
     quantizedModel = loadQModel(filepath,modelType)
-    model, predictions,modelType = getModelAndPredict(quantizedModel,tfRecordFolder)
+    model, predictions,modelType = getModelAndPredict(quantizedModel,tfRecordFolder,filterTime=filterTime)
     if modelType == 1:
         cmap = "Purples"
     elif modelType == 2:
