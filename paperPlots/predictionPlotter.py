@@ -22,8 +22,8 @@ PLOT_DIR = "./evaluationPlots"
 interactivePlots = False
 styleSheet = "seaborn-v0_8-colorblind"
 N_CPU = 1
-loadPredVarPkl = True
-
+loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
+FILTER_TIME = True #add the -0.5 to 15 ns filter
 # if not loadPredVarPkl:
 #     import tensorflow as tf 
 #     tf.config.set_visible_devices([], 'GPU')
@@ -32,7 +32,7 @@ paths = [
     "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_057.h5",
     ]
 
-def runForPath(path):
+def runForPath(path,filterTime=FILTER_TIME):
     modelID = path[-10:]
     print(path)
     print(modelID)
@@ -48,7 +48,7 @@ def runForPath(path):
             raise Exception("You may have to first save pkls before you can read them\nHint: set loadPredVarPkl to False")
             
     else:
-        predVarDF, model, predictions, threshVal = varPredPlotUtils.runModelPlots(filepath = path,PLOT_DIR=pltDir, interactivePlots=interactivePlots,extendTitle=path[25:])   
+        predVarDF, model, predictions, threshVal = varPredPlotUtils.runModelPlots(filepath = path,PLOT_DIR=pltDir, interactivePlots=interactivePlots,extendTitle=path[25:],filterTime=filterTime)   
         predVarDF.to_pickle(Path(pltDir).joinpath("predVarDF.pkl"))
         with open(Path(pltDir).joinpath("threshVal.pkl"), 'wb') as file:
             pickle.dump(threshVal, file)
@@ -59,6 +59,8 @@ def runForPath(path):
 def plotAll1dHists(predVarDF,threshVal,pltDir):
     print(predVarDF)
     print(predVarDF.keys())
+    if "adjusted_hit_time_30ps_gaussian" in predVarDF.keys():
+        histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel="Cluster Hit Arrival Time [ns]",figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel="z-global [mm]",figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="pt",keyLabel=r"Transverse Momentum $p_T$ [GeV/c]",figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="y-local",keyLabel="y-local [mm] aaaaah I can't find a good binnning",figsize=(5,10),bins=25)
