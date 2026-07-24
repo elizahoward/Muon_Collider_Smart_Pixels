@@ -26,7 +26,9 @@ matplotlib.rcParams["figure.dpi"] = 150
 pklPath = "/local/d1/smartpixML/cutAnalysis/dfOfTruth.pkl"
 pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots/savedPklsFromFullDataset/dfOfTruth.pkl" #okay timing distribution
 # pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026Feb/plots/dfOfTruth.pkl" #messed up timing distribution
-
+# pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_20260129_155514/plots/dfOfTruth.pkl"
+# pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_20260119_151558/plots/dfOfTruth.pkl"
+# pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_20260129_200531/plots/dfOfTruth.pkl"
 # --- Load data ---
 print(f"Loading truthDF from {pklPath}")
 truthDF = pd.read_pickle(pklPath)
