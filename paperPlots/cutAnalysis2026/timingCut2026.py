@@ -11,10 +11,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 sys.path.append("../../MuC_Smartpix_ML")
 sys.path.append("../../eric")
+from timing_cut_analysis import find_operating_points,TARGET_EFFICIENCIES,plot_roc
+#perhaps add 0.9806268960028482 SE to target efficiencies.. 
 sys.path.append("../../daniel/validationPlots")
 import plotUtils
-from plot_hit_time import *
+import matplotlib
+# from plot_hit_time import *
+###################################################
+# sys.path.append("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots/")
+# from plotUtils import load_parquet_pairs, countBibSig, plotManyHisto
+#instead of importing from plot_hit_time, copied and made edits
+matplotlib.rcParams["figure.dpi"] = 150
 
+pkl_path = "/local/d1/smartpixML/cutAnalysis/dfOfTruth.pkl"
+
+# --- Load data ---
+print(f"Loading truthDF from {pkl_path}")
+truthDF = pd.read_pickle(pkl_path)
+
+# --- Split into sig / bib sub-groups ---
+fracBib, fracSig, fracMM, fracMP, numTotalSig, numTotalBib, truthSig, truthBib_mm, truthBib_mp, truthBib = plotUtils.countBibSig(truthDF, doPrint=True)
+
+##################################################################
 
 def numEvents(df,key,lower,upper,doPrint=True):
     arr = df[key]
@@ -124,8 +142,7 @@ def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0
     if standalone:
         plotUtils.closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
 
-from timing_cut_analysis import find_operating_points,TARGET_EFFICIENCIES,plot_roc
-#perhaps add 0.9806268960028482 SE to target efficiencies.. 
+
 
 def doEricsSweepAnalysis(sweep_df,outputDir = "."):
     print("\nFinding operating points...")
