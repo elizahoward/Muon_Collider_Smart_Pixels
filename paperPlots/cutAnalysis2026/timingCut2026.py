@@ -23,11 +23,13 @@ import matplotlib
 #instead of importing from plot_hit_time, copied and made edits
 matplotlib.rcParams["figure.dpi"] = 150
 
-pkl_path = "/local/d1/smartpixML/cutAnalysis/dfOfTruth.pkl"
+pklPath = "/local/d1/smartpixML/cutAnalysis/dfOfTruth.pkl"
+pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots/savedPklsFromFullDataset/dfOfTruth.pkl" #okay timing distribution
+# pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026Feb/plots/dfOfTruth.pkl" #messed up timing distribution
 
 # --- Load data ---
-print(f"Loading truthDF from {pkl_path}")
-truthDF = pd.read_pickle(pkl_path)
+print(f"Loading truthDF from {pklPath}")
+truthDF = pd.read_pickle(pklPath)
 
 # --- Split into sig / bib sub-groups ---
 fracBib, fracSig, fracMM, fracMP, numTotalSig, numTotalBib, truthSig, truthBib_mm, truthBib_mp, truthBib = plotUtils.countBibSig(truthDF, doPrint=True)
