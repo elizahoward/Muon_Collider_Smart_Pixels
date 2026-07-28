@@ -11,11 +11,14 @@ import sys
 sys.path.append("../MuC_Smartpix_Data_Production/Tracklist_Production")
 sys.path.append("../daniel/validationPlots")
 
+
+plt.style.use('seaborn-v0_8-colorblind')
+
 # from coordinateValidation_Utils import * #instead of importing, copied function over
 # def plotHits(sig,uniqueGammas,pltStandalone=True,pltShow=True,alpha = 1):
-def plotHitsXY(sig,pltStandalone=True,pltShow=True,alpha = 1):
+def plotHitsXY(sig,pltStandalone=True,pltShow=True,alpha = 1,figsize=(4,3.8)):
     if pltStandalone:
-        fig,ax=plt.subplots(figsize=(5,4.8))
+        fig,ax=plt.subplots(figsize=figsize)
     else:
         ax = plt.gca()
     colorsList = ["r","b","g","c","m","y","aquamarine","fuchsia",
@@ -39,10 +42,10 @@ def plotHitsXY(sig,pltStandalone=True,pltShow=True,alpha = 1):
     if pltShow:
         plt.show()
 
-def plotRZPlane(sig):
+def plotRZPlane(sig,figsize=(4,1.5)):
     print(sig)
     print(sig.keys())
-    plt.figure(figsize=(5,2))
+    plt.figure(figsize=figsize)
 
     colorsList = ["r","b","g","c","m","y","aquamarine","fuchsia",
                 "sienna","deepskyblue","springgreen","royalblue",
