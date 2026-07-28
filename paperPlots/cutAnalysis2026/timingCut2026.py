@@ -121,7 +121,7 @@ def computeSweep2(truthBib=truthBib, truthSig=truthSig, thresholds = defaultThre
 
 def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0.09,0.15], cutColors = ["green"],
                       PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHist",figsize = (6.5,3),
-                      bins = np.linspace(-0.5, 15, 100),standalone=True,cutLabels = None,customLegendFunc = None):
+                      bins = np.linspace(-0.5, 15, 100),standalone=True,cutLabels = None,customLegendFunc = None,addAnnotation=False):
     if standalone:
         plt.figure(figsize =figsize)
     plotUtils.plotManyHisto(
@@ -142,6 +142,9 @@ def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0
     plt.vlines(cutLocations,0,10e5,color=cutColors,label=cutLabels)
     if customLegendFunc is not None:
         customLegendFunc()
+    if addAnnotation:
+        # annotateCuts()
+        annotateCuts(cutLocations = cutLocations, cutColors = cutColors,cutNames=cutLabels)
     # plt.legend()
     if standalone:
         plotUtils.closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
@@ -174,20 +177,25 @@ def doEricsSweepAnalysis(sweep_df,outputDir = "."):
     print(f"  {op_path}")
     print(f"  {roc_path}")
     print("=" * 65)
+    return op_df
 
-def plotHistosTogether(PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHistTogether",):
+def plotHistosTogether(PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHistTogether",cutLocations2nd=[-0.09,0.15,0.063705,0.142950,0.369645]):
     plt.figure(figsize=(7,5))
     plt.subplot(211)
     plotHistoWithCuts(cutColors=["black","purple"],standalone=False)
     plt.subplot(212)
-    plotHistoWithCuts(cutLocations=[-0.09,0.15,0.063705,0.142950,0.369645],cutColors=["black","purple","cyan","red","green"],
+    plotHistoWithCuts(cutLocations=cutLocations2nd,cutColors=["black","purple","cyan","red","green"],
                       bins = np.linspace(-0.2, 1, 100),standalone=False)    
     plotUtils.closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
 
-def customPaperLegend(cutLocations=[-0.215,0.15,0.063705,0.142950,0.369645],cutColors=["black","purple","cyan","red","green"],
+# def customPaperLegend(cutLocations=[-0.215,0.15,0.063705,0.142950,0.369645],cutColors=["black","purple","cyan","red","green"],
+#                       cutNames = ["start of \n cut",r"$5\sigma$ cut","99%  SE cut","98% SE cut","95% SE cut",],
+#                       cutYs = [1.5e5,5e4,6e5,2e5,6e5],
+#                       xOff = [0,0.01,0.0035,0.01,0.005]):
+def annotateCuts(cutLocations=[-0.09,0.15,0.063705,0.142950,0.369645],cutColors=["black","purple","cyan","red","green"],
                       cutNames = ["start of \n cut",r"$5\sigma$ cut","99%  SE cut","98% SE cut","95% SE cut",],
                       cutYs = [1.5e5,5e4,6e5,2e5,6e5],
-                      xOff = [0,0.01,0.0035,0.01,0.005]):
+                      xOff = [-0.125,0.01,0.0035,0.01,0.005]):
     # from matplotlib.lines import Line2D
     # custom_lines = [Line2D([0], [0], color='teal', linestyle='--'),
     #             Line2D([0], [0], color='gold', linestyle='-.')]
@@ -212,13 +220,15 @@ def main():
     _,cutTight =  numEvents(truthBib,key,-0.09,0.15)
     plotHistoWithCuts(cutColors=["black","purple"])
     sweepDf = computeSweep2()
-    print(sweepDf)
+    # print(sweepDf)
     sweepDf.to_csv("sweepDf.csv")
-    doEricsSweepAnalysis(sweepDf)
-    plotHistoWithCuts(cutLocations=[-0.09,0.15,0.063705,0.142950,0.369645],cutColors=["black","purple","cyan","red","green"],
-                      bins = np.linspace(-0.2, 1, 100),saveTitle="cutHistPost_forPaper",
-                      cutLabels=["-3 \sigma ","5\sigma","95% SE","98% SE","99% SE",],customLegendFunc=customPaperLegend)
-    plotHistosTogether()
+    op_df = doEricsSweepAnalysis(sweepDf)
+    cutLocations = [-0.09, 0.15] + (op_df["threshold_ns"].to_numpy()).tolist()
+    plotHistoWithCuts(cutLocations=cutLocations,cutColors=["black","purple","cyan","red","green"],
+                      bins = np.linspace(-0.2, 1, 100),saveTitle="cutHistPost_forPaper",addAnnotation=True,
+                      cutLabels=["start of \n cut",r"$5\sigma$ cut","99%  SE cut","98% SE cut","95% SE cut",],)
+                    #   customLegendFunc=customPaperLegend)
+    plotHistosTogether(cutLocations2nd=cutLocations)
 
 
 if __name__=="__main__":
