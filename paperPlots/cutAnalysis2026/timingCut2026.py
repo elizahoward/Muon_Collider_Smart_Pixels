@@ -21,11 +21,12 @@ import matplotlib
 # sys.path.append("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots/")
 # from plotUtils import load_parquet_pairs, countBibSig, plotManyHisto
 #instead of importing from plot_hit_time, copied and made edits
-matplotlib.rcParams["figure.dpi"] = 150
+matplotlib.rcParams["figure.dpi"] = 300
+plt.style.use('seaborn-v0_8-colorblind')
 
 pklPath = "/local/d1/smartpixML/cutAnalysis/dfOfTruth.pkl"
 pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/validationPlots/savedPklsFromFullDataset/dfOfTruth.pkl" #okay timing distribution
-# pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026Feb/plots/dfOfTruth.pkl" #messed up timing distribution
+pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026Feb/plots/dfOfTruth.pkl" #messed up timing distribution
 # pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_20260129_155514/plots/dfOfTruth.pkl"
 # pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_20260119_151558/plots/dfOfTruth.pkl"
 # pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_20260129_200531/plots/dfOfTruth.pkl"
@@ -121,7 +122,9 @@ def computeSweep2(truthBib=truthBib, truthSig=truthSig, thresholds = defaultThre
 
 def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0.09,0.15], cutColors = ["green"],
                       PLOT_DIR = ".",interactivePlots = False,saveTitle = "cutHist",figsize = (6.5,3),
-                      bins = np.linspace(-0.5, 15, 100),standalone=True,cutLabels = None,customLegendFunc = None,addAnnotation=False):
+                      bins = np.linspace(-0.5, 15, 100),standalone=True,cutLabels = None,customLegendFunc = None,addAnnotation=False,
+                      cutYs = [1.5e5,5e4,6e5,2e5,6e5],
+                      xOff = [-0.125,0.01,0.0035,0.01,0.005]):
     if standalone:
         plt.figure(figsize =figsize)
     plotUtils.plotManyHisto(
@@ -144,7 +147,7 @@ def plotHistoWithCuts(key = "adjusted_hit_time_30ps_gaussian",cutLocations = [-0
         customLegendFunc()
     if addAnnotation:
         # annotateCuts()
-        annotateCuts(cutLocations = cutLocations, cutColors = cutColors,cutNames=cutLabels)
+        annotateCuts(cutLocations = cutLocations, cutColors = cutColors,cutNames=cutLabels,cutYs=cutYs,xOff=xOff)
     # plt.legend()
     if standalone:
         plotUtils.closePlot(PLOT_DIR,interactivePlots,f"{saveTitle}.png")
@@ -214,6 +217,13 @@ def annotateCuts(cutLocations=[-0.09,0.15,0.063705,0.142950,0.369645],cutColors=
     # plt.text(0.142950,1e5,,color="red")
     # plt.text(0.369645,1e5,color="green")
 
+def getMaiaCut(sweepDf,doPrint=True):
+    afterDf = sweepDf.query("threshold_ns >= 0.150")
+    rightRow = afterDf.iloc[0]
+    if doPrint:
+        print("MAIA cut")
+        print(rightRow)
+
 def main():
     key = "adjusted_hit_time_30ps_gaussian"
     fullTotal, cutTotal = numEvents(truthBib,key,-0.5,15)
@@ -223,10 +233,13 @@ def main():
     # print(sweepDf)
     sweepDf.to_csv("sweepDf.csv")
     op_df = doEricsSweepAnalysis(sweepDf)
+    getMaiaCut(sweepDf,doPrint=True)
     cutLocations = [-0.09, 0.15] + (op_df["threshold_ns"].to_numpy()).tolist()
-    plotHistoWithCuts(cutLocations=cutLocations,cutColors=["black","purple","cyan","red","green"],
+    plotHistoWithCuts(cutLocations=cutLocations,cutColors=["black","purple","darkturquoise","red","green"],
                       bins = np.linspace(-0.2, 1, 100),saveTitle="cutHistPost_forPaper",addAnnotation=True,
-                      cutLabels=["start of \n cut",r"$5\sigma$ cut","99%  SE cut","98% SE cut","95% SE cut",],)
+                      cutLabels=["start of \n cut",r"$5\sigma$ cut","99% SE cut","98% SE cut","95% SE cut",],
+                      cutYs = [1.5e5,2e4,6e5,2e5,6e4],
+                      xOff = [-0.125,0.01,0.076-cutLocations[2],0.076-cutLocations[3],0.076-cutLocations[4]],)
                     #   customLegendFunc=customPaperLegend)
     plotHistosTogether(cutLocations2nd=cutLocations)
 
