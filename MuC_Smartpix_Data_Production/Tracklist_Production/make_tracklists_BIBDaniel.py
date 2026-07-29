@@ -73,8 +73,8 @@ parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.Argumen
 parser.add_argument("-i", "--input_file", help="Input file", type=str)
 parser.add_argument("-odir", "--output_folder", help="Output folder", type=str)
 parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
-parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=100, type=int)
-parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=1, type=int) 
+parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=250000, type=int)
+parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=500, type=int) 
 parser.add_argument("-p", "--plot", help="Include if you want to make plots at this stage", action='store_true')
 parser.add_argument("-flp", "--flp", help="Direction of sensor (1 for FE side out, 0 for FE side down)", default=0, type=int)
 parser.add_argument("-sig", "--signal", help="Are you generating signal?", action='store_true')
@@ -97,7 +97,8 @@ elif ops.bib_mm or ops.bib_mp:
         directory_path = "/local/d1/berobert/bib/" 
         output_file_form="bib_mp_tracks_*.txt"
     else:
-        directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mm_pruned/" 
+        directory_path = "/local/d1/berobert/bib/"
+        #directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mm_pruned/" 
         output_file_form="bib_mm_tracks_*.txt"
     file_list=os.listdir(directory_path)
     file_list = [os.path.join(directory_path, file) for file in file_list]
@@ -284,6 +285,7 @@ float_precision = ops.float_precision
 def writeTracklists(tracks, numFiles, binsize, fileStart = 0):
 
     print(f"Writing {len(tracks)} tracks to {numFiles} files with {binsize} tracks per file\n")
+    print(f"Total number of tracks: {len(tracks)}")
 
     for fileNum in range(numFiles):
         # fileNum = fileNum + fileStart
@@ -296,6 +298,7 @@ def writeTracklists(tracks, numFiles, binsize, fileStart = 0):
                 formatted_sublist = [f"{element:.{float_precision}f}" if isinstance(element, float) else element for element in track]
                 line = ' '.join(map(str, formatted_sublist)) + '\n'
                 file.write(line)
+
 if ops.track_total > 250000:
     mid = len(file_list) // 2
     file_list1 = file_list[:mid]
@@ -346,7 +349,8 @@ print("finished tracks")
 numFiles = int(np.ceil(len(tracks)/binsize))
 
 if ops.bib_mm:
-    fileStart=888
+    #fileStart=888
+    fileStart = 0
 elif ops.bib_mp:
     #fileStart=857
     fileStart = 0
