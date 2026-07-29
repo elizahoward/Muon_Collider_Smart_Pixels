@@ -17,11 +17,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pickle
 import numpy as np
+import functools
+
 
 PLOT_DIR = "./evaluationPlots"
 interactivePlots = False
 styleSheet = "seaborn-v0_8-colorblind"
-N_CPU = 4
+N_CPU = 1
 loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
 FILTER_TIME = True #add the -0.5 to 15 ns filter
 # if not loadPredVarPkl:
@@ -30,9 +32,9 @@ FILTER_TIME = True #add the -0.5 to 15 ns filter
 
 paths = [
     "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_057.h5",
-    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model1_fin_results_model1_8bit_normalised_selected__model_trial_1046.h5",
-    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5",
-    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5",
+    # "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model1_fin_results_model1_8bit_normalised_selected__model_trial_1046.h5",
+    # "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5",
+    # "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5",
     ]
 
 def runForPath(path,filterTime=FILTER_TIME):
@@ -57,6 +59,7 @@ def runForPath(path,filterTime=FILTER_TIME):
             pickle.dump(threshVal, file)
 
     plotAll1dHists(predVarDF,threshVal,pltDir)
+    plotNew2by2(predVarDF, threshVal, pltDir)
 
 
 def plotAll1dHists(predVarDF,threshVal,pltDir):
@@ -64,6 +67,8 @@ def plotAll1dHists(predVarDF,threshVal,pltDir):
     print(predVarDF.keys())
     if "adjusted_hit_time_30ps_gaussian" in predVarDF.keys():
         histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel="Cluster Hit Arrival Time [ns]",figsize=(5,10),bins=100)
+        histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel="Cluster Hit Arrival Time [ns]",figsize=(4,3),bins=100,plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="")
+    histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel="z-global [mm]",figsize=(4,3),bins=100,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="")
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel="z-global [mm]",figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="pt",keyLabel=r"Transverse Momentum $p_T$ [GeV/c]",figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="y-local",keyLabel="y-local [mm] aaaaah I can't find a good binnning",figsize=(5,10),bins=25)
@@ -71,9 +76,18 @@ def plotAll1dHists(predVarDF,threshVal,pltDir):
     histoKarri(predVarDF,threshVal,pltDir,key="ySize",keyLabel="y-Size [# pixels]",bins=np.arange(0,14,1),figsize=(5,11),locLegend="upper right")
     histoKarri(predVarDF,threshVal,pltDir,key="nModule",keyLabel="Module Number (longitudinally counted)",bins=12,figsize=(5,10))
     histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(5,10),locLegend="upper right")
+    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(5,4),locLegend="upper right",plotAll = False,extendSaveTitle="paperVersion")
     print("finished 1d histograms")
 
-def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bins="auto",yscale="log",locLegend = "best"):
+def plotNew2by2(predVarDF, threshVal, pltDir,interactivePlots = False,extendTitle = "",cmap="Blues",figsize=(10,8)):
+    plotter = functools.partial(varPredPlotUtils.plotZglobalXsizeJust1,cmap=cmap)
+    genTitle = "ZGlobalXSize"
+    genTitle = ""
+    varPredPlotUtils.plot2by2PredBibSig(predVarDF,plot_func=plotter,genTitle=genTitle,extendTitle = extendTitle,cut=threshVal, PLOT_DIR=pltDir,interactivePlots=interactivePlots,figsize=figsize)
+
+
+def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bins="auto",yscale="log",locLegend = "best",
+               plotAll = True, plotBIB = True, plotSig = True,extendSaveTitle="",allTitle="All vectors",bibTitle = "BIB",sigTitle="Signal"):
     configsAll = [
         (predVarDF, "all vectors"),
         (predVarDF.query("trueY == 0"), "all BIB"),
@@ -90,50 +104,32 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bi
         (predVarDF.query("trueY == 0"), "all BIB"),
         (predVarDF.query("trueY == 0 and prediction > @cut"), "all BIB accepted by model"),
     ]
+    totalPlots = plotAll + plotBIB + plotSig
     plt.figure(figsize=figsize)
-    plt.subplot(311)
-    #def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,
-    #               figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",
-    #               PLOT_DIR=None,interactivePlots=None,saveTitle=None,alphas = None,legendLoc = "best"):
-    plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsAll],
-                  bins=bins,title="All vectors",pltLabels =[title for (df_subset, title) in configsAll],
-                  pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel="N",legendLoc=locLegend,
-                  alphas = [0.7 for _ in configsAll]);
-    # for i, (df_subset, title) in enumerate(configsAll, 1):
-    #     plt.hist(df_subset[key],label=title,alpha=0.5,histtype="step",bins=bins)
-    # plt.legend(loc=locLegend)
-    # plt.xlabel(keyLabel)
-    # plt.ylabel("N")
-    # plt.yscale(yscale)
-    # plt.title("All vectors")
+    if plotAll:
+        plt.subplot(totalPlots,1,1)
+        #def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,
+        #               figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",
+        #               PLOT_DIR=None,interactivePlots=None,saveTitle=None,alphas = None,legendLoc = "best"):
+        plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsAll],
+                    bins=bins,title=allTitle,pltLabels =[title for (df_subset, title) in configsAll],
+                    pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel="N",legendLoc=locLegend,
+                    alphas = [0.7 for _ in configsAll]);
+    if plotBIB:
+        plt.subplot(totalPlots,1,plotAll + plotBIB)    
+        plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsBib],
+                    bins=bins,title=bibTitle,pltLabels =[title for (df_subset, title) in configsBib],
+                    pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel="N",legendLoc=locLegend,
+                    alphas = [0.7 for _ in configsBib]);
+    if plotSig:
+        plt.subplot(totalPlots,1,plotAll + plotBIB + plotSig)
+        plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsSig],
+                    bins=bins,title=sigTitle,pltLabels =[title for (df_subset, title) in configsSig],
+                    pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel="N",legendLoc=locLegend,
+                    alphas = [0.7 for _ in configsSig]);
 
-    plt.subplot(312)    
-    plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsBib],
-                  bins=bins,title="BIB",pltLabels =[title for (df_subset, title) in configsBib],
-                  pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel="N",legendLoc=locLegend,
-                  alphas = [0.7 for _ in configsBib]);
-    # for i, (df_subset, title) in enumerate(configsBib, 1):
-    #     plt.hist(df_subset[key],label=title,alpha=0.5,bins=bins)
-    # plt.legend(loc=locLegend)
-    # plt.xlabel(keyLabel)
-    # plt.ylabel("N")
-    # plt.yscale(yscale)
-    # plt.title("BIB")
 
-    plt.subplot(313)
-    plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsSig],
-                  bins=bins,title="Signal",pltLabels =[title for (df_subset, title) in configsSig],
-                  pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel="N",legendLoc=locLegend,
-                  alphas = [0.7 for _ in configsSig]);
-    # for i, (df_subset, title) in enumerate(configsSig, 1):
-    #     plt.hist(df_subset[key],label=title,alpha=0.5,bins=bins)
-    # plt.legend(loc=locLegend)
-    # plt.xlabel(keyLabel)
-    # plt.ylabel("N")
-    # plt.yscale(yscale)
-    # plt.title("Signal")
-
-    closePlot(pltDir, interactivePlots, "karrisHistogram_"+key+"_.png",printOutputDir=True,transparent = False)
+    closePlot(pltDir, interactivePlots, "karrisHistogram_"+key+extendSaveTitle+"_.png",printOutputDir=True,transparent = False)
     return
 
 def main():

@@ -119,6 +119,45 @@ def plot3by3PredBibSig(
         plot_func(df_subset, title=title, *args, **kwargs)
     plt.suptitle(genTitle + "\n" + extendTitle)
     closePlot(PLOT_DIR,interactivePlots,plotName = f"predStratPlot_{genTitle}.png")
+def plot2by2PredBibSig(
+    predVarDF: pd.DataFrame, 
+    # plot_func: Callable[[pd.DataFrame, str, ...], Any], #not allowed 
+    plot_func: PlottingFunction, 
+    cut: float = 0.51171875,
+    genTitle = "",
+    extendTitle = "",
+    PLOT_DIR = "./ratePlots",
+    interactivePlots = True,
+    isHist2d = True, #means that plot_func should return counts, xedges, yedges, im
+    figsize=(10,8),
+    *args: Any,
+    **kwargs: Any
+) -> None:
+    """
+    Plots a 3x3 grid of subsets of the data using an arbitrary plotting function.
+    """
+    plt.figure(figsize=figsize)
+    
+    configs = [
+        # (predVarDF, "all vectors"),
+        # (predVarDF.query("trueY == 0"), "all bib"),
+        # (predVarDF.query("trueY == 1"), "all sig"),
+        
+        # (predVarDF.query("prediction > @cut"), "all vectors passing cut"),
+        (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
+        (predVarDF.query("trueY == 1 and prediction > @cut"), "Signal accepted by model"),
+        
+        # (predVarDF.query("prediction < @cut"), "all vectors rejected by cut"),
+        (predVarDF.query("trueY == 0 and prediction < @cut"), "BIB rejected by model"),
+        (predVarDF.query("trueY == 1 and prediction < @cut"), "Signal rejected by model")
+    ]
+
+    for i, (df_subset, title) in enumerate(configs, 1):
+        plt.subplot(2, 2, i)
+        # Pass the subset and title, then any extra args/kwargs
+        plot_func(df_subset, title=title, *args, **kwargs)
+    plt.suptitle(genTitle + "\n" + extendTitle)
+    closePlot(PLOT_DIR,interactivePlots,plotName = f"predStratPlot_{genTitle}.png")
 
 # a couple of declarations of plotters more explicitly
 def plotZglobalXsizeJust1(truthDF, title="",binsZGlobal = 30,binsXSize = np.arange(0,22,1),cmap="Blues"):
