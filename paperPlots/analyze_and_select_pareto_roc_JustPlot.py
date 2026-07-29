@@ -72,6 +72,9 @@ sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/M
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/ryan/')
 sys.path.append('/local/d1/smartpixML/filtering_models/shuffling_data/')
 
+STYLESHEET = "seaborn-v0_8-colorblind"
+plt.style.use(STYLESHEET)
+
 # Import TensorFlow
 try:
     import tensorflow as tf
@@ -358,6 +361,46 @@ def evaluate_model_roc(model_file, validation_dataset, signal_efficiencies, use_
     }
 
 
+#unfinished/untested code
+def getBaseModel(quantizedModel):
+    if "1" in quantizedModel.name[3:7]:
+        modelType = 1
+        model = Model1(tfRecordFolder = tfRecordFolder)   
+    elif "ASIC" in quantizedModel.name[3:9]:
+        modelType = 0
+        model = ModelASIC(tfRecordFolder=tfRecordFolder)   
+    elif "2" in quantizedModel.name[3:7]:
+        modelType = 2
+        model = Model2_5(tfRecordFolder = tfRecordFolder)   
+    elif "3" in quantizedModel.name[3:7]:
+        modelType = 3
+        model = Model3(tfRecordFolder = tfRecordFolder)   
+    else:
+        raise ValueError("Error processing model type")
+    return model, modelType
+
+def evaluate_model_rocNew(model_file, model, signal_efficiencies, use_weighted=True, bkg_rej_weights=None):
+    """
+    Evaluate a single model and compute ROC metrics.
+    
+    Args:
+        model_file: Path to H5 model file
+        validation_dataset: TensorFlow dataset for validation
+        signal_efficiencies: List of signal efficiencies to evaluate
+        use_weighted: Whether to use weighted background rejection
+        bkg_rej_weights: Weights for weighted metric
+        
+    Returns:
+        dict with metrics: parameters, auc, background_rejection, etc.
+    """
+    model_name = Path(model_file).stem
+    print(f"  Evaluating {model_name}...", end=' ')
+
+    quantizedModel = loadQModel(filepath,modelType)
+    model.models[configName] = quantizedModel
+    model.evaluate(config_name=configName,predictionPlots=False,signal_efficiencies=[0.95, 0.98, 0.99],filterTime = filterTime)
+    # model, predictions,modelType = getModelAndPredict(quantizedModel,tfRecordFolder,filterTime=filterTime)
+
 # ============================================================================
 # PARETO SELECTION FUNCTIONS
 # ============================================================================
@@ -443,18 +486,18 @@ def select_pareto_models(df):
 # PLOTTING FUNCTIONS
 # ============================================================================
 
-def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name,modelPltName):
+def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name,modelPltName,figsize=(6, 4)):
     """Create Pareto front visualization."""
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(figsize=figsize)
     
     # All models
     ax.scatter(df['parameters'], df['primary_metric'], 
-               alpha=0.4, s=60, c='lightgray', edgecolors='gray', 
+               alpha=0.4, s=40, c='lightgray', edgecolors='gray', 
                linewidth=0.5, label='All models', zorder=1)
     
     # Primary Pareto front
     ax.scatter(pareto_df['parameters'], pareto_df['primary_metric'], 
-               alpha=0.9, s=120, c='red', edgecolors='darkred', 
+               alpha=0.9, s=80, c='red', edgecolors='darkred', 
                linewidth=1.5, label='Primary Pareto front', zorder=3, marker='D')
     
     pareto_sorted = pareto_df.sort_values('parameters')
@@ -464,8 +507,8 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
     # Secondary Pareto front
     if pareto_df_secondary is not None and not pareto_df_secondary.empty:
         ax.scatter(pareto_df_secondary['parameters'], pareto_df_secondary['primary_metric'], 
-                   alpha=0.8, s=100, c='orange', edgecolors='darkorange', 
-                   linewidth=1.5, label='Secondary Pareto front (redundancy)', zorder=3, marker='s')
+                   alpha=0.8, s=60, c='orange', edgecolors='darkorange', 
+                   linewidth=1.5, label='Secondary Pareto front', zorder=3, marker='s')
         
         pareto_sorted_2 = pareto_df_secondary.sort_values('parameters')
         ax.plot(pareto_sorted_2['parameters'], pareto_sorted_2['primary_metric'],
@@ -478,7 +521,8 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
         'weighted_bkg_rej': 'Weighted Background Rejection',
         'bkg_rej_@95%': 'Background Rejection @ 95% Signal Eff.',
         'bkg_rej_@98%': 'Background Rejection @ 98% Signal Eff.',
-        'bkg_rej_@99%': 'Background Rejection @ 99% Signal Eff.'
+        # 'bkg_rej_@99%': 'Background Rejection @ 99% Signal Eff.'
+        'bkg_rej_@99%': 'BR_99SE'
     }.get(metric_name, metric_name)
     
     ax.set_xlabel('Number of Parameters', fontsize=14, fontweight='bold')
@@ -489,7 +533,7 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
     ax.grid(True, alpha=0.3, linestyle='--')
     
     # Legend at bottom right, above statistics box
-    ax.legend(loc='lower right', fontsize=11, framealpha=0.9, bbox_to_anchor=(0.98, 0.25))
+    ax.legend(loc='center right', )#fontsize=11, framealpha=0.9, bbox_to_anchor=(0.98, 0.25))
     
     # Statistics box at bottom right, below legend
     if pareto_df_secondary is not None and not pareto_df_secondary.empty:
@@ -883,171 +927,6 @@ Examples:
                     no_separate_folders = args.no_separate_folders,
                     )
     
-    # modelPltName = args.modelPltName
-    # # Parse background rejection weights
-    # bkg_rej_weights = {}
-    # if args.use_weighted:
-    #     for pair in args.bkg_rej_weights.split(','):
-    #         sig_eff, weight = pair.split(':')
-    #         bkg_rej_weights[float(sig_eff)] = float(weight)
-    #     signal_efficiencies = list(bkg_rej_weights.keys())
-    # else:
-    #     signal_efficiencies = [args.signal_efficiency]
-    #     bkg_rej_weights = None
-    
-    # # Parse feature description if provided
-    # feature_description = None
-    # if args.features:
-    #     feature_list = [f.strip() for f in args.features.split(',')]
-    #     # Always include 'y' for labels
-    #     if 'y' not in feature_list:
-    #         feature_list.append('y')
-    #     feature_description = {name: tf.io.FixedLenFeature([], tf.string) for name in feature_list}
-    #     print(f"Using specified features: {sorted(feature_list)}")
-    
-    # # Validate directories
-    # if not os.path.isdir(args.input_dir):
-    #     print(f"Error: Input directory does not exist: {args.input_dir}")
-    #     sys.exit(1)
-    
-    # if not os.path.isdir(args.data_dir):
-    #     print(f"Error: Data directory does not exist: {args.data_dir}")
-    #     sys.exit(1)
-    
-    # # Create output directory
-    # os.makedirs(args.output_dir, exist_ok=True)
-    
-    # model_name = os.path.basename(args.input_dir.rstrip('/'))
-    
-    # print("\n" + "=" * 80)
-    # print("PARETO SELECTION USING ROC-BASED METRICS")
-    # print("=" * 80)
-    # print(f"\nInput directory: {args.input_dir}")
-    # print(f"Data directory: {args.data_dir}")
-    # print(f"Output directory: {args.output_dir}")
-    # print(f"Model name: {model_name}")
-    # if args.use_weighted:
-    #     print(f"Metric: Weighted background rejection")
-    #     print(f"Weights: {bkg_rej_weights}")
-    # else:
-    #     print(f"Metric: Background rejection @ {args.signal_efficiency:.0%} signal efficiency")
-    
-    # # Find all H5 files first
-    # print("\n" + "=" * 80)
-    # print("FINDING MODEL FILES")
-    # print("=" * 80)
-    
-    # h5_files = sorted([os.path.join(args.input_dir, f) 
-    #                   for f in os.listdir(args.input_dir) 
-    #                   if f.endswith('.h5') and f.startswith('model_trial_')])
-    
-    # if not h5_files:
-    #     print(f"\nError: No H5 model files found in {args.input_dir}")
-    #     sys.exit(1)
-    
-    # print(f"Found {len(h5_files)} models to evaluate")
-    
-    # # Detect features from first model if not specified
-    # if feature_description is None:
-    #     print("\n" + "=" * 80)
-    #     print("DETECTING INPUT FEATURES FROM MODEL")
-    #     print("=" * 80)
-    #     print(f"Inspecting first model: {os.path.basename(h5_files[0])}")
-    #     feature_description = _detect_model_input_features(h5_files[0])
-    
-    # # Load validation data
-    # print("\n" + "=" * 80)
-    # print("LOADING VALIDATION DATA")
-    # print("=" * 80)
-    # val_dir = os.path.join(args.data_dir, "tfrecords_validation/")
-    
-    # if not os.path.exists(val_dir):
-    #     print(f"Error: Validation directory not found: {val_dir}")
-    #     sys.exit(1)
-    
-    # print(f"Loading validation data from: {val_dir}")
-    # validation_dataset = build_tfrecord_dataset(val_dir, feature_description=feature_description)
-    # print("✓ Validation dataset loaded")
-    
-    # # Evaluate all models
-    # print("\n" + "=" * 80)
-    # print("EVALUATING MODELS WITH ROC METRICS")
-    # print("=" * 80)
-    
-    # results = []
-    # for model_file in h5_files:
-    #     result = evaluate_model_roc(
-    #         model_file,
-    #         validation_dataset,
-    #         signal_efficiencies,
-    #         use_weighted=args.use_weighted,
-    #         bkg_rej_weights=bkg_rej_weights
-    #     )
-    #     if result is not None:
-    #         # Extract trial ID
-    #         trial_id = Path(model_file).stem.replace('model_trial_', '')
-    #         result['trial_id'] = trial_id
-    #         results.append(result)
-    
-    # if not results:
-    #     print("\nError: No models were successfully evaluated")
-    #     sys.exit(1)
-    
-    # # Create results DataFrame
-    # df = pd.DataFrame(results)
-    
-    # print(f"\n✓ Successfully evaluated {len(df)} models")
-    # print(f"  Parameters range: {df['parameters'].min():,} - {df['parameters'].max():,}")
-    # print(f"  Primary metric range: {df['primary_metric'].min():.4f} - {df['primary_metric'].max():.4f}")
-    # print(f"  AUC range: {df['auc'].min():.4f} - {df['auc'].max():.4f}")
-    
-    # # Pareto selection
-    # print("\n" + "=" * 80)
-    # print("PARETO SELECTION")
-    # print("=" * 80)
-    
-    # pareto_df, pareto_df_secondary = select_pareto_models(df)
-
-    # # Suppress secondary tier if requested
-    # if args.no_secondary:
-    #     print("\n  [--no_secondary] Secondary Pareto front disabled — skipping tier 2.")
-    #     pareto_df_secondary = None
-
-    # # Generate Pareto front plot
-    # print("\n" + "=" * 80)
-    # print("GENERATING PLOTS")
-    # print("=" * 80)
-
-    # metric_name = df.iloc[0]['metric_name']
-    # plot_pareto_front(df, pareto_df, pareto_df_secondary, args.output_dir, model_name, metric_name, modelPltName)
-
-    # # Copy model files
-    # copy_model_files(pareto_df, pareto_df_secondary, args.output_dir, separate_folders=not args.no_separate_folders)
-
-    # # Save results
-    # save_results(df, pareto_df, pareto_df_secondary, args.output_dir, metric_name, bkg_rej_weights)
-
-    # # Save layer structure for each selected model
-    # save_model_architectures(pareto_df, pareto_df_secondary, args.output_dir)
-
-    # # Final summary
-    # print("\n" + "=" * 80)
-    # print("COMPLETE - PARETO SELECTION FINISHED!")
-    # print("=" * 80)
-    # print(f"\nOutput directory: {args.output_dir}")
-    # print(f"\nSelected models:")
-    # print(f"  Primary Pareto: {len(pareto_df)}")
-    # if pareto_df_secondary is not None:
-    #     print(f"  Secondary Pareto: {len(pareto_df_secondary)}")
-    # print(f"  Total: {len(pareto_df) + (len(pareto_df_secondary) if pareto_df_secondary is not None else 0)}")
-    # print(f"\nFiles created:")
-    # print(f"  - Pareto front plot")
-    # print(f"  - CSV files with results")
-    # print(f"  - JSON summary")
-    # print(f"  - {len(pareto_df) + (len(pareto_df_secondary) if pareto_df_secondary is not None else 0)} H5 model files")
-    # print(f"  - architectures/<model>_architecture.json  (per-model layer structure)")
-    # print(f"  - architectures/all_architectures_summary.json")
-    # print("\n" + "=" * 80)
 
 def main_SingleFile(    
         input_dir: str =True, #        help='Directory containing hyperparameter tuning results (with H5 files))
@@ -1232,52 +1111,52 @@ def main_SingleFile(
 
 def mainNew():
     modelConfs = [#comment out the rows you don't want to regenerate, since this takes a while
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_3w0i_i5_sigmoid_results",
-                    #    "data_dir": "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
-                   "output_dir": "./individualHyperparams/model1_fin_results/model1_3bit_normalised_selected", 
-                    #    "signal_efficiency": 0.99, 
-                   "modelPltName": "1 (3 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_4w0i_i6_sigmoid_results",
-                   "output_dir": "./individualHyperparams/model1_fin_results/model1_4bit_normalised_selected", 
-                   "modelPltName": "1 (4 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_6w0i_i8_sigmoid_results",
-                   "output_dir": "./individualHyperparams/model1_fin_results/model1_6bit_normalised_selected", 
-                   "modelPltName": "1 (6 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_3w0i_i5_sigmoid_results",
+                #     #    "data_dir": "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
+                #    "output_dir": "./individualHyperparams/model1_fin_results/model1_3bit_normalised_selected", 
+                #     #    "signal_efficiency": 0.99, 
+                #    "modelPltName": "1 (3 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_4w0i_i6_sigmoid_results",
+                #    "output_dir": "./individualHyperparams/model1_fin_results/model1_4bit_normalised_selected", 
+                #    "modelPltName": "1 (4 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_6w0i_i8_sigmoid_results",
+                #    "output_dir": "./individualHyperparams/model1_fin_results/model1_6bit_normalised_selected", 
+                #    "modelPltName": "1 (6 bit)",},
                    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_8w0i_i10_sigmoid_results",
                    "output_dir": "./individualHyperparams/model1_fin_results/model1_8bit_normalised_selected", 
                    "modelPltName": "1 (8 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_10w0i_i12_sigmoid_results",
-                   "output_dir": "./individualHyperparams/model1_fin_results/model1_10bit_normalised_selected", 
-                   "modelPltName": "1 (10 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model1_fin_results/quantization_sigmoid_results/quantized_10w0i_i12_sigmoid_results",
+                #    "output_dir": "./individualHyperparams/model1_fin_results/model1_10bit_normalised_selected", 
+                #    "modelPltName": "1 (10 bit)",},
 
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_3w0i_normalized_run_hyperparameter_results_20260430_185058",
-                   "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_3bit_normalised_selected", 
-                   "modelPltName": "2 (3 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_3w0i_normalized_run_hyperparameter_results_20260430_185058",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_3bit_normalised_selected", 
+                #    "modelPltName": "2 (3 bit)",},
                    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_4w0i_normalized_run_hyperparameter_results_20260501_185241",
                    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_4bit_normalised_selected", 
                    "modelPltName": "2 (4 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_6w0i_normalized_run_hyperparameter_results_20260503_165934",
-                   "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_6bit_normalised_selected", 
-                   "modelPltName": "2 (6 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_8w0i_normalized_run_hyperparameter_results_20260505_143352",
-                   "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_8bit_normalised_selected", 
-                   "modelPltName": "2 (8 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_10w0i_normalized_run_hyperparameter_results_20260504_004945",
-                   "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_10bit_normalised_selected", 
-                   "modelPltName": "2 (10 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_6w0i_normalized_run_hyperparameter_results_20260503_165934",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_6bit_normalised_selected", 
+                #    "modelPltName": "2 (6 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_8w0i_normalized_run_hyperparameter_results_20260505_143352",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_8bit_normalised_selected", 
+                #    "modelPltName": "2 (8 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model2.5_fin_results/model2.5_quantizedinputs_quantized_10w0i_normalized_run_hyperparameter_results_20260504_004945",
+                #    "output_dir": "./individualHyperparams/model2.5_fin_results/model2_5_10bit_normalised_selected", 
+                #    "modelPltName": "2 (10 bit)",},
 
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_3w0i_hyperparameter_results_normalized_run_20260428_210840",
-                   "output_dir": "./individualHyperparams/model3_fin_results/model3_3bit_normalised_selected", 
-                   "modelPltName": "3 (3 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_4w0i_hyperparameter_results_normalized_run_20260501_150542",
-                   "output_dir": "./individualHyperparams/model3_fin_results/model3_4bit_normalised_selected", 
-                   "modelPltName": "3 (4 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_6w0i_hyperparameter_results_normalized_run_20260502_172931",
-                   "output_dir": "./individualHyperparams/model3_fin_results/model3_6bit_normalised_selected", 
-                   "modelPltName": "3 (6 bit)",},
-                   {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_8w0i_hyperparameter_results_normalized_run_20260503_165943",
-                   "output_dir": "./individualHyperparams/model3_fin_results/model3_8bit_normalised_selected", 
-                   "modelPltName": "3 (8 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_3w0i_hyperparameter_results_normalized_run_20260428_210840",
+                #    "output_dir": "./individualHyperparams/model3_fin_results/model3_3bit_normalised_selected", 
+                #    "modelPltName": "3 (3 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_4w0i_hyperparameter_results_normalized_run_20260501_150542",
+                #    "output_dir": "./individualHyperparams/model3_fin_results/model3_4bit_normalised_selected", 
+                #    "modelPltName": "3 (4 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_6w0i_hyperparameter_results_normalized_run_20260502_172931",
+                #    "output_dir": "./individualHyperparams/model3_fin_results/model3_6bit_normalised_selected", 
+                #    "modelPltName": "3 (6 bit)",},
+                #    {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_8w0i_hyperparameter_results_normalized_run_20260503_165943",
+                #    "output_dir": "./individualHyperparams/model3_fin_results/model3_8bit_normalised_selected", 
+                #    "modelPltName": "3 (8 bit)",},
                    {"input_dir": "../eric/Results_June2026_99SigEff/model3_fin_results/model3_quantizedinputs_quantized_10w0i_hyperparameter_results_normalized_run_20260501_185247",
                    "output_dir": "./individualHyperparams/model3_fin_results/model3_10bit_normalised_selected", 
                    "modelPltName": "3 (10 bit)",},
