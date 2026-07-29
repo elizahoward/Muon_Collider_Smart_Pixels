@@ -6,27 +6,46 @@ Description: script to plot the model 2s from paretos with different bits onto t
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+STYLESHEET = "seaborn-v0_8-colorblind"
+plt.style.use(STYLESHEET)
+matplotlib.rcParams["figure.dpi"] = 300
+
+DEFAULT_COLORS = ["blue","magenta","green","cyan","purple"]
+DEFAULT_COLORS = None #use stylesheet defaults
 
 def plotParetosTogether(allParetoDfs,saveTitle="./Model2ParetosTogether.png",
                         labels=["3 bit", "4 bit", "6 bit", "8 bit", "10 bit"],
-                        colors = ["blue","magenta","green","cyan","purple"]):
+                        colors = DEFAULT_COLORS,
+                        figsize=(5.5,4)):
     assert len(labels)==len(allParetoDfs)
-    assert len(colors)==len(allParetoDfs)
+    if colors is not None:
+        assert len(colors)==len(allParetoDfs)
+    plt.figure(figsize=figsize)
     for idx,paretoDf in enumerate(allParetoDfs):
         primaryDF = paretoDf.query("pareto_type == 'primary'")
         secondaryDF = paretoDf.query("pareto_type == 'secondary'")
-        plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],"D",markersize=8,label=labels[idx],color=colors[idx],alpha=0.7)
+        if colors is None:
+            lines = plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],"D",markersize=6,label=labels[idx],alpha=0.7)
+        else:
+            lines = plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],"D",markersize=6,label=labels[idx],color=colors[idx],alpha=0.7)
+
+        linecolor = lines[0].get_color()
         # plt.plot(secondaryDF["parameters"],secondaryDF["bkg_rej_@99%"],".",label=labels[idx]+" secondary pareto front",color=colors[idx],alpha=0.7)        
-        plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],"-",color=colors[idx],alpha=0.3)
+        plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],"-",color=linecolor,alpha=0.3)
         # plt.plot(secondaryDF["parameters"],secondaryDF["bkg_rej_@99%"],"--",color=colors[idx],alpha=0.3)
     plt.legend()
-    plt.xlabel("Parameters")
-    plt.ylabel("Background Rejectiona at 99% Signal Efficiency")
+    plt.grid(True, alpha=0.3, linestyle='--')
+    plt.xlabel("Number of Parameters")
+    # plt.ylabel("Background Rejectiona at 99% Signal Efficiency")
+    plt.ylabel("BR_99SE",fontsize=12)
+    plt.tight_layout()
     
     plt.savefig(saveTitle)
 def main(paretoCsvPath = "./combined_all_models_pareto_newJune2026/combined_all_detailed.csv"):    
     paretoCsv = pd.read_csv(paretoCsvPath)
     pareto2 = paretoCsv.query("model == 'model2_5'")
+    # pareto2 = paretoCsv.query("model == 'model1'")
     pareto2["pareto_type"] = pareto2["fullPath"].apply(
         lambda x: (
             "secondary"
@@ -36,6 +55,7 @@ def main(paretoCsvPath = "./combined_all_models_pareto_newJune2026/combined_all_
     )
     print(pareto2)
     bitConfigs = ["model25_3bit","model25_4bit","model25_6bit","model25_8bit","model25_10bit"]
+    # bitConfigs = ["model1_3w5i","model1_4w6i","model1_6w8i","model1_8w10i","model1_10w12i"]
     allPareto2 = [pareto2.query("run_name == @bitConfig") for bitConfig in bitConfigs]
     plotParetosTogether(allPareto2)
 
