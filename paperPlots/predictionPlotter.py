@@ -23,6 +23,7 @@ import functools
 PLOT_DIR = "./evaluationPlots"
 interactivePlots = False
 styleSheet = "seaborn-v0_8-colorblind"
+plt.style.use(styleSheet)
 N_CPU = 1
 loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
 FILTER_TIME = True #add the -0.5 to 15 ns filter
