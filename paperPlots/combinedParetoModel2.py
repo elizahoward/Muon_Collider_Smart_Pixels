@@ -44,8 +44,8 @@ def plotParetosTogether(allParetoDfs,saveTitle="./Model2ParetosTogether.png",
     plt.savefig(saveTitle)
 def main(paretoCsvPath = "./combined_all_models_pareto_newJune2026/combined_all_detailed.csv"):    
     paretoCsv = pd.read_csv(paretoCsvPath)
-    pareto2 = paretoCsv.query("model == 'model2_5'")
-    # pareto2 = paretoCsv.query("model == 'model1'")
+    # pareto2 = paretoCsv.query("model == 'model2_5'")
+    pareto2 = paretoCsv.query("model == 'model1'")
     pareto2["pareto_type"] = pareto2["fullPath"].apply(
         lambda x: (
             "secondary"
@@ -54,10 +54,10 @@ def main(paretoCsvPath = "./combined_all_models_pareto_newJune2026/combined_all_
         )
     )
     print(pareto2)
-    bitConfigs = ["model25_3bit","model25_4bit","model25_6bit","model25_8bit","model25_10bit"]
-    # bitConfigs = ["model1_3w5i","model1_4w6i","model1_6w8i","model1_8w10i","model1_10w12i"]
+    # bitConfigs = ["model25_3bit","model25_4bit","model25_6bit","model25_8bit","model25_10bit"]
+    bitConfigs = ["model1_3w5i","model1_4w6i","model1_6w8i","model1_8w10i","model1_10w12i"]
     allPareto2 = [pareto2.query("run_name == @bitConfig") for bitConfig in bitConfigs]
-    plotParetosTogether(allPareto2)
+    plotParetosTogether(allPareto2,"./Model1ParetosTogether.png")
 
 
 if __name__=="__main__":
