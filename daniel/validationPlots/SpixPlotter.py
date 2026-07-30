@@ -120,7 +120,7 @@ class SmartpixPlotter():
     def loadTrackData(self):
         if not self.processTracks:
             print("process Tracks is set to false, so not loading tracklists")
-            # return
+            return
         print("Start loading track data")
         print(self.trackDirBib_mm)
         print(self.trackDirBib_mp)

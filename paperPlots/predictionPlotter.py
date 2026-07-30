@@ -18,6 +18,7 @@ import pandas as pd
 import pickle
 import numpy as np
 import functools
+import matplotlib
 
 
 PLOT_DIR = "./evaluationPlots"
@@ -27,6 +28,8 @@ plt.style.use(styleSheet)
 N_CPU = 1
 loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
 FILTER_TIME = True #add the -0.5 to 15 ns filter
+
+matplotlib.rcParams["figure.dpi"] = 300
 # if not loadPredVarPkl:
 #     import tensorflow as tf 
 #     tf.config.set_visible_devices([], 'GPU')

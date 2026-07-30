@@ -38,6 +38,8 @@ if dataDir_all is not None:
 ###########################################################################
 
 STYLESHEET = "seaborn-v0_8-colorblind"
+STYLESHEET = "seaborn-v0_8-poster"
+
 def main(parquetDir_all = "/local/d1/smartpixML/bigData/allData/",     #this should be not used?          
             #skip_indices = list(range(1730 - 124+87, 1769)),
             trackDirBib_mm = trackDirBib_mm,
@@ -47,9 +49,9 @@ def main(parquetDir_all = "/local/d1/smartpixML/bigData/allData/",     #this sho
             interactivePlots = False,
             PLOT_DIR = "./datasetPlots",
             savedPklFromParquet = True,
-            processTracks = True,
+            processTracks = False,#True,
             processOldTracks = False,
-            plotTracklists = True,
+            plotTracklists = False,#True,
             plotParquets = True,
             styleSheet=STYLESHEET,):
     plotter = SmartpixPlotter(
