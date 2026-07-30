@@ -29,16 +29,21 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
+import matplotlib
 
-try:
-    import matplotlib.pyplot as plt
-    from scipy import stats
-    PLOTTING_AVAILABLE = True
-except ImportError:
-    PLOTTING_AVAILABLE = False
-    print("Error: matplotlib and scipy are required")
-    print("Install with: pip install matplotlib scipy")
-    sys.exit(1)
+# try:
+import matplotlib.pyplot as plt
+from scipy import stats
+#     PLOTTING_AVAILABLE = True
+# except ImportError:
+#     PLOTTING_AVAILABLE = False
+#     print("Error: matplotlib and scipy are required")
+#     print("Install with: pip install matplotlib scipy")
+#     sys.exit(1)
+
+STYLESHEET = "seaborn-v0_8-poster"
+plt.style.use(STYLESHEET)
+matplotlib.rcParams["figure.dpi"] = 300
 
 CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
 CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
@@ -199,6 +204,7 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6)):
     fig, ax = plt.subplots(figsize=figsize)
 
     colors = plt.cm.viridis(np.linspace(0, 1, len(runs_info)))  # distinct colors
+    colors =  plt.rcParams['axes.prop_cycle'].by_key()['color']
     if len(runs_info) == 5:
         print(colors)
         # colors[4] = []
@@ -248,13 +254,13 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6)):
             }
         )
 
-    ax.set_xlabel("Number of Parameters", fontsize=14, fontweight="bold")
-    ax.set_ylabel("Total Hardware Resources (FF + LUT)", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Number of Parameters")#, fontsize=14, fontweight="bold")
+    ax.set_ylabel("Total Hardware Resources (FFs + LUTs)")#, fontsize=14, fontweight="bold")
     ax.set_title(
         f"Model {MODEL_NUM} Parameters vs Hardware Resources",#\n"
         # "Multi-bit Comparison with Linear Regression",
-        fontsize=16,
-        fontweight="bold",
+        # fontsize=16,
+        # fontweight="bold",
         pad=20,
     )
 
@@ -279,7 +285,7 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6)):
         0.98,
         table_text,
         transform=ax.transAxes,
-        fontsize=9,
+        # fontsize=9,
         verticalalignment="top",
         bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
         family="monospace",
@@ -426,7 +432,7 @@ Examples:
     print("\nGenerating multi-bit plot...")
     if len(runs_info)==5:
         runs_info = [runs_info[1],runs_info[2],runs_info[3],runs_info[4],runs_info[0],]
-    plot_multi_bit(runs_info, output_path, slopes_csv_path=slopes_csv_path)
+    plot_multi_bit(runs_info, output_path, slopes_csv_path=slopes_csv_path,figsize=(8,6))
 
     print("\n" + "=" * 80)
     print("MULTI-BIT ANALYSIS COMPLETE")
