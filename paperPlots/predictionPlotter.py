@@ -24,6 +24,7 @@ import matplotlib
 PLOT_DIR = "./evaluationPlots"
 interactivePlots = False
 styleSheet = "seaborn-v0_8-colorblind"
+styleSheet = "seaborn-v0_8-poster"
 plt.style.use(styleSheet)
 N_CPU = 1
 loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
@@ -71,8 +72,8 @@ def plotAll1dHists(predVarDF,threshVal,pltDir):
     print(predVarDF.keys())
     if "adjusted_hit_time_30ps_gaussian" in predVarDF.keys():
         histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel="Cluster Hit Arrival Time [ns]",figsize=(5,10),bins=100)
-        histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel="Cluster Hit Arrival Time [ns]",figsize=(4,3),bins=100,plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="")
-    histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel="z-global [mm]",figsize=(4,3),bins=100,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="")
+        histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel="Cluster Hit Arrival Time [ns]",figsize=(7,5),bins=100,plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="")
+    histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel="z-global [mm]",figsize=(7,5),bins=100,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="")
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel="z-global [mm]",figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="pt",keyLabel=r"Transverse Momentum $p_T$ [GeV/c]",figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="y-local",keyLabel="y-local [mm] aaaaah I can't find a good binnning",figsize=(5,10),bins=25)
@@ -80,7 +81,7 @@ def plotAll1dHists(predVarDF,threshVal,pltDir):
     histoKarri(predVarDF,threshVal,pltDir,key="ySize",keyLabel="y-Size [# pixels]",bins=np.arange(0,14,1),figsize=(5,11),locLegend="upper right")
     histoKarri(predVarDF,threshVal,pltDir,key="nModule",keyLabel="Module Number (longitudinally counted)",bins=12,figsize=(5,10))
     histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(5,10),locLegend="upper right")
-    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(5,4),locLegend="upper right",plotAll = False,extendSaveTitle="paperVersion")
+    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(9,7),locLegend="upper right",plotAll = False,extendSaveTitle="paperVersion")
     print("finished 1d histograms")
 
 def plotNew2by2(predVarDF, threshVal, pltDir,interactivePlots = False,extendTitle = "",cmap="Blues",figsize=(10,8)):
