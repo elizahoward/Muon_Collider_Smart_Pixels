@@ -58,7 +58,7 @@ PRIMARY_METRIC = "bkg_rej_@99%"
 if PRIMARY_METRIC == "primary_metric":
     METRIC_NAME = "Weighted Bkg Rejection"
 elif PRIMARY_METRIC == "bkg_rej_@99%":
-    METRIC_NAME = "Bkg Rejection @ 99% Sig. Eff."
+    METRIC_NAME = "Background Rejection at 99% Sig. Eff."
 else:
     raise ValueError("invalid PRIMARY_METRIC")
 
@@ -150,6 +150,7 @@ SELECTED_MODELS = [
 # ("model1_8w10i","1028"),
 ]
 styleSheet = "seaborn-v0_8-colorblind"
+styleSheet = "seaborn-v0_8-poster"
 plt.style.use(styleSheet)
 # ── HLS resource extraction ────────────────────────────────────────────────────
 def _lut_ff_from_vsynth_log(log_path):
@@ -620,10 +621,11 @@ def make_plot_simple(df, pareto_df, output_dir, zoomed=False, annotate=True):
 
 
 def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, pareto_m3,
-                        output_dir, xscale="linear", complement=False, annotate=True):
+                        output_dir, xscale="linear", complement=False, annotate=True,
+                        figsize=(14,9*14/16)):
     x_col = "luts_plus_ff"
     fig, ax = plt.subplots(figsize=(16, 9))
-    fig, ax = plt.subplots(figsize=(14, 9*14/16))
+    fig, ax = plt.subplots(figsize=figsize)
     _draw_scatter(ax, df, pareto_df, x_col, complement=complement, annotate=annotate)
     _draw_subfronts(ax, pareto_m1, pareto_m25, pareto_m3, pareto_df,
                     x_col, complement=complement)
@@ -727,9 +729,11 @@ def main():
         make_plot_simple(df, pareto_all, OUTPUT_DIR, zoomed=False, annotate=annotate)
         make_plot_simple(df, pareto_all, OUTPUT_DIR, zoomed=True,  annotate=annotate)
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
-                            OUTPUT_DIR, xscale="linear", complement=False, annotate=annotate)
+                            OUTPUT_DIR, xscale="linear", complement=False, annotate=annotate,
+                            figsize=(13,9*13/16))
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
-                            OUTPUT_DIR, xscale="log",    complement=False, annotate=annotate)
+                            OUTPUT_DIR, xscale="log",    complement=False, annotate=annotate,
+                            figsize=(13.4,9*13.2/16))
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
                             OUTPUT_DIR, xscale="linear", complement=True,  annotate=annotate)
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
