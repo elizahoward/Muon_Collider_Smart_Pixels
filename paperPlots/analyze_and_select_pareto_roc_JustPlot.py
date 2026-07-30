@@ -73,6 +73,7 @@ sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/r
 sys.path.append('/local/d1/smartpixML/filtering_models/shuffling_data/')
 
 STYLESHEET = "seaborn-v0_8-colorblind"
+STYLESHEET = "seaborn-v0_8-poster"
 plt.style.use(STYLESHEET)
 
 # Import TensorFlow
@@ -486,7 +487,7 @@ def select_pareto_models(df):
 # PLOTTING FUNCTIONS
 # ============================================================================
 
-def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name,modelPltName,figsize=(6, 4)):
+def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name,modelPltName,figsize=(8, 5)):
     """Create Pareto front visualization."""
     fig, ax = plt.subplots(figsize=figsize)
     
@@ -525,10 +526,13 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
         'bkg_rej_@99%': 'BR_99SE'
     }.get(metric_name, metric_name)
     
-    ax.set_xlabel('Number of Parameters', fontsize=14, fontweight='bold')
-    ax.set_ylabel(metric_display, fontsize=14, fontweight='bold')
+    ax.set_xlabel('Number of Parameters', #fontsize=14, 
+                    fontweight='bold')
+    ax.set_ylabel(metric_display, #fontsize=14,
+                     fontweight='bold')
     ax.set_title(f'Model {modelPltName}: Pareto Front', 
-                fontsize=16, fontweight='bold', pad=20)
+                # fontsize=16, 
+                fontweight='bold', pad=20)
     
     ax.grid(True, alpha=0.3, linestyle='--')
     
@@ -552,7 +556,8 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
         )
     
     ax.text(0.98, 0.02, stats_text, transform=ax.transAxes,
-           fontsize=10, verticalalignment='bottom', horizontalalignment='right',
+        #    fontsize=10, 
+           verticalalignment='bottom', horizontalalignment='right',
            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
     
     plt.tight_layout()
@@ -941,6 +946,7 @@ def main_SingleFile(
         no_separate_folders:bool = False,#        help='Disable separate sub-folders and save all models flat into output_dir (overrides default separate-folder behavior)',
         saveH5:bool = False,
         saveArchitectures:bool = False,
+        reEvaluate:bool=False,
     ):
     # Parse background rejection weights
     bkg_rej_weights = {}
@@ -1027,34 +1033,50 @@ def main_SingleFile(
     validation_dataset = build_tfrecord_dataset(val_dir, feature_description=feature_description)
     print("✓ Validation dataset loaded")
     
-    # Evaluate all models
-    print("\n" + "=" * 80)
-    print("EVALUATING MODELS WITH ROC METRICS")
-    print("=" * 80)
-    
-    results = []
-    for model_file in h5_files:
-        result = evaluate_model_roc(
-            model_file,
-            validation_dataset,
-            signal_efficiencies,
-            use_weighted=use_weighted,
-            bkg_rej_weights=bkg_rej_weights
-        )
-        if result is not None:
-            # Extract trial ID
-            trial_id = Path(model_file).stem.replace('model_trial_', '')
-            result['trial_id'] = trial_id
-            results.append(result)
-    
-    if not results:
-        print("\nError: No models were successfully evaluated")
-        sys.exit(1)
-    
-    # Create results DataFrame
-    df = pd.DataFrame(results)
-    
-    print(f"\n✓ Successfully evaluated {len(df)} models")
+    if not reEvaluate:
+        try:
+            df = pd.read_csv(os.path.join(output_dir, 'roc_based_analysis_detailed.csv'))
+            # primary
+            # df['metric_name'] = f'bkg_rej_@{primary_sig_eff:.0%}'
+            
+            # for sig_eff in sorted(df.iloc[0]['bg_rej_results'].keys()):
+            #     save_df[f'bkg_rej_@{sig_eff:.0%}'] = df['bg_rej_results'].apply(lambda x: x[sig_eff])
+            df['metric_name'] = f'bkg_rej_@99%'
+            df['bg_rej_results'] = df['bkg_rej_@99%'].apply(lambda x: {0.99: x})
+            df['trial_id'] = df['trial_id'].apply(lambda x: f'{x:03}')
+        except:
+            print("failed to load results, so evaluating")
+            reEvaluate=True
+    if reEvaluate:
+        # Evaluate all models
+        print("\n" + "=" * 80)
+        print("EVALUATING MODELS WITH ROC METRICS")
+        print("=" * 80)
+        
+        results = []
+        for model_file in h5_files:
+            result = evaluate_model_roc(
+                model_file,
+                validation_dataset,
+                signal_efficiencies,
+                use_weighted=use_weighted,
+                bkg_rej_weights=bkg_rej_weights
+            )
+            if result is not None:
+                # Extract trial ID
+                trial_id = Path(model_file).stem.replace('model_trial_', '')
+                result['trial_id'] = trial_id
+                results.append(result)
+        
+        if not results:
+            print("\nError: No models were successfully evaluated")
+            sys.exit(1)
+        
+        # Create results DataFrame
+        df = pd.DataFrame(results)
+        
+        print(f"\n✓ Successfully evaluated {len(df)} models")
+
     print(f"  Parameters range: {df['parameters'].min():,} - {df['parameters'].max():,}")
     print(f"  Primary metric range: {df['primary_metric'].min():.4f} - {df['primary_metric'].max():.4f}")
     print(f"  AUC range: {df['auc'].min():.4f} - {df['auc'].max():.4f}")
