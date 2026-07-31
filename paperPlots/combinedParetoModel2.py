@@ -16,7 +16,7 @@ DEFAULT_COLORS = ["blue","magenta","green","cyan","purple"]
 DEFAULT_COLORS = None #use stylesheet defaults
 
 def plotParetosTogether(allParetoDfs,saveTitle="./Model2ParetosTogether.png",
-                        labels=["3 bit", "4 bit", "6 bit", "8 bit", "10 bit"],
+                        labels=["3-bit", "4-bit", "6-bit", "8-bit", "10-bit"],
                         colors = DEFAULT_COLORS,
                         figsize=(5.5,4),#default for non poster stylesheet
                         modelType =1):
@@ -28,9 +28,11 @@ def plotParetosTogether(allParetoDfs,saveTitle="./Model2ParetosTogether.png",
         primaryDF = paretoDf.query("pareto_type == 'primary'")
         secondaryDF = paretoDf.query("pareto_type == 'secondary'")
         if colors is None:
-            lines = plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],"D",markersize=12,label=labels[idx],alpha=0.7)
+            lines = plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],linestyle="None",marker="o",markeredgecolor="black",markersize=8,#"D",markersize=12,
+                             label=labels[idx],alpha=0.7)
         else:
-            lines = plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],"D",markersize=12,label=labels[idx],color=colors[idx],alpha=0.7)
+            lines = plt.plot(primaryDF["parameters"],primaryDF["bkg_rej_@99%"],linestyle="None",#"D",markersize=12,
+                             label=labels[idx],color=colors[idx],alpha=0.7)
 
         linecolor = lines[0].get_color()
         # plt.plot(secondaryDF["parameters"],secondaryDF["bkg_rej_@99%"],".",label=labels[idx]+" secondary pareto front",color=colors[idx],alpha=0.7)        
@@ -40,7 +42,7 @@ def plotParetosTogether(allParetoDfs,saveTitle="./Model2ParetosTogether.png",
     plt.grid(True, alpha=0.3, linestyle='--')
     plt.xlabel("Number of Parameters")
     # plt.ylabel("Background Rejectiona at 99% Signal Efficiency")
-    plt.ylabel("BR_99SE")#,fontsize=12)
+    plt.ylabel(r'$\mathcal{R}_{\mathrm{BIB,99}}^{\mathrm{cluster}}$',fontsize=25)
     plt.title(f"Model {modelType} Pareto Fronts Superimposed")
     plt.tight_layout()
     

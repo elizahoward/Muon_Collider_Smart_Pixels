@@ -196,7 +196,7 @@ def collect_bit_width_runs(runs_dir, subdirs=None):
     return runs
 
 
-def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6)):
+def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6),showStats=False,alternateLegend=True):
     """
     Create a single plot with scatter + regression line for each bit-width.
     Also optionally save a CSV summarizing slopes and fit metrics.
@@ -223,8 +223,8 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6)):
             alpha=0.6,
             s=60,
             color=color,
-            edgecolors="black",
-            linewidth=0.7,
+            # edgecolors="black",
+            # linewidth=0.7,
             label=f"{bit}-bit data",
         )
 
@@ -261,14 +261,43 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6)):
         # "Multi-bit Comparison with Linear Regression",
         # fontsize=16,
         # fontweight="bold",
-        pad=20,
+        # pad=20,
     )
 
     ax.grid(True, alpha=0.3, linestyle="--", zorder=1)
 
     # Place legend outside to reduce clutter
     # ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=10, framealpha=0.9)
-    ax.legend(framealpha=0.9)
+    if alternateLegend:
+        from matplotlib.lines import Line2D
+        bits = ["3-bit", "4-bit", "6-bit", "8-bit", "10-bit"]
+        # 2. Build the 5 rows of colored dots
+        bit_handles = [
+            Line2D([0], [0], 
+                marker="o", 
+                color="none", 
+                markerfacecolor=colors[i], 
+                markeredgecolor="dimgray", 
+                markersize=9, 
+                label=bits[i]
+            )
+            for i in range(5)
+        ]
+
+        # 3. Build the generic "Data" vs "Linear Fit" legend entries
+        style_handles = [
+            Line2D([0], [0], marker="o", color="none", markerfacecolor="gray", markeredgecolor="dimgray", markersize=9, label="Architectures"),
+            Line2D([0], [0], linestyle="--", color="gray", linewidth=2, label="Linear fit")
+        ]
+
+        # 4. Add the first legend (Colors) and anchor it manually
+        leg1 = ax.legend(handles=bit_handles, loc="lower right", frameon=True)
+        ax.add_artist(leg1)  # Prevents the second legend from overwriting the first
+
+        # 5. Add the second legend (Styles)
+        ax.legend(handles=style_handles, loc="lower left", bbox_to_anchor=(0.37, 0.0),frameon=True)
+    else:
+        ax.legend(framealpha=0.9)
 
     # Small summary table of slopes vs bit-width inside the plot
     slopes_df = pd.DataFrame(slopes_summary).sort_values("bit_width")
@@ -279,17 +308,17 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6)):
             f"{row['bit_width']}-bit: slope={row['slope']:.2f}, "
             f"R²={row['r_squared']:.3f}, n={int(row['n_models'])}\n"
         )
-
-    ax.text(
-        0.02,
-        0.98,
-        table_text,
-        transform=ax.transAxes,
-        # fontsize=9,
-        verticalalignment="top",
-        bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
-        family="monospace",
-    )
+    if showStats:
+        ax.text(
+            0.02,
+            0.98,
+            table_text,
+            transform=ax.transAxes,
+            # fontsize=9,
+            verticalalignment="top",
+            bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
+            family="monospace",
+        )
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
