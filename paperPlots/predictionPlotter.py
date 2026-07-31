@@ -210,6 +210,7 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bi
             plt.ylim(ylim)
         if increaseFontSize:
             plt.gca().yaxis.get_label().set_fontsize(plt.rcParams["axes.labelsize"]+5)
+            plt.gca().xaxis.get_label().set_fontsize(plt.rcParams["axes.labelsize"]+5)
     if plotBIB:
         plt.subplot(totalPlots,1,plotAll + plotBIB)    
         plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsBib],
@@ -220,6 +221,7 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bi
             plt.ylim(ylim)
         if increaseFontSize:
             plt.gca().yaxis.get_label().set_fontsize(plt.rcParams["axes.labelsize"]+5)
+            plt.gca().xaxis.get_label().set_fontsize(plt.rcParams["axes.labelsize"]+5)
     if plotSig:
         plt.subplot(totalPlots,1,plotAll + plotBIB + plotSig)
         plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsSig],
@@ -230,6 +232,7 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bi
             plt.ylim(ylim)
         if increaseFontSize:
             plt.gca().yaxis.get_label().set_fontsize(plt.rcParams["axes.labelsize"]+5)
+            plt.gca().xaxis.get_label().set_fontsize(plt.rcParams["axes.labelsize"]+5)
 
 
     closePlot(pltDir, interactivePlots, "karrisHistogram_"+key+extendSaveTitle+"_.png",printOutputDir=True,transparent = False)
