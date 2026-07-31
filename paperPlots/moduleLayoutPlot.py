@@ -38,8 +38,8 @@ def plotHitsXY(sig,pltStandalone=True,pltShow=True,alpha = 1,figsize=(4,3.8)): #
     circle=plt.Circle((0,0), 30, fill=0, color='k', label="Barrel")
     ax.add_patch(circle)
     ax.set_title("Hits in the barrel xy-plane")
-    ax.set_xlabel("x-global [mm]")
-    ax.set_ylabel("y-global [mm]")
+    ax.set_xlabel(r"$x_{\mathrm{global}}$ [mm]")
+    ax.set_ylabel(r"$y_{\mathrm{global}}$ [mm]")
     ax.set_xlim(-40,40)
     ax.set_ylim(-40,40)
     plt.tight_layout()
@@ -65,8 +65,9 @@ def plotRZPlane(sig,figsize=(4,1.5)):#figsize defaults for when not using poster
     # plt.subplot(212)
     # plt.scatter(sig['hit_z'],sig["hit_r"],s=1,c=colors, label="Signal hits") #to confirm that hit_z is the same as z-global
     plt.ylim([0,60])
-    plt.xlabel("z-global [mm]")
-    plt.ylabel("radius [mm]")
+    plt.xlabel(r"$z_{\mathrm{global}}$ [mm]")
+    # plt.ylabel("radius [mm]")
+    plt.ylabel(r"$r_{\mathrm{global}}$ [mm]")
 
     plt.tight_layout()
     plt.savefig("ModuleLayoutRZ.png")
