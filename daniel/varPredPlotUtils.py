@@ -160,21 +160,21 @@ def plot2by2PredBibSig(
     closePlot(PLOT_DIR,interactivePlots,plotName = f"predStratPlot_{genTitle}.png")
 
 # a couple of declarations of plotters more explicitly
-def plotZglobalXsizeJust1(truthDF, title="",binsZGlobal = 30,binsXSize = np.arange(0,22,1),cmap="Blues"):
+def plotZglobalXsizeJust1(truthDF, title="",binsZGlobal = 30,binsXSize = np.arange(0,22,1),cmap="Blues",colorLabel=r"$n_{\mathrm{clusters}}$"):
     mask = [True for i in range(len(truthDF))]
-    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","xSize", mask, binsZGlobal, binsXSize, cmap, 'z-global [mm]','x-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","xSize", mask, binsZGlobal, binsXSize, cmap, r'$z_{\mathrm{global}}$ [mm]',r'$x_{\mathrm{size}}$ [# pixels]',title,logColor = True,colorLabel=colorLabel)
     return counts, xedges, yedges, im
-def plotZglobalYsizeJust1(truthDF, title="",binsZGlobal = 30,binsYSize = np.arange(0,14,1),cmap="Blues"):
+def plotZglobalYsizeJust1(truthDF, title="",binsZGlobal = 30,binsYSize = np.arange(0,14,1),cmap="Blues",colorLabel=r"$n_{\mathrm{clusters}}$"):
     mask = [True for i in range(len(truthDF))]
-    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","ySize", mask, binsZGlobal, binsYSize, cmap, 'z-global [mm]','y-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","ySize", mask, binsZGlobal, binsYSize, cmap, 'z-global [mm]','y-size (# pixels)',title,logColor = True,colorLabel=colorLabel)
     return counts, xedges, yedges, im
-def plotYlocalXsizeJust1(truthDF, title="",binsYlocal = 30,binsXSize = np.arange(0,22,1),cmap="Blues"):
+def plotYlocalXsizeJust1(truthDF, title="",binsYlocal = 30,binsXSize = np.arange(0,22,1),cmap="Blues",colorLabel=r"$n_{\mathrm{clusters}}$"):
     mask = [True for i in range(len(truthDF))]
-    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","xSize", mask, binsYlocal, binsXSize, cmap, 'y-local [μm]','x-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","xSize", mask, binsYlocal, binsXSize, cmap, 'y-local [μm]','x-size (# pixels)',title,logColor = True,colorLabel=colorLabel)
     return counts, xedges, yedges, im
-def plotYlocalYsizeJust1(truthDF, title="",binsYlocal = 30,binsYSize = np.arange(0,14,1),cmap="Blues",):
+def plotYlocalYsizeJust1(truthDF, title="",binsYlocal = 30,binsYSize = np.arange(0,14,1),cmap="Blues",colorLabel=r"$n_{\mathrm{clusters}}$",):
     mask = [True for i in range(len(truthDF))]
-    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","ySize", mask, binsYlocal, binsYSize, cmap, 'y-local [μm]','y-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","ySize", mask, binsYlocal, binsYSize, cmap, 'y-local [μm]','y-size (# pixels)',title,logColor = True,colorLabel=colorLabel)
     return counts, xedges, yedges, im
 
 # Now to actually use the code
