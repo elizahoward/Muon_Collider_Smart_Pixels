@@ -66,6 +66,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from datetime import datetime
 from sklearn.metrics import roc_curve, auc
+import matplotlib
 
 # Add parent directory to path for imports
 sys.path.append('/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/MuC_Smartpix_ML/')
@@ -487,7 +488,8 @@ def select_pareto_models(df):
 # PLOTTING FUNCTIONS
 # ============================================================================
 
-def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name,modelPltName,figsize=(8, 5)):
+def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name,modelPltName,
+                      figsize=(6, 4.5),doCustomYlim=True,showStats=False,legendLoc='lower right',reformatTicks=False):
     """Create Pareto front visualization."""
     fig, ax = plt.subplots(figsize=figsize)
     
@@ -498,7 +500,7 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
     
     # Primary Pareto front
     ax.scatter(pareto_df['parameters'], pareto_df['primary_metric'], 
-               alpha=0.9, s=80, c='red', edgecolors='darkred', 
+               alpha=0.9, s=80, c=plt.rcParams['axes.prop_cycle'].by_key()['color'][3], edgecolors=plt.rcParams['axes.prop_cycle'].by_key()['color'][3], 
                linewidth=1.5, label='Primary Pareto front', zorder=3, marker='D')
     
     pareto_sorted = pareto_df.sort_values('parameters')
@@ -508,7 +510,7 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
     # Secondary Pareto front
     if pareto_df_secondary is not None and not pareto_df_secondary.empty:
         ax.scatter(pareto_df_secondary['parameters'], pareto_df_secondary['primary_metric'], 
-                   alpha=0.8, s=60, c='orange', edgecolors='darkorange', 
+                   alpha=0.8, s=60, c=plt.rcParams['axes.prop_cycle'].by_key()['color'][1], edgecolors=plt.rcParams['axes.prop_cycle'].by_key()['color'][1], 
                    linewidth=1.5, label='Secondary Pareto front', zorder=3, marker='s')
         
         pareto_sorted_2 = pareto_df_secondary.sort_values('parameters')
@@ -523,21 +525,41 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
         'bkg_rej_@95%': 'Background Rejection @ 95% Signal Eff.',
         'bkg_rej_@98%': 'Background Rejection @ 98% Signal Eff.',
         # 'bkg_rej_@99%': 'Background Rejection @ 99% Signal Eff.'
-        'bkg_rej_@99%': 'BR_99SE'
+        # 'bkg_rej_@99%': 'BR_99SE'
+        'bkg_rej_@99%': r'$\mathcal{R}_{\mathrm{BIB,99}}^{\mathrm{cluster}}$'
     }.get(metric_name, metric_name)
     
-    ax.set_xlabel('Number of Parameters', #fontsize=14, 
-                    fontweight='bold')
-    ax.set_ylabel(metric_display, #fontsize=14,
-                     fontweight='bold')
-    ax.set_title(f'Model {modelPltName}: Pareto Front', 
+    ax.set_xlabel('Number of Parameters',) #fontsize=14, 
+                    # fontweight='bold')
+    ax.set_ylabel(metric_display,fontsize=25,)
+                    #  fontweight='bold')
+    ax.set_title(f'Model {modelPltName}: Pareto Front', )
                 # fontsize=16, 
-                fontweight='bold', pad=20)
+                # fontweight='bold', pad=20)
+    if doCustomYlim:
+        ax.set_ylim([0.6,0.95])
+
+    # set axis ticks
+    # formatter = matplotlib.ticker.ScalarFormatter(useMathText=True)  # False gives '2e3', True gives '2x10^3'
+    # # formatter.set_scientific(True)
+    # formatter.set_powerlimits((0, 0))  # Forces scientific notation for all non-zero numbers
+    # ax.xaxis.set_major_formatter(formatter)
+
+    # 2. Format each tick individually as scientific notation
+    # %g automatically strips trailing zeros and format looks like 2e+03 or 2e03
+    # .replace("+0", "").replace("0", "") cleans it up to exactly '2e3'
+    def format_e(x, pos):
+        if x == 0:
+            return "0"
+        base, exponent = f"{x:.0e}".split("e")
+        return fr"${base}\times 10^{{{int(exponent)}}}$"  # int() strips the leading zeros and '+' sign
+    if reformatTicks:
+        ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(format_e))
     
     ax.grid(True, alpha=0.3, linestyle='--')
     
     # Legend at bottom right, above statistics box
-    ax.legend(loc='center right', )#fontsize=11, framealpha=0.9, bbox_to_anchor=(0.98, 0.25))
+    ax.legend(loc=legendLoc, )#fontsize=11, framealpha=0.9, bbox_to_anchor=(0.98, 0.25))
     
     # Statistics box at bottom right, below legend
     if pareto_df_secondary is not None and not pareto_df_secondary.empty:
@@ -554,12 +576,13 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
             f"Primary Pareto: {len(pareto_df)} ({100*len(pareto_df)/len(df):.1f}%)\n"
             f"Metric range: {df['primary_metric'].min():.4f} - {df['primary_metric'].max():.4f}"
         )
-    
-    ax.text(0.98, 0.02, stats_text, transform=ax.transAxes,
-        #    fontsize=10, 
-           verticalalignment='bottom', horizontalalignment='right',
-           bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
-    
+    if showStats:
+        ax.text(0.98, 0.02, stats_text, transform=ax.transAxes,
+            #    fontsize=10, 
+            verticalalignment='bottom', horizontalalignment='right',
+            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+
+
     plt.tight_layout()
     
     plot_path = os.path.join(output_dir, 'pareto_front_roc_based_nolabels.png')
@@ -573,9 +596,9 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
         ax.annotate(label, 
                    xy=(row['parameters'], row['primary_metric']),
                    xytext=(8, 8), textcoords='offset points',
-                   fontsize=9, color='darkred', fontweight='bold',
+                   fontsize=9, color=plt.rcParams['axes.prop_cycle'].by_key()['color'][3], fontweight='bold',
                    bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', 
-                            alpha=0.7, edgecolor='darkred', linewidth=1),
+                            alpha=0.7, edgecolor=plt.rcParams['axes.prop_cycle'].by_key()['color'][3], linewidth=1),
                    zorder=4)
     
     # Annotate secondary Pareto points
@@ -586,9 +609,9 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
             ax.annotate(label, 
                        xy=(row['parameters'], row['primary_metric']),
                        xytext=(8, -12), textcoords='offset points',
-                       fontsize=8, color='darkorange', fontweight='bold',
+                       fontsize=8, color=plt.rcParams['axes.prop_cycle'].by_key()['color'][1], fontweight='bold',
                        bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', 
-                                alpha=0.7, edgecolor='darkorange', linewidth=1),
+                                alpha=0.7, edgecolor=plt.rcParams['axes.prop_cycle'].by_key()['color'][1], linewidth=1),
                        zorder=4)
             
 
