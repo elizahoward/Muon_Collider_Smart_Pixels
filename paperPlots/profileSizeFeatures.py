@@ -104,9 +104,10 @@ def plotClusterWithProfiles(cluster,figsize=(10.8, 7)):
     ax_top.set_yscale('log')
 
     # Top Labels & Arrow Placement
-    ax_top.text(0.54, 1.2, 'x-size', transform=ax_top.transAxes, ha='center', va='bottom',fontsize=plt.rcParams['axes.labelsize'])
+    ax_top.text(0.50, 1.2, r'$x_{\mathrm{size}}$', transform=ax_top.transAxes, ha='center', va='bottom',fontsize=plt.rcParams['axes.labelsize'])
     # ax_top.text(0.5, 1.05, r'$\longleftrightarrow$', transform=ax_top.transAxes, ha='center', va='bottom',fontsize=plt.rcParams['axes.labelsize'])
-    ax_top.text(1.01, 0.5, 'x-profile', transform=ax_top.transAxes, ha='left', va='center', rotation=-90,fontsize=plt.rcParams['axes.labelsize'])
+    # ax_top.text(1.01, 0.5, 'x-profile', transform=ax_top.transAxes, ha='left', va='center', rotation=-90,fontsize=plt.rcParams['axes.labelsize'])
+    ax_top.text(0.02, 0.3, r'$x_{\mathrm{profile}}$', transform=ax_top.transAxes, ha='left', va='center',fontsize=plt.rcParams['axes.labelsize'])
     x_start, x_end = get_profile_bounds_fraction(x_profile)
     ax_top.annotate('', xy=(x_start, 1.12), xytext=(x_end, 1.12), xycoords='axes fraction',
                     arrowprops=dict(arrowstyle='<->', color='black',lw=1.5))
@@ -120,8 +121,8 @@ def plotClusterWithProfiles(cluster,figsize=(10.8, 7)):
     ax_right.set_xscale('log')
 
     # Right Labels & Arrow Placement (re-ordered vertically to match top panel format)
-    ax_right.text(0.6, 1.01, 'y-profile', transform=ax_right.transAxes, ha='center', va='bottom',fontsize=plt.rcParams['axes.labelsize'])
-    ax_right.text(1.2, 0.47, 'y-size', transform=ax_right.transAxes, ha='left', va='center', rotation=-90,fontsize=plt.rcParams['axes.labelsize'])
+    ax_right.text(0.22, 0.75, r'$y_{\mathrm{profile}}$', transform=ax_right.transAxes, ha='center', va='bottom',rotation=-90,fontsize=plt.rcParams['axes.labelsize'])
+    ax_right.text(1.2, 0.545, r'$y_{\mathrm{size}}$', transform=ax_right.transAxes, ha='left', va='center', rotation=-90,fontsize=plt.rcParams['axes.labelsize'])
     # ax_right.text(1.05, 0.5, r'$\longleftrightarrow$', transform=ax_right.transAxes, ha='left', va='center',rotation=90,fontsize=plt.rcParams['axes.labelsize'])
     y_start, y_end = get_profile_bounds_fraction(y_profile)
     ax_right.annotate('', xy=(1.15, y_start), xytext=(1.15, y_end), xycoords='axes fraction',
@@ -158,8 +159,8 @@ def plotSingleCluster(cluster,cmap="Blues", ax = plt.gca(),doColorbar=True,title
     plt.tick_params(axis='y', which='both', left=False, right=False, labelleft=False)
     ax.grid(which="minor", color="grey", linestyle='-', linewidth=0.5,snap=False)
 
-    plt.xlabel("x-local")
-    plt.ylabel("y-local")
+    plt.xlabel(r"$x_{\mathrm{local}}$",fontsize=25)
+    plt.ylabel(r"$y_{\mathrm{local}}$",fontsize=25)
     
     plt.tight_layout(pad=3.5)
     return im, ax
@@ -218,13 +219,22 @@ def main():
     reconDF = pd.read_pickle(pklPath)
     # clustersSig = recon2Dsig.to_numpy().reshape(recon2Dsig.shape[0],13,21)
     # print(reconDF.iloc[0,0:273].to_numpy())
-    index = 2
+    index = 373742
+    index = 21
+    index = 819117
+    reconDF = reconDF.query("source == 'bib_mp'")
+    nPix = np.count_nonzero(reconDF.iloc[:,0:273].to_numpy(),axis=1)
+    print(np.where(nPix>10))
     cluster = reconDF.iloc[index,0:273].to_numpy().reshape(13,21).astype(float)
+    print(reconDF.iloc[index,273])
+    print(np.unique(reconDF.iloc[:,273]))
+    print((reconDF.iloc[:,273]))
+    print(len(reconDF))
     # print(cluster)
     plotSingleCluster(cluster)
     plt.savefig("./cluster.png")
 
-    plotClusterWithProfiles(cluster)
+    plotClusterWithProfiles(cluster,figsize=(8.1,5.28))
     plt.savefig("./clusterFeatures.png")
 
     # print(cluster)
