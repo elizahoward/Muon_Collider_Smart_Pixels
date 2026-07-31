@@ -59,17 +59,36 @@ if PRIMARY_METRIC == "primary_metric":
     METRIC_NAME = "Weighted Bkg Rejection"
 elif PRIMARY_METRIC == "bkg_rej_@99%":
     METRIC_NAME = "Background Rejection at 99% Sig. Eff."
+    METRIC_NAME = r'$\mathcal{R}_{\mathrm{BIB,99}}^{\mathrm{cluster}}$'
 else:
     raise ValueError("invalid PRIMARY_METRIC")
+
+#for the new colors that are modular kind of 
+def darken_hex(hex_str, amount=22): #amount is in decimal not hex!
+    hex_str = hex_str.lstrip("#")
+    r, g, b = [int(hex_str[i : i + 2], 16) for i in (0, 2, 4)]
+    r, g, b = [max(0, val - amount) for val in (r, g, b)]
+    return f"#{r:02x}{g:02x}{b:02x}"
+base_color = plt.rcParams["axes.prop_cycle"].by_key()["color"][3]
+reds = [base_color] + [base_color := darken_hex(base_color) for _ in range(4)]
+
+base_color = plt.rcParams["axes.prop_cycle"].by_key()["color"][2]
+greens = [base_color] + [base_color := darken_hex(base_color) for _ in range(4)]
+
+base_color = plt.rcParams["axes.prop_cycle"].by_key()["color"][0]
+blues = [base_color] + [base_color := darken_hex(base_color) for _ in range(4)]
+
+base_color = '#646464'
+grays = [base_color] + [base_color := darken_hex(base_color) for _ in range(4)]
 
 # ── Bit-width folder configs: (folder_name, run_name, label, color) ────────────
 if newFolderStructure:
     MODEL1_CONFIGS = [
-        ("model1_3bit_normalised_selected",   "model1_3w5i",   "Model 1 (3-bit)",   "#ff6b6b"),
-        ("model1_4bit_normalised_selected",   "model1_4w6i",   "Model 1 (4-bit)",   "#ee5a24"),
-        ("model1_6bit_normalised_selected",   "model1_6w8i",   "Model 1 (6-bit)",   "#c0392b"),
-        ("model1_8bit_normalised_selected",  "model1_8w10i",  "Model 1 (8-bit)",  "#922b21"),
-        ("model1_10bit_normalised_selected", "model1_10w12i", "Model 1 (10-bit)", "#641e16"),
+        ("model1_3bit_normalised_selected",   "model1_3w5i",   "Model 1 (3-bit)",   reds[0]),#"#ff6b6b"),
+        ("model1_4bit_normalised_selected",   "model1_4w6i",   "Model 1 (4-bit)",   reds[1]),#"#ee5a24"),
+        ("model1_6bit_normalised_selected",   "model1_6w8i",   "Model 1 (6-bit)",   reds[2]),#"#c0392b"),
+        ("model1_8bit_normalised_selected",  "model1_8w10i",  "Model 1 (8-bit)",  reds[3]),#"#922b21"),
+        ("model1_10bit_normalised_selected", "model1_10w12i", "Model 1 (10-bit)", reds[4]),#"#641e16"),
     ]
 else:
     MODEL1_CONFIGS = [
@@ -82,11 +101,11 @@ else:
 
 if newFolderStructure:
     MODEL25_CONFIGS = [
-        ("model2_5_3bit_normalised_selected",  "model25_3bit",  "Model 2 (3-bit)",  "#74b9ff"),
-        ("model2_5_4bit_normalised_selected",  "model25_4bit",  "Model 2 (4-bit)",  "#0984e3"),
-        ("model2_5_6bit_normalised_selected",  "model25_6bit",  "Model 2 (6-bit)",  "#2980b9"),
-        ("model2_5_8bit_normalised_selected",  "model25_8bit",  "Model 2 (8-bit)",  "#1a5276"),
-        ("model2_5_10bit_normalised_selected", "model25_10bit", "Model 2 (10-bit)", "#154360"),
+        ("model2_5_3bit_normalised_selected",  "model25_3bit",  "Model 2 (3-bit)",  blues[0]),#"#74b9ff"),
+        ("model2_5_4bit_normalised_selected",  "model25_4bit",  "Model 2 (4-bit)",  blues[1]),#"#0984e3"),
+        ("model2_5_6bit_normalised_selected",  "model25_6bit",  "Model 2 (6-bit)",  blues[2]),#"#2980b9"),
+        ("model2_5_8bit_normalised_selected",  "model25_8bit",  "Model 2 (8-bit)",  blues[3]),#"#1a5276"),
+        ("model2_5_10bit_normalised_selected", "model25_10bit", "Model 2 (10-bit)", blues[4]),#"#154360"),
     ]
 else:
     MODEL25_CONFIGS = [
@@ -98,11 +117,11 @@ else:
     ]
 
 MODEL3_CONFIGS = [
-    ("model3_3bit_normalised_selected",  "model3_3bit",  "Model 3 (3-bit)",  "#9bfea5"),
-    ("model3_4bit_normalised_selected",  "model3_4bit",  "Model 3 (4-bit)",  "#2ecc31"),
-    ("model3_6bit_normalised_selected",  "model3_6bit",  "Model 3 (6-bit)",  "#3bad58"),
-    ("model3_8bit_normalised_selected",  "model3_8bit",  "Model 3 (8-bit)",  "#00b8ac"),
-    ("model3_10bit_normalised_selected", "model3_10bit", "Model 3 (10-bit)", "#00745D"),
+    ("model3_3bit_normalised_selected",  "model3_3bit",  "Model 3 (3-bit)",  greens[0]),#"#9bfea5"),
+    ("model3_4bit_normalised_selected",  "model3_4bit",  "Model 3 (4-bit)",  greens[1]),#"#2ecc31"),
+    ("model3_6bit_normalised_selected",  "model3_6bit",  "Model 3 (6-bit)",  greens[2]),#"#3bad58"),
+    ("model3_8bit_normalised_selected",  "model3_8bit",  "Model 3 (8-bit)",  greens[3]),#"#00b8ac"),
+    ("model3_10bit_normalised_selected", "model3_10bit", "Model 3 (10-bit)", greens[4]),#"#00745D"),
 ]
 
 _ALL_CONFIGS = MODEL1_CONFIGS + MODEL25_CONFIGS + MODEL3_CONFIGS
@@ -110,9 +129,11 @@ RUN_COLORS   = {rn: col for _, rn, _, col in _ALL_CONFIGS}
 RUN_LABELS   = {rn: lbl for _, rn, lbl, _ in _ALL_CONFIGS}
 
 FAMILY_LINE = {
-    "Model 1":   dict(color="#c0392b", lw=1.4, ls="--", label="Model 1 Pareto front"),
-    "Model 2.5": dict(color="#1a5276", lw=1.4, ls="-.", label="Model 2 Pareto front"),
-    "Model 3":   dict(color="#27ae60", lw=1.4, ls=":",  label="Model 3 Pareto front"),
+    "Model 1":   dict(color=reds[0], lw=1.4, ls="--", label="Model 1 Pareto front"),
+    # "Model 2.5": dict(color="#1a5276", lw=1.4, ls="-.", label="Model 2 Pareto front"),
+    "Model 2.5": dict(color=blues[0], lw=1.4, ls="--", label="Model 2 Pareto front"),
+    # "Model 3":   dict(color="#27ae60", lw=1.4, ls=":",  label="Model 3 Pareto front"),
+    "Model 3":   dict(color=greens[0], lw=1.4, ls="--",  label="Model 3 Pareto front"),
     "Combined":  dict(color="black",   lw=1.8, ls="-",  label="Combined Pareto front"),
 }
 
@@ -125,12 +146,15 @@ COMP_LOG_TICKS = [0.9, 0.85, 0.80, 0.75, 0.70, 0.60, 0.50, 0.30, 0.10, 0.0]
 
 HARDWARE_REFS = [
     # (34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
-    (34568,"Smartpixel Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (34568,"Smartpixel Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (34568,"Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (26376,"Smartpixel Filtering Model (vsynth)","teal",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
-    (14289+57398,"Smartpixel Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (14289+57398,"Smartpixel Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (14289+57398,"Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
-    (106400+53200,"FPGA: Xilinx Zynq (xc7z020clg400-1), featured on PYNQ-Z2","fuchsia",0.05,0),
+    # (106400+53200,"FPGA: Xilinx Zynq (xc7z020clg400-1), featured on PYNQ-Z2","fuchsia",0.05,0),
+    (106400+53200,"FPGA: Xilinx Zynq, featured on PYNQ-Z2","fuchsia",0.05,0),
     # (20736+15552,"FPGA: Tang Nano 20k","pink",0.05,0.1),
     # (14400+28800,"FPGA: Xilinx Zynq 7007S (xc7z007z)","purple",0.05,0.1),#https://www.mouser.com/datasheet/2/903/ds190-Zynq-7000-Overview-1595492.pdf
     # (10000+20000,'Small FPGA: "Pink Board" Tang Nano 20k', ), #accroding to https://deepwiki.com/sipeed/sipeed_wiki/4.1-tang-nano-20k
@@ -448,7 +472,7 @@ def add_threshold_line(ax, x_val, label, color='gray', linestyle='--', linewidth
             color=color, 
             va='bottom',         
             ha='left',        
-            fontsize=12,
+            fontsize=plt.rcParams["axes.labelsize"]-1,
             zorder=3
         )
     else:
@@ -547,7 +571,7 @@ def reorderLegend(handles, labels, legendOrder=[]):
         return handles, labels
     return [handles[idx] for idx in legendOrder],[labels[idx] for idx in legendOrder]
   
-def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=None):
+def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=None,showStats=False,oldLegend=False):
     handles, labels = ax.get_legend_handles_labels()
     if extra_handles:
         handles += extra_handles
@@ -560,15 +584,61 @@ def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=Non
     loc = "lower right"
     legendOrder = [0,1,2,3,4,15,18,5,6,7,8,9,16,10,11,12,13,14,17]
     h2, l2 = reorderLegend(h2, l2, legendOrder=legendOrder)
-    ax.legend(h2, l2, loc=loc, fontsize=11, framealpha=0.9, ncol=3, columnspacing=0.6)
+    if oldLegend:
+        ax.legend(h2, l2, loc=loc, fontsize=11, framealpha=0.9, ncol=3, columnspacing=0.6)
+    else:
+        from matplotlib.lines import Line2D
+        from matplotlib.legend_handler import HandlerTuple
+        bits = ["3-bit", "4-bit", "6-bit", "8-bit", "10-bit"]
+        # 2. Build the 5 rows of colored dots
+        bit_handles = []
+        for i in range(5):
+            # Create a tuple of 3 separate dots using your 3 different gray/darkened variants
+            row_dots = (
+                Line2D([], [], marker="o", color="none", markerfacecolor=reds[i], markersize=9),
+                Line2D([], [], marker="o", color="none", markerfacecolor=blues[i], markersize=9),
+                Line2D([], [], marker="o", color="none", markerfacecolor=greens[i], markersize=9),
+            )
+            bit_handles.append(row_dots)
+
+        # 3. Build the generic "Data" vs "Linear Fit" legend entries
+        style_handles = [
+            
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=reds[0], markeredgecolor="dimgray", markersize=9, label="Model 1"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=blues[0], markeredgecolor="dimgray", markersize=9, label="Model 2"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=greens[0], markeredgecolor="dimgray", markersize=9, label="Model 3"),
+            Line2D([0], [0], linestyle="--", color="gray", linewidth=2, label="Model Pareto Fronts"),
+            Line2D([], [], 
+                    linestyle="-",       # Solid line
+                    color="black",        # Line color
+                    linewidth=2, 
+                    marker="D",          # "D" creates a large diamond (use "d" for a thin diamond)
+                    markerfacecolor="gray", 
+                    markeredgecolor="black", 
+                    markersize=10, 
+                    label="Cross-Model Pareto Front",
+                ),
+            Line2D([0], [0], marker="*", color="none", markerfacecolor="gray", markeredgecolor="black", markersize=20, label="Selected Models"),
+            # Line2D([0], [0], linestyle="-", color="black", linewidth=2, label="Cross-Model Pareto Front"),
+
+        ]
+
+        # 4. Add the first legend (bits) and anchor it manually
+        leg1 = ax.legend(handles=bit_handles, labels=bits,loc="lower right", bbox_to_anchor=(0.632, 0.0),#559 if other legend
+                        frameon=True,handler_map={tuple: HandlerTuple(ndivide=None, pad=0.5)} )
+        ax.add_artist(leg1)  # Prevents the second legend from overwriting the first
+
+        # 5. Add the second legend (Styles)
+        ax.legend(handles=style_handles, loc="lower right", frameon=True)
 
     stats = (f"Total models plotted: {len(df)}\n"
              f"Pareto optimal: {len(pareto_df)} ({100*len(pareto_df)/len(df):.1f}%)\n"
              f"Metric range: {df[PRIMARY_METRIC].min():.4f} – {df[PRIMARY_METRIC].max():.4f}")
-    ax.text(0.02, 0.02 if complement else 0.98, stats,
-            transform=ax.transAxes, fontsize=9,
-            va="bottom" if complement else "top",
-            bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8))
+    if showStats:
+        ax.text(0.02, 0.02 if complement else 0.98, stats,
+                transform=ax.transAxes, fontsize=9,
+                va="bottom" if complement else "top",
+                bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8))
 
 
 def _finalize(ax, title, xscale="linear", complement=False):
@@ -576,12 +646,13 @@ def _finalize(ax, title, xscale="linear", complement=False):
     if xscale != "linear": tags.append("x-log")
     if complement:          tags.append("y: 1−metric log")
     tag = f" [{', '.join(tags)}]" if tags else ""
-    ax.set_title(title + tag, fontsize=18, fontweight="bold", pad=14)
-    ax.set_xlabel("LUTs + FFs (registers) (csynth)", fontsize=16, fontweight="bold")
+    ax.set_title(title)# + tag, fontsize=18, fontweight="bold", pad=14)
+    # ax.set_xlabel("LUTs + FFs (registers) (csynth)", )#fontsize=16, fontweight="bold")
+    ax.set_xlabel("LUTs + FFs (csynth)", )#fontsize=16, fontweight="bold")
     ax.set_ylabel(
         f"{METRIC_NAME}  (1−metric, log scale)" if complement
-        else METRIC_NAME,
-        fontsize=16, fontweight="bold")
+        else METRIC_NAME,fontsize=25)
+        #fontsize=16, fontweight="bold")
     ax.grid(True, alpha=0.28, linestyle="--", which="both")
     for (ff_plus_lut, label,color,labelYHeight,textOffset) in HARDWARE_REFS:
         add_threshold_line(ax,ff_plus_lut,label,color=color,labelYHeight=labelYHeight,textOffset = textOffset)
@@ -613,6 +684,7 @@ def make_plot_simple(df, pareto_df, output_dir, zoomed=False, annotate=True):
         suffix = "_full"
         title  = f"Model 1 vs Model 2 vs Model 3 — Combined Pareto Front\n{METRIC_NAME} vs LUTs + FF"
         title  = f"Model 1 vs Model 2 vs Model 3 — Combined Pareto Front"
+        title  = f"Cross-Model Pareto Front"
     _finalize(ax, title)
     _add_legend_and_stats(ax, df, pareto_df)
     plt.tight_layout()
@@ -631,8 +703,11 @@ def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, pareto_m3,
                     x_col, complement=complement)
     if complement:
         _setup_complement_log_y(ax, df)
+    else:
+        ax.set_ylim(-0.01,1)
 
     title = ("Model 1 vs Model 2 vs Model 3 — Sub-fronts + Combined Pareto")
+    title = ("Cross-Model Pareto Front")
             #  f"\n{METRIC_NAME} vs LUTs + FF")
     _finalize(ax, title, xscale=xscale, complement=complement)
 
@@ -733,7 +808,7 @@ def main():
                             figsize=(13,9*13/16))
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
                             OUTPUT_DIR, xscale="log",    complement=False, annotate=annotate,
-                            figsize=(13.4,9*13.2/16))
+                            figsize=(11.2,7.4))
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
                             OUTPUT_DIR, xscale="linear", complement=True,  annotate=annotate)
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
