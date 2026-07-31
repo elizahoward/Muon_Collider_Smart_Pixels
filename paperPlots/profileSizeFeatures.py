@@ -209,11 +209,11 @@ def plotCluster(truth, recon2D, index):
     fig.canvas.draw()
 
 def main():
-    pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026Feb/plots/dfOfTruth.pkl" #messed up timing distribution
+    pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026Feb/plots/dfOfTruth.pkl"
     # --- Load data ---
     # print(f"Loading truthDF from {pklPath}")
     # truthDF = pd.read_pickle(pklPath)
-    pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026Feb/plots/dfOfRecon.pkl" #messed up timing distribution
+    pklPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/Data_Files/Data_Set_2026Feb/plots/dfOfRecon.pkl" 
     print(f"Loading reconDF from {pklPath}")
     reconDF = pd.read_pickle(pklPath)
     # clustersSig = recon2Dsig.to_numpy().reshape(recon2Dsig.shape[0],13,21)

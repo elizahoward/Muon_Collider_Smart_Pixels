@@ -60,6 +60,7 @@ def plotRZPlane(sig,figsize=(4,1.5)):#figsize defaults for when not using poster
     sig['hit_r'] = np.sqrt( sig["hit_y"]**2 + sig["hit_x"]**2)
     # plt.subplot(211)
     plt.scatter(sig['zglobal'],sig["hit_r"],marker="s",s=10,c=colors, label="Signal hits")
+    # plt.gca().set_aspect('equal')
     # plt.ylim([0,60])
     # plt.subplot(212)
     # plt.scatter(sig['hit_z'],sig["hit_r"],s=1,c=colors, label="Signal hits") #to confirm that hit_z is the same as z-global
@@ -79,7 +80,7 @@ def main():
     plt.title("")
     plt.savefig("./ModuleLayoutXY.png")
     plt.close()
-    plotRZPlane(sig,figsize=((5,2.4)))
+    plotRZPlane(sig,figsize=((6,5.5)))
 
 if __name__=="__main__":
     main()
