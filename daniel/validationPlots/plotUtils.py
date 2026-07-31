@@ -542,20 +542,20 @@ def getEricsMasks(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
 
 #This should not be called directly!
 #Only use this inside other functions that e.g. use this and deal with figsize/subplot outside
-def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False):
+def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False,colorLabel=r"$n_{\mathrm{clusters}}$"):
     if not( keyX in truthDF.columns ):
         raise Exception(f"{keyX} not present in truthbib or truthsig dataframes")
     if not( keyY in truthDF.columns ):
         raise Exception(f"{keyY} not present in truthbib or truthsig dataframes")
-    counts, xedges, yedges, im = plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = logColor)
+    counts, xedges, yedges, im = plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = logColor,colorLabel=colorLabel)
     return counts, xedges, yedges, im
 
-def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False):
+def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False,colorLabel=r"Number of eh pairs or $n_{\mathrm{clusters}}$"):
     if logColor:
         counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],norm=colors.LogNorm(),bins=[binsX,binsY],cmap=cmap)
     else:
         counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],bins=[binsX,binsY],cmap=cmap)
-    plt.colorbar(im,ax=plt.gca())
+    plt.colorbar(im,ax=plt.gca(),label=colorLabel)
     plt.title(title, fontsize = 20)
     plt.xlabel(xlabel, fontsize = 16)
     plt.ylabel(ylabel, fontsize = 16)
@@ -564,17 +564,18 @@ def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColo
 
 def plot1by2BibSig2dHisto(truthBib, truthSig,keyX, keyY,mask_bib,mask_sig,binsX,binsY,cmap,xlabel,ylabel,title,                          
                           PLOT_DIR="./plots",interactivePlots=False,
-                          yscale = 'linear',xscale = 'linear',logColor = False,closePlt = True):
+                          yscale = 'linear',xscale = 'linear',logColor = False,closePlt = True,
+                          colorLabel="Number of eh Pairs"):
     # fig, ax = plt.subplots(1, 2, figsize=(14, 6))
     # fig, ax = plt.subplots(1, 2, figsize=(10, 4))
     plt.figure(figsize = (10,4))
     plt.subplot(121)
-    countsBIB, xedgesBIB, yedgesBIB, im = plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB",logColor=logColor)
+    countsBIB, xedgesBIB, yedgesBIB, im = plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB",logColor=logColor,colorLabel=colorLabel)
     plt.xscale(xscale)
     plt.yscale(yscale)
 
     plt.subplot(122)
-    countsSig, xedgesSig, yedgesSig, im = plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal",logColor=logColor)
+    countsSig, xedgesSig, yedgesSig, im = plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal",logColor=logColor,colorLabel=colorLabel)
     plt.xscale(xscale)
     plt.yscale(yscale)
     if closePlt:
@@ -611,7 +612,9 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     pastel_red_cmap = create_pastel_red_cmap()
     pastel_red_cmap = 'Blues'
     
-    plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'xSize',mask_bib,mask_sig,30,np.arange(0,22,1),pastel_red_cmap,'z-global [mm]','x-size (# pixels)', "bib_signal_zglobal_vs_xsize_comparison",PLOT_DIR,interactivePlots,logColor=True)
+    plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'xSize',mask_bib,mask_sig,30,np.arange(0,22,1),pastel_red_cmap,
+                          r'$z_{\mathrm{global}}$ [mm]',r'$x_{\mathrm{size}}$ [# pixels]', "bib_signal_zglobal_vs_xsize_comparison",
+                          PLOT_DIR,interactivePlots,logColor=True,colorLabel=r"$n_{\mathrm{clusters}}$")
 
     printEricRangeThing(truthbib,truthsig,'z-global','xSize')
 
