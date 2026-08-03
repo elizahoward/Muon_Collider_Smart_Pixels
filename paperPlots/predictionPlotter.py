@@ -164,7 +164,7 @@ def plotAll1dHists(predVarDF,threshVal,pltDir):
     histoKarri(predVarDF,threshVal,pltDir,key="ySize",keyLabel="y-Size [# pixels]",bins=np.arange(0,14,1),figsize=(5,11),locLegend="upper right")
     histoKarri(predVarDF,threshVal,pltDir,key="nModule",keyLabel="Module Number (longitudinally counted)",bins=12,figsize=(5,10))
     histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(5,10),locLegend="upper right")
-    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(7.2,7),locLegend="upper right",plotAll = False,extendSaveTitle="paperVersion")
+    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(6.6,10),locLegend="upper right",plotAll = False,extendSaveTitle="paperVersion")
     print("finished 1d histograms")
 
 def plotNew2by2(predVarDF, threshVal, pltDir,interactivePlots = False,extendTitle = "",cmap="Blues",figsize=(10,8)):
@@ -188,12 +188,12 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bi
     configsSig = [
         (predVarDF.query("trueY == 1"), "all Signal"),
         (predVarDF.query("trueY == 1 and prediction > @cut"), "Signal accepted by model"),
-        (predVarDF.query("trueY == 1 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), "Signal accepted by model \nwithin timing window"),
+        (predVarDF.query("trueY == 1 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), "Signal accepted by model, \n "+ r"$[3\sigma, 5\sigma]$ timing selection"),
     ]
     configsBib = [
         (predVarDF.query("trueY == 0"), "all BIB"),
         (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
-        (predVarDF.query("trueY == 0 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), "BIB accepted by model \nwithin timing window"),
+        (predVarDF.query("trueY == 0 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), "BIB accepted by model, \n "+ r"$[3\sigma, 5\sigma]$ timing selection"),
     ]
     totalPlots = plotAll + plotBIB + plotSig
     plt.figure(figsize=figsize)
