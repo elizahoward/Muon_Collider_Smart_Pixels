@@ -67,16 +67,17 @@ else:
 def darken_hex(hex_str, amount=22): #amount is in decimal not hex!
     hex_str = hex_str.lstrip("#")
     r, g, b = [int(hex_str[i : i + 2], 16) for i in (0, 2, 4)]
-    r, g, b = [max(0, val - amount) for val in (r, g, b)]
+    r, g, b = [min(max(0, val - amount),255) for val in (r, g, b)]
     return f"#{r:02x}{g:02x}{b:02x}"
-base_color = plt.rcParams["axes.prop_cycle"].by_key()["color"][3]
-reds = [base_color] + [base_color := darken_hex(base_color) for _ in range(4)]
+colorStep = 10
+base_color = darken_hex(plt.rcParams["axes.prop_cycle"].by_key()["color"][3],amount=-colorStep*3)
+reds = [base_color] + [base_color := darken_hex(base_color,amount=colorStep) for _ in range(4)]
 
-base_color = plt.rcParams["axes.prop_cycle"].by_key()["color"][2]
-greens = [base_color] + [base_color := darken_hex(base_color) for _ in range(4)]
+base_color = darken_hex(plt.rcParams["axes.prop_cycle"].by_key()["color"][2],amount=-colorStep*3)
+greens = [base_color] + [base_color := darken_hex(base_color,amount=colorStep) for _ in range(4)]
 
-base_color = plt.rcParams["axes.prop_cycle"].by_key()["color"][0]
-blues = [base_color] + [base_color := darken_hex(base_color) for _ in range(4)]
+base_color = darken_hex(plt.rcParams["axes.prop_cycle"].by_key()["color"][0],amount=-colorStep*3)
+blues = [base_color] + [base_color := darken_hex(base_color,amount=colorStep) for _ in range(4)]
 
 base_color = '#646464'
 grays = [base_color] + [base_color := darken_hex(base_color) for _ in range(4)]
@@ -127,6 +128,20 @@ MODEL3_CONFIGS = [
 _ALL_CONFIGS = MODEL1_CONFIGS + MODEL25_CONFIGS + MODEL3_CONFIGS
 RUN_COLORS   = {rn: col for _, rn, _, col in _ALL_CONFIGS}
 RUN_LABELS   = {rn: lbl for _, rn, lbl, _ in _ALL_CONFIGS}
+# print(RUN_LABELS)
+##Make markers
+markerList = ["o", "<", "v", ">", "^"] 
+markerList = ["^", "s", "p", "h", "8"] 
+# markerList = ["^", "s", "h", "8",(10,0,0)] 
+# Map the bit strings to the index of your replacement list
+bit_map = {"3-bit": markerList[0], "4-bit": markerList[1], "6-bit": markerList[2], "8-bit": markerList[3], "10-bit": markerList[4]}
+# Update the dictionary using a comprehension
+RUN_MARKERS = {
+    key: next((bit_map[bit] for bit in bit_map if bit in val), val) 
+    for key, val in RUN_LABELS.items()
+}
+
+# print(RUN_MARKERS)
 
 FAMILY_LINE = {
     "Model 1":   dict(color=reds[0], lw=1.4, ls="--", label="Model 1 Pareto front"),
@@ -147,14 +162,16 @@ COMP_LOG_TICKS = [0.9, 0.85, 0.80, 0.75, 0.70, 0.60, 0.50, 0.30, 0.10, 0.0]
 HARDWARE_REFS = [
     # (34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (34568,"Smartpixel Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
-    (34568,"Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (34568,"Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (34568,"arxiv:2310.02474","black",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (26376,"Smartpixel Filtering Model (vsynth)","teal",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (14289+57398,"Smartpixel Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
-    (14289+57398,"Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (14289+57398,"Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (14289+57398,"arxiv:2312.11676v1","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (106400+53200,"FPGA: Xilinx Zynq (xc7z020clg400-1), featured on PYNQ-Z2","fuchsia",0.05,0),
-    (106400+53200,"FPGA: Xilinx Zynq, featured on PYNQ-Z2","fuchsia",0.05,0),
+    (106400+53200,"Xilinx ZYNQ XC7Z020 FPGA","black",0.05,0),
     # (20736+15552,"FPGA: Tang Nano 20k","pink",0.05,0.1),
     # (14400+28800,"FPGA: Xilinx Zynq 7007S (xc7z007z)","purple",0.05,0.1),#https://www.mouser.com/datasheet/2/903/ds190-Zynq-7000-Overview-1595492.pdf
     # (10000+20000,'Small FPGA: "Pink Board" Tang Nano 20k', ), #accroding to https://deepwiki.com/sipeed/sipeed_wiki/4.1-tang-nano-20k
@@ -505,23 +522,26 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
     for run_name in df["run_name"].unique():
         color  = RUN_COLORS.get(run_name, "gray")
         label  = RUN_LABELS.get(run_name, run_name)
+        marker  = RUN_MARKERS.get(run_name, "o")
         subset = df[df["run_name"] == run_name]
         ax.scatter(subset[x_col], _y(subset[PRIMARY_METRIC], complement),
-                   alpha=0.30, s=25, c=color, edgecolors="none",
+                   alpha=0.30, s=30, c=color, edgecolors="none",marker=marker,
                    label=label, zorder=1)
 
     for run_name in pareto_df["run_name"].unique():
         color = RUN_COLORS.get(run_name, "gray")
         p_sub = pareto_df[pareto_df["run_name"] == run_name]
+        marker  = RUN_MARKERS.get(run_name, "o")
         ax.scatter(p_sub[x_col], _y(p_sub[PRIMARY_METRIC], complement),
-                   alpha=0.90, s=60, c=color, edgecolors="black",
-                   linewidth=1.2, marker="D", zorder=3)
+                   alpha=0.90, s=100, c=color, edgecolors="black",
+                   linewidth=1.2, marker=marker, zorder=3) #marker = "D"
     for _, row in pareto_df.iterrows():
+        marker  = RUN_MARKERS.get(row['run_name'], "o")
         if (row['run_name'],row['trial_id']) in SELECTED_MODELS:
             color = RUN_COLORS.get(row['run_name'], "gray")
             ax.scatter(row[x_col], _y(row[PRIMARY_METRIC], complement),
-                   alpha=0.90, s=700, c=color, edgecolors="black",
-                   linewidth=1.2, marker="*", zorder=3)
+                   alpha=0.95, s=300, c=color, edgecolors="black",
+                   linewidth=1.2, marker=marker, zorder=3) #marker = "*"
 
 
     ps    = pareto_df.sort_values(x_col)
@@ -595,36 +615,36 @@ def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=Non
         for i in range(5):
             # Create a tuple of 3 separate dots using your 3 different gray/darkened variants
             row_dots = (
-                Line2D([], [], marker="o", color="none", markerfacecolor=reds[i], markersize=9),
-                Line2D([], [], marker="o", color="none", markerfacecolor=blues[i], markersize=9),
-                Line2D([], [], marker="o", color="none", markerfacecolor=greens[i], markersize=9),
+                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=reds[i], markersize=10),
+                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=blues[i], markersize=10),
+                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=greens[i], markersize=10),
             )
             bit_handles.append(row_dots)
 
         # 3. Build the generic "Data" vs "Linear Fit" legend entries
         style_handles = [
             
-            Line2D([0], [0], marker="o", color="none", markerfacecolor=reds[0], markeredgecolor="dimgray", markersize=9, label="Model 1"),
-            Line2D([0], [0], marker="o", color="none", markerfacecolor=blues[0], markeredgecolor="dimgray", markersize=9, label="Model 2"),
-            Line2D([0], [0], marker="o", color="none", markerfacecolor=greens[0], markeredgecolor="dimgray", markersize=9, label="Model 3"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=reds[3], markeredgecolor="dimgray", markersize=9, label="Model 1"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=blues[3], markeredgecolor="dimgray", markersize=9, label="Model 2"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor=greens[3], markeredgecolor="dimgray", markersize=9, label="Model 3"),
             Line2D([0], [0], linestyle="--", color="gray", linewidth=2, label="Model Pareto Fronts"),
             Line2D([], [], 
                     linestyle="-",       # Solid line
                     color="black",        # Line color
                     linewidth=2, 
-                    marker="D",          # "D" creates a large diamond (use "d" for a thin diamond)
+                    marker="o",          # "D" creates a large diamond (use "d" for a thin diamond)
                     markerfacecolor="gray", 
                     markeredgecolor="black", 
-                    markersize=10, 
+                    markersize=12, 
                     label="Cross-Model Pareto Front",
                 ),
-            Line2D([0], [0], marker="*", color="none", markerfacecolor="gray", markeredgecolor="black", markersize=20, label="Selected Models"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor="gray", markeredgecolor="black", markersize=20, label="Selected Models"),
             # Line2D([0], [0], linestyle="-", color="black", linewidth=2, label="Cross-Model Pareto Front"),
 
         ]
 
         # 4. Add the first legend (bits) and anchor it manually
-        leg1 = ax.legend(handles=bit_handles, labels=bits,loc="lower right", bbox_to_anchor=(0.632, 0.0),#559 if other legend
+        leg1 = ax.legend(handles=bit_handles, labels=bits,loc="lower right", bbox_to_anchor=(1, 0.36),#559 if other legend (0.632, 0.0) on the side
                         frameon=True,handler_map={tuple: HandlerTuple(ndivide=None, pad=0.5)} )
         ax.add_artist(leg1)  # Prevents the second legend from overwriting the first
 
@@ -646,12 +666,12 @@ def _finalize(ax, title, xscale="linear", complement=False):
     if xscale != "linear": tags.append("x-log")
     if complement:          tags.append("y: 1−metric log")
     tag = f" [{', '.join(tags)}]" if tags else ""
-    ax.set_title(title)# + tag, fontsize=18, fontweight="bold", pad=14)
+    ax.set_title(title,fontsize=30)# + tag, fontsize=18, fontweight="bold", pad=14)
     # ax.set_xlabel("LUTs + FFs (registers) (csynth)", )#fontsize=16, fontweight="bold")
-    ax.set_xlabel("LUTs + FFs (csynth)", )#fontsize=16, fontweight="bold")
+    ax.set_xlabel("LUTs + FFs (csynth)", fontsize=25)#fontsize=16, fontweight="bold")
     ax.set_ylabel(
         f"{METRIC_NAME}  (1−metric, log scale)" if complement
-        else METRIC_NAME,fontsize=25)
+        else METRIC_NAME,fontsize=30)
         #fontsize=16, fontweight="bold")
     ax.grid(True, alpha=0.28, linestyle="--", which="both")
     for (ff_plus_lut, label,color,labelYHeight,textOffset) in HARDWARE_REFS:
@@ -705,6 +725,9 @@ def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, pareto_m3,
         _setup_complement_log_y(ax, df)
     else:
         ax.set_ylim(-0.01,1)
+        ax.yaxis.set_major_locator(mticker.MultipleLocator(0.2))
+        ax.minorticks_on()
+        ax.yaxis.set_minor_locator(mticker.MultipleLocator(0.1))
 
     title = ("Model 1 vs Model 2 vs Model 3 — Sub-fronts + Combined Pareto")
     title = ("Cross-Model Pareto Front")
