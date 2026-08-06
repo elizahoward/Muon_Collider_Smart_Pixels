@@ -55,6 +55,10 @@ PRIMARY_METRIC = "primary_metric"
 
 PRIMARY_METRIC = "bkg_rej_@99%"
 
+HARDWARE_METRIC = "luts_plus_ff"
+FF_COEFFICIENT = 1
+HARDWARE_METRIC = f"luts_plus_{FF_COEFFICIENT}*_ff"
+
 if PRIMARY_METRIC == "primary_metric":
     METRIC_NAME = "Weighted Bkg Rejection"
 elif PRIMARY_METRIC == "bkg_rej_@99%":
@@ -62,6 +66,8 @@ elif PRIMARY_METRIC == "bkg_rej_@99%":
     METRIC_NAME = r'$\mathcal{R}_{\mathrm{BIB,99}}^{\mathrm{cluster}}$'
 else:
     raise ValueError("invalid PRIMARY_METRIC")
+
+HARDWARE_METRIC_NAME = f"LUTs + {FF_COEFFICIENT} * FFs (csynth)"
 
 #for the new colors that are modular kind of 
 def darken_hex(hex_str, amount=22): #amount is in decimal not hex!
@@ -168,6 +174,7 @@ HARDWARE_REFS = [
     # (14289+57398,"Smartpixel Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (14289+57398,"Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     (14289+57398,"arxiv:2312.11676v1","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (42503+131921+0,"regression MLP slim model","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (106400+53200,"FPGA: Xilinx Zynq (xc7z020clg400-1), featured on PYNQ-Z2","fuchsia",0.05,0),
@@ -313,7 +320,7 @@ def _build_row(model_key, run_name, trial_id, csv_row, lut, ff, dsp, bram, src,f
         PRIMARY_METRIC: csv_row.get(PRIMARY_METRIC, np.nan),
         "luts":           lut,
         "registers":      ff,
-        "luts_plus_ff":   lut + ff,
+        HARDWARE_METRIC:   lut + ff,
         "dsp":            dsp or 0,
         "bram":           bram or 0,
         "hls_source":     src,
@@ -438,9 +445,9 @@ def load_modelNEW(base_dir,modelNum):
 def _is_dominated(point, others):
     for _, other in others.iterrows():
         if (other[PRIMARY_METRIC] >= point[PRIMARY_METRIC] and
-                other["luts_plus_ff"]   <= point["luts_plus_ff"] and
+                other[HARDWARE_METRIC]   <= point[HARDWARE_METRIC] and
                 (other[PRIMARY_METRIC] > point[PRIMARY_METRIC] or
-                 other["luts_plus_ff"]  < point["luts_plus_ff"])):
+                 other[HARDWARE_METRIC]  < point[HARDWARE_METRIC])):
             return True
     return False
 
@@ -449,7 +456,7 @@ def find_pareto_front(df):
     idx = [i for i, row in df.iterrows()
            if not _is_dominated(row, df.drop(index=i))]
     return (df.loc[idx].copy()
-              .sort_values(by=[PRIMARY_METRIC, "luts_plus_ff"],
+              .sort_values(by=[PRIMARY_METRIC, HARDWARE_METRIC],
                            ascending=[False, True]))
 
 # Added to make vertical lines for reference points for FF+LUT
@@ -668,7 +675,7 @@ def _finalize(ax, title, xscale="linear", complement=False):
     tag = f" [{', '.join(tags)}]" if tags else ""
     ax.set_title(title,fontsize=30)# + tag, fontsize=18, fontweight="bold", pad=14)
     # ax.set_xlabel("LUTs + FFs (registers) (csynth)", )#fontsize=16, fontweight="bold")
-    ax.set_xlabel("LUTs + FFs (csynth)", fontsize=25)#fontsize=16, fontweight="bold")
+    ax.set_xlabel(HARDWARE_METRIC_NAME, fontsize=25)#fontsize=16, fontweight="bold")
     ax.set_ylabel(
         f"{METRIC_NAME}  (1−metric, log scale)" if complement
         else METRIC_NAME,fontsize=30)
@@ -693,7 +700,7 @@ def _save(fig, output_dir, fname):
 
 
 def make_plot_simple(df, pareto_df, output_dir, zoomed=False, annotate=True):
-    x_col = "luts_plus_ff"
+    x_col = HARDWARE_METRIC
     fig, ax = plt.subplots(figsize=(16, 9))
     _draw_scatter(ax, df, pareto_df, x_col, annotate=annotate)
     if zoomed:
@@ -702,7 +709,7 @@ def make_plot_simple(df, pareto_df, output_dir, zoomed=False, annotate=True):
         title  = "Model 1 vs Model 2 vs Model 3 — Pareto Front (Zoomed)"
     else:
         suffix = "_full"
-        title  = f"Model 1 vs Model 2 vs Model 3 — Combined Pareto Front\n{METRIC_NAME} vs LUTs + FF"
+        title  = f"Model 1 vs Model 2 vs Model 3 — Combined Pareto Front\n{METRIC_NAME} vs {HARDWARE_METRIC_NAME}"
         title  = f"Model 1 vs Model 2 vs Model 3 — Combined Pareto Front"
         title  = f"Cross-Model Pareto Front"
     _finalize(ax, title)
@@ -715,7 +722,7 @@ def make_plot_simple(df, pareto_df, output_dir, zoomed=False, annotate=True):
 def make_plot_subfronts(df, pareto_df, pareto_m1, pareto_m25, pareto_m3,
                         output_dir, xscale="linear", complement=False, annotate=True,
                         figsize=(14,9*14/16)):
-    x_col = "luts_plus_ff"
+    x_col = HARDWARE_METRIC
     fig, ax = plt.subplots(figsize=(16, 9))
     fig, ax = plt.subplots(figsize=figsize)
     _draw_scatter(ax, df, pareto_df, x_col, complement=complement, annotate=annotate)
@@ -779,13 +786,17 @@ def main():
     # print([df3[key].head() for key in df1.keys()])
 
     df = pd.concat([df1, df25, df3], ignore_index=True)
-    
+    print("SPOTFIXING LUTS + FF TO 1 * LUTs + 0.5 * FFs, should modify better later!!!")
+    df[HARDWARE_METRIC] = df["luts"] +  0.5 * df["registers"]
+    df1[HARDWARE_METRIC] = df1["luts"] +  0.5 * df1["registers"]
+    df25[HARDWARE_METRIC] = df25["luts"] +  0.5 * df25["registers"]
+    df3[HARDWARE_METRIC] = df3["luts"] +  0.5 * df3["registers"]
     print("dsps",df["dsp"])
     print("bram", df["bram"])
 
     print(f"\nCombined total: {len(df)} trials")
     print(f"Primary metric range: {df[PRIMARY_METRIC].min():.4f} – {df[PRIMARY_METRIC].max():.4f}")
-    print(f"LUTs+FF range:        {df['luts_plus_ff'].min()} – {df['luts_plus_ff'].max()}")
+    print(f"LUTs+FF range:        {df[HARDWARE_METRIC].min()} – {df[HARDWARE_METRIC].max()}")
 
     # print(df)
     # raise ValueError("Stop now")
@@ -803,7 +814,7 @@ def main():
 
     df.to_csv(os.path.join(OUTPUT_DIR, "combined_all_detailed.csv"), index=False)
     cols = ["model", "run_name", "trial_id", "parameters", "auc", PRIMARY_METRIC,
-            "luts", "registers", "luts_plus_ff", "dsp", "bram", "hls_source","fullPath"]
+            "luts", "registers", HARDWARE_METRIC, "dsp", "bram", "hls_source","fullPath"]
     pareto_all[[c for c in cols if c in pareto_all.columns]].to_csv(
         os.path.join(OUTPUT_DIR, "pareto_primary.csv"), index=False)
     with open(os.path.join(OUTPUT_DIR, "summary.json"), "w") as f:
@@ -818,8 +829,8 @@ def main():
             "model1_csynth":      int((df1["hls_source"] == "csynth").sum()),
             "metric_range":       {"min": float(df[PRIMARY_METRIC].min()),
                                    "max": float(df[PRIMARY_METRIC].max())},
-            "luts_plus_ff_range": {"min": int(df["luts_plus_ff"].min()),
-                                   "max": int(df["luts_plus_ff"].max())},
+            "luts_plus_ff_range": {"min": int(df[HARDWARE_METRIC].min()),
+                                   "max": int(df[HARDWARE_METRIC].max())},
         }, f, indent=2)
 
     print("\nGenerating plots...")
