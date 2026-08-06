@@ -786,11 +786,6 @@ def main():
     # print([df3[key].head() for key in df1.keys()])
 
     df = pd.concat([df1, df25, df3], ignore_index=True)
-    print("SPOTFIXING LUTS + FF TO 1 * LUTs + 0.5 * FFs, should modify better later!!!")
-    df[HARDWARE_METRIC] = df["luts"] +  0.5 * df["registers"]
-    df1[HARDWARE_METRIC] = df1["luts"] +  0.5 * df1["registers"]
-    df25[HARDWARE_METRIC] = df25["luts"] +  0.5 * df25["registers"]
-    df3[HARDWARE_METRIC] = df3["luts"] +  0.5 * df3["registers"]
     print("dsps",df["dsp"])
     print("bram", df["bram"])
 
