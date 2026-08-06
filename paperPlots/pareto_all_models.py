@@ -320,7 +320,7 @@ def _build_row(model_key, run_name, trial_id, csv_row, lut, ff, dsp, bram, src,f
         PRIMARY_METRIC: csv_row.get(PRIMARY_METRIC, np.nan),
         "luts":           lut,
         "registers":      ff,
-        HARDWARE_METRIC:   lut + ff,
+        HARDWARE_METRIC:   lut + FF_COEFFICIENT * ff,
         "dsp":            dsp or 0,
         "bram":           bram or 0,
         "hls_source":     src,
