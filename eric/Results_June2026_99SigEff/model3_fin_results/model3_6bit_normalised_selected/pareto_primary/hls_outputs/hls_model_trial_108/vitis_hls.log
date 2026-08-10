@@ -3,12 +3,12 @@
   **** SW Build 5069499 on May 21 2024
   **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
   **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-  **** Start of session at: Thu Jun 18 09:18:57 2026
+  **** Start of session at: Thu Aug  6 03:49:25 2026
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
     ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 
 source /code/Xilinx_2024.1/Vitis_HLS/2024.1/scripts/vitis_hls/hls.tcl -notrace
-INFO: [HLS 200-10] For user 'dabadjiev' on host 'kdplab01' (Linux_x86_64 version 5.14.0-687.15.1.el9_8.x86_64) on Thu Jun 18 09:19:01 CDT 2026
+INFO: [HLS 200-10] For user 'dabadjiev' on host 'kdplab01' (Linux_x86_64 version 5.14.0-687.17.1.el9_8.x86_64) on Thu Aug 06 03:49:28 CDT 2026
 INFO: [HLS 200-10] In directory '/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model3_fin_results/model3_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_108'
 WARNING: [HLS 200-2053] The vitis_hls executable is deprecated. Consider using vitis-run --mode hls --tcl
 Sourcing Tcl script 'build_prj.tcl'
@@ -35,17 +35,17 @@ INFO: [HLS 200-1510] Running: set_part xc7z020clg400-1
 INFO: [HLS 200-1611] Setting target device to 'xc7z020-clg400-1'
 INFO: [XFORM 203-1161] The maximum of name length is set to 80.
 INFO: [HLS 200-1510] Running: config_schedule -enable_dsp_full_reg=false 
-INFO: [HLS 200-1510] Running: create_clock -period 5 -name default 
-INFO: [SYN 201-201] Setting up clock 'default' with a period of 5ns.
+INFO: [HLS 200-1510] Running: create_clock -period 20 -name default 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 20ns.
 INFO: [HLS 200-1510] Running: set_clock_uncertainty 12.5% default 
-INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 0.625ns.
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 2.5ns.
 ***** C/RTL SYNTHESIS *****
 INFO: [HLS 200-1510] Running: config_op mul -impl fabric 
 INFO: [HLS 200-1445] Configure operator 'mul' with implementation style 'fabric'.
 INFO: [HLS 200-1510] Running: config_op add -impl fabric 
 INFO: [HLS 200-1445] Configure operator 'add' with implementation style 'fabric'.
 INFO: [HLS 200-1510] Running: csynth_design 
-INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0.07 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.08 seconds; current allocated memory: 333.207 MB.
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.08 seconds; current allocated memory: 333.250 MB.
 INFO: [HLS 200-10] Analyzing design file 'firmware/myproject.cpp' ... 
 WARNING: [HLS 207-5292] unused parameter 'keep' (firmware/nnet_utils/nnet_helpers.h:285:99)
 WARNING: [HLS 207-5292] unused parameter 'data' (firmware/nnet_utils/nnet_code_gen.h:11:36)
@@ -54,7 +54,7 @@ WARNING: [HLS 207-5292] unused parameter 'partition' (firmware/nnet_utils/nnet_c
 WARNING: [HLS 207-5292] unused parameter 'data' (firmware/nnet_utils/nnet_code_gen.h:21:24)
 WARNING: [HLS 207-5292] unused parameter 'buffer' (firmware/nnet_utils/nnet_code_gen.h:22:24)
 WARNING: [HLS 207-5292] unused parameter 'partition' (firmware/nnet_utils/nnet_code_gen.h:23:32)
-INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 10.94 seconds. CPU system time: 1.25 seconds. Elapsed time: 13.52 seconds; current allocated memory: 342.086 MB.
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 9.48 seconds. CPU system time: 0.82 seconds. Elapsed time: 11.59 seconds; current allocated memory: 342.074 MB.
 INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
 INFO: [HLS 200-1995] There were 84,835 instructions in the design after the 'Compile/Link' phase of compilation. See the Design Size Report for more details: /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model3_fin_results/model3_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_108/myproject_prj/solution1/syn/report/csynth_design_size.rpt
 WARNING: [HLS 200-1995] There were 101,739 instructions in the design after the 'Unroll/Inline' phase of compilation. See the Design Size Report for more details: /home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model3_fin_results/model3_6bit_normalised_selected/pareto_primary/hls_outputs/hls_model_trial_108/myproject_prj/solution1/syn/report/csynth_design_size.rpt
@@ -189,12 +189,12 @@ INFO: [HLS 214-437] Automatically disabling loop flattening for loop 'PartitionL
 INFO: [HLS 214-354] Changing the port bit width of top function 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*)' argument 'w16': from '6' to '8' due to access pattern. (firmware/myproject.cpp:19:0)
 INFO: [HLS 214-354] Changing the port bit width of top function 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*)' argument 'w21': from '6' to '8' due to access pattern. (firmware/myproject.cpp:19:0)
 INFO: [HLS 214-354] Changing the port bit width of top function 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>*)' argument 'w24': from '6' to '8' due to access pattern. (firmware/myproject.cpp:19:0)
-INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 82.86 seconds. CPU system time: 1.25 seconds. Elapsed time: 87.56 seconds; current allocated memory: 358.863 MB.
-INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0 seconds; current allocated memory: 358.863 MB.
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 66.05 seconds. CPU system time: 0.94 seconds. Elapsed time: 71.13 seconds; current allocated memory: 358.902 MB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0 seconds; current allocated memory: 358.902 MB.
 INFO: [HLS 200-10] Starting code transformations ...
-INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 3.73 seconds. CPU system time: 0.02 seconds. Elapsed time: 4.07 seconds; current allocated memory: 414.473 MB.
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 3.45 seconds. CPU system time: 0.03 seconds. Elapsed time: 3.73 seconds; current allocated memory: 414.367 MB.
 INFO: [HLS 200-10] Checking synthesizability ...
-INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 3.86 seconds. CPU system time: 0.03 seconds. Elapsed time: 3.92 seconds; current allocated memory: 484.512 MB.
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 3.58 seconds. CPU system time: 0.05 seconds. Elapsed time: 3.64 seconds; current allocated memory: 484.496 MB.
 INFO: [XFORM 203-102] Partitioning array 'pool' (firmware/nnet_utils/nnet_pooling.h:216) automatically.
 INFO: [XFORM 203-712] Applying dataflow to function 'myproject' (firmware/myproject.cpp:54), detected/extracted 18 process function(s): 
 	 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config2>'
@@ -227,7 +227,7 @@ INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet
 INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_dense_resource.h:125:9) to (firmware/nnet_utils/nnet_dense_resource.h:124:5) in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>'... converting 37 basic blocks.
 INFO: [XFORM 203-11] Balancing expressions in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>' (firmware/nnet_utils/nnet_dense_resource.h:38:17)...64 expression(s) balanced.
 INFO: [XFORM 203-11] Balancing expressions in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config16>' (firmware/nnet_utils/nnet_dense_resource.h:73:5)...12 expression(s) balanced.
-INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 35.82 seconds. CPU system time: 0.4 seconds. Elapsed time: 36.32 seconds; current allocated memory: 877.863 MB.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 32.03 seconds. CPU system time: 0.17 seconds. Elapsed time: 32.28 seconds; current allocated memory: 877.578 MB.
 WARNING: [HLS 200-1991] Performance of loop 'ReuseLoop'(firmware/nnet_utils/nnet_conv2d_resource.h:58:9) in function 'conv_2d_cl<ap_fixed<8, 1, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config9>' can be improved with loop rewind inference if the loop can be encapsulated as a standalone function.
 WARNING: [HLS 200-1992] Performance of loop 'ReuseLoop'(firmware/nnet_utils/nnet_conv2d_resource.h:58:9) in function 'conv_2d_cl<ap_fixed<8, 1, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config9>' can be improved with loop rewind inference if the loop is called from a region that can be executed in overlapped fashion such as a dataflow region or the top function.
 WARNING: [HLS 200-1991] Performance of loop 'PartitionLoop'(firmware/nnet_utils/nnet_conv2d_resource.h:41:5) in function 'conv_2d_cl<ap_fixed<8, 1, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config9>' can be improved with loop rewind inference if the loop can be encapsulated as a standalone function.
@@ -244,7 +244,7 @@ WARNING: [HLS 200-1449] Process dense_resource<ap_fixed<16, 6, 5, 3, 0>, ap_fixe
 WARNING: [HLS 200-1449] Process dense_resource<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config21> has both a predecessor and reads an input from its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this input via a predecessor process.
 WARNING: [HLS 200-1449] Process dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config24> has both a predecessor and reads an input from its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this input via a predecessor process.
 WARNING: [HLS 200-1449] Process dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config27> has both a predecessor and reads an input from its caller (see the GUI dataflow viewer). This may lead to lower throughput. Consider copying this input via a predecessor process.
-INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 22.37 seconds. CPU system time: 0.28 seconds. Elapsed time: 22.71 seconds; current allocated memory: 1.457 GB.
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 19.88 seconds. CPU system time: 0.19 seconds. Elapsed time: 20.13 seconds; current allocated memory: 1.457 GB.
 INFO: [HLS 200-10] Starting hardware synthesis ...
 INFO: [HLS 200-10] Synthesizing 'myproject' ...
 WARNING: [SYN 201-103] Legalizing function name 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config2>' to 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config2_s'.
@@ -270,78 +270,69 @@ INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config2>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config2>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config2>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 11.76 seconds. CPU system time: 0.3 seconds. Elapsed time: 12.16 seconds; current allocated memory: 1.623 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 4.42 seconds. CPU system time: 0.12 seconds. Elapsed time: 4.61 seconds; current allocated memory: 1.621 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 5.09 seconds. CPU system time: 0.1 seconds. Elapsed time: 5.21 seconds; current allocated memory: 1.623 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 4.78 seconds. CPU system time: 0.03 seconds. Elapsed time: 4.82 seconds; current allocated memory: 1.621 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config6_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config6>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config6>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config6>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 3.8 seconds. CPU system time: 0.1 seconds. Elapsed time: 3.91 seconds; current allocated memory: 1.623 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 3.66 seconds. CPU system time: 0.03 seconds. Elapsed time: 3.69 seconds; current allocated memory: 1.621 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.623 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 1.621 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.623 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.621 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.623 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 1.621 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'fill_buffer' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 1.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 1.03 seconds; current allocated memory: 1.625 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 2.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 2.08 seconds; current allocated memory: 1.621 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.31 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.32 seconds; current allocated memory: 1.625 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.31 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.32 seconds; current allocated memory: 1.621 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'conv_2d_cl_ap_fixed_8_1_4_0_0_ap_fixed_16_6_5_3_0_config9_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
-WARNING: [HLS 200-1015] Estimated delay Estimated delay (6.426ns)  of 'mul' operation 14 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_conv2d_resource.h:74->firmware/nnet_utils/nnet_conv2d.h:53) exceeds the target cycle time (target cycle time: 5.000ns, clock uncertainty: 0.625ns, effective cycle time: 4.375ns).
-
-Resolution: For help on HLS 200-1015 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1015.html
 INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
-INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 4, loop 'ReuseLoop'
-WARNING: [HLS 200-871] Estimated clock period (6.426 ns) exceeds the target (target clock period: 5.000 ns, clock uncertainty: 0.625 ns, effective delay budget: 4.375 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'conv_2d_cl_ap_fixed_8_1_4_0_0_ap_fixed_16_6_5_3_0_config9_s' consists of the following:
-	'mul' operation 14 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_conv2d_resource.h:74->firmware/nnet_utils/nnet_conv2d.h:53) [1133]  (6.426 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'ReuseLoop'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 1.68 seconds. CPU system time: 0.02 seconds. Elapsed time: 1.7 seconds; current allocated memory: 1.627 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 2.22 seconds. CPU system time: 0.01 seconds. Elapsed time: 2.23 seconds; current allocated memory: 1.657 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 6.84 seconds. CPU system time: 0.02 seconds. Elapsed time: 6.87 seconds; current allocated memory: 1.627 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 6.62 seconds. CPU system time: 0.01 seconds. Elapsed time: 6.63 seconds; current allocated memory: 1.657 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -349,41 +340,41 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config11>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config11>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.24 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.26 seconds; current allocated memory: 1.627 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.21 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.21 seconds; current allocated memory: 1.657 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.627 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 1.657 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config12_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config12>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config12>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config12>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.627 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.657 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.627 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 1.657 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 12.29 seconds. CPU system time: 0.13 seconds. Elapsed time: 12.44 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 6.27 seconds. CPU system time: 0.06 seconds. Elapsed time: 6.34 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 6.48 seconds. CPU system time: 0.08 seconds. Elapsed time: 6.59 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 8.81 seconds. CPU system time: 0.04 seconds. Elapsed time: 8.86 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config14_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -391,85 +382,72 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config14>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config14>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 4.94 seconds. CPU system time: 0.1 seconds. Elapsed time: 5.06 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 6.73 seconds. CPU system time: 0.06 seconds. Elapsed time: 6.79 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'pool_op_ap_ufixed_8_0_4_0_0_4_0_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'pool_op_ap_ufixed_8_0_4_0_0_4_0_s'.
-INFO: [HLS 200-1470] Pipelining result : Target II = 0, Final II = 1, Depth = 3, function 'pool_op_ap_ufixed_8_0_4_0_0_4_0_s'
+INFO: [HLS 200-1470] Pipelining result : Target II = 0, Final II = 1, Depth = 1, function 'pool_op_ap_ufixed_8_0_4_0_0_4_0_s'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.02 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'pooling2d_cl<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config15>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = 16, Final II = 16, Depth = 18, function 'pooling2d_cl<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config15>'
+INFO: [HLS 200-1470] Pipelining result : Target II = 16, Final II = 15, Depth = 15, function 'pooling2d_cl<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config15>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.39 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.4 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.46 seconds. CPU system time: 0 seconds. Elapsed time: 0.46 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Starting global binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.2 seconds. CPU system time: 0 seconds. Elapsed time: 0.21 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.14 seconds. CPU system time: 0 seconds. Elapsed time: 0.15 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
-WARNING: [HLS 200-1015] Estimated delay Estimated delay (7.494ns)  of 'mul' operation 17 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:134->firmware/nnet_utils/nnet_dense_resource.h:242) exceeds the target cycle time (target cycle time: 5.000ns, clock uncertainty: 0.625ns, effective cycle time: 4.375ns).
-
-Resolution: For help on HLS 200-1015 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1015.html
 INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
 WARNING: [HLS 200-885] The II Violation in module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' (loop 'ReuseLoop'): Unable to schedule 'load' operation 8 bit ('w16_load_1', firmware/nnet_utils/nnet_dense_resource.h:135->firmware/nnet_utils/nnet_dense_resource.h:242) on array 'w16' due to limited memory ports (II = 1). Please consider using a memory core with more ports or partitioning the array 'w16'.
 Resolution: For help on HLS 200-885 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-885.html
-INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 2, Depth = 4, loop 'ReuseLoop'
-WARNING: [HLS 200-871] Estimated clock period (10.670 ns) exceeds the target (target clock period: 5.000 ns, clock uncertainty: 0.625 ns, effective delay budget: 4.375 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' consists of the following:
-	'phi' operation 11 bit ('p_read75_rewind', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read75', firmware/nnet_utils/nnet_dense_resource.h:235) [26]  (0.000 ns)
-	multiplexor before 'phi' operation 11 bit ('p_read75_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read75', firmware/nnet_utils/nnet_dense_resource.h:235) [118]  (1.588 ns)
-	'phi' operation 11 bit ('p_read75_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read75', firmware/nnet_utils/nnet_dense_resource.h:235) [118]  (0.000 ns)
-	'sparsemux' operation 11 bit ('a', firmware/nnet_utils/nnet_dense_resource.h:235) [129]  (1.588 ns)
-	'mul' operation 17 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:134->firmware/nnet_utils/nnet_dense_resource.h:242) [135]  (7.494 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 2, Depth = 3, loop 'ReuseLoop'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.24 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.26 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.18 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.19 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config19_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config19>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config19>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config19>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.14 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.14 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.11 seconds. CPU system time: 0 seconds. Elapsed time: 0.11 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -477,20 +455,17 @@ INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_ufixed,ap_fixed<16,6,5,3,0>,config20>'.
 INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_ufixed,ap_fixed<16,6,5,3,0>,config20>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.2 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.21 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.16 seconds. CPU system time: 0 seconds. Elapsed time: 0.17 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config21_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
-WARNING: [HLS 200-1015] Estimated delay Estimated delay (7.138ns)  of 'mul' operation 16 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:54->firmware/nnet_utils/nnet_dense_resource.h:240) exceeds the target cycle time (target cycle time: 5.000ns, clock uncertainty: 0.625ns, effective cycle time: 4.375ns).
-
-Resolution: For help on HLS 200-1015 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1015.html
 INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
 WARNING: [HLS 200-885] The II Violation in module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config21_s' (loop 'ReuseLoop'): Unable to schedule 'load' operation 8 bit ('w21_load_1', firmware/nnet_utils/nnet_dense_resource.h:55->firmware/nnet_utils/nnet_dense_resource.h:240) on array 'w21' due to limited memory ports (II = 1). Please consider using a memory core with more ports or partitioning the array 'w21'.
 Resolution: For help on HLS 200-885 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-885.html
@@ -506,211 +481,280 @@ WARNING: [HLS 200-885] The II Violation in module 'dense_resource_ap_fixed_16_6_
 Resolution: For help on HLS 200-885 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-885.html
 WARNING: [HLS 200-885] The II Violation in module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config21_s' (loop 'ReuseLoop'): Unable to schedule 'load' operation 8 bit ('w21_load_61', firmware/nnet_utils/nnet_dense_resource.h:55->firmware/nnet_utils/nnet_dense_resource.h:240) on array 'w21' due to limited memory ports (II = 31). Please consider using a memory core with more ports or partitioning the array 'w21'.
 Resolution: For help on HLS 200-885 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-885.html
-INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 32, Depth = 34, loop 'ReuseLoop'
-WARNING: [HLS 200-871] Estimated clock period (11.478 ns) exceeds the target (target clock period: 5.000 ns, clock uncertainty: 0.625 ns, effective delay budget: 4.375 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config21_s' consists of the following:
-	'phi' operation 10 bit ('p_read535_rewind', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read535', firmware/nnet_utils/nnet_dense_resource.h:235) [150]  (0.000 ns)
-	multiplexor before 'phi' operation 10 bit ('p_read535_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read535', firmware/nnet_utils/nnet_dense_resource.h:235) [467]  (1.588 ns)
-	'phi' operation 10 bit ('p_read535_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read535', firmware/nnet_utils/nnet_dense_resource.h:235) [467]  (0.000 ns)
-	'sparsemux' operation 10 bit ('a', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:54->firmware/nnet_utils/nnet_dense_resource.h:240) [613]  (2.752 ns)
-	'mul' operation 16 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:54->firmware/nnet_utils/nnet_dense_resource.h:240) [619]  (7.138 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 32, Depth = 33, loop 'ReuseLoop'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 2.89 seconds. CPU system time: 0.02 seconds. Elapsed time: 2.92 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 3.12 seconds. CPU system time: 0.02 seconds. Elapsed time: 3.14 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.19 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.22 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.16 seconds. CPU system time: 0 seconds. Elapsed time: 0.16 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config23>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config23>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config23>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.18 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.19 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.14 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.15 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
-WARNING: [HLS 200-1015] Estimated delay Estimated delay (6.426ns)  of 'mul' operation 14 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:54->firmware/nnet_utils/nnet_dense_resource.h:240) exceeds the target cycle time (target cycle time: 5.000ns, clock uncertainty: 0.625ns, effective cycle time: 4.375ns).
-
-Resolution: For help on HLS 200-1015 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1015.html
 INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
 WARNING: [HLS 200-885] The II Violation in module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s' (loop 'ReuseLoop'): Unable to schedule 'load' operation 8 bit ('w24_load_1', firmware/nnet_utils/nnet_dense_resource.h:55->firmware/nnet_utils/nnet_dense_resource.h:240) on array 'w24' due to limited memory ports (II = 1). Please consider using a memory core with more ports or partitioning the array 'w24'.
 Resolution: For help on HLS 200-885 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-885.html
-INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 2, Depth = 4, loop 'ReuseLoop'
-WARNING: [HLS 200-871] Estimated clock period (8.238 ns) exceeds the target (target clock period: 5.000 ns, clock uncertainty: 0.625 ns, effective delay budget: 4.375 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s' consists of the following:
-	'mul' operation 14 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:54->firmware/nnet_utils/nnet_dense_resource.h:240) [75]  (6.426 ns)
-	'add' operation 15 bit ('add_ln53', firmware/nnet_utils/nnet_dense_resource.h:53->firmware/nnet_utils/nnet_dense_resource.h:240) [78]  (1.812 ns)
-	'insertvalue' operation 45 bit ('mrv', firmware/nnet_utils/nnet_dense_resource.h:246) [106]  (0.000 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 2, Depth = 3, loop 'ReuseLoop'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.11 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.12 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.08 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.08 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config26>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config26>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config26>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
-WARNING: [HLS 200-1015] Estimated delay Estimated delay (6.426ns)  of 'mul' operation 14 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:54->firmware/nnet_utils/nnet_dense_resource.h:240) exceeds the target cycle time (target cycle time: 5.000ns, clock uncertainty: 0.625ns, effective cycle time: 4.375ns).
-
-Resolution: For help on HLS 200-1015 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1015.html
 INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
-INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 3, loop 'ReuseLoop'
-WARNING: [HLS 200-871] Estimated clock period (9.602 ns) exceeds the target (target clock period: 5.000 ns, clock uncertainty: 0.625 ns, effective delay budget: 4.375 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s' consists of the following:
-	'phi' operation 8 bit ('p_read6_rewind', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_497', firmware/nnet_utils/nnet_dense_resource.h:235) [10]  (0.000 ns)
-	multiplexor before 'phi' operation 8 bit ('p_read6_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_497', firmware/nnet_utils/nnet_dense_resource.h:235) [26]  (1.588 ns)
-	'phi' operation 8 bit ('p_read6_phi', firmware/nnet_utils/nnet_dense_resource.h:235) with incoming values : ('p_read_497', firmware/nnet_utils/nnet_dense_resource.h:235) [26]  (0.000 ns)
-	'sparsemux' operation 8 bit ('a', firmware/nnet_utils/nnet_dense_resource.h:235) [33]  (1.588 ns)
-	'mul' operation 14 bit ('mul_ln73', firmware/nnet_utils/nnet_mult.h:73->firmware/nnet_utils/nnet_dense_resource.h:54->firmware/nnet_utils/nnet_dense_resource.h:240) [38]  (6.426 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'ReuseLoop'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config29_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
 INFO: [SCHED 204-61] Pipelining function 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config29>'.
-INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 4, function 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config29>'
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config29>'
 INFO: [SCHED 204-11] Finished scheduling.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.804 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.02 seconds; current allocated memory: 1.804 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-42] -- Implementing module 'myproject' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [SCHED 204-11] Starting scheduling ...
-WARNING: [HLS 200-871] Estimated clock period (10.288 ns) exceeds the target (target clock period: 5.000 ns, clock uncertainty: 0.625 ns, effective delay budget: 4.375 ns).
-Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
-WARNING: [HLS 200-1016] The critical path in module 'myproject' consists of the following:
-	'call' operation 256 bit ('call_ret7', firmware/nnet_utils/nnet_dense.h:43->firmware/myproject.cpp:93) to 'dense_resource<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config16>' [1491]  (10.288 ns)
-
-Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
 INFO: [SCHED 204-11] Finished scheduling.
 WARNING: [HLS 200-1020] Increasing the depth of FIFO layer12_out (from linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config12_U0 to concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config14_U0) to 3 to improve performance and/or avoid deadlocks.
-INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.55 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.57 seconds; current allocated memory: 1.809 GB.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_1 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_2 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_3 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_4 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_5 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_6 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_7 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_8 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_9 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_10 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_11 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_12 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_13 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_14 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_15 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_16 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_17 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_18 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_19 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_20 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_21 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_22 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_23 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_24 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_25 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_26 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_27 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_28 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_29 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_30 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_31 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_32 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_33 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_34 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_35 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_36 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_37 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_38 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_39 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_40 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_41 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_42 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_43 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_44 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_45 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_46 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_47 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_48 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_49 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_50 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_51 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_52 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_53 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_54 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_55 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_56 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_57 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_58 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_59 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_60 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_61 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_62 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_63 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_64 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_65 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_66 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_67 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_68 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_69 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_70 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_71 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_72 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_73 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_74 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_75 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_76 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_77 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_78 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_79 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_80 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_81 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_82 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_83 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_84 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_85 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_86 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_87 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_88 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_89 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_90 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_91 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_92 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_93 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_94 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_95 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_96 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_97 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_98 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_99 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_100 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_101 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_102 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_103 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_104 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_105 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_106 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_107 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_108 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_109 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_110 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_111 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_112 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_113 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_114 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_115 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_116 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_117 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_118 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer15_out_119 (from pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_U0 to concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_U0) to 3 to improve performance and/or avoid deadlocks.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.86 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.9 seconds; current allocated memory: 1.809 GB.
 INFO: [BIND 205-100] Starting micro-architecture generation ...
 INFO: [BIND 205-101] Performing variable lifetime analysis.
 INFO: [BIND 205-101] Exploring resource sharing.
 INFO: [BIND 205-101] Binding ...
 INFO: [BIND 205-100] Finished micro-architecture generation.
-INFO: [HLS 200-111] Finished Binding: CPU user time: 0.54 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.57 seconds; current allocated memory: 1.809 GB.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.4 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.43 seconds; current allocated memory: 1.809 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config2_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config2_s' pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config2>' pipeline type 'function pipeline'
-INFO: [HLS 200-1553] Disabling free running pipeline (frp) architecture on pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config2>' in module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config2_s', because the estimated Stream Port Number is 17000, which is bigger than the frp_stream_port_number threshold of 20.
-Resolution: For help on HLS 200-1553 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1553.html
-INFO: [RTGEN 206-104] Estimated max fanout for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config2_s' is 12285 from HDL expression: ((1'b0 == ap_block_pp0_stage0_11001) & (1'b1 == ap_CS_fsm_pp0_stage0))
+INFO: [RTGEN 206-104] Estimated max fanout for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config2_s' is 5463 from HDL expression: ((1'b0 == ap_block_state1) & (1'b1 == ap_CS_fsm_state1) & (1'b1 == ap_ce))
 INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config2_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 7.69 seconds. CPU system time: 0.18 seconds. Elapsed time: 7.88 seconds; current allocated memory: 2.121 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 5.37 seconds. CPU system time: 0.13 seconds. Elapsed time: 5.51 seconds; current allocated memory: 2.103 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config6_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config6_s' pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config6>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config6_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 8.79 seconds. CPU system time: 0.47 seconds. Elapsed time: 9.38 seconds; current allocated memory: 2.228 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 7.99 seconds. CPU system time: 0.43 seconds. Elapsed time: 8.53 seconds; current allocated memory: 2.224 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.22 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.25 seconds; current allocated memory: 2.271 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.16 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.18 seconds; current allocated memory: 2.273 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'fill_buffer' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'fill_buffer'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.64 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.66 seconds; current allocated memory: 2.272 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.56 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.56 seconds; current allocated memory: 2.274 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'conv_2d_cl_ap_fixed_8_1_4_0_0_ap_fixed_16_6_5_3_0_config9_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [RTGEN 206-104] Estimated max fanout for 'conv_2d_cl_ap_fixed_8_1_4_0_0_ap_fixed_16_6_5_3_0_config9_s' is 6483 from HDL expression: ((1'b1 == ap_CS_fsm_state9) & (icmp_ln41_fu_7685_p2 == 1'd1))
+INFO: [RTGEN 206-104] Estimated max fanout for 'conv_2d_cl_ap_fixed_8_1_4_0_0_ap_fixed_16_6_5_3_0_config9_s' is 6483 from HDL expression: ((1'b1 == ap_CS_fsm_state5) & (icmp_ln41_fu_7687_p2 == 1'd1))
 INFO: [RTGEN 206-100] Generating core module 'mul_8s_6s_14_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Generating core module 'sparsemux_19_4_8_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Finished creating RTL model for 'conv_2d_cl_ap_fixed_8_1_4_0_0_ap_fixed_16_6_5_3_0_config9_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 13.29 seconds. CPU system time: 0.4 seconds. Elapsed time: 13.73 seconds; current allocated memory: 3.001 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 10.26 seconds. CPU system time: 0.36 seconds. Elapsed time: 10.68 seconds; current allocated memory: 3.018 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 1.1 seconds. CPU system time: 0.1 seconds. Elapsed time: 1.23 seconds; current allocated memory: 3.001 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.93 seconds. CPU system time: 0.07 seconds. Elapsed time: 1.01 seconds; current allocated memory: 3.042 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config12_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config12_s' pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config12>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config12_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.24 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.24 seconds; current allocated memory: 3.001 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.16 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.17 seconds; current allocated memory: 3.042 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>' pipeline type 'function pipeline'
-INFO: [HLS 200-1553] Disabling free running pipeline (frp) architecture on pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config13>' in module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s', because the estimated Stream Port Number is 347, which is bigger than the frp_stream_port_number threshold of 20.
-Resolution: For help on HLS 200-1553 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1553.html
-INFO: [RTGEN 206-104] Estimated max fanout for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' is 16800 from HDL expression: ((1'b0 == ap_block_pp0_stage0_11001) & (1'b1 == ap_CS_fsm_pp0_stage0))
+INFO: [RTGEN 206-104] Estimated max fanout for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s' is 8163 from HDL expression: ((1'b0 == ap_block_state1) & (1'b1 == ap_CS_fsm_state1) & (1'b1 == ap_ce))
 INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config13_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 17.03 seconds. CPU system time: 0.39 seconds. Elapsed time: 17.47 seconds; current allocated memory: 3.727 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 10.61 seconds. CPU system time: 0.28 seconds. Elapsed time: 10.92 seconds; current allocated memory: 3.674 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config14_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config14_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 12.11 seconds. CPU system time: 0.54 seconds. Elapsed time: 12.78 seconds; current allocated memory: 3.794 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 12.9 seconds. CPU system time: 0.44 seconds. Elapsed time: 13.47 seconds; current allocated memory: 3.783 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'pool_op_ap_ufixed_8_0_4_0_0_4_0_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'pool_op_ap_ufixed_8_0_4_0_0_4_0_s' pipeline 'pool_op_ap_ufixed_8_0_4_0_0_4_0_s' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'pool_op_ap_ufixed_8_0_4_0_0_4_0_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.32 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.33 seconds; current allocated memory: 3.801 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.25 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.29 seconds; current allocated memory: 3.830 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' pipeline 'pooling2d_cl<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config15>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'pooling2d_cl_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 1.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 1.1 seconds; current allocated memory: 3.802 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.69 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.7 seconds; current allocated memory: 3.831 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -720,60 +764,53 @@ INFO: [RTGEN 206-100] Generating core module 'sparsemux_7_2_11_1_1': 1 instance(
 INFO: [RTGEN 206-100] Generating core module 'sparsemux_9_2_16_1_1': 4 instance(s).
 INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s'.
 INFO: [RTMG 210-279] Implementing memory 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config16_s_outidx_i_RObkb' using auto ROMs.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.7 seconds. CPU system time: 0.08 seconds. Elapsed time: 0.78 seconds; current allocated memory: 3.844 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.52 seconds. CPU system time: 0.06 seconds. Elapsed time: 0.61 seconds; current allocated memory: 3.870 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config19_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config19_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config19>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config19_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.42 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.46 seconds; current allocated memory: 3.862 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.34 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.37 seconds; current allocated memory: 3.876 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_ufixed_ap_fixed_16_6_5_3_0_config20_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 1.09 seconds. CPU system time: 0.03 seconds. Elapsed time: 1.12 seconds; current allocated memory: 3.870 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.82 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.87 seconds; current allocated memory: 3.895 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config21_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config21_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
 INFO: [RTGEN 206-100] Generating core module 'mul_10ns_6s_16_1_1': 64 instance(s).
 INFO: [RTGEN 206-100] Generating core module 'sparsemux_35_5_10_1_1': 8 instance(s).
 INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config21_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.62 seconds. CPU system time: 0.06 seconds. Elapsed time: 0.69 seconds; current allocated memory: 3.925 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.49 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.53 seconds; current allocated memory: 3.949 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config23>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config23_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.74 seconds. CPU system time: 0.07 seconds. Elapsed time: 0.82 seconds; current allocated memory: 3.936 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.64 seconds. CPU system time: 0.06 seconds. Elapsed time: 0.7 seconds; current allocated memory: 3.962 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
 INFO: [RTGEN 206-100] Generating core module 'mul_8ns_6s_14_1_1': 3 instance(s).
 INFO: [RTGEN 206-100] Generating core module 'sparsemux_17_3_8_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config24_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.38 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.42 seconds; current allocated memory: 3.964 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.32 seconds. CPU system time: 0.03 seconds. Elapsed time: 0.34 seconds; current allocated memory: 3.987 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config26>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config26_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.33 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.35 seconds; current allocated memory: 3.969 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.28 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.29 seconds; current allocated memory: 3.992 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
 INFO: [RTGEN 206-100] Generating core module 'mul_8ns_6s_14_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Generating core module 'sparsemux_7_2_8_1_1': 1 instance(s).
 INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config27_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.32 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.34 seconds; current allocated memory: 3.972 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.28 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.29 seconds; current allocated memory: 3.995 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config29_s' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
-INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config29_s' pipeline 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config29>' pipeline type 'function pipeline'
 INFO: [RTGEN 206-100] Finished creating RTL model for 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config29_s'.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.31 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.33 seconds; current allocated memory: 3.974 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.25 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.27 seconds; current allocated memory: 3.997 GB.
 INFO: [HLS 200-10] ----------------------------------------------------------------
 INFO: [HLS 200-10] -- Generating RTL for module 'myproject' 
 INFO: [HLS 200-10] ----------------------------------------------------------------
@@ -818,14 +855,6 @@ INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/b24_2' to 'ap_no
 INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/w27' to 'ap_memory'.
 INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/b27' to 'ap_none'.
 INFO: [RTGEN 206-500] Setting interface mode on function 'myproject' to 'ap_ctrl_hs'.
-WARNING: [HLS 200-656] Deadlocks can occur since process linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config2> is instantiated in a dataflow region with ap_ctrl_none or without start propagation and contains an auto-rewind pipeline.
-Resolution: For help on HLS 200-656 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-656.html
-WARNING: [HLS 200-656] Deadlocks can occur since process linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config6> is instantiated in a dataflow region with ap_ctrl_none or without start propagation and contains an auto-rewind pipeline.
-Resolution: For help on HLS 200-656 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-656.html
-WARNING: [HLS 200-656] Deadlocks can occur since process linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7> is instantiated in a dataflow region with ap_ctrl_none or without start propagation and contains an auto-rewind pipeline.
-Resolution: For help on HLS 200-656 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-656.html
-WARNING: [HLS 200-656] Deadlocks can occur since process linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config12> is instantiated in a dataflow region with ap_ctrl_none or without start propagation and contains an auto-rewind pipeline.
-Resolution: For help on HLS 200-656 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-656.html
 INFO: [RTGEN 206-100] Finished creating RTL model for 'myproject'.
 INFO: [RTMG 210-285] Implementing FIFO 'layer2_out_U(myproject_fifo_w8_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer2_out_1_U(myproject_fifo_w8_d2_S)' using Shift Registers.
@@ -2068,126 +2097,126 @@ INFO: [RTMG 210-285] Implementing FIFO 'layer13_out_479_U(myproject_fifo_w8_d2_S
 INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_U(myproject_fifo_w11_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_1_U(myproject_fifo_w11_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_2_U(myproject_fifo_w11_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_1_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_2_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_3_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_4_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_5_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_6_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_7_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_8_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_9_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_10_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_11_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_12_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_13_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_14_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_15_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_16_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_17_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_18_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_19_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_20_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_21_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_22_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_23_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_24_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_25_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_26_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_27_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_28_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_29_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_30_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_31_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_32_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_33_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_34_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_35_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_36_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_37_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_38_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_39_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_40_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_41_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_42_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_43_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_44_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_45_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_46_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_47_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_48_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_49_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_50_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_51_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_52_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_53_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_54_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_55_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_56_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_57_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_58_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_59_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_60_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_61_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_62_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_63_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_64_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_65_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_66_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_67_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_68_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_69_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_70_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_71_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_72_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_73_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_74_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_75_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_76_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_77_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_78_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_79_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_80_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_81_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_82_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_83_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_84_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_85_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_86_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_87_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_88_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_89_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_90_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_91_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_92_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_93_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_94_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_95_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_96_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_97_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_98_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_99_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_100_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_101_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_102_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_103_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_104_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_105_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_106_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_107_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_108_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_109_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_110_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_111_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_112_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_113_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_114_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_115_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_116_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_117_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_118_U(myproject_fifo_w10_d2_S)' using Shift Registers.
-INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_119_U(myproject_fifo_w10_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_1_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_2_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_3_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_4_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_5_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_6_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_7_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_8_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_9_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_10_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_11_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_12_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_13_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_14_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_15_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_16_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_17_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_18_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_19_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_20_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_21_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_22_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_23_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_24_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_25_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_26_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_27_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_28_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_29_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_30_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_31_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_32_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_33_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_34_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_35_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_36_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_37_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_38_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_39_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_40_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_41_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_42_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_43_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_44_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_45_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_46_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_47_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_48_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_49_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_50_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_51_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_52_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_53_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_54_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_55_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_56_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_57_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_58_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_59_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_60_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_61_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_62_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_63_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_64_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_65_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_66_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_67_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_68_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_69_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_70_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_71_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_72_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_73_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_74_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_75_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_76_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_77_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_78_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_79_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_80_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_81_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_82_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_83_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_84_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_85_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_86_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_87_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_88_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_89_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_90_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_91_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_92_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_93_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_94_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_95_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_96_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_97_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_98_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_99_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_100_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_101_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_102_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_103_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_104_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_105_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_106_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_107_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_108_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_109_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_110_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_111_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_112_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_113_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_114_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_115_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_116_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_117_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_118_U(myproject_fifo_w10_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_119_U(myproject_fifo_w10_d3_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer16_out_U(myproject_fifo_w16_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer16_out_1_U(myproject_fifo_w16_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer16_out_2_U(myproject_fifo_w16_d2_S)' using Shift Registers.
@@ -2379,13 +2408,13 @@ INFO: [RTMG 210-285] Implementing FIFO 'layer26_out_U(myproject_fifo_w8_d2_S)' u
 INFO: [RTMG 210-285] Implementing FIFO 'layer26_out_1_U(myproject_fifo_w8_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer26_out_2_U(myproject_fifo_w8_d2_S)' using Shift Registers.
 INFO: [RTMG 210-285] Implementing FIFO 'layer27_out_U(myproject_fifo_w13_d2_S)' using Shift Registers.
-INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 27.53 seconds. CPU system time: 2.1 seconds. Elapsed time: 29.77 seconds; current allocated memory: 4.016 GB.
-INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 4.42 seconds. CPU system time: 0.52 seconds. Elapsed time: 4.99 seconds; current allocated memory: 4.084 GB.
-INFO: [HLS 200-111] Finished Updating report files: CPU user time: 15.49 seconds. CPU system time: 0.18 seconds. Elapsed time: 15.71 seconds; current allocated memory: 4.372 GB.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 17.36 seconds. CPU system time: 1.17 seconds. Elapsed time: 18.65 seconds; current allocated memory: 4.039 GB.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 3.69 seconds. CPU system time: 0.4 seconds. Elapsed time: 4.15 seconds; current allocated memory: 4.153 GB.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 12.1 seconds. CPU system time: 0.11 seconds. Elapsed time: 12.23 seconds; current allocated memory: 4.403 GB.
 INFO: [VHDL 208-304] Generating VHDL RTL for myproject.
 INFO: [VLOG 209-307] Generating Verilog RTL for myproject.
 INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were NOT satisfied.
-INFO: [HLS 200-789] **** Estimated Fmax: 87.12 MHz
-INFO: [HLS 200-2161] Finished Command csynth_design Elapsed time: 00:05:51; Allocated memory: 4.047 GB.
-***** C/RTL SYNTHESIS COMPLETED IN 0h5m51s *****
-INFO: [HLS 200-112] Total CPU user time: 340.92 seconds. Total CPU system time: 10.53 seconds. Total elapsed time: 363.75 seconds; peak allocated memory: 4.372 GB.
+INFO: [HLS 200-789] **** Estimated Fmax: 57.69 MHz
+INFO: [HLS 200-2161] Finished Command csynth_design Elapsed time: 00:04:47; Allocated memory: 4.077 GB.
+***** C/RTL SYNTHESIS COMPLETED IN 0h4m47s *****
+INFO: [HLS 200-112] Total CPU user time: 278.58 seconds. Total CPU system time: 7.03 seconds. Total elapsed time: 295.66 seconds; peak allocated memory: 4.403 GB.

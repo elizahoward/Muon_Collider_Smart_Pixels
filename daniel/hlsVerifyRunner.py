@@ -26,21 +26,21 @@ singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_
 qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
 singleFilepath = qmodel_file
 modelType = "ASIC"
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results/model2_5_8bit_normalised_selected/pareto_primary/model_trial_077.h5"
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results/model2_5_10bit_normalised_selected/pareto_primary/model_trial_057.h5"
-modelType = 2.5
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_8bit_normalised_selected_pareto_primary__model_trial_100.h5"
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_10bit_normalised_selected_pareto_primary__model_trial_110.h5"#current 110 10,
-#need to do 110 8 bit
-# need to do 009 8 bit
-#need to do 084 10 bit
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model1_fin_results_model1_8bit_normalised_selected__model_trial_1046.h5"
-singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
-# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_057.h5"
-# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5"
-modelType = 3
-bitNumber = 10
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results/model2_5_8bit_normalised_selected/pareto_primary/model_trial_077.h5"
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results/model2_5_10bit_normalised_selected/pareto_primary/model_trial_057.h5"
+# modelType = 2.5
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_8bit_normalised_selected_pareto_primary__model_trial_100.h5"
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_June2026/model3_10bit_normalised_selected_pareto_primary__model_trial_110.h5"#current 110 10,
+# #need to do 110 8 bit
+# # need to do 009 8 bit
+# #need to do 084 10 bit
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model1_fin_results_model1_8bit_normalised_selected__model_trial_1046.h5"
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
+# # singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_057.h5"
+# # singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5"
+# modelType = 3
+bitNumber = -1
 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{singleFilepath[-20:-1]}"
 if runSingleVerification:
     hlsGuy = hlsVerification.hlsVerifier(
