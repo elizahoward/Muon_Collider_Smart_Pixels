@@ -7,6 +7,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import PolynomialDecay, ExponentialDecay, CosineDecay
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import keras_tuner as kt
+from qkeras import QDense, QActivation, quantized_bits, quantized_relu
 from sklearn.metrics import roc_curve, auc
 from pathlib import Path
 import os

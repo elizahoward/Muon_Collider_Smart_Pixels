@@ -1,11 +1,13 @@
 import os
 import sys
+import matplotlib
 sys.path.append('../MuC_Smartpix_ML/')
 sys.path.append('../daniel/')
 sys.path.append('../ryan/')
 sys.path.append('../eric/')
 
 from Model_Classes import SmartPixModel
+matplotlib.use('Agg')
 from model1 import Model1
 from model2 import Model2
 from model2_5 import Model2_5
