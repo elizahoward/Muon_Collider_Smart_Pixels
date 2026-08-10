@@ -9,6 +9,7 @@ from plothelper import *
 from datetime import datetime
 import gc
 import tracemalloc
+import sys
 
 # setup plotter
 plt = PlotHelper()
@@ -73,7 +74,7 @@ parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.Argumen
 parser.add_argument("-i", "--input_file", help="Input file", type=str)
 parser.add_argument("-odir", "--output_folder", help="Output folder", type=str)
 parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
-parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=250000, type=int)
+parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=sys.maxsize, type=int)
 parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=500, type=int) 
 parser.add_argument("-p", "--plot", help="Include if you want to make plots at this stage", action='store_true')
 parser.add_argument("-flp", "--flp", help="Direction of sensor (1 for FE side out, 0 for FE side down)", default=0, type=int)
@@ -94,13 +95,21 @@ if ops.signal:
 elif ops.bib_mm or ops.bib_mp:
     if ops.bib_mp:
         #directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mp_pruned/"
-        directory_path = "/local/d1/berobert/bib/" 
+        directory_path = "/local/d1/berobert/bib/BIB10TeV/sim_mp_pruned/" 
         output_file_form="bib_mp_tracks_*.txt"
     else:
-        directory_path = "/local/d1/berobert/bib/"
+        directory_path = "/local/d1/berobert/bib/BIB10TeV/sim_mm_pruned"
         #directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mm_pruned/" 
         output_file_form="bib_mm_tracks_*.txt"
-    file_list=os.listdir(directory_path)
+    file_list=(os.listdir(directory_path))
+
+    def nums(item):
+        piece = item.split("_")[2]
+        return int(piece.split(".")[0])
+    
+    file_list=sorted(file_list, key=nums)
+
+    print(file_list)
     file_list = [os.path.join(directory_path, file) for file in file_list]
 else: 
     raise Exception("You must include one of the flags for signal (-sig), bib mm (-bmm), or bib mp (-bmp)")
