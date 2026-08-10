@@ -138,6 +138,7 @@ RUN_LABELS   = {rn: lbl for _, rn, lbl, _ in _ALL_CONFIGS}
 ##Make markers
 markerList = ["o", "<", "v", ">", "^"] 
 markerList = ["^", "s", "p", "h", "8"] 
+markerList = ["^", "s", "h", "P","*"] 
 # markerList = ["^", "s", "h", "8",(10,0,0)] 
 # Map the bit strings to the index of your replacement list
 bit_map = {"3-bit": markerList[0], "4-bit": markerList[1], "6-bit": markerList[2], "8-bit": markerList[3], "10-bit": markerList[4]}
@@ -146,7 +147,26 @@ RUN_MARKERS = {
     key: next((bit_map[bit] for bit in bit_map if bit in val), val) 
     for key, val in RUN_LABELS.items()
 }
-
+def getMarkerSize(marker, baseSize, isScatter=True):
+    """
+    Returns the dynamically scaled size for a marker to balance visual weight.
+    Set isScatter=True for plt.scatter() (scales area).
+    Set isScatter=False for plt.plot() (scales linear diameter).
+    """
+    # Multipliers calibrated for area (s) in plt.scatter()
+    scatterMultipliers = {
+        'o': 1.0, '<': 1.3, 'v': 1.3, '>': 1.3, '^': 1.3,
+        's': 0.85, 'p': 1.2, 'h': 1.1, '8': 1.05, 'P': 1.35, '*': 2.4
+    }
+    
+    # Multipliers calibrated for diameter (markersize/ms) in plt.plot()
+    plotMultipliers = {
+        'o': 1.0, '<': 1.15, 'v': 1.15, '>': 1.15, '^': 1.15,
+        's': 0.92, 'p': 1.1, 'h': 1.05, '8': 1.02, 'P': 1.16, '*': 1.55
+    }
+    
+    multipliers = scatterMultipliers if isScatter else plotMultipliers
+    return baseSize * multipliers.get(marker, 1.0)
 # print(RUN_MARKERS)
 
 FAMILY_LINE = {
@@ -538,7 +558,7 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
         marker  = RUN_MARKERS.get(run_name, "o")
         subset = df[df["run_name"] == run_name]
         ax.scatter(subset[x_col], _y(subset[PRIMARY_METRIC], complement),
-                   alpha=0.30, s=30, c=color, edgecolors="none",marker=marker,
+                   alpha=0.30, s=getMarkerSize(marker,30), c=color, edgecolors="none",marker=marker,
                    label=label, zorder=1)
 
     for run_name in pareto_df["run_name"].unique():
@@ -546,14 +566,14 @@ def _draw_scatter(ax, df, pareto_df, x_col, complement=False, annotate=True):
         p_sub = pareto_df[pareto_df["run_name"] == run_name]
         marker  = RUN_MARKERS.get(run_name, "o")
         ax.scatter(p_sub[x_col], _y(p_sub[PRIMARY_METRIC], complement),
-                   alpha=0.90, s=100, c=color, edgecolors="black",
+                   alpha=0.90, s=getMarkerSize(marker,100), c=color, edgecolors="black",
                    linewidth=1.2, marker=marker, zorder=3) #marker = "D"
     for _, row in pareto_df.iterrows():
         marker  = RUN_MARKERS.get(row['run_name'], "o")
         if (row['run_name'],row['trial_id']) in SELECTED_MODELS:
             color = RUN_COLORS.get(row['run_name'], "gray")
             ax.scatter(row[x_col], _y(row[PRIMARY_METRIC], complement),
-                   alpha=0.95, s=300, c=color, edgecolors="black",
+                   alpha=0.95, s=getMarkerSize(marker,300), c=color, edgecolors="black",
                    linewidth=1.2, marker=marker, zorder=3) #marker = "*"
 
 
@@ -628,9 +648,9 @@ def _add_legend_and_stats(ax, df, pareto_df, complement=False, extra_handles=Non
         for i in range(5):
             # Create a tuple of 3 separate dots using your 3 different gray/darkened variants
             row_dots = (
-                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=reds[i], markersize=10),
-                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=blues[i], markersize=10),
-                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=greens[i], markersize=10),
+                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=reds[i], markersize=getMarkerSize(markerList[i],9,False)),
+                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=blues[i], markersize=getMarkerSize(markerList[i],9,False)),
+                Line2D([], [], marker=markerList[i], color="none", markerfacecolor=greens[i], markersize=getMarkerSize(markerList[i],9,False)),
             )
             bit_handles.append(row_dots)
 
