@@ -169,16 +169,22 @@ HARDWARE_REFS = [
     # (34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (34568,"Smartpixel Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (34568,"Filtering Model, arxiv:2310.02474","teal",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
-    (34568,"arxiv:2310.02474","black",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (34568,"arxiv:2310.02474","black",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (20886 + FF_COEFFICIENT * 1701,"arxiv:2310.02474","black",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (20886 + FF_COEFFICIENT * 1701,"DOI 10.1088/2632-2153/ad6a00","black",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (10813 + FF_COEFFICIENT * 1692,"arxiv:2310.02474 vsynth","black",0.05,0),#for top alignment, 0.86 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (26376,"Smartpixel Filtering Model (vsynth)","teal",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (14289+57398,"Smartpixel Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (14289+57398,"Regression Model, arxiv:2312.11676v1","purple",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
-    (14289+57398,"arxiv:2312.11676v1","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
-    (42503+131921+0,"regression MLP slim model","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (14289+57398,"arxiv:2312.11676v1","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (42503+131921+0,"regression MLP slim model","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (79309 + FF_COEFFICIENT * 37200+55*220,"regression MLP slim model with dsp","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (87935 + FF_COEFFICIENT * 39072+0,"regression MLP slim model newest","black",0.05,0.03), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    (87935 + FF_COEFFICIENT * 39072+0,"arXiv:2602.15946v3","black",0.05,0.03), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (106400+53200,"FPGA: Xilinx Zynq (xc7z020clg400-1), featured on PYNQ-Z2","fuchsia",0.05,0),
-    (106400+53200,"Xilinx ZYNQ XC7Z020 FPGA","black",0.05,0),
+    (106400+FF_COEFFICIENT * 53200,"Xilinx ZYNQ XC7Z020 FPGA","black",0.05,0),
     # (20736+15552,"FPGA: Tang Nano 20k","pink",0.05,0.1),
     # (14400+28800,"FPGA: Xilinx Zynq 7007S (xc7z007z)","purple",0.05,0.1),#https://www.mouser.com/datasheet/2/903/ds190-Zynq-7000-Overview-1595492.pdf
     # (10000+20000,'Small FPGA: "Pink Board" Tang Nano 20k', ), #accroding to https://deepwiki.com/sipeed/sipeed_wiki/4.1-tang-nano-20k
