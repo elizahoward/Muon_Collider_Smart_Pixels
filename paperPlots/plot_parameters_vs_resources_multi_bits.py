@@ -49,7 +49,12 @@ CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider
 CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
 CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1vsynth.csv")
 CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1vsynth_10ns.csv")
-MODEL_NUM = '1' #'1', '25', or '3'
+# CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1vsynth_20ns.csv")
+# HARDWARE_KEY = "luts_plus_ff"
+# HARDWARE_KEY = "luts_plus_0.5*_ff"
+CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1And2vsynth_20ns_model3csynth_20ns.csv")
+MODEL_NUM = '25' #'1', '25', or '3'
+FF_COEFFICIENT = 1
 def infer_bit_width_from_name(name: str) -> str:
     """
     Try to infer the bit-width from a directory name.
@@ -80,6 +85,7 @@ def load_and_merge_data(resource_csv, pareto_csv,bits):
 
     This mirrors the logic from plot_parameters_vs_resources.py.
     """
+    raise ValueError("Deprecated")
     resource_df = pd.read_csv(resource_csv)
     # resource_df["trial_id"] = resource_df["model_name"].str.extract(
     #     r"model_trial_(\d+)"
@@ -102,7 +108,7 @@ def load_and_merge_data(resource_csv, pareto_csv,bits):
     # merged_df["total_resources"] = (
     #     merged_df["luts_used"] + merged_df["registers_used"]
     # )
-    merged_df["total_resources"] = merged_df["luts_plus_ff"]
+    merged_df["total_resources"] = merged_df[HARDWARE_KEY]
     merged_df["parameters"] = merged_df["parameters_y"] 
     # print(merged_df.keys())
 
@@ -117,8 +123,8 @@ def loadDataNew(resource_csv, bits,modelNum='25'):
         resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}w{str(int(bits)+2)}i'") # works for model1
     else:
         resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}bit'") #works for model 25 or 3
-    resource_df["total_resources"] = resource_df["luts_plus_ff"]
-    resource_df["total_resources"] = resource_df["luts"] + resource_df["registers"]
+    # resource_df["total_resources"] = resource_df[HARDWARE_KEY]
+    resource_df["total_resources"] = resource_df["luts"] + FF_COEFFICIENT * resource_df["registers"]
     # print(resource_df)
     return resource_df
 
@@ -255,9 +261,9 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6),sh
         )
 
     ax.set_xlabel("Number of Parameters")#, fontsize=14, fontweight="bold")
-    ax.set_ylabel("Total Hardware Resources (FFs + LUTs)")#, fontsize=14, fontweight="bold")
+    ax.set_ylabel(f"Total Hardware Resources (LUTs + {FF_COEFFICIENT} * FFs)")#, fontsize=14, fontweight="bold")
     ax.set_title(
-        f"Model {MODEL_NUM} Parameters vs Hardware Resources",#\n"
+        f"Model {MODEL_NUM[0]} Parameters vs Hardware Resources",#\n"
         # "Multi-bit Comparison with Linear Regression",
         # fontsize=16,
         # fontweight="bold",
@@ -443,6 +449,8 @@ Examples:
         # df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
         df = loadDataNew(info["resource_csv"],info["bit"],modelNum=MODEL_NUM) #either works
         #filtering out points that look like outliers
+        df = df.query("total_resources < 100000")
+        df = df.query("total_resources <  97000")
         # df = df.query("total_resources < 400000")
         # df = df.query("total_resources < 4000000")
         ##################
