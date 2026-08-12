@@ -54,7 +54,8 @@ CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider
 # HARDWARE_KEY = "luts_plus_0.5*_ff"
 CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1And2vsynth_20ns_model3csynth_20ns.csv")
 MODEL_NUM = '25' #'1', '25', or '3'
-FF_COEFFICIENT = 1
+FF_COEFFICIENT = 0.5
+RESOURCE_FILTER = 80000 #a number to filter ff+lut below this threshold or None
 def infer_bit_width_from_name(name: str) -> str:
     """
     Try to infer the bit-width from a directory name.
@@ -262,8 +263,9 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6),sh
 
     ax.set_xlabel("Number of Parameters")#, fontsize=14, fontweight="bold")
     ax.set_ylabel(f"Total Hardware Resources (LUTs + {FF_COEFFICIENT} * FFs)")#, fontsize=14, fontweight="bold")
+    extendTitle = f"\n FILTER on y axis by {RESOURCE_FILTER}" if RESOURCE_FILTER else ""
     ax.set_title(
-        f"Model {MODEL_NUM[0]} Parameters vs Hardware Resources",#\n"
+        f"Model {MODEL_NUM[0]} Parameters vs Hardware Resources{extendTitle}",#\n"
         # "Multi-bit Comparison with Linear Regression",
         # fontsize=16,
         # fontweight="bold",
@@ -418,14 +420,14 @@ Examples:
     else:
         output_path = os.path.join(
             # runs_dir, "parameters_vs_resources_multi_bits.png"
-            ".", "parameters_vs_resources_multi_bits.png"
+            ".", f"parameters_vs_resources_multi_bits_M{MODEL_NUM}_FF{FF_COEFFICIENT}_R{RESOURCE_FILTER}.png"
         )
 
     if args.slopes_csv:
         slopes_csv_path = args.slopes_csv
     else:
         slopes_csv_path = os.path.join(
-            ".", "parameters_vs_resources_multi_bits_slopes.csv"
+            ".", f"parameters_vs_resources_multi_bits_slopes_M{MODEL_NUM}_FF{FF_COEFFICIENT}_R{RESOURCE_FILTER}.csv"
         )
 
     # Collect runs
@@ -449,8 +451,9 @@ Examples:
         # df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
         df = loadDataNew(info["resource_csv"],info["bit"],modelNum=MODEL_NUM) #either works
         #filtering out points that look like outliers
-        df = df.query("total_resources < 100000")
-        df = df.query("total_resources <  97000")
+        if RESOURCE_FILTER:
+            df = df.query("total_resources < @RESOURCE_FILTER")
+        # df = df.query("total_resources <  97000")
         # df = df.query("total_resources < 400000")
         # df = df.query("total_resources < 4000000")
         ##################
