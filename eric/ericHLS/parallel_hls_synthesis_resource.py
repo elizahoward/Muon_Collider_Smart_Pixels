@@ -52,7 +52,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # myproject_csynth.rpt is the top-level Vitis HLS C-synth report with
 # FF/LUT/DSP/BRAM *estimates* (no Vivado synthesis needed).
 KEEP_FILES = [
-    'vivado_synth.rpt'
+    'vivado_synth.rpt',
     'project.tcl',
     'vitis_hls.log',
     'myproject_csynth.rpt',
@@ -148,6 +148,8 @@ def synthesize_model(
         print(f"[{model_name}] Starting HLS synthesis (resource/FF+LUT mode)...")
 
         output_dir = os.path.join(output_base_dir, f"hls_{model_name}")
+        # if build_options["vsynth"]: #put into output_base_dir from above functions
+        #     output_dir = os.path.join(output_base_dir, f"hls_{model_name}_vsynth")
         result['output_dir'] = output_dir
 
         if os.path.exists(output_dir):
@@ -379,6 +381,8 @@ Examples:
 
     if args.output_dir is None:
         args.output_dir = os.path.join(args.input_dir, 'hls_outputs')
+        if args.vsynth:
+            args.output_dir = os.path.join(args.input_dir, 'hls_outputs_vsynth')
     os.makedirs(args.output_dir, exist_ok=True)
 
     print(f"Searching for H5 files in: {args.input_dir}")

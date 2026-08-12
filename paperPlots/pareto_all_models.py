@@ -56,7 +56,7 @@ PRIMARY_METRIC = "primary_metric"
 PRIMARY_METRIC = "bkg_rej_@99%"
 
 HARDWARE_METRIC = "luts_plus_ff"
-FF_COEFFICIENT = 1
+FF_COEFFICIENT = 0.5
 HARDWARE_METRIC = f"luts_plus_{FF_COEFFICIENT}*_ff"
 
 if PRIMARY_METRIC == "primary_metric":
@@ -446,9 +446,14 @@ def load_modelNEW(base_dir,modelNum):
             lut, ff, dsp, bram, src = _hls_resources_csynth_only(
             # lut, ff, dsp, bram, src = _hls_resources_csynth_or_vsynth(
                 bit_dir, trial_id,
-                ["pareto_primary/hls_outputs",
+                [
+                #  "pareto_primary/hls_outputs_vsynth",
+                #  "pareto_secondary/hls_outputs_vsynth",
+                #  "hls_outputs_vsynth",
+                 "pareto_primary/hls_outputs",
                  "pareto_secondary/hls_outputs",
-                 "hls_outputs"])
+                 "hls_outputs",
+                 ])
             if lut is None:
                 continue
             if dsp != 0:
