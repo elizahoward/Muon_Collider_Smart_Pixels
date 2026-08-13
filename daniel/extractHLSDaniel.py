@@ -304,34 +304,53 @@ assert extractProjectMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Col
 
 ###################################################################################
 #Vivado report processing
-def find_in_text(pattern, file_path, cast_type=float, default=-1):
+def find_in_text(pattern, file_path, cast_type=float, default=-1, group=1):
     """Safely extracts a regex match from a text file, defaulting to -1 on failure."""
     if not os.path.exists(file_path):
         return default
     with open(file_path, 'r') as f:
         match = re.search(pattern, f.read())
-    return cast_type(match.group(1)) if match else default
+    return cast_type(match.group(group)) if match else default
 
+def find_latency_row(file_path):
+    return find_in_text(
+        r'\+ Latency:\s*\n'
+        r'(?:[^\r\n]*\r?\n){5}'
+        r'([^\r\n]+)',
+        file_path,
+        str,
+        default=""
+    )
 def check_deterministic_pipeline(rpt_path):
     """Verifies if the pipeline is enabled and min latency equals max latency."""
-    # 1. Extract min and max latency using the precise column order patterns
-    min_lat = find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|', rpt_path, int)
-    max_lat = find_in_text(r'\|\s*\d+\s*\|\s*(\d+)\s*\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[\d\.]+\s*[a-z]+\s*\|', rpt_path, int)
-    # 2. Check the end of the data row to see if the pipeline type column is 'yes' or 'function'
-    is_pipelined = find_in_text(r'\|\s*[\d\.]+\s*[a-z]+\s*\|\s*[^\|]+\s*\|\s*[^\|]+\s*\|\s*(yes|function)\s*\|', rpt_path, str, default="") != ""
-    # 3. Design is verified deterministic if pipelined and min equals max
-    return bool(is_pipelined and min_lat == max_lat and min_lat != -1)
-def getVsynthMetrics(base_dir: str, doPrint = False):
-    """Extracts true Vitis timing/latency and Vivado area metrics via text reports."""
+    row = find_latency_row(rpt_path)
+    if not row:
+        # raise ValueError("Latency row not found")
+        return False
+    fields = [x.strip() for x in row.strip().strip('|').split('|')]
+    return (
+        len(fields) == 7
+        and fields[0] == fields[1]
+        and fields[6] in ("yes", "function")
+    )
+def getVsynthMetrics(base_dir: str, doPrint=False):
     rpt_csynth = os.path.join(base_dir, "myproject_prj/solution1/syn/report/myproject_csynth.rpt")
     rpt_vsynth = os.path.join(base_dir, "vivado_synth.rpt")
+    latency_row = find_latency_row(rpt_csynth)
+    latency_fields = [x.strip() for x in latency_row.strip('|').split('|')] if latency_row else []
+    latency_str = (
+        latency_fields[4]
+        if len(latency_fields) > 4 and re.match(r'[\d.]+\s*[a-zA-Z]+$', latency_fields[4])
+        else latency_fields[3]
+        if len(latency_fields) > 3 else -1
+    )
+    # print(latency_fields)
     metrics = {
         "Target Clock (ns)": find_in_text(r'ap_clk\s*\|\s*([\d\.]+)\s*ns', rpt_csynth),
         "Achieved Clock (ns)": find_in_text(r'ap_clk\s*\|\s*[\d\.]+\s*ns\s*\|\s*([\d\.]+)\s*ns', rpt_csynth),
-        "Latency (cycles)": find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*[\d\.]+\s*[a-z]+', rpt_csynth, int),        
-        # Captures the full string block of the second time column (e.g., "0.115 us" or "12.4 ms")
-        "Latency (str)": find_in_text(r'\|\s*[\d\.]+\s*[a-z]+\s*\|\s*([\d\.]+\s*[a-z]+)\s*\|\s*\d+\s*\|\s*\d+\s*\|\s*(?:yes|no)\s*\|', rpt_csynth, str),
-        "Interval (cycles)": find_in_text(r'\|\s*(\d+)\s*\|\s*\d+\s*\|\s*(?:yes|no)\s*\|', rpt_csynth, int),
+        "Latency (cycles)": int(latency_fields[2]) if len(latency_fields) > 2 else -1,
+        "Latency (str)": latency_str,
+        "Interval (cycles)": int(latency_fields[6]) if len(latency_fields) > 6 else -1,
         "Post-Synth LUTs": find_in_text(r'Slice LUTs\*\s*\|\s*(\d+)', rpt_vsynth, int),
         "Post-Synth FFs": find_in_text(r'Slice Registers\s*\|\s*(\d+)', rpt_vsynth, int),
         "Post-Synth DSPs": find_in_text(r'DSPs\s*\|\s*(\d+)', rpt_vsynth, int),
@@ -346,6 +365,8 @@ def getVsynthMetrics(base_dir: str, doPrint = False):
 assert getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m1_b6___model_trial_836.h/hlsVitisModel2_20260714_050318") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.302, 'Latency (cycles)': 23, 'Latency (str)': '0.115 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 2051, 'Post-Synth FFs': 1762, 'Post-Synth DSPs': 2, "Post-Synth BRAMs":0,'Verified Deterministic': True}
 assert getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b8___model_trial_063.h/hlsVitisModel2_20260714_062921") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.362, 'Latency (cycles)': 42, 'Latency (str)': '0.210 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 234454, 'Post-Synth FFs': 223056, 'Post-Synth DSPs': 220, "Post-Synth BRAMs":0,'Verified Deterministic': True}
 assert getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m2.5_b8___model_trial_063.h/hlsVitisModel2_20260714_062921") == {'Target Clock (ns)': 5.0, 'Achieved Clock (ns)': 4.362, 'Latency (cycles)': 42, 'Latency (str)': '0.210 us', 'Interval (cycles)': 1, 'Post-Synth LUTs': 234454, 'Post-Synth FFs': 223056, 'Post-Synth DSPs': 220, "Post-Synth BRAMs":0,'Verified Deterministic': True}
+# print(getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m3_b10___model_trial_046.h/hlsVitisModel2_20260723_111028"))
+assert getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/m3_b10___model_trial_046.h/hlsVitisModel2_20260723_111028") == {'Target Clock (ns)': 10.0, 'Achieved Clock (ns)': 8.745, 'Latency (cycles)': 313, 'Latency (str)': '3.120 us', 'Interval (cycles)': 280, 'Post-Synth LUTs': 492029, 'Post-Synth FFs': 201191, 'Post-Synth DSPs': 0, "Post-Synth BRAMs":0,'Verified Deterministic': False}
 ###################################################################################
 
 def saveMetrics(allMetrics, savePath = "./hlsComparison/hls_synthesis_metrics.csv"):
