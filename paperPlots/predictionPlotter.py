@@ -155,7 +155,7 @@ def plotAll1dHists(predVarDF,threshVal,pltDir):
     print(predVarDF.keys())
     if "adjusted_hit_time_30ps_gaussian" in predVarDF.keys():
         histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel="Cluster Hit Arrival Time [ns]",figsize=(5,10),bins=100)
-        histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel=r"$t_{\mathrm{corr}}$ [ns]",figsize=(6,5),bins=100,plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4])
+        histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel=r"$t_{\mathrm{corr}}$ [ns]",figsize=(6,5),bins=np.arange(-0.09-.24*2,15,.24),plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4])
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(6,5),bins=60,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4],locLegend="upper center")
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="pt",keyLabel=r"Transverse Momentum $p_T$ [GeV/c]",figsize=(5,10),bins=100)
