@@ -155,8 +155,8 @@ def plotAll1dHists(predVarDF,threshVal,pltDir):
     print(predVarDF.keys())
     if "adjusted_hit_time_30ps_gaussian" in predVarDF.keys():
         histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel="Cluster Hit Arrival Time [ns]",figsize=(5,10),bins=100)
-        histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel=r"$t_{\mathrm{corr}}$ [ns]",figsize=(6,5),bins=np.arange(-0.09-.24*2,15,.24),plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4])
-    histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(6,5),bins=60,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4],locLegend="upper center")
+        histoKarri(predVarDF,threshVal,pltDir,key="adjusted_hit_time_30ps_gaussian",keyLabel=r"$t_{\mathrm{corr}}$ [ns]",figsize=(9,7),bins=np.arange(-0.09-.24*2,15,.24),plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4])
+    histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(9,7),bins=60,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4],locLegend="upper center",extraLinebreak="")
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="pt",keyLabel=r"Transverse Momentum $p_T$ [GeV/c]",figsize=(5,10),bins=100)
     histoKarri(predVarDF,threshVal,pltDir,key="y-local",keyLabel="y-local [mm] aaaaah I can't find a good binnning",figsize=(5,10),bins=25)
@@ -164,8 +164,8 @@ def plotAll1dHists(predVarDF,threshVal,pltDir):
     histoKarri(predVarDF,threshVal,pltDir,key="ySize",keyLabel="y-Size [# pixels]",bins=np.arange(0,14,1),figsize=(5,11),locLegend="upper right")
     histoKarri(predVarDF,threshVal,pltDir,key="nModule",keyLabel="Module Number (longitudinally counted)",bins=12,figsize=(5,10))
     histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(5,10),locLegend="upper right")
-    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(6.6,5),locLegend="upper right",plotAll = False,plotSig=False,extendSaveTitle="paperVersionBib")
-    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(6.6,5),locLegend="upper right",plotAll = False,plotBIB=False,extendSaveTitle="paperVersionSig")
+    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(7.5,6.1),locLegend="upper right",plotAll = False,plotSig=False,extendSaveTitle="paperVersionBib")
+    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(7.5,6.1),locLegend="upper right",plotAll = False,plotBIB=False,extendSaveTitle="paperVersionSig")
     print("finished 1d histograms")
 
 def plotNew2by2(predVarDF, threshVal, pltDir,interactivePlots = False,extendTitle = "",cmap="Blues",figsize=(10,8)):
@@ -177,7 +177,7 @@ def plotNew2by2(predVarDF, threshVal, pltDir,interactivePlots = False,extendTitl
 
 def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bins="auto",yscale="log",locLegend = "best",
                plotAll = True, plotBIB = True, plotSig = True,extendSaveTitle="",allTitle="All vectors",bibTitle = "BIB",sigTitle="Signal",
-               ylim=None,increaseFontSize=True):
+               ylim=None,increaseFontSize=True,extraLinebreak="\n"):
     configsAll = [
         (predVarDF, "all vectors"),
         (predVarDF.query("trueY == 0"), "all BIB"),
@@ -189,12 +189,12 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bi
     configsSig = [
         (predVarDF.query("trueY == 1"), "all Signal"),
         (predVarDF.query("trueY == 1 and prediction > @cut"), "Signal accepted by model"),
-        (predVarDF.query("trueY == 1 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), "Signal accepted by model, \n "+ r"$[3\sigma, 5\sigma]$ timing selection"),
+        (predVarDF.query("trueY == 1 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), "Signal accepted by model,\n"+ r"$[3\sigma, 5\sigma]$ timing selection"),
     ]
     configsBib = [
         (predVarDF.query("trueY == 0"), "all BIB"),
         (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
-        (predVarDF.query("trueY == 0 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), "BIB accepted by model, \n "+ r"$[3\sigma, 5\sigma]$ timing selection"),
+        (predVarDF.query("trueY == 0 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), f"BIB accepted by model, {extraLinebreak}"+ r"$[3\sigma, 5\sigma]$ timing selection"),
     ]
     totalPlots = plotAll + plotBIB + plotSig
     plt.figure(figsize=figsize)
