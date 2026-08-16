@@ -510,7 +510,7 @@ class hlsVerifier():
             #Actually need to import the other hls4ml for this
             config = self.hls4ml.utils.config_from_keras_model(self.quantizedModel, granularity='name',default_precision = "fixed<16,7>",)
             # config = self.hls4ml.utils.config_from_keras_model(quantizedModel, granularity='name',default_precision="ap_fixed<16,6,true>")
-
+            config["Model"]["BramFactor"] = 0 #might make weights programmable
             for layer in config['LayerName'].keys():
                 print('Enable tracing for layer:', layer)
                 config['LayerName'][layer]['Trace'] = True
