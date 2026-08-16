@@ -200,7 +200,10 @@ HARDWARE_REFS = [
     # (42503+131921+0,"regression MLP slim model","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (79309 + FF_COEFFICIENT * 37200+55*220,"regression MLP slim model with dsp","black",0.05,0), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
     # (87935 + FF_COEFFICIENT * 39072+0,"regression MLP slim model newest","black",0.05,0.03), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
-    (87935 + FF_COEFFICIENT * 39072+0,"arXiv:2602.15946v3","black",0.05,0.03), #for top alignment 0.5 #qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    # (87935 + FF_COEFFICIENT * 39072+0,"arXiv:2602.15946v3 programmable vsynth","black",0.05,0.03), #for top alignment 0.5 This is from Giuseppe with programmable weights
+    # (166253 + FF_COEFFICIENT * 12041+0,"arXiv:2602.15946v3 nonprogrammable csynth","black",0.05,0.03), #for top alignment 0.5 This is from Giuseppe with programmable weights
+    (166253 + FF_COEFFICIENT * 12041+0,"arXiv:2602.15946v3","black",0.05,0.03), #for top alignment 0.5 This is from Giuseppe with programmable weights
+    # (42975 + FF_COEFFICIENT * 10505+0,"arXiv:2602.15946v3 nonprogrammable vsynth","black",0.05,0.03), #for top alignment 0.5 This is from Giuseppe with programmable weights
     # (35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer","teal",0.95), #singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/ASIC Model_results_20260610_055759/models/ASIC Model_quantized_4bit.h5"
     # (106400+53200,"FPGA: Xilinx Zynq (xc7z020clg400-1), featured on PYNQ-Z2","fuchsia",0.05,0),
@@ -346,7 +349,7 @@ def _build_row(model_key, run_name, trial_id, csv_row, lut, ff, dsp, bram, src,f
         PRIMARY_METRIC: csv_row.get(PRIMARY_METRIC, np.nan),
         "luts":           lut,
         "registers":      ff,
-        HARDWARE_METRIC:   2*(lut + FF_COEFFICIENT * ff),
+        HARDWARE_METRIC:   1*(lut + FF_COEFFICIENT * ff),
         "dsp":            dsp or 0,
         "bram":           bram or 0,
         "hls_source":     src,
