@@ -27,7 +27,7 @@ styleSheet = "seaborn-v0_8-colorblind"
 styleSheet = "seaborn-v0_8-poster"
 plt.style.use(styleSheet)
 N_CPU = 4
-loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
+loadPredVarPkl = False #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
 FILTER_TIME = True #add the -0.5 to 15 ns filter
 
 matplotlib.rcParams["figure.dpi"] = 300
@@ -179,20 +179,20 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(5,10),bi
                plotAll = True, plotBIB = True, plotSig = True,extendSaveTitle="",allTitle="All vectors",bibTitle = "BIB",sigTitle="Signal",
                ylim=None,increaseFontSize=True,extraLinebreak="\n"):
     configsAll = [
-        (predVarDF, "all vectors"),
-        (predVarDF.query("trueY == 0"), "all BIB"),
-        (predVarDF.query("trueY == 1"), "all Signal"),
-        (predVarDF.query("prediction > @cut"), "all vectors accepted by model"),
+        (predVarDF, "All vectors"),
+        (predVarDF.query("trueY == 0"), "All BIB"),
+        (predVarDF.query("trueY == 1"), "All Signal"),
+        (predVarDF.query("prediction > @cut"), "Vectors accepted by model"),
         (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
         (predVarDF.query("trueY == 1 and prediction > @cut"), "Signal accepted by model"),
     ]
     configsSig = [
-        (predVarDF.query("trueY == 1"), "all Signal"),
+        (predVarDF.query("trueY == 1"), "All Signal"),
         (predVarDF.query("trueY == 1 and prediction > @cut"), "Signal accepted by model"),
         (predVarDF.query("trueY == 1 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), "Signal accepted by model,\n"+ r"$[3\sigma, 5\sigma]$ timing selection"),
     ]
     configsBib = [
-        (predVarDF.query("trueY == 0"), "all BIB"),
+        (predVarDF.query("trueY == 0"), "All BIB"),
         (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
         (predVarDF.query("trueY == 0 and prediction > @cut and adjusted_hit_time_30ps_gaussian > -0.09 and adjusted_hit_time_30ps_gaussian < 0.150"), f"BIB accepted by model, {extraLinebreak}"+ r"$[3\sigma, 5\sigma]$ timing selection"),
     ]
