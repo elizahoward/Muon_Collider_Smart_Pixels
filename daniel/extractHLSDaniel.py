@@ -15,7 +15,7 @@ from typing import Callable, Any
 import pandas as pd
 from plotHLSDaniel import *
 
-rtlPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/rtl.rpt"
+rtlPath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/oldSyntheses_Pre_20260622_orwhatever/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/rtl.rpt"
 
 def areaScoreFromRtlRpt(rtlPath: str) -> tuple[float, float, float]:
     """
@@ -54,8 +54,8 @@ def areaScoreFromRtlRpt(rtlPath: str) -> tuple[float, float, float]:
 
     return areaScorePostScheduling, areaScorePostDSP, areaScorePostAssignment
 
-assert areaScoreFromRtlRpt("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/rtl.rpt") == (560291.8, 588659.5, 586221.4)
-assert areaScoreFromRtlRpt("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/hlsCatapultModel2_20260619_115432/Catapult/myproject.v1/rtl.rpt") == (4290801.6, 4370154.8, 4322300.2)
+assert areaScoreFromRtlRpt("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/oldSyntheses_Pre_20260622_orwhatever/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/rtl.rpt") == (560291.8, 588659.5, 586221.4)
+assert areaScoreFromRtlRpt("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/oldSyntheses_Pre_20260622_orwhatever/hlsCatapultModel2_20260619_115432/Catapult/myproject.v1/rtl.rpt") == (4290801.6, 4370154.8, 4322300.2)
 import re
 import os
 
@@ -119,8 +119,8 @@ def latencyFromCycleRpt(cyclPath: str) -> tuple[float, float, int]:
         print(f"An error occurred while reading the file: {e}")
 
     return designLatency, clockPeriod, numClocks
-assert latencyFromCycleRpt("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/cycle.rpt") == (250.0,10.0,25)
-assert latencyFromCycleRpt("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/hlsCatapultModel2_20260619_115432/Catapult/myproject.v1/cycle.rpt") == (260,10,26)
+assert latencyFromCycleRpt("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/oldSyntheses_Pre_20260622_orwhatever/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/cycle.rpt") == (250.0,10.0,25)
+assert latencyFromCycleRpt("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/oldSyntheses_Pre_20260622_orwhatever/hlsCatapultModel2_20260619_115432/Catapult/myproject.v1/cycle.rpt") == (260,10,26)
 
 import os
 import re
@@ -297,8 +297,8 @@ def extractProjectMetrics(projectDir: str, doPrint = True) -> dict:
     if doPrint:
         print(metrics)
     return metrics
-# assert extractProjectMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/") == ((560291.8, 588659.5, 586221.4), (250.0,10.0,25))
-assert extractProjectMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/",doPrint=False) == {'areaScorePostScheduling': 560291.8, 'areaScorePostDSP': 588659.5, 'areaScorePostAssignment': 586221.4, 'designLatency': 250.0, 'clockPeriod': 10.0, 'numClocks': 25}
+# assert extractProjectMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/oldSyntheses_Pre_20260622_orwhatever/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/") == ((560291.8, 588659.5, 586221.4), (250.0,10.0,25))
+assert extractProjectMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/hlsVerification/oldSyntheses_Pre_20260622_orwhatever/hlsCatapultModel2_20260622_103255/Catapult/myproject.v1/",doPrint=False) == {'areaScorePostScheduling': 560291.8, 'areaScorePostDSP': 588659.5, 'areaScorePostAssignment': 586221.4, 'designLatency': 250.0, 'clockPeriod': 10.0, 'numClocks': 25}
 # Execution example:
 # processTargetDirectories("/path/to/your/base/workspace", extractProjectMetrics)
 
@@ -378,7 +378,7 @@ def saveMetrics(allMetrics, savePath = "./hlsComparison/hls_synthesis_metrics.cs
     else:
         print("No hlsDir or hlsDirVitis key to sort by, so saving unsorted")
     df.to_csv(savePath, index=False)
-    print(df)
+    # print(df)
     print("Metrics successfully saved to ",savePath)
     return
 
@@ -469,7 +469,7 @@ def main() -> None:
     print("\n\n\n")
     combinedDf = mergeTwoCsvFiles("../eric/combined_all_models_pareto_newJune2026/pareto_primary.csv","./hlsComparison/hls_synthesis_metrics.csv")
 
-    print(combinedDf)
+    # print(combinedDf)
     print(combinedDf.keys())
     plotCombinedDf(combinedDf)
     plotCombinedDf2(combinedDf)
