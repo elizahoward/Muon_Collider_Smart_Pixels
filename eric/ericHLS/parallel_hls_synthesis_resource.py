@@ -56,6 +56,7 @@ KEEP_FILES = [
     'project.tcl',
     'vitis_hls.log',
     'myproject_csynth.rpt',
+    'myproject.v',
 ]
 
 
