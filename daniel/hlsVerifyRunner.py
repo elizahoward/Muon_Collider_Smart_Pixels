@@ -14,8 +14,8 @@ import shutil
 print("Current MGC_HOME:", os.environ.get("MGC_HOME"))
 print("Resolved Catapult Binary:", shutil.which("catapult"))
 
-runParetoVerification = False
-runSingleVerification = True
+runParetoVerification = True
+runSingleVerification = False
 
 tfRecordFolder = "" #The default, which will go to tfLoaderUtils defaults, which are not normalized actually, 
 # that default appropriate for some older models or for model1, but not great for the newest (as of May/June2026) models 2/3
@@ -89,8 +89,8 @@ if runParetoVerification:
                         # continue
                     if "model3" in e.path:
                         modelType = 3
-                        print("skipping model 3 type")
-                        continue
+                        # print("skipping model 3 type")
+                        # continue
                 match = re.search(r'(\d+)bit', e.path)
                 bitNumber = int(match.group(1)) if match else -1
                 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{e.path[-20:-1]}"
