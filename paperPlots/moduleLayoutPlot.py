@@ -166,7 +166,7 @@ def plotRZPlanev2(sig, figsize=(4, 1.5), thickness=1 ):
 
     ax.relim()
     ax.autoscale_view()
-    # plt.ylim([0, 60])
+    plt.ylim([0, 60])
     plt.xlabel(r"$z_{\mathrm{global}}$ [mm]")
     plt.ylabel(r"$r_{\mathrm{global}}$ [mm]")
     plt.tight_layout()
