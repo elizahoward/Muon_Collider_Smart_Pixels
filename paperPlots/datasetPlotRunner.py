@@ -10,6 +10,7 @@ sys.path.append("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_P
 from SpixPlotter import SmartpixPlotter
 import argparse
 from pathlib import Path
+import matplotlib
 
 ###########################################################################
 ########## Defaults for data directories, copied from runPlots2.py
@@ -40,6 +41,10 @@ if dataDir_all is not None:
 STYLESHEET = "seaborn-v0_8-colorblind"
 STYLESHEET = "seaborn-v0_8-poster"
 
+matplotlib.rcParams["figure.dpi"] = 300
+matplotlib.pyplot.rcParams["patch.linewidth"] = 2
+
+
 def main(parquetDir_all = "/local/d1/smartpixML/bigData/allData/",     #this should be not used?          
             #skip_indices = list(range(1730 - 124+87, 1769)),
             trackDirBib_mm = trackDirBib_mm,
@@ -49,9 +54,9 @@ def main(parquetDir_all = "/local/d1/smartpixML/bigData/allData/",     #this sho
             interactivePlots = False,
             PLOT_DIR = "./datasetPlots",
             savedPklFromParquet = True,
-            processTracks = False,#True,
+            processTracks = True,
             processOldTracks = False,
-            plotTracklists = False,#True,
+            plotTracklists = True,
             plotParquets = True,
             styleSheet=STYLESHEET,):
     plotter = SmartpixPlotter(
