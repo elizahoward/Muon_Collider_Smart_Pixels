@@ -506,7 +506,8 @@ class hlsVerifier():
             # Performance strategy is set to latency mode
             config_ccs['HLSConfig']['Model']['Strategy'] = 'Latency'
             if self.programWeights:
-                config_ccs['HLSConfig']["BramFactor"] = 0  
+                print("\n\n\nProgrammable weights!\n\n\n\n")
+                config_ccs['HLSConfig']["Model"]["BramFactor"] = 0  
             hls_model_ccs = self.catapult_ai_nn.generate_dataflow(model=self.quantizedModel,config_ccs=config_ccs)
             hls_model_ccs.compile()
             self.hls_model_ccs = hls_model_ccs

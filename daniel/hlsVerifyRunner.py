@@ -44,8 +44,8 @@ bitNumber = 8
 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{singleFilepath[-20:-1]}"
 if runSingleVerification:
     hlsGuy = hlsVerification.hlsVerifier(
-        doingCatapult = False, #If using catapult, use the ccs_env python environment
-        doingVitis = True, #If using vitis, use the hls4ml "default" environment that works with Vitis      
+        doingCatapult = True, #If using catapult, use the ccs_env python environment
+        doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
         loadTestVectors = True,
         saveTestVectors = False,
         buildModel = True,
@@ -97,8 +97,8 @@ if runParetoVerification:
                 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{e.path[-20:-1]}"
                 print(hlsDir)
                 hlsGuy = hlsVerification.hlsVerifier(
-                    doingCatapult = False, #If using catapult, use the ccs_env python environment
-                    doingVitis = True, #If using vitis, use the hls4ml "default" environment that works with Vitis (e.g. miscGithubEnviro)     
+                    doingCatapult = True, #If using catapult, use the ccs_env python environment
+                    doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis (e.g. miscGithubEnviro)     
                     # loadTestVectors = True,
                     # saveTestVectors = False,
                     buildModel = True,
