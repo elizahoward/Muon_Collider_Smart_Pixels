@@ -11,7 +11,8 @@ from SpixPlotter import SmartpixPlotter
 import argparse
 from pathlib import Path
 import matplotlib
-
+import plotUtils
+import numpy as np
 ###########################################################################
 ########## Defaults for data directories, copied from runPlots2.py
 repodir = Path(__file__).resolve().parent.parent
@@ -79,6 +80,86 @@ def main(parquetDir_all = "/local/d1/smartpixML/bigData/allData/",     #this sho
                     styleSheet = styleSheet,
                     )
     plotter.runPlots()
+    extraAppendixPlot(plotter)
+
+def extraAppendixPlot(plotter):
+    recalcStrs = ["", "", "", "", "", "", "", "", ""]    
+    trackHeader = ["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]    
+    parquetTrackKeys = ["cotAlpha","cotBeta","p_calc1","p_calc1","y-local","z-global","pt","hit_time","PID"]
+    xlabels = ["cot(α)", "cot(β)", "Momentum [GeV/c]", "NO", r'$y_{\mathrm{local}}$ [mm]', r'$z_{\mathrm{global}}$ [mm]', r"$p_T$ [GeV/c]", "Raw Hit Time [ns]", "PDG ID"]
+    keyLabels = ["cot(α)", "cot(β)", "p", "NO", r"$y_{\mathrm{local}}$", r'$z_{\mathrm{global}}$', r"$p_T$", "Hit Time", "PDG ID"]                    
+    plotUtils.plotSomeTracParqVars(plotter.tracksBib, plotter.tracksSig,plotter.truthBib,plotter.truthSig,PLOT_DIR=plotter.PLOT_DIR,interactivePlots=plotter.interactivePlots,
+                     recalcStrs=recalcStrs,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,xlabels = xlabels,keyLabels = keyLabels,
+                     figsize=(15,25))
+
+    recalcStrs = ["", "",]    
+    trackHeader = ["p", "pt"]    
+    parquetTrackKeys = ["p_calc1","pt"]
+    xlabels = ["Momentum [GeV/c]", r"$p_T$ [GeV/c]"]
+    keyLabels = ["p", r"$p_T$"] 
+    keyLabels = ["", ""]    
+    bibTimeBins = np.linspace(np.min(plotter.tracksBib["t"]),10000,35)
+    sigTimeBins = np.linspace(np.min(plotter.tracksSig["t"]),3,35)
+    bibPtBins = np.linspace(0,1,30)
+    bibPBins = np.linspace(0,2,30)
+    binsBibList = [bibPBins,bibPtBins]                
+    binsSigList = [None,None]
+    plotUtils.plotSomeTracParqVars(plotter.tracksBib, plotter.tracksSig,plotter.truthBib,plotter.truthSig,PLOT_DIR=plotter.PLOT_DIR,interactivePlots=plotter.interactivePlots,
+                     recalcStrs=recalcStrs,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,xlabels = xlabels,keyLabels = keyLabels,
+                     figsize=(13,12),saveTitle="appendixAllVarspt1.png",binsBibList=binsBibList,binsSigList=binsSigList)
+
+    recalcStrs = ["",]    
+    trackHeader = [ "t"]    
+    parquetTrackKeys = ["hit_time"]
+    xlabels = ["Raw Hit Time [ns]"]
+    keyLabels = ["Hit Time"]
+    keyLabels = [""]     
+    bibTimeBins = np.linspace(np.min(plotter.tracksBib["t"]),10000,35)
+    sigTimeBins = np.linspace(np.min(plotter.tracksSig["t"]),3,35)
+    binsBibList = [bibTimeBins]                
+    binsSigList = [sigTimeBins]                
+    plotUtils.plotSomeTracParqVars(plotter.tracksBib, plotter.tracksSig,plotter.truthBib,plotter.truthSig,PLOT_DIR=plotter.PLOT_DIR,interactivePlots=plotter.interactivePlots,
+                     recalcStrs=recalcStrs,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,xlabels = xlabels,keyLabels = keyLabels,
+                     figsize=(13.5,6.5),saveTitle="appendixAllVarspt2.png",binsBibList=binsBibList,binsSigList=binsSigList)
+    
+    plotter.tracksBib["alpha"] =np.arctan2(1, plotter.tracksBib["cota"] )
+    plotter.tracksSig["alpha"] =np.arctan2(1, plotter.tracksSig["cota"] )
+    plotter.truthBib["alpha"] =np.arctan2(1, plotter.truthBib["cotAlpha"] )
+    plotter.truthSig["alpha"] =np.arctan2(1, plotter.truthSig["cotAlpha"] )
+    plotter.tracksBib["beta"] =np.arctan2(1, plotter.tracksBib["cotb"] )
+    plotter.tracksSig["beta"] =np.arctan2(1, plotter.tracksSig["cotb"] )
+    plotter.truthBib["beta"] =np.arctan2(1, plotter.truthBib["cotBeta"] )
+    plotter.truthSig["beta"] =np.arctan2(1, plotter.truthSig["cotBeta"] )
+
+    recalcStrs = ["", ""]    
+    trackHeader = [ "ylocal", "zglobal",]    
+    parquetTrackKeys = ["y-local","z-global"]
+    xlabels = [r'$y_{\mathrm{local}}$ [mm]', r'$z_{\mathrm{global}}$ [mm]']
+    keyLabels = [ r"$y_{\mathrm{local}}$", r'$z_{\mathrm{global}}$']
+    keyLabels = ["", ""] 
+    ylocalBins = np.arange(np.min(plotter.tracksBib["ylocal"].append(plotter.tracksSig["ylocal"]))-0.25,np.max(plotter.tracksBib["ylocal"])+0.25,0.25)
+    # print(ylocalBins)
+    # print(np.max(plotter.tracksBib["ylocal"]))
+    binsBibList = [ylocalBins,None]
+    binsSigList = [ylocalBins,None]
+    legendLocs = [["best","best"],["best","best"]]
+    plotUtils.plotSomeTracParqVars(plotter.tracksBib, plotter.tracksSig,plotter.truthBib,plotter.truthSig,PLOT_DIR=plotter.PLOT_DIR,interactivePlots=plotter.interactivePlots,
+                     recalcStrs=recalcStrs,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,xlabels = xlabels,keyLabels = keyLabels,binsBibList = binsBibList,binsSigList = binsSigList,
+                     figsize=(13.5,12),saveTitle="appendixAllVarspt3.png",legendLocs=legendLocs)
+
+    recalcStrs = ["", ""]    
+    trackHeader = ["alpha", "beta",]    
+    parquetTrackKeys = ["alpha","beta"]
+    xlabels = ["α", "β",]
+    keyLabels = ["α", "β",] 
+    keyLabels = ["", ""]  
+    binsBibList = [None,None]
+    binsSigList = [None,None]
+    legendLocs = [["best","best"],["best","upper left"]]
+    plotUtils.plotSomeTracParqVars(plotter.tracksBib, plotter.tracksSig,plotter.truthBib,plotter.truthSig,PLOT_DIR=plotter.PLOT_DIR,interactivePlots=plotter.interactivePlots,
+                     recalcStrs=recalcStrs,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,xlabels = xlabels,keyLabels = keyLabels,binsBibList = binsBibList,binsSigList = binsSigList,
+                     figsize=(13.5,12),saveTitle="appendixAllVarspt4.png",legendLocs=legendLocs)
+
 
 if __name__=="__main__":
     main()

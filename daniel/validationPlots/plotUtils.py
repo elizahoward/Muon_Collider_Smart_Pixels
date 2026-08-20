@@ -96,7 +96,7 @@ def reshapeCluster(recon2d__):
     # print("I might have broken this funciton, might need to be called on each dataframe subtype")
     return recon2d__.to_numpy().reshape(recon2d__.shape[0],13,21)
 
-def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",showNums=True,
+def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",showNums=True,addPoisErr=False,
               xlabel="",ylabel="",alpha=1,labelFontsize=plt.rcParams['axes.labelsize'],titleFontsize=plt.rcParams['axes.titlesize']):
     if pltStandalone:
         plt.figure(figsize=(4,1))
@@ -107,6 +107,18 @@ def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",
     else:
         hist, bin_edges = np.histogram(np.clip(arr,bins[0],bins[-1]),bins=bins)
     plt.stairs(hist*postScale,bin_edges,label=pltLabel,alpha=alpha,fill=False,lw=3)#,linestyle=plt.rcParams.get("lines.linestyle", "-"))
+    if addPoisErr:
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+        errors = np.sqrt(hist) * postScale
+        plt.errorbar(
+            bin_centers, 
+            hist*postScale, 
+            yerr=errors, 
+            fmt='none',          # 'none' ensures it only plots bars, not a line connecting dots
+            ecolor='black',      # Color of the error bars
+            capsize=3,           # Width of the horizontal caps on the error bars
+            alpha=alpha          # Match the transparency of your histogram
+        )
     plt.ylabel(ylabel,fontsize=labelFontsize)
     plt.xlabel(xlabel,fontsize=labelFontsize)
     if showNums:
@@ -163,7 +175,7 @@ def plotHistoBibSig(truthBib,truthSig,key,pltStandalone,bins=None,showNums=False
 
 def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,
                   figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",
-                  PLOT_DIR=None,interactivePlots=None,saveTitle=None,alphas = None,legendLoc = "best"):
+                  PLOT_DIR=None,interactivePlots=None,saveTitle=None,alphas = None,legendLoc = "best",addPoisErr=False):
     assert len(arrs) == len(pltLabels)
     if alphas is None:
         alphas = [1 for i in range(len(arrs))]
@@ -185,7 +197,7 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pl
 
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
     for i in range(len(arrs)):
-        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel,alpha=alphas[i])
+        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel,alpha=alphas[i],addPoisErr=addPoisErr)
     plt.legend(loc=legendLoc)
     plt.xlabel(xlabel)
     plt.yscale(yscale)
@@ -789,7 +801,7 @@ def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizes
     binsYSize = np.arange(0,14,1)
     plot2by2BibSig2dHisto(truthbib,truthsig,'y-local','xSize','y-local','ySize',mask_bib,mask_sig,
                           binsYlocal,binsXSize,binsYlocal,binsYSize,'Blues','',r'$x_{\mathrm{size}}$ [# pixels]',
-                          r'$y_{\mathrm{local}}$ [μm]',r'$y_{\mathrm{size}}$ [# pixels]',"bib_signal_ylocal_vs_size_2d",PLOT_DIR,interactivePlots)
+                          r'$y_{\mathrm{local}}$ [mm]',r'$y_{\mathrm{size}}$ [# pixels]',"bib_signal_ylocal_vs_size_2d",PLOT_DIR,interactivePlots)
 
 
 # --- Plot 4: 2D histogram of number_eh_pairs vs pt ---
@@ -1097,7 +1109,7 @@ def plotPtTrackAndParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./pl
     binsSig = 30
     plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,xlabel="pT [GeV/c]")
 
-def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",interactivePlots=False):
+def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",interactivePlots=False,legendLoc = "best",addPoisErr=False):
     # z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"]))
     # x = z*tracksDF["cota"]
     # y = z*tracksDF["cotb"]
@@ -1110,7 +1122,7 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)    
     plotManyHisto([p,tracksDF["p"]],pltStandalone=False,title=f"{bibSigLabel}",xlabel="Momentum [GeV/c]",yscale='log',alphas=[1,0.5],
-                  pltLabels=["p recalculated using \n cota, cotb, pt, in the tracklists","p directly as saved in tracklists"],)
+                  pltLabels=["p recalculated using \n cota, cotb, pt, in the tracklists","p directly as saved in tracklists"],legendLoc = legendLoc,addPoisErr=addPoisErr)
 
     plt.subplot(122)
     plt.hist(p - tracksDF["p"])
@@ -1179,7 +1191,7 @@ def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plo
     closePlot(PLOT_DIR, interactivePlots, "TrackParquet_nxnynz.png")
 
 def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStrTrack = "",recalcStrParq = "",
-                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = "",keyTruth=None,keyLabelP=None,keyLabelT=None):
+                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = "",keyTruth=None,keyLabelP=None,keyLabelT=None,legendLocs=["best","best"]):
     if keyTruth is None:
         keyTruth = key
     if keyLabelP is None:
@@ -1191,15 +1203,17 @@ def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, 
     if not isSubplot:
         fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
         subplots = [121, 122]
+    assert len(legendLocs) == 2
     plt.subplot(subplots[0])
+    pltLabels = [f"{keyLabelP} after PixelAV {recalcStrParq}",f"{keyLabelT} from GEANT4 {recalcStrTrack}"] if len(keyLabelP)>0 else [f"After PixelAV",f"From GEANT4"]
     plotManyHisto([truthBib[keyTruth],tracksBib[key]],binsBib,title=f"BIB",
-                  pltLabels=[f"{keyLabelP} after PixelAV {recalcStrParq}",f"{keyLabelT} from GEANT4 {recalcStrTrack}"],pltStandalone=False,yscale='log',
-                  xlabel=xlabel,ylabel=r"$n_{\mathrm{clusters}}$",alphas=[1,0.5])
+                  pltLabels=pltLabels,pltStandalone=False,yscale='log',
+                  xlabel=xlabel,ylabel=r"$n_{\mathrm{clusters}}$",alphas=[1,0.5],legendLoc=legendLocs[0])
     
     plt.subplot(subplots[1])
     plotManyHisto([truthSig[keyTruth],tracksSig[key]],binsSig,title=f"Signal",
-                  pltLabels=[f"{keyLabelP} after PixelAV {recalcStrParq}",f"{keyLabelT} from GEANT4 {recalcStrTrack}"],pltStandalone=False,yscale='log',
-                  xlabel=xlabel,ylabel=r"$n_{\mathrm{clusters}}$",alphas=[1,0.5],)
+                  pltLabels=pltLabels,pltStandalone=False,yscale='log',
+                  xlabel=xlabel,ylabel=r"$n_{\mathrm{clusters}}$",alphas=[1,0.5],legendLoc=legendLocs[1])
 
     if not isSubplot:
         closePlot(PLOT_DIR, interactivePlots,  f"TrackParquet{key}.png")
@@ -1215,7 +1229,7 @@ parquetTrackKeys = ["cotAlpha","cotBeta","p_calc1","flpNO","y-local","z-global",
 recalcStrs = ["", "", "(recalculated)", "", "", "", "", "", ""]
 recalcStrs = ["", "", "", "", "", "", "", "", ""]
 def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,recalcStrs=recalcStrs,
-                     xlabels = ["cot(α)", "cot(β)", "Momentum [GeV/c]", "NO", r'$y_{\mathrm{local}}$ [μm]', r'$z_{\mathrm{global}}$ [mm]', r"$p_T$ [GeV/c]", "Raw Hit Time [s]", "PDG ID"],
+                     xlabels = ["cot(α)", "cot(β)", "Momentum [GeV/c]", "NO", r'$y_{\mathrm{local}}$ [mm]', r'$z_{\mathrm{global}}$ [mm]', r"$p_T$ [GeV/c]", "Raw Hit Time [ns]", "PDG ID"],
                      keyLabels = ["cot(α)", "cot(β)", "p", "NO", r"$y_{\mathrm{local}}$", r'$z_{\mathrm{global}}$', r"$p_T$", "Hit Time", "PDG ID"],
                      PLOT_DIR="./plots",interactivePlots=False, cutPID=True,figsize=(15,25)):
     assert len(trackHeader) == len(parquetTrackKeys)
@@ -1263,6 +1277,43 @@ def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHe
     
     # plt.hist(tracksBib['hit_pdg'])
     # closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_track.png")
+
+def plotSomeTracParqVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,recalcStrs=recalcStrs,
+                     xlabels = ["cot(α)", "cot(β)", "Momentum [GeV/c]", "NO", r'$y_{\mathrm{local}}$ [mm]', r'$z_{\mathrm{global}}$ [mm]', r"$p_T$ [GeV/c]", "Raw Hit Time [ns]", "PDG ID"],
+                     keyLabels = ["cot(α)", "cot(β)", "p", "NO", r"$y_{\mathrm{local}}$", r'$z_{\mathrm{global}}$', r"$p_T$", "Hit Time", "PDG ID"],
+                     PLOT_DIR="./plots",interactivePlots=False,figsize=(15,25),saveTitle="TrackParquet_allVars.png",binsBibList=None,binsSigList=None,legendLocs=None):
+    assert len(trackHeader) == len(parquetTrackKeys)
+    assert len(trackHeader) == len(recalcStrs)
+    assert len(trackHeader) == len(xlabels)
+    assert len(trackHeader) == len(keyLabels)
+    numRows = len(trackHeader)
+    if binsBibList is None:
+        binsBibList = [30 for i in range(numRows)]    
+    if binsSigList is None:
+        binsSigList = [30 for i in range(numRows)]
+    assert len(binsBibList) == numRows
+    assert len(binsSigList) == numRows
+    if legendLocs is None:
+        legendLocs = [["best","best"] for i in range(numRows)]
+    assert len(legendLocs) == numRows
+    fig, ax = plt.subplots(ncols=2, nrows=numRows, figsize=figsize)
+    if numRows > 1:
+        subplotsList = [[ax[i,0].get_subplotspec(),ax[i,1].get_subplotspec()] for i in range(numRows)]
+    else:
+        subplotsList = [[ax[0].get_subplotspec(),ax[1].get_subplotspec()]]
+    assert len(subplotsList) == numRows
+    for idx, key in enumerate(trackHeader):
+        binsBib = binsBibList[idx]
+        binsSig = binsSigList[idx]
+        if binsBib is None:
+            binsBib = 30        
+        if binsSig is None:
+            binsSig = 30
+        if key == "hit_pdg":
+            binsBib = 'auto'
+            binsBib = np.linspace(-13,13,26)
+        plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,keyTruth=parquetTrackKeys[idx],binsBib=binsBib, binsSig=binsSig,recalcStrParq=recalcStrs[idx],PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=subplotsList[idx],xlabel = xlabels[idx],keyLabelP=keyLabels[idx],keyLabelT=keyLabels[idx],legendLocs=legendLocs[idx])
+    closePlot(PLOT_DIR, interactivePlots, saveTitle)
 
 def calcAvgEHperMicron(truthDF, binsBetaGamma):
     avgEHperMicron = [0 for i in range(len(binsBetaGamma))]
