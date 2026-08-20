@@ -129,6 +129,8 @@ def synthesize_model(
     tf_threads,
     create_tarball,
     noDSP = True,
+    programWeights = True,
+    clockPeriod = 12,
 ):
     """Synthesize a single H5 model, then prune output to KEEP_FILES."""
     result = {
@@ -183,7 +185,8 @@ def synthesize_model(
             # VERIFIED HLS4ML API: Force a global optimization strategy 
             # This forces activation layers to utilize standard LUT logic mappings
             # config['Model']['Strategy'] = 'Resource'
-            config['Model']['BramFactor'] = 0 
+            if programWeights:
+                config['Model']['BramFactor'] = 0 
 
         print(f"[{model_name}] Converting to HLS model (io_type={io_type})...")
         hls_model = hls4ml.converters.convert_from_keras_model(
@@ -193,7 +196,7 @@ def synthesize_model(
             output_dir=output_dir,
             backend="Vitis",
             io_type=io_type,
-            clock_period = 20,
+            clock_period = clockPeriod,
         )
 
         print(f"[{model_name}] Writing HLS files...")
