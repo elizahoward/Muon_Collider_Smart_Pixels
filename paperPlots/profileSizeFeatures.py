@@ -104,12 +104,13 @@ def plotClusterWithProfiles(cluster,figsize=(10.8, 7)):
     ax_top.set_yscale('log')
 
     # Top Labels & Arrow Placement
-    ax_top.text(0.50, 1.2, r'$x_{\mathrm{size}}$', transform=ax_top.transAxes, ha='center', va='bottom',fontsize=plt.rcParams['axes.labelsize'])
+    ax_top.text(0.50, 1.29, r'$x_{\mathrm{size}}$', transform=ax_top.transAxes, ha='center', va='bottom',fontsize=plt.rcParams['axes.labelsize'])
     # ax_top.text(0.5, 1.05, r'$\longleftrightarrow$', transform=ax_top.transAxes, ha='center', va='bottom',fontsize=plt.rcParams['axes.labelsize'])
     # ax_top.text(1.01, 0.5, 'x-profile', transform=ax_top.transAxes, ha='left', va='center', rotation=-90,fontsize=plt.rcParams['axes.labelsize'])
     ax_top.text(0.02, 0.3, r'$x_{\mathrm{profile}}$', transform=ax_top.transAxes, ha='left', va='center',fontsize=plt.rcParams['axes.labelsize'])
     x_start, x_end = get_profile_bounds_fraction(x_profile)
-    ax_top.annotate('', xy=(x_start, 1.12), xytext=(x_end, 1.12), xycoords='axes fraction',
+    arrCoord=1.2
+    ax_top.annotate('', xy=(x_start, arrCoord), xytext=(x_end, arrCoord), xycoords='axes fraction',
                     arrowprops=dict(arrowstyle='<->', color='black',lw=1.5))
  
     # --- Right Panel (Y-Profile) ---
