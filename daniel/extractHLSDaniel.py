@@ -480,6 +480,16 @@ def main() -> None:
     plotCombinedDf4(combinedDf)
     plotCombinedDf4(combinedDf[7:], savePath = "./hlsComparison/hls_csynthVsAreascore_noModel3.png")
 
+    print("Now processing the parallel synth version")
+    print("hls_model_trial_1046")
+    getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_shortlist_parallelInput/hls_outputs_vsynth/hls_model_trial_1046",doPrint=True)
+    print("hls_model_trial_057")
+    getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_shortlist_parallelInput/hls_outputs_vsynth/hls_model_trial_057",doPrint=True)
+    print("hls_model_trial_087")
+    getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_shortlist_parallelInput/hls_outputs_vsynth/hls_model_trial_087",doPrint=True)
+    print("hls_model_trial_046")
+    getVsynthMetrics("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_shortlist_parallelInput/hls_outputs_vsynth/hls_model_trial_046",doPrint=True)
+    
 # The proper Python entry point condition
 if __name__ == "__main__":
     main()
