@@ -62,8 +62,9 @@ HARDWARE_METRIC = f"luts_plus_{FF_COEFFICIENT}*_ff"
 if PRIMARY_METRIC == "primary_metric":
     METRIC_NAME = "Weighted Bkg Rejection"
 elif PRIMARY_METRIC == "bkg_rej_@99%":
-    METRIC_NAME = "Background Rejection at 99% Sig. Eff."
-    METRIC_NAME = r'$\mathcal{R}_{\mathrm{BIB,99}}^{\mathrm{cluster}}$'
+    METRIC_NAME = "Background Rejection at 99% Signal Efficiency"
+    METRIC_NAME = "Bkg. Rej. at 99% Sig. Eff."
+    METRIC_NAME = r'$\mathcal{R}_{\mathrm{BIB,99}}^{\mathrm{cluster}}$' #paper version
 else:
     raise ValueError("invalid PRIMARY_METRIC")
 
@@ -871,7 +872,8 @@ def main():
                             figsize=(13,9*13/16))
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
                             OUTPUT_DIR, xscale="log",    complement=False, annotate=annotate,
-                            figsize=(11.2,7.4))
+                            figsize=(11.2,7.4))#paper verison
+                            # figsize=(7.4*16/9,7.4)) #slide version
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
                             OUTPUT_DIR, xscale="linear", complement=True,  annotate=annotate)
         make_plot_subfronts(df, pareto_all, pareto_m1, pareto_m25, pareto_m3,
