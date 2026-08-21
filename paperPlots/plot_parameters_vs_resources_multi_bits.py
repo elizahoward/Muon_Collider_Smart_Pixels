@@ -52,10 +52,12 @@ CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider
 # CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1vsynth_20ns.csv")
 # HARDWARE_KEY = "luts_plus_ff"
 # HARDWARE_KEY = "luts_plus_0.5*_ff"
-CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1And2vsynth_20ns_model3csynth_20ns.csv")
-MODEL_NUM = '25' #'1', '25', or '3'
+# CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1And2vsynth_20ns_model3csynth_20ns.csv")
+MODEL_NUM = '1' #'1', '25', or '3'
 FF_COEFFICIENT = 0.5
 RESOURCE_FILTER = 80000 #a number to filter ff+lut below this threshold or None
+RESOURCE_FILTER = None
+showTitle = False
 def infer_bit_width_from_name(name: str) -> str:
     """
     Try to infer the bit-width from a directory name.
@@ -262,15 +264,16 @@ def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6),sh
         )
 
     ax.set_xlabel("Number of Parameters")#, fontsize=14, fontweight="bold")
-    ax.set_ylabel(f"Total Hardware Resources (LUTs + {FF_COEFFICIENT} * FFs)")#, fontsize=14, fontweight="bold")
+    ax.set_ylabel(f"FPGA Resources (LUTs + {FF_COEFFICIENT} * FFs)")#, fontsize=14, fontweight="bold")
     extendTitle = f"\n FILTER on y axis by {RESOURCE_FILTER}" if RESOURCE_FILTER else ""
-    ax.set_title(
-        f"Model {MODEL_NUM[0]} Parameters vs Hardware Resources{extendTitle}",#\n"
-        # "Multi-bit Comparison with Linear Regression",
-        # fontsize=16,
-        # fontweight="bold",
-        # pad=20,
-    )
+    if showTitle:
+        ax.set_title(
+            f"Model {MODEL_NUM[0]} Parameters vs Hardware Resources{extendTitle}",#\n"
+            # "Multi-bit Comparison with Linear Regression",
+            # fontsize=16,
+            # fontweight="bold",
+            # pad=20,
+        )
 
     ax.grid(True, alpha=0.3, linestyle="--", zorder=1)
 

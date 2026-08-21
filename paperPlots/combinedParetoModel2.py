@@ -43,7 +43,7 @@ def plotParetosTogether(allParetoDfs,saveTitle="./Model2ParetosTogether.png",
     plt.xlabel("Number of Parameters")
     # plt.ylabel("Background Rejectiona at 99% Signal Efficiency")
     plt.ylabel(r'$\mathcal{R}_{\mathrm{BIB,99}}^{\mathrm{cluster}}$',fontsize=25)
-    plt.title(f"Model {modelType} Pareto Fronts Superimposed")
+    # plt.title(f"Model {modelType} Pareto Fronts Superimposed")
     plt.tight_layout()
     
     plt.savefig(saveTitle)
