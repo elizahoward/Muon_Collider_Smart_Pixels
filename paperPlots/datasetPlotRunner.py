@@ -159,7 +159,33 @@ def extraAppendixPlot(plotter):
     plotUtils.plotSomeTracParqVars(plotter.tracksBib, plotter.tracksSig,plotter.truthBib,plotter.truthSig,PLOT_DIR=plotter.PLOT_DIR,interactivePlots=plotter.interactivePlots,
                      recalcStrs=recalcStrs,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,xlabels = xlabels,keyLabels = keyLabels,binsBibList = binsBibList,binsSigList = binsSigList,
                      figsize=(13.5,12),saveTitle="appendixAllVarspt4.png",legendLocs=legendLocs)
+    
+    # df['adjusted_hit_time'] = df['hit_time']-1e6*np.sqrt(df['z-global']**2+30**2)/299792458
+    # df['adjusted_hit_time_30ps_gaussian'] = df['adjusted_hit_time']+np.random.normal(loc=0,scale=30e-3,size=len(df['adjusted_hit_time']))
+    # df['adjusted_hit_time_60ps_gaussian'] = df['adjusted_hit_time']+np.random.normal(loc=0,scale=60e-3,size=len(df['adjusted_hit_time']))
 
+    plotter.truthBib["adjusted_hit_time"] = plotter.truthBib['hit_time']-1e6*np.sqrt(plotter.truthBib['z-global']**2+30**2)/299792458
+    plotter.truthSig["adjusted_hit_time"] = plotter.truthSig['hit_time']-1e6*np.sqrt(plotter.truthSig['z-global']**2+30**2)/299792458
+    plotter.truthBib['adjusted_hit_time_30ps_gaussian'] = plotter.truthBib['adjusted_hit_time']+np.random.normal(loc=0,scale=30e-3,size=len(plotter.truthBib['adjusted_hit_time']))
+    plotter.truthSig['adjusted_hit_time_30ps_gaussian'] = plotter.truthSig['adjusted_hit_time']+np.random.normal(loc=0,scale=30e-3,size=len(plotter.truthSig['adjusted_hit_time']))
+    
+    plotter.tracksBib["adjusted_hit_time"] = plotter.tracksBib['t']-1e6*np.sqrt(plotter.tracksBib['zglobal']**2+30**2)/299792458
+    plotter.tracksSig["adjusted_hit_time"] = plotter.tracksSig['t']-1e6*np.sqrt(plotter.tracksSig['zglobal']**2+30**2)/299792458
+    plotter.tracksBib['adjusted_hit_time_30ps_gaussian'] = plotter.tracksBib['adjusted_hit_time']+np.random.normal(loc=0,scale=30e-3,size=len(plotter.tracksBib['adjusted_hit_time']))
+    plotter.tracksSig['adjusted_hit_time_30ps_gaussian'] = plotter.tracksSig['adjusted_hit_time']+np.random.normal(loc=0,scale=30e-3,size=len(plotter.tracksSig['adjusted_hit_time']))
+
+    recalcStrs = ["", ""]    
+    trackHeader = ["adjusted_hit_time", "adjusted_hit_time_30ps_gaussian",]    
+    parquetTrackKeys = ["adjusted_hit_time","adjusted_hit_time_30ps_gaussian"]
+    xlabels = ["adjusted_hit_time", "adjusted_hit_time_30ps_gaussian",]
+    keyLabels = ["adjusted_hit_time", "adjusted_hit_time_30ps_gaussian",] 
+    keyLabels = ["", ""]  
+    binsBibList = [None,None]
+    binsSigList = [None,None]
+    legendLocs = [["best","best"],["best","best"]]
+    plotUtils.plotSomeTracParqVars(plotter.tracksBib, plotter.tracksSig,plotter.truthBib,plotter.truthSig,PLOT_DIR=plotter.PLOT_DIR,interactivePlots=plotter.interactivePlots,
+                     recalcStrs=recalcStrs,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,xlabels = xlabels,keyLabels = keyLabels,binsBibList = binsBibList,binsSigList = binsSigList,
+                     figsize=(13.5,12),saveTitle="appendixAllVarspt5.png",legendLocs=legendLocs)
 
 if __name__=="__main__":
     main()
