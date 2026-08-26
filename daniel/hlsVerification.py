@@ -385,6 +385,7 @@ class hlsVerifier():
                 tfRecordFolder = "", #this is the default used by tfLoaderUtils, which if unchanged will pass to the default directories of tfLoaderUtils
                 doTrace: bool = True,
                 noDSP: bool = False,
+                programWeights: bool = True,
                  ) -> None:
         
         self.doingCatapult = doingCatapult 
@@ -398,6 +399,7 @@ class hlsVerifier():
         self.tfRecordFolder = tfRecordFolder
         self.doTrace = doTrace
         self.noDSP = noDSP
+        self.programWeights = programWeights
 
         #process input flags
         if self.doingCatapult:
@@ -503,6 +505,9 @@ class hlsVerifier():
             # config_ccs['HLSConfig']['LayerName']['input1']['Precision'] = 'ac_fixed<8,1,true>' ##TODO
             # Performance strategy is set to latency mode
             config_ccs['HLSConfig']['Model']['Strategy'] = 'Latency'
+            if self.programWeights:
+                print("\n\n\nProgrammable weights!\n\n\n\n")
+                config_ccs['HLSConfig']["Model"]["BramFactor"] = 0  
             hls_model_ccs = self.catapult_ai_nn.generate_dataflow(model=self.quantizedModel,config_ccs=config_ccs)
             hls_model_ccs.compile()
             self.hls_model_ccs = hls_model_ccs
@@ -510,7 +515,8 @@ class hlsVerifier():
             #Actually need to import the other hls4ml for this
             config = self.hls4ml.utils.config_from_keras_model(self.quantizedModel, granularity='name',default_precision = "fixed<16,7>",)
             # config = self.hls4ml.utils.config_from_keras_model(quantizedModel, granularity='name',default_precision="ap_fixed<16,6,true>")
-
+            if self.programWeights:
+                config["Model"]["BramFactor"] = 0 
             for layer in config['LayerName'].keys():
                 print('Enable tracing for layer:', layer)
                 config['LayerName'][layer]['Trace'] = True
@@ -518,7 +524,7 @@ class hlsVerifier():
             #added to get more latency tracing
             # Add this line to force Co-simulation tracking
             # config['TraceLevel'] = 'port' # Options: 'all', 'port', or 'none'
-            hls_model = self.hls4ml.converters.convert_from_keras_model(self.quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=self.output_dir_vitis,backend="Vitis",clock_period=20)
+            hls_model = self.hls4ml.converters.convert_from_keras_model(self.quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=self.output_dir_vitis,backend="Vitis",clock_period=10)
             # hls_model = self.hls4ml.converters.convert_from_keras_model(quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=output_dir,backend="Catapult")
             ##Part number input in above line as part='xcu
             # part='xcu250-figd2104-2L-e',
