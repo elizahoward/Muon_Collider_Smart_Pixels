@@ -78,17 +78,17 @@ class OfflineStudentModel(keras.Model):
     def __init__(
         self,
         student: keras.Model,
-        temperature: float = 3.0,
-        alpha: float = 0.5,
-        beta: float = 0.1,
+        # temperature: float = 3.0,
+        # alpha: float = 0.5,
+        # beta: float = 0.1,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.student           = student
         self.student_extractor = build_extractor(student)
-        self.temperature       = temperature
-        self.alpha             = alpha
-        self.beta              = beta
+        # self.temperature       = temperature #set in .compile()
+        # self.alpha             = alpha
+        # self.beta              = beta
 
         # Derive student input keys from its named Input layers so call() and
         # compute_loss() pass only the keys the student actually accepts,
@@ -99,9 +99,13 @@ class OfflineStudentModel(keras.Model):
         # loss function set by compile()
         self.student_loss_fn = None
 
-    def compile(self, optimizer, student_loss_fn, metrics=None, **kwargs):
-        super().compile(optimizer=optimizer, metrics=metrics or [], **kwargs)
-        self.student_loss_fn = student_loss_fn
+    def compile(self, optimizer, student_loss_fn, alpha=0.5, beta=0.1, 
+            temperature=3.0, **kwargs):
+            super().compile(optimizer=optimizer, **kwargs)
+            self.student_loss_fn = student_loss_fn
+            self.alpha           = alpha
+            self.beta            = beta
+            self.temperature     = temperature
 
     def call(self, x):
         return self.student(x)
@@ -355,15 +359,15 @@ class OfflineDistiller:
         self,
         teacher: keras.Model,
         student: keras.Model,
-        temperature: float = 3.0,
-        alpha: float = 0.5,
-        beta: float = 0.1,
+        # temperature: float = 3.0,
+        # alpha: float = 0.5,
+        # beta: float = 0.1,
     ):
         self.teacher     = teacher
         self.student     = student
-        self.temperature = temperature
-        self.alpha       = alpha
-        self.beta        = beta
+        # self.temperature = temperature
+        # self.alpha       = alpha
+        # self.beta        = beta
 
         self.teacher_extractor = build_extractor(teacher)
         check_hint_layer_compatibility(teacher, student)
@@ -437,7 +441,7 @@ class OfflineDistiller:
     def build_student_model(self) -> OfflineStudentModel:
         return OfflineStudentModel(
             student=self.student,
-            temperature=self.temperature,
-            alpha=self.alpha,
-            beta=self.beta,
+            # temperature=self.temperature,
+            # alpha=self.alpha,
+            # beta=self.beta,
         )
