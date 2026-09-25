@@ -90,6 +90,12 @@ class OfflineStudentModel(keras.Model):
         self.alpha             = alpha
         self.beta              = beta
 
+        # Derive student input keys from its named Input layers so call() and
+        # compute_loss() pass only the keys the student actually accepts,
+        # regardless of what else is in the input dict (teacher keys, features
+        # from other models, etc.).
+        self.student_input_keys = {inp.name.split("/")[0] for inp in student.inputs}
+
         # loss function set by compile()
         self.student_loss_fn = None
 
@@ -98,8 +104,7 @@ class OfflineStudentModel(keras.Model):
         self.student_loss_fn = student_loss_fn
 
     def call(self, x, training=False):
-        student_x = {k: v for k, v in x.items()
-                     if k not in ("teacher_logits", "teacher_feat")}
+        student_x = {k: v for k, v in x.items() if k in self.student_input_keys}
         return self.student(student_x, training=training)
 
     def compute_loss(self, x=None, y=None, y_pred=None, sample_weight=None,
@@ -107,8 +112,7 @@ class OfflineStudentModel(keras.Model):
         teacher_logits = x["teacher_logits"]
         teacher_feat   = x["teacher_feat"]
 
-        student_x = {k: v for k, v in x.items()
-                     if k not in ("teacher_logits", "teacher_feat")}
+        student_x = {k: v for k, v in x.items() if k in self.student_input_keys}
         student_feat, _ = self.student_extractor(student_x, training=True)
 
         # Hard label loss: student predictions vs ground truth
@@ -203,6 +207,9 @@ class OnlineDistiller(keras.Model):
         self.student_extractor = build_extractor(student)
         check_hint_layer_compatibility(teacher, student)
 
+        self.teacher_input_keys = {inp.name.split("/")[0] for inp in teacher.inputs}
+        self.student_input_keys = {inp.name.split("/")[0] for inp in student.inputs}
+
         self.student_loss_fn = None
 
     def compile(self, optimizer, student_loss_fn, metrics=None, **kwargs):
@@ -210,12 +217,15 @@ class OnlineDistiller(keras.Model):
         self.student_loss_fn = student_loss_fn
 
     def call(self, x, training=False):
-        return self.student(x, training=training)
+        student_x = {k: v for k, v in x.items() if k in self.student_input_keys}
+        return self.student(student_x, training=training)
 
     def compute_loss(self, x=None, y=None, y_pred=None, sample_weight=None,
                      allow_empty=False):
-        teacher_feat, teacher_logits = self.teacher_extractor(x, training=False)
-        student_feat, _              = self.student_extractor(x, training=True)
+        student_x    = {k: v for k, v in x.items() if k in self.student_input_keys}
+        teacher_x    = {k: v for k, v in x.items() if k in self.teacher_input_keys}
+        teacher_feat, teacher_logits = self.teacher_extractor(teacher_x, training=False)
+        student_feat, _              = self.student_extractor(student_x, training=True)
 
         # Hard label loss: student predictions vs ground truth
         hard_loss = self.student_loss_fn(y, y_pred)
@@ -301,12 +311,14 @@ class OfflineDistiller:
         augValDir = f"{augTfRecordDir}/tfrecords_validation/"
 
         # Step 1.5: actually write the new records
-        d.extract_and_save_teacher_outputs(
-            training_generator=odgTrain,
-            output_dir=augTrainDir,
-            validation_generator=odgTest,
-            val_output_dir=augValDir,
-        )
+        regenerateRecords=False
+        if regenerateRecords:
+            d.extract_and_save_teacher_outputs(
+                training_generator=odgTrain,
+                output_dir=augTrainDir,
+                validation_generator=odgTest,
+                val_output_dir=augValDir,
+            )
 
         # --- Step 2: reload generators from augmented TFRecords ---
         # Extend the feature list with teacher keys, point at the new directory,
@@ -333,6 +345,7 @@ class OfflineDistiller:
             optimizer=tf.keras.optimizers.Adam(1e-3),
             student_loss_fn=tf.keras.losses.BinaryCrossentropy(),
             metrics=[tf.keras.metrics.BinaryAccuracy()],
+            run_eagerly=True,  # required for QKeras models
         )
         model.fit(aug_train_gen,
                 validation_data=aug_val_gen,
