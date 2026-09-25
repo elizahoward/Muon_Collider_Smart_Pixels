@@ -103,9 +103,8 @@ class OfflineStudentModel(keras.Model):
         super().compile(optimizer=optimizer, metrics=metrics or [], **kwargs)
         self.student_loss_fn = student_loss_fn
 
-    def call(self, x, training=False):
-        student_x = {k: v for k, v in x.items() if k in self.student_input_keys}
-        return self.student(student_x, training=training)
+    def call(self, x):
+        return self.student(x)
 
     def compute_loss(self, x=None, y=None, y_pred=None, sample_weight=None,
                      allow_empty=False):
