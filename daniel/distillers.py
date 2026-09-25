@@ -85,7 +85,7 @@ class OfflineStudentModel(keras.Model):
     ):
         super().__init__(**kwargs)
         self.student           = student
-        self.student_extractor = build_extractor(student)
+        # self.student_extractor = build_extractor(student)
         # self.temperature       = temperature #set in .compile()
         # self.alpha             = alpha
         # self.beta              = beta
@@ -106,6 +106,7 @@ class OfflineStudentModel(keras.Model):
             self.alpha           = alpha
             self.beta            = beta
             self.temperature     = temperature
+            self.student_extractor = build_extractor(self.student)
 
     def call(self, x):
         return self.student(x)
@@ -126,18 +127,26 @@ class OfflineStudentModel(keras.Model):
         # pushes it toward 0.5, producing softer targets. t=1 gives no softening.
         t = self.temperature
         teacher_soft = tf.sigmoid(tf.math.log(teacher_logits / (1.0 - teacher_logits + 1e-7)) / t)
-        student_soft = tf.sigmoid(tf.math.log(y_pred        / (1.0 - y_pred        + 1e-7)) / t)
+        student_soft = tf.sigmoid(tf.math.log(
+                    tf.stop_gradient(y_pred) / (1.0 - tf.stop_gradient(y_pred) + 1e-7)
+                ) / t)
         distillation_loss = tf.reduce_mean(
             tf.keras.losses.binary_crossentropy(teacher_soft, student_soft)
         )
 
         hint_loss = tf.reduce_mean(tf.square(teacher_feat - student_feat))
 
-        return (
-            (1.0 - self.alpha) * hard_loss
-            + self.alpha       * distillation_loss
-            + self.beta        * hint_loss
-        )
+        losses = tf.stack([
+            (1.0 - self.alpha) * hard_loss,
+            self.alpha * distillation_loss,
+            self.beta * hint_loss,
+        ])
+        # tf.print("hard:", hard_loss, "distil:", distillation_loss, "hint:", hint_loss)
+        # return hard_loss + 0.0 * hint_loss
+        # return hard_loss + 0.0 * distillation_loss
+        # return hard_loss + 0.0 * distillation_loss + 0.0 * hint_loss
+        return (1.0 - self.alpha) * hard_loss + self.alpha * distillation_loss + self.beta * hint_loss
+        # return tf.experimental.numpy.nansum(losses)
 
     def get_config(self):
         base = super().get_config()
