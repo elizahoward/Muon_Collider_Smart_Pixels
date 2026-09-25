@@ -68,7 +68,7 @@ class OptimizedDataGeneratorDataShuffledBigData(tf.keras.utils.Sequence):
             random.seed(random_seed)
             np.random.seed(random_seed)
         self.file_offsets = [0]
-        allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule","pt","inVectAsic"]
+        allowed_features = ['cluster', 'x_profile', 'y_profile', 'x_size', 'y_size', 'y_local', 'z_global', 'total_charge', 'adjusted_hit_time', 'adjusted_hit_time_30ps_gaussian', 'adjusted_hit_time_60ps_gaussian','nPix',"x_local","nModule","pt","inVectAsic"] + ["teacher_logits", "teacher_feat"]
         if isinstance(x_feature_description, str) and x_feature_description == "all":
             self.x_feature_description=allowed_features
         elif isinstance(x_feature_description, str):
