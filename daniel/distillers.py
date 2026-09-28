@@ -99,6 +99,11 @@ class OfflineStudentModel(keras.Model):
         # loss function set by compile()
         self.student_loss_fn = None
 
+        self.loss_tracker = keras.metrics.Mean(name="loss")
+        self.hard_loss_tracker   = keras.metrics.Mean(name="hard_loss")
+        self.distil_loss_tracker = keras.metrics.Mean(name="distil_loss")
+        self.hint_loss_tracker   = keras.metrics.Mean(name="hint_loss")
+
     def compile(self, optimizer, student_loss_fn, alpha=0.5, beta=0.1, 
             temperature=3.0, **kwargs):
             super().compile(optimizer=optimizer, **kwargs)
@@ -145,8 +150,17 @@ class OfflineStudentModel(keras.Model):
         # return hard_loss + 0.0 * hint_loss
         # return hard_loss + 0.0 * distillation_loss
         # return hard_loss + 0.0 * distillation_loss + 0.0 * hint_loss
-        return (1.0 - self.alpha) * hard_loss + self.alpha * distillation_loss + self.beta * hint_loss
+        total_loss = (1.0 - self.alpha) * hard_loss + self.alpha * distillation_loss + self.beta * hint_loss
+        self.loss_tracker.update_state(total_loss)
+        self.hard_loss_tracker.update_state(hard_loss)
+        self.distil_loss_tracker.update_state(distillation_loss)
+        self.hint_loss_tracker.update_state(hint_loss)
+        return total_loss
         # return tf.experimental.numpy.nansum(losses)
+    @property
+    def metrics(self):
+        return [self.loss_tracker, self.hard_loss_tracker,
+                self.distil_loss_tracker, self.hint_loss_tracker] + super().metrics
 
     def get_config(self):
         base = super().get_config()
