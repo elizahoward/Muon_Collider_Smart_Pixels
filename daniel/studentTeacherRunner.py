@@ -133,14 +133,16 @@ class DistillationRunner():
         self.teacher = None;
         self.student = None
         self.distiller = None
-        self.odgTrain = None
-        self.odgTest = None
+        self.aug_train_gen = None
+        self.aug_val_gen = None
         self.nEpochs = nEpochs
         self.regenerateRecords = regenerateRecords
         self.augTfRecordDir = augTfRecordDir
         self.learningRate = learningRate
         if self.learningRate is None:
             raise NotImplementedError("Need to add learning rate scheduler")
+        else:
+            self.optimizer = tf.keras.optimizers.Adam(self.learningRate)
         self.saveDir = saveDir
 
         if self.runAllOnInit:
@@ -183,7 +185,7 @@ class DistillationRunner():
         self.model = self.distiller.build_student_model()
 
         self.model.compile(
-            optimizer=tf.keras.optimizers.Adam(1e-3),
+            optimizer=self.optimizer,
             student_loss_fn=tf.keras.losses.BinaryCrossentropy(),
             alpha=self.alpha,
             beta=self.beta,
@@ -205,7 +207,7 @@ class DistillationRunner():
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.output_dir = os.path.join(self.saveDir,f"studentModel_{timestamp}_a{self.alpha}_b{self.beta}_t{self.temperature}_nE{self.nEpochs}")
         pathlib.Path(self.output_dir).mkdir(parents=True,exist_ok=True)
-        self.model.save(os.path.join(self.output_dir,"model.keras"))
+        self.model.student.save(os.path.join(self.output_dir,"model.keras"))
         with open(os.path.join(self.output_dir,"history.json"),"w") as f:
             f.write(json.dumps(self.history.history,indent=4))
         
@@ -228,6 +230,13 @@ class DistillationRunner():
         
 
 def main():
-    runner = DistillationRunner(nEpochs=3,saveDir = "./distillRuns")
+    alphas = [0, 0.3, 0.5, 0.7, 1]
+    betas = [0, 0.1, 0.2]
+    temperatures = [1, 2, 5, 10]
+    nEpochs = 100
+    for temperature in temperatures:
+        for beta in betas:
+            for alpha in alphas:
+                runner = DistillationRunner(nEpochs=nEpochs,saveDir = "./distillRuns",alpha=alpha,beta=beta,temperature=temperature)
 if __name__=="__main__":
     main()
