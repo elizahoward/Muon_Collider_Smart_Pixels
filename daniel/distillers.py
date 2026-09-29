@@ -131,26 +131,32 @@ class OfflineStudentModel(keras.Model):
         # teacher_logits is already a sigmoid value in (0, 1); dividing by t > 1
         # pushes it toward 0.5, producing softer targets. t=1 gives no softening.
         t = self.temperature
-        teacher_soft = tf.sigmoid(tf.math.log(teacher_logits / (1.0 - teacher_logits + 1e-7)) / t)
-        student_soft = tf.sigmoid(tf.math.log(
-                    tf.stop_gradient(y_pred) / (1.0 - tf.stop_gradient(y_pred) + 1e-7)
-                ) / t)
-        distillation_loss = tf.reduce_mean(
-            tf.keras.losses.binary_crossentropy(teacher_soft, student_soft)
-        )
+        # teacher_soft = tf.sigmoid(tf.math.log(teacher_logits / (1.0 - teacher_logits + 1e-7)) / t)
+        # student_soft = tf.sigmoid(tf.math.log(
+        #             tf.stop_gradient(y_pred) / (1.0 - tf.stop_gradient(y_pred) + 1e-7)
+        #         ) / t)
+        # distillation_loss = tf.reduce_mean(
+        #     tf.keras.losses.binary_crossentropy(teacher_soft, student_soft)
+        # )
+
+        # MSE between logits (what the paper recommends)
+        y_pred_clipped = tf.clip_by_value(tf.stop_gradient(y_pred), 1e-7, 1.0 - 1e-7)
+        teacher_clipped = tf.clip_by_value(teacher_logits, 1e-7, 1.0 - 1e-7)
+
+        teacher_logit = tf.math.log(teacher_clipped / (1.0 - teacher_clipped))
+        student_logit = tf.math.log(y_pred_clipped / (1.0 - y_pred_clipped))
+        distillation_loss = tf.reduce_mean(tf.square(teacher_logit - student_logit)) / 100
 
         hint_loss = tf.reduce_mean(tf.square(teacher_feat - student_feat))
 
-        losses = tf.stack([
-            (1.0 - self.alpha) * hard_loss,
-            self.alpha * distillation_loss,
-            self.beta * hint_loss,
-        ])
+        # tf.print("distil contribution:", self.alpha * distillation_loss, 
+        #  "hint contribution:", self.beta * hint_loss)
+
         # tf.print("hard:", hard_loss, "distil:", distillation_loss, "hint:", hint_loss)
         # return hard_loss + 0.0 * hint_loss
         # return hard_loss + 0.0 * distillation_loss
         # return hard_loss + 0.0 * distillation_loss + 0.0 * hint_loss
-        total_loss = (1.0 - self.alpha) * hard_loss + self.alpha * distillation_loss + self.beta * hint_loss
+        total_loss = (1.0 - self.alpha - self.beta) * hard_loss + self.alpha * distillation_loss + self.beta * hint_loss
         self.loss_tracker.update_state(total_loss)
         self.hard_loss_tracker.update_state(hard_loss)
         self.distil_loss_tracker.update_state(distillation_loss)

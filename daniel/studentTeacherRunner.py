@@ -31,6 +31,10 @@ import pathlib
 from datetime import datetime
 import os
 import json
+import glob
+from matplotlib import colors
+import pandas as pd
+
 
 def plotHistory(history,accKey="binary_accuracy",yscale="log", savePlotName=None,extraValPlot=False,title="",figsize=(10,10)):
     plt.figure(figsize=figsize)
@@ -74,6 +78,77 @@ def paramsFromStudentPath(studentPath):
     alpha = parts[-4][1:]
     timestamp = parts[-6] + "_" + parts[-5]
     return epochs,temp,beta,alpha,timestamp
+def showAllStudentResults(modelFolderPath,makePlots=False):
+    with open(modelFolderPath+"/history.json","r") as f:
+        history = json.load(f)
+    # print(history)
+    print(history["val_binary_accuracy"][-1])
+    epochs,temp,beta,alpha,timestamp = paramsFromStudentPath(modelFolderPath)
+    evalResults,brej99se = evaluateModelFromPath(modelFolderPath)
+    print(brej99se)
+    if makePlots:
+        plotHistory(history,title=f"time_{timestamp} trainFor{epochs}Epochs brejAt99SE:{brej99se} \n temp:{temp} beta:{beta} alpha:{alpha}",figsize=(8,6))
+    return brej99se,temp,beta,alpha,epochs,timestamp,evalResults,history
+
+def iterateShowingStudRes(modelResGlob,makePlots=False):
+    allPathRes = []
+    for path in glob.glob(modelResGlob):
+        print(path)
+        pathRes = showAllStudentResults(path)
+        allPathRes.append({"brej99se":pathRes[0],"temp":pathRes[1],"beta":pathRes[2],"alpha":pathRes[3],"epochs":pathRes[4],})
+    return allPathRes
+def plotAllStuRes(allPathRes,sizeScale=17):
+
+    studResOrig = pd.DataFrame(allPathRes)
+    # print(studResOrig)
+    studRes = studResOrig.query("brej99se>0.5")
+    # # print(studRes)
+    # # print(studRes["temp"].to_numpy(dtype="int"))
+    # for idx,row in enumerate(allPathRes):
+    #     print(np.log(row["brej99se"])*100+30)
+    #     plt.plot(float(row["beta"]),float(row["alpha"])+(idx/20),"o",markersize=np.log(row["brej99se"])*100+30)
+    #     plt.text(float(row["beta"]),float(row["alpha"])+(idx/20),f"t{row['temp']} a{row['alpha']} b{row['beta']} b99: {row['brej99se']:0.4}")
+    # # plt.plot(studRes["beta"],studRes["alpha"],"o",markersize=[1, 3, 5, 1, 3, 5, 1])
+    # # print(studRes["brej99se"])
+
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    temps = sorted(studRes["temp"].unique())
+    temp_offsets = {t: (i - len(temps)/2) * 0.05 for i, t in enumerate(temps)}
+    sc = ax.scatter(
+        studRes["beta"].astype(float),
+        studRes["alpha"].astype(float) + studRes["temp"].map(temp_offsets).astype(float),
+        c=studRes["brej99se"].astype(float),
+        s=studRes["temp"].astype(float)*sizeScale+1,
+        cmap="viridis",
+        # vmin=studRes["brej99se"].astype(float).min(),
+        # vmax=studRes["brej99se"].astype(float).max(),
+        alpha=0.8,
+        edgecolors="black",
+        linewidths=0.5,
+        # norm=colors.LogNorm(vmin=studRes["brej99se"].astype(float).min(), vmax=studRes["brej99se"].astype(float).max())
+    )
+    plt.colorbar(sc, label="brej99se")
+    for row in allPathRes:
+        if row["brej99se"] < 0.5:
+            continue
+        plt.text(float(row["beta"]),float(row["alpha"])+temp_offsets[row["temp"]],f"t{row['temp']} a{row['alpha']} b{row['beta']} b99: {row['brej99se']:0.4}")
+
+
+    # Legend for temperature offsets
+    for t, offset in temp_offsets.items():
+        ax.plot([], [], 'o', color='gray',markersize=t, label=f"t={t} (offset {offset:+.2f})")
+    ax.legend(title="temperature", loc="center")
+
+    ax.set_xlabel("beta")
+    ax.set_ylabel("alpha")
+    ax.set_xlim([-0.01,0.15])
+    ax.set_yticks([0, 0.3, 0.5])
+    ax.set_xticks([0,0.1])
+    ax.set_title("Training distilled models with different losses — color: brej99, jitter: temperature")
+
+    return studRes,studResOrig
 
 
 
@@ -279,9 +354,14 @@ def main():
     temperatures = [1, 2, 5, 10]#suggested by claude
     
     alphas = [0, 0.3, 0.5]
-    betas = [0.1]
-    temperatures = [1, 3, 5]
+    betas = [0,0.1]
+    temperatures = [1, 3]
+
+    alphas = [0,0.3,0.5]
+    betas = [0,0.1]
+    temperatures = [1,3]
     nEpochs = 100
+    nEpochs = 40
     for temperature in temperatures:
         for beta in betas:
             for alpha in alphas:
