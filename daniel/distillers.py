@@ -260,6 +260,22 @@ class OnlineDistiller(keras.Model):
         # teacher_logits is already a sigmoid value in (0, 1); dividing by t > 1
         # pushes it toward 0.5, producing softer targets. t=1 gives no softening.
         t = self.temperature
+        # tryAlternate=True
+        # if tryAlternate:
+        #     # # Soften by blending with 0.5
+        #     # teacher_soft = teacher_logits * (1/t) + 0.5 * (1 - 1/t)
+        #     # student_soft = tf.stop_gradient(y_pred) * (1/t) + 0.5 * (1 - 1/t)
+        #     # # distillation_loss = tf.reduce_mean(tf.keras.losses.binary_crossentropy(teacher_soft, student_soft))
+        #     # # Explicit numerically stable BCE avoiding Keras's internal implementation
+        #     # student_soft_clipped = tf.clip_by_value(student_soft, 1e-7, 1.0 - 1e-7)
+        #     # distillation_loss = -tf.reduce_mean(
+        #     #     teacher_soft * tf.math.log(student_soft_clipped) 
+        #     #     + (1.0 - teacher_soft) * tf.math.log(1.0 - student_soft_clipped)
+        #     # )
+        #     teacher_soft = teacher_logits * (1.0/t) + 0.5 * (1.0 - 1.0/t)
+        #     student_soft = tf.stop_gradient(y_pred) * (1.0/t) + 0.5 * (1.0 - 1.0/t)
+        #     distillation_loss = tf.reduce_mean(tf.square(teacher_soft - student_soft))
+        # else:
         teacher_soft = tf.sigmoid(tf.math.log(teacher_logits / (1.0 - teacher_logits + 1e-7)) / t)
         student_soft = tf.sigmoid(tf.math.log(y_pred        / (1.0 - y_pred        + 1e-7)) / t)
         distillation_loss = tf.reduce_mean(

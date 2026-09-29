@@ -663,7 +663,7 @@ class SmartPixModel(ABC):
 
         
         # Calculate metrics
-        test_loss, test_accuracy = self.models[config_name].evaluate(eval_generator, verbose=0)
+        test_loss, test_accuracy, *_ = self.models[config_name].evaluate(eval_generator, verbose=0)
         
         # Calculate ROC AUC
         fpr, tpr, thresholds = roc_curve(true_labels, predictions.ravel())

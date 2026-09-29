@@ -32,6 +32,49 @@ from datetime import datetime
 import os
 import json
 
+def plotHistory(history,accKey="binary_accuracy",yscale="log", savePlotName=None,extraValPlot=False,title="",figsize=(10,10)):
+    plt.figure(figsize=figsize)
+    if accKey not in history.keys():
+        raise ValueError("wrong accuracy key")
+    plt.subplot(211)
+    plt.plot(history[accKey],label=accKey)
+    plt.plot(history[f"val_{accKey}"],label=f"val_{accKey}")
+    plt.yscale(yscale)
+    plt.legend()
+    plt.xlabel("epoch")
+    plt.ylabel(accKey+" training student")
+    plt.title(title)
+    plt.subplot(212)
+    for lossKey in history.keys():
+        if "loss" in lossKey:
+            plt.plot(history[lossKey],label=lossKey,alpha=0.7)
+    if extraValPlot:
+        plt.plot(history['val_loss'],"o",label="val_loss")
+    plt.ylabel("loss training student")
+    plt.xlabel("epoch")
+    plt.yscale(yscale)
+    plt.legend()
+    if savePlotName is None:
+        plt.show()
+    else:
+        plt.savefig(savePlotName)
+        plt.close()
+def evaluateModelFromPath(modelFolderPath,tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V4_June/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized/"):
+    configName="justThisOne"
+    smodel = Model1(tfRecordFolder = tfRecordFolder) 
+    smodel.models[configName] = Model_Classes.loadQuantizedModel(modelFolderPath+"/model.h5")
+    smodel.models[configName].compile(metrics=[tf.keras.metrics.BinaryAccuracy()])
+    evalResults = smodel.evaluate(config_name=configName,predictionPlots=False,signal_efficiencies=[0.95, 0.98, 0.99])
+    return evalResults,evalResults['bkg_rej_at_99pct']
+def paramsFromStudentPath(studentPath):
+    parts = studentPath.split("_")
+    epochs = parts[-1][2:]
+    temp = parts[-2][1:]
+    beta = parts[-3][1:]
+    alpha = parts[-4][1:]
+    timestamp = parts[-6] + "_" + parts[-5]
+    return epochs,temp,beta,alpha,timestamp
+
 
 
 def numOutNodes(model):
@@ -207,9 +250,10 @@ class DistillationRunner():
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.output_dir = os.path.join(self.saveDir,f"studentModel_{timestamp}_a{self.alpha}_b{self.beta}_t{self.temperature}_nE{self.nEpochs}")
         pathlib.Path(self.output_dir).mkdir(parents=True,exist_ok=True)
-        self.model.student.save(os.path.join(self.output_dir,"model.keras"))
+        self.model.student.save(os.path.join(self.output_dir,"model.h5"))
         with open(os.path.join(self.output_dir,"history.json"),"w") as f:
             f.write(json.dumps(self.history.history,indent=4))
+        plotHistory(self.history.history,savePlotName=os.path.join(self.output_dir,"learning.png"))
         
     def runAll(self,nEpochs:int = None):
         if nEpochs is None:
@@ -230,9 +274,13 @@ class DistillationRunner():
         
 
 def main():
-    alphas = [0, 0.3, 0.5, 0.7, 1]
-    betas = [0, 0.1, 0.2]
-    temperatures = [1, 2, 5, 10]
+    alphas = [0, 0.3, 0.5, 0.7, 1] #suggested by claude
+    betas = [0, 0.1, 0.2]#suggested by claude
+    temperatures = [1, 2, 5, 10]#suggested by claude
+    
+    alphas = [0, 0.3, 0.5]
+    betas = [0.1]
+    temperatures = [1, 3, 5]
     nEpochs = 100
     for temperature in temperatures:
         for beta in betas:
