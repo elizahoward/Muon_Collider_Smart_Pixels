@@ -306,6 +306,203 @@ class OnlineDistiller(keras.Model):
         return base
 
 
+
+# ---------------------------------------------------------------------------
+# MDMM infrastructure
+# ---------------------------------------------------------------------------
+# Adapted from ArghyaRanjanDas/smart-pixels-ml softtimerouter branch
+# (two_bit_optimization_helpers/mdmm.py). Changes from the original:
+#   - Removed conditional_nll imports and bandit_update hooks
+#   - Added needs_inputs flag so constraints can access the full input dict x
+#     (needed for teacher_logits, teacher_feat, and student input features)
+#   - Stripped SmartPixel-specific constraint classes (MinStd, MinMad, etc.)
+# ---------------------------------------------------------------------------
+
+class OutputConstraint(keras.layers.Layer):
+    """Base class: a constraint on the model output with its own multiplier."""
+
+    def __init__(self, scale=1.0, damping=1.0, **kwargs):
+        super().__init__(**kwargs)
+        self.scale   = scale
+        self.damping = damping
+        self.lmbda   = self.add_weight(
+            name=self.name + "_lmbda",
+            shape=(),
+            initializer="zeros",
+            trainable=True,
+        )
+
+    def fn(self, outputs, **kwargs):
+        raise NotImplementedError
+
+    def infeasibility(self, fn_value):
+        raise NotImplementedError
+
+    def call(self, outputs, **kwargs):
+        inf      = self.infeasibility(self.fn(outputs, **kwargs))
+        l_term   = tf.math.maximum(self.lmbda, 0.0) * inf
+        damp_term = self.damping * tf.square(inf) / 2.0
+        return self.scale * (l_term + damp_term)
+
+
+class MDMM(keras.Model):
+    """Wraps a model; adds OutputConstraint penalties to the training loss.
+
+    train_step: loss = task_loss + sum(constraint penalties). The gradient
+    sign is FLIPPED for lambda variables (ascent) so each multiplier grows
+    while its constraint is violated and relaxes once satisfied.
+    val_loss stays the plain compiled loss (test_step untouched) so it
+    remains directly comparable to non-MDMM runs.
+
+    constraint_pass options:
+      'primary'      : penalties computed on the training=True y_pred of the
+                       main pass. Right for distillation constraints where
+                       gradients need to flow through quantizer STE.
+      'deterministic': a second training=False forward pass. Right for spread
+                       constraints where dropout noise inflates measurements.
+
+    Constraints signal their input requirements via class attributes:
+      needs_truth  = True : constraint.call receives y_true=y
+      needs_inputs = True : constraint.call receives x=x (full input dict)
+    """
+
+    def __init__(self, model, constraints, constraint_samples=None,
+                 constraint_pass='primary', name='MDMM', **kwargs):
+        super().__init__(name=name, **kwargs)
+        assert constraint_pass in ('deterministic', 'primary'), constraint_pass
+        self.model              = model
+        self.constraints_list   = list(constraints)
+        self._lmbda_ids         = {id(c.lmbda) for c in self.constraints_list}
+        self.constraint_samples = constraint_samples
+        self.constraint_pass    = constraint_pass
+
+    def call(self, inputs, training=False):
+        return self.model(inputs, training=training)
+
+    def train_step(self, data):
+        x, y = data
+
+        with tf.GradientTape() as tape:
+            y_pred   = self.model(x, training=True)
+            loss_obj = self.compute_loss(x=x, y=y, y_pred=y_pred)
+
+            # Slice for constraint evaluation if constraint_samples is set
+            n        = self.constraint_samples
+            x_c      = x if n is None else {k: v[:n] for k, v in x.items()}
+            y_c      = y if n is None else y[:n]
+
+            if self.constraint_pass == 'primary':
+                y_det = y_pred if n is None else y_pred[:n]
+            else:
+                y_det = self.model(x_c, training=False)
+
+            penalties = {}
+            for c in self.constraints_list:
+                kwargs = {}
+                if getattr(c, "needs_truth",  False):
+                    kwargs["y_true"] = y_c
+                if getattr(c, "needs_inputs", False):
+                    kwargs["x"] = x_c
+                penalties["pen_" + c.name] = c(y_det, **kwargs)
+
+            loss = loss_obj + tf.add_n(list(penalties.values()))
+
+        grads = tape.gradient(loss, self.trainable_variables)
+        grads_and_vars = []
+        for grad, var in zip(grads, self.trainable_variables):
+            if grad is None:
+                continue
+            if id(var) in self._lmbda_ids:
+                grads_and_vars.append((-grad, var))   # ascent for lambdas
+            else:
+                grads_and_vars.append((grad, var))
+        self.optimizer.apply_gradients(grads_and_vars)
+
+        self.compiled_metrics.update_state(y, y_pred)
+
+        out = {"loss": loss, "loss_obj": loss_obj}
+        out.update(penalties)
+        # tf.print(self.compiled_metrics.metrics,self.metrics)
+        out.update({m.name: m.result() for m in self.compiled_metrics.metrics})
+        # out.update({m.name: m.result() for m in self.metrics})
+        return out
+
+    # Delegate save/load/summary to the inner model so existing callbacks
+    # and checkpointing work unchanged
+    def save_weights(self, filepath, *args, **kwargs):
+        self.model.save_weights(filepath, *args, **kwargs)
+
+    def load_weights(self, filepath, *args, **kwargs):
+        self.model.load_weights(filepath, *args, **kwargs)
+
+    def summary(self, *args, **kwargs):
+        return self.model.summary(*args, **kwargs)
+
+
+# ---------------------------------------------------------------------------
+# Distillation constraints
+# ---------------------------------------------------------------------------
+
+class DistillationConstraint(OutputConstraint):
+    """Logit-space MSE between student and teacher outputs <= max_value.
+
+    Implements the logit-matching approach from Comparing KL Divergence and
+    MSE Loss in Knowledge Distillation (arxiv 2105.08919), scaled by /100 to
+    bring it to the same order of magnitude as BCE hard loss (~0.5-1.0).
+
+    Override fn() to experiment with different distillation loss functions,
+    e.g. BCE on sigmoid outputs or linear-blend temperature scaling.
+    """
+    needs_inputs = True
+
+    def __init__(self, max_value=0.3, scale=1.0, damping=1.0, **kwargs):
+        super().__init__(scale=scale, damping=damping, **kwargs)
+        self.max_value = max_value
+
+    def fn(self, outputs, x=None, **kwargs):
+        teacher_clipped = tf.clip_by_value(x["teacher_logits"], 1e-7, 1.0 - 1e-7)
+        student_clipped = tf.clip_by_value(tf.stop_gradient(outputs), 1e-7, 1.0 - 1e-7)
+        teacher_logit   = tf.math.log(teacher_clipped / (1.0 - teacher_clipped))
+        student_logit   = tf.math.log(student_clipped / (1.0 - student_clipped))
+        return tf.reduce_mean(tf.square(teacher_logit - student_logit)) / 100.0
+
+    def infeasibility(self, fn_value):
+        return tf.math.maximum(fn_value - self.max_value, 0.0)
+
+
+class HintConstraint(OutputConstraint):
+    """MSE between teacher and student second-to-last layer activations <= max_value.
+
+    Requires hint layer dimensions to match (enforced by
+    check_hint_layer_compatibility at OfflineDistiller construction time).
+
+    Override fn() to experiment with different feature-matching losses,
+    e.g. cosine similarity instead of MSE.
+    """
+    needs_inputs = True
+
+    def __init__(self, student_extractor, student_input_keys, max_value=0.6,
+                 scale=1.0, damping=1.0, **kwargs):
+        super().__init__(scale=scale, damping=damping, **kwargs)
+        self.student_extractor  = student_extractor
+        self.student_input_keys = student_input_keys
+        self.max_value          = max_value
+
+    def fn(self, outputs, x=None, **kwargs):
+        teacher_feat = x["teacher_feat"]
+        student_x    = {k: v for k, v in x.items() if k in self.student_input_keys}
+        student_feat, _ = self.student_extractor(student_x, training=True)
+        return tf.reduce_mean(tf.square(teacher_feat - student_feat))
+
+    def infeasibility(self, fn_value):
+        return tf.math.maximum(fn_value - self.max_value, 0.0)
+
+
+# ---------------------------------------------------------------------------
+# end of MDMM infrastructure
+# ---------------------------------------------------------------------------
+
+
 # ---------------------------------------------------------------------------
 # OfflineDistiller
 # ---------------------------------------------------------------------------
@@ -489,4 +686,67 @@ class OfflineDistiller:
             # temperature=self.temperature,
             # alpha=self.alpha,
             # beta=self.beta,
+        )
+
+    def build_mdmm_model(
+        self,
+        distil_max_value: float = 0.3,
+        hint_max_value: float = None,
+        scale: float = 1.0,
+        damping: float = 1.0,
+        constraint_pass: str = 'primary',
+    ) -> MDMM:
+        """Wrap the student in an MDMM model with distillation constraints.
+
+        The student minimizes hard_loss (BCE vs ground truth) subject to:
+          - distillation_loss <= distil_max_value  (always added)
+          - hint_loss <= hint_max_value            (added only if hint_max_value is not None)
+
+        Lagrange multipliers learn the constraint weights automatically,
+        replacing the manual alpha/beta hyperparameters of build_student_model().
+
+        Starting values based on observed loss magnitudes (logit MSE / 100):
+          distil_max_value = 0.3  (distil_loss starts ~1.0, decreases to ~0.6)
+          hint_max_value   = 0.6  (hint_loss starts ~3.5, decreases to ~2.0)
+
+        To experiment with different distillation or hint loss functions,
+        subclass DistillationConstraint or HintConstraint and override fn().
+
+        Usage:
+            mdmm_model = d.build_mdmm_model(distil_max_value=0.3,
+                                             hint_max_value=0.6)
+            mdmm_model.compile(
+                optimizer=tf.keras.optimizers.Adam(1e-3),
+                loss=tf.keras.losses.BinaryCrossentropy(),
+                metrics=[tf.keras.metrics.BinaryAccuracy()],
+            )
+            mdmm_model.fit(aug_train_gen, validation_data=aug_val_gen,
+                           epochs=50)
+            # Save the inner student (plain QKeras model, loadable by
+            # Model_Classes.loadQuantizedModel):
+            mdmm_model.model.save("model.h5")
+        """
+        constraints = [
+            DistillationConstraint(
+                max_value=distil_max_value,
+                scale=scale,
+                damping=damping,
+            )
+        ]
+        if hint_max_value is not None:
+            constraints.append(
+                HintConstraint(
+                    student_extractor=build_extractor(self.student),
+                    student_input_keys={
+                        inp.name.split("/")[0] for inp in self.student.inputs
+                    },
+                    max_value=hint_max_value,
+                    scale=scale,
+                    damping=damping,
+                )
+            )
+        return MDMM(
+            model=self.student,
+            constraints=constraints,
+            constraint_pass=constraint_pass,
         )
