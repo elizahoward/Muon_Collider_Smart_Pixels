@@ -240,6 +240,9 @@ class DistillationRunner():
         augTfRecordDir:str = "./augRecords",
         learningRate = 1e-3,#if None then should do a scheduler
         saveDir:str = None,
+        typeMDMM: bool = True,
+        distil_max_value=0.3,
+        hint_max_value=0.6
     ):
         self.temperature = temperature
         self.alpha       = alpha
@@ -257,6 +260,9 @@ class DistillationRunner():
         self.regenerateRecords = regenerateRecords
         self.augTfRecordDir = augTfRecordDir
         self.learningRate = learningRate
+        self.typeMDMM = typeMDMM
+        self.distil_max_value= distil_max_value
+        self.hint_max_value = hint_max_value
         if self.learningRate is None:
             raise NotImplementedError("Need to add learning rate scheduler")
         else:
@@ -300,18 +306,27 @@ class DistillationRunner():
         )
         return self.aug_train_gen, self.aug_val_gen
     def makeOffStuModel(self):
-        self.model = self.distiller.build_student_model()
+        if self.typeMDMM:
+            self.model = self.distiller.build_mdmm_model(distil_max_value=self.distil_max_value,
+                                    hint_max_value=self.hint_max_value)
+            self.model.compile(
+                optimizer=tf.keras.optimizers.Adam(1e-3),
+                loss=tf.keras.losses.BinaryCrossentropy(),
+                metrics=[tf.keras.metrics.BinaryAccuracy()],
+            )
+        else:
+            self.model = self.distiller.build_student_model()
 
-        self.model.compile(
-            optimizer=self.optimizer,
-            student_loss_fn=tf.keras.losses.BinaryCrossentropy(),
-            alpha=self.alpha,
-            beta=self.beta,
-            temperature=self.temperature,
-            # metrics=[tf.keras.metrics.BinaryAccuracy()],
-            metrics = "binary_accuracy",
-            run_eagerly=True,
-        )
+            self.model.compile(
+                optimizer=self.optimizer,
+                student_loss_fn=tf.keras.losses.BinaryCrossentropy(),
+                alpha=self.alpha,
+                beta=self.beta,
+                temperature=self.temperature,
+                # metrics=[tf.keras.metrics.BinaryAccuracy()],
+                metrics = "binary_accuracy",
+                run_eagerly=True,
+            )
         return self.model
     def trainModel(self,nEpochs):
         self.history = self.model.fit(self.aug_train_gen,
@@ -323,9 +338,17 @@ class DistillationRunner():
 
         pathlib.Path(self.saveDir).mkdir(parents=True,exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.output_dir = os.path.join(self.saveDir,f"studentModel_{timestamp}_a{self.alpha}_b{self.beta}_t{self.temperature}_nE{self.nEpochs}")
+        if self.typeMDMM:
+            self.output_dir = os.path.join(self.saveDir,f"studentModel_{timestamp}_dM{self.distil_max_value}_hM{self.hint_max_value}_nE{self.nEpochs}")
+        else:
+            self.output_dir = os.path.join(self.saveDir,f"studentModel_{timestamp}_a{self.alpha}_b{self.beta}_t{self.temperature}_nE{self.nEpochs}")
+            
+        # self.output_dir = os.path.join(self.saveDir,f"studentModel_{timestamp}_a{self.alpha}_b{self.beta}_t{self.temperature}_nE{self.nEpochs}")
         pathlib.Path(self.output_dir).mkdir(parents=True,exist_ok=True)
-        self.model.student.save(os.path.join(self.output_dir,"model.h5"))
+        if self.typeMDMM:
+            self.model.model.save(os.path.join(self.output_dir,"model.h5"))
+        else:
+            self.model.student.save(os.path.join(self.output_dir,"model.h5"))
         with open(os.path.join(self.output_dir,"history.json"),"w") as f:
             f.write(json.dumps(self.history.history,indent=4))
         plotHistory(self.history.history,savePlotName=os.path.join(self.output_dir,"learning.png"))
@@ -348,7 +371,7 @@ class DistillationRunner():
             self.saveModel()
         
 
-def main():
+def main(doMDMM = True):
     alphas = [0, 0.3, 0.5, 0.7, 1] #suggested by claude
     betas = [0, 0.1, 0.2]#suggested by claude
     temperatures = [1, 2, 5, 10]#suggested by claude
@@ -362,9 +385,18 @@ def main():
     temperatures = [1,3]
     nEpochs = 100
     nEpochs = 40
-    for temperature in temperatures:
-        for beta in betas:
-            for alpha in alphas:
-                runner = DistillationRunner(nEpochs=nEpochs,saveDir = "./distillRuns",alpha=alpha,beta=beta,temperature=temperature)
+    distillationMaxes = [0.3]
+    hintMaxes = [0.6]
+    if doMDMM:
+        nEpochs = 100
+        for distillationMax in distillationMaxes:
+            for hintMax in hintMaxes:
+                runner = DistillationRunner(nEpochs=nEpochs,saveDir = "./distillRuns",typeMDMM=True,distil_max_value=distillationMax,hint_max_value=hintMax)
+    else:
+        for temperature in temperatures:
+            for beta in betas:
+                for alpha in alphas:
+                    runner = DistillationRunner(nEpochs=nEpochs,saveDir = "./distillRuns",alpha=alpha,beta=beta,temperature=temperature,typeMDMM=False) 
+
 if __name__=="__main__":
     main()
