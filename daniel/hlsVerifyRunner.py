@@ -14,8 +14,8 @@ import shutil
 print("Current MGC_HOME:", os.environ.get("MGC_HOME"))
 print("Resolved Catapult Binary:", shutil.which("catapult"))
 
-runParetoVerification = True
-runSingleVerification = False
+runParetoVerification = False
+runSingleVerification = True
 
 tfRecordFolder = "" #The default, which will go to tfLoaderUtils defaults, which are not normalized actually, 
 # that default appropriate for some older models or for model1, but not great for the newest (as of May/June2026) models 2/3
@@ -39,13 +39,19 @@ singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_
 # singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5"
 # singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_057.h5"
 # singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5"
+
+singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/distillRuns/studentModel_20260928_070632_a0_b0_t1_nE100/model.h5"
+# singleFilepath = "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/distillRuns/studentModel_20260928_073356_a0_b0_t3_nE100/model.h5"
+studentModel = True
 modelType = 1
 bitNumber = 8
 hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{singleFilepath[-20:-1]}"
+if studentModel:
+    hlsDir = f"./hlsVerification/m{modelType}_b{bitNumber}_{singleFilepath[-30:-1]}"
 if runSingleVerification:
     hlsGuy = hlsVerification.hlsVerifier(
-        doingCatapult = True, #If using catapult, use the ccs_env python environment
-        doingVitis = False, #If using vitis, use the hls4ml "default" environment that works with Vitis      
+        doingCatapult = False, #If using catapult, use the ccs_env or ccs_venv2 python environment
+        doingVitis = True, #If using vitis, use the hls4ml "default" environment that works with Vitis      
         loadTestVectors = True,
         saveTestVectors = False,
         buildModel = True,

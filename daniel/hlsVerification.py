@@ -440,8 +440,8 @@ class hlsVerifier():
 
         pathlib.Path(baseSaveDir).mkdir(parents=True,exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.output_dir_catapult = os.path.join(baseSaveDir,"hlsCatapultModel2_"+timestamp)
-        self.output_dir_vitis = os.path.join(baseSaveDir,"hlsVitisModel2_"+timestamp)
+        self.output_dir_catapult = os.path.join(baseSaveDir,"hlsCatapultModel_"+timestamp)
+        self.output_dir_vitis = os.path.join(baseSaveDir,"hlsVitisModel_"+timestamp)
         self.output_dir = self.output_dir_catapult if doingCatapult else self.output_dir_vitis
 
         if PLOT_DIR == "":
@@ -515,6 +515,9 @@ class hlsVerifier():
             #Actually need to import the other hls4ml for this
             config = self.hls4ml.utils.config_from_keras_model(self.quantizedModel, granularity='name',default_precision = "fixed<16,7>",)
             # config = self.hls4ml.utils.config_from_keras_model(quantizedModel, granularity='name',default_precision="ap_fixed<16,6,true>")
+            # if True:
+            #     for layer_name in config.get('LayerName', {}):
+            #         config['LayerName'][layer_name]['Strategy'] = 'Resource'
             if self.programWeights:
                 config["Model"]["BramFactor"] = 0 
             for layer in config['LayerName'].keys():
