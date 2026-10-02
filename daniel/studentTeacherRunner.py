@@ -36,7 +36,7 @@ from matplotlib import colors
 import pandas as pd
 
 
-def plotHistory(history,accKey="binary_accuracy",yscale="log", savePlotName=None,extraValPlot=False,title="",figsize=(10,10)):
+def plotHistory(history,accKey="binary_accuracy",yscale="log", savePlotName=None,extraValPlot=False,title="",figsize=(10,10),typeMDMM=False):
     plt.figure(figsize=figsize)
     if accKey not in history.keys():
         raise ValueError("wrong accuracy key")
@@ -50,8 +50,8 @@ def plotHistory(history,accKey="binary_accuracy",yscale="log", savePlotName=None
     plt.title(title)
     plt.subplot(212)
     for lossKey in history.keys():
-        if "loss" in lossKey:
-            plt.plot(history[lossKey],label=lossKey,alpha=0.7)
+        if ("loss" in lossKey) or ("constraint" in lossKey):
+            plt.plot(history[lossKey],label=lossKey,alpha=0.7)    
     if extraValPlot:
         plt.plot(history['val_loss'],"o",label="val_loss")
     plt.ylabel("loss training student")
@@ -78,24 +78,45 @@ def paramsFromStudentPath(studentPath):
     alpha = parts[-4][1:]
     timestamp = parts[-6] + "_" + parts[-5]
     return epochs,temp,beta,alpha,timestamp
-def showAllStudentResults(modelFolderPath,makePlots=False):
+def paramsFromMDMMStudentPath(studentPath):
+    parts = studentPath.split("_")
+    epochs = parts[-1][2:]
+    hintDamping = parts[-2][1:]
+    distilDamping = parts[-3][1:]
+    hintMax = parts[-4][1:]
+    distillMax = parts[-5][1:]
+    timestamp = parts[-7] + "_" + parts[-6]
+    return epochs,hintDamping,distilDamping,hintMax,distillMax,timestamp
+def showAllStudentResults(modelFolderPath,makePlots=False,typeMDMM=False):
     with open(modelFolderPath+"/history.json","r") as f:
         history = json.load(f)
     # print(history)
     print(history["val_binary_accuracy"][-1])
-    epochs,temp,beta,alpha,timestamp = paramsFromStudentPath(modelFolderPath)
+    if typeMDMM:
+        epochs,hintDamping,distilDamping,hintMax,distillMax,timestamp = paramsFromMDMMStudentPath(modelFolderPath)
+    else:
+        epochs,temp,beta,alpha,timestamp = paramsFromStudentPath(modelFolderPath)
     evalResults,brej99se = evaluateModelFromPath(modelFolderPath)
     print(brej99se)
     if makePlots:
-        plotHistory(history,title=f"time_{timestamp} trainFor{epochs}Epochs brejAt99SE:{brej99se} \n temp:{temp} beta:{beta} alpha:{alpha}",figsize=(8,6))
-    return brej99se,temp,beta,alpha,epochs,timestamp,evalResults,history
+        if typeMDMM:
+            plotHistory(history,title=f"time_{timestamp} trainFor{epochs}Epochs brejAt99SE:{brej99se} \n hintDamping:{hintDamping} distilDamping:{distilDamping} hintMaxLoss:{hintMax} distilMaxLoss:{distillMax}",figsize=(8,6))
+        else:
+            plotHistory(history,title=f"time_{timestamp} trainFor{epochs}Epochs brejAt99SE:{brej99se} \n temp:{temp} beta:{beta} alpha:{alpha}",figsize=(8,6))
+    if typeMDMM:
+        return brej99se,hintDamping,distilDamping,hintMax,distillMax,epochs,timestamp,evalResults,history
+    else:
+        return brej99se,temp,beta,alpha,epochs,timestamp,evalResults,history
 
-def iterateShowingStudRes(modelResGlob,makePlots=False):
+def iterateShowingStudRes(modelResGlob,makePlots=False,typeMDMM=False):
     allPathRes = []
     for path in glob.glob(modelResGlob):
         print(path)
-        pathRes = showAllStudentResults(path)
-        allPathRes.append({"brej99se":pathRes[0],"temp":pathRes[1],"beta":pathRes[2],"alpha":pathRes[3],"epochs":pathRes[4],})
+        pathRes = showAllStudentResults(path,makePlots=makePlots,typeMDMM=typeMDMM)
+        if typeMDMM:
+            allPathRes.append({"brej99se":pathRes[0],"hintDamping":pathRes[1],"distilDamping":pathRes[2],"hintMax":pathRes[3],"distillMax":pathRes[4],"epochs":pathRes[5],})
+        else:
+            allPathRes.append({"brej99se":pathRes[0],"temp":pathRes[1],"beta":pathRes[2],"alpha":pathRes[3],"epochs":pathRes[4],})
     return allPathRes
 def plotAllStuRes(allPathRes,sizeScale=17):
 
@@ -241,8 +262,10 @@ class DistillationRunner():
         learningRate = 1e-3,#if None then should do a scheduler
         saveDir:str = None,
         typeMDMM: bool = True,
-        distil_max_value=0.3,
-        hint_max_value=0.6
+        distil_max_value:float=0.3,
+        hint_max_value:float =0.6,
+        dampingHint:float = 1,
+        dampingDistil:float = 1,
     ):
         self.temperature = temperature
         self.alpha       = alpha
@@ -263,6 +286,8 @@ class DistillationRunner():
         self.typeMDMM = typeMDMM
         self.distil_max_value= distil_max_value
         self.hint_max_value = hint_max_value
+        self.dampingHint = dampingHint
+        self.dampingDistil = dampingDistil
         if self.learningRate is None:
             raise NotImplementedError("Need to add learning rate scheduler")
         else:
@@ -308,9 +333,9 @@ class DistillationRunner():
     def makeOffStuModel(self):
         if self.typeMDMM:
             self.model = self.distiller.build_mdmm_model(distil_max_value=self.distil_max_value,
-                                    hint_max_value=self.hint_max_value)
+                                    hint_max_value=self.hint_max_value, dampingHint= self.dampingHint,dampingDistil=self.dampingDistil)
             self.model.compile(
-                optimizer=tf.keras.optimizers.Adam(1e-3),
+                optimizer=self.optimizer,
                 loss=tf.keras.losses.BinaryCrossentropy(),
                 metrics=[tf.keras.metrics.BinaryAccuracy()],
             )
@@ -339,7 +364,7 @@ class DistillationRunner():
         pathlib.Path(self.saveDir).mkdir(parents=True,exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         if self.typeMDMM:
-            self.output_dir = os.path.join(self.saveDir,f"studentModel_{timestamp}_dM{self.distil_max_value}_hM{self.hint_max_value}_nE{self.nEpochs}")
+            self.output_dir = os.path.join(self.saveDir,f"stuMDMMModel_{timestamp}_dM{self.distil_max_value}_hM{self.hint_max_value}_dD{self.dampingDistil}_hD{self.dampingHint}_nE{self.nEpochs}")
         else:
             self.output_dir = os.path.join(self.saveDir,f"studentModel_{timestamp}_a{self.alpha}_b{self.beta}_t{self.temperature}_nE{self.nEpochs}")
             
@@ -384,14 +409,17 @@ def main(doMDMM = True):
     betas = [0,0.1]
     temperatures = [1,3]
     nEpochs = 100
-    nEpochs = 40
-    distillationMaxes = [0.3]
+    nEpochs = 50
+    distillationMaxes = [0.27,0.29]
     hintMaxes = [0.6]
+    dampings = [1,3,5]
+    hintDampingExtras = [0,3]
     if doMDMM:
-        nEpochs = 100
-        for distillationMax in distillationMaxes:
-            for hintMax in hintMaxes:
-                runner = DistillationRunner(nEpochs=nEpochs,saveDir = "./distillRuns",typeMDMM=True,distil_max_value=distillationMax,hint_max_value=hintMax)
+        for hintDampingExtra in hintDampingExtras:
+            for damping in dampings:
+                for distillationMax in distillationMaxes:
+                    for hintMax in hintMaxes:
+                        runner = DistillationRunner(nEpochs=nEpochs,saveDir = "./distillRuns",typeMDMM=True,distil_max_value=distillationMax,hint_max_value=hintMax,dampingHint=damping+hintDampingExtra, dampingDistil=damping)
     else:
         for temperature in temperatures:
             for beta in betas:

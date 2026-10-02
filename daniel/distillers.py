@@ -339,10 +339,11 @@ class OutputConstraint(keras.layers.Layer):
         raise NotImplementedError
 
     def call(self, outputs, **kwargs):
-        inf      = self.infeasibility(self.fn(outputs, **kwargs))
-        l_term   = tf.math.maximum(self.lmbda, 0.0) * inf
+        fn_value = self.fn(outputs, **kwargs) #loss computed standard, like hint_loss or distillation_loss
+        inf      = self.infeasibility(fn_value) #how infeasible is the loss, e.g. how close to loss<max_loss satisfied
+        l_term   = tf.math.maximum(self.lmbda, 0.0) * inf #self.lmbda is analogue to the alpha/beta coefficients, controlled by optimization in training
         damp_term = self.damping * tf.square(inf) / 2.0
-        return self.scale * (l_term + damp_term)
+        return self.scale * (l_term + damp_term), fn_value
 
 
 class MDMM(keras.Model):
@@ -375,6 +376,10 @@ class MDMM(keras.Model):
         self._lmbda_ids         = {id(c.lmbda) for c in self.constraints_list}
         self.constraint_samples = constraint_samples
         self.constraint_pass    = constraint_pass
+        self.constraint_fn_trackers = {
+            c.name: keras.metrics.Mean(name=c.name + "_fn")
+            for c in self.constraints_list
+        }
 
     def call(self, inputs, training=False):
         return self.model(inputs, training=training)
@@ -403,7 +408,9 @@ class MDMM(keras.Model):
                     kwargs["y_true"] = y_c
                 if getattr(c, "needs_inputs", False):
                     kwargs["x"] = x_c
-                penalties["pen_" + c.name] = c(y_det, **kwargs)
+                penalty, fn_val = c(y_det, **kwargs)
+                self.constraint_fn_trackers[c.name].update_state(fn_val)
+                penalties["pen_" + c.name] = penalty
 
             loss = loss_obj + tf.add_n(list(penalties.values()))
 
@@ -424,6 +431,8 @@ class MDMM(keras.Model):
         out.update(penalties)
         # tf.print(self.compiled_metrics.metrics,self.metrics)
         out.update({m.name: m.result() for m in self.compiled_metrics.metrics})
+        out.update({c.name + "_fnLoss": self.constraint_fn_trackers[c.name].result() 
+            for c in self.constraints_list})
         # out.update({m.name: m.result() for m in self.metrics})
         return out
 
@@ -437,6 +446,35 @@ class MDMM(keras.Model):
 
     def summary(self, *args, **kwargs):
         return self.model.summary(*args, **kwargs)
+    
+    @property
+    def metrics(self):
+        return list(self.constraint_fn_trackers.values()) + super().metrics
+
+    def test_step(self, data):
+        x, y = data
+        y_pred = self.model(x, training=False)
+        loss_obj = self.compute_loss(x=x, y=y, y_pred=y_pred)
+
+        n   = self.constraint_samples
+        x_c = x if n is None else {k: v[:n] for k, v in x.items()}
+        y_c = y if n is None else y[:n]
+
+        for c in self.constraints_list:
+            kwargs = {}
+            if getattr(c, "needs_truth",  False):
+                kwargs["y_true"] = y_c
+            if getattr(c, "needs_inputs", False):
+                kwargs["x"] = x_c
+            _, fn_val = c(y_pred if n is None else y_pred[:n], **kwargs)
+            self.constraint_fn_trackers[c.name].update_state(fn_val)
+
+        self.compiled_metrics.update_state(y, y_pred)
+        out = {"loss": loss_obj}
+        out.update({m.name: m.result() for m in self.compiled_metrics.metrics})
+        out.update({c.name + "_fnLoss": self.constraint_fn_trackers[c.name].result()
+                    for c in self.constraints_list})
+        return out
 
 
 # ---------------------------------------------------------------------------
@@ -692,8 +730,10 @@ class OfflineDistiller:
         self,
         distil_max_value: float = 0.3,
         hint_max_value: float = None,
-        scale: float = 1.0,
-        damping: float = 1.0,
+        scaleHint: float = 1.0,
+        scaleDistil: float = 1.0,
+        dampingHint: float = 1.0,
+        dampingDistil: float = 1.0,
         constraint_pass: str = 'primary',
     ) -> MDMM:
         """Wrap the student in an MDMM model with distillation constraints.
@@ -729,8 +769,8 @@ class OfflineDistiller:
         constraints = [
             DistillationConstraint(
                 max_value=distil_max_value,
-                scale=scale,
-                damping=damping,
+                scale=scaleDistil,
+                damping=dampingDistil,
             )
         ]
         if hint_max_value is not None:
@@ -741,8 +781,8 @@ class OfflineDistiller:
                         inp.name.split("/")[0] for inp in self.student.inputs
                     },
                     max_value=hint_max_value,
-                    scale=scale,
-                    damping=damping,
+                    scale=scaleHint,
+                    damping=dampingHint,
                 )
             )
         return MDMM(
