@@ -123,9 +123,35 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
         print(f"dataModelAndTimingOverJustModel2:   {dataModelAndTimingOverJustModel2}", file=f)
         print(f"dataModelAndTimingOverJustTiming:   {dataModelAndTimingOverJustTiming}", file=f)
         print(f"dataModelAndTimingOverJustTiming2:  {dataModelAndTimingOverJustTiming2}",file=f)
-    return
+    dataRateResults = {
+        "dataBack": dataBack,
+        "dataModel": dataModel,
+        "dataModelAndTiming": dataModelAndTiming,
+        "dataTiming": dataTiming,
+        "dataRateModel": dataRateModel,
+        "1Min_dataRateModel": 1-dataRateModel,
+        "dataRateModelAndTiming": dataRateModelAndTiming,
+        "1Min_dataRateModelAndTiming": 1-dataRateModelAndTiming,
+        "dataRateTiming": dataRateTiming,
+        "1Min_dataRateTiming": 1-dataRateTiming,
+        "clusterBack": clusterBack,
+        "clusterModel": clusterModel,
+        "clusterModelAndTiming": clusterModelAndTiming,
+        "clusterTiming": clusterTiming,
+        "clusterRateModel": clusterRateModel,
+        "1Min_clusterRateModel": 1-clusterRateModel,
+        "clusterRateModelAndTiming": clusterRateModelAndTiming,
+        "1Min_clusterRateModelAndTiming": 1-clusterRateModelAndTiming,
+        "clusterRateTiming": clusterRateTiming,
+        "1Min_clusterRateTiming": 1-clusterRateTiming,
+        "dataModelAndTimingOverJustModel": dataModelAndTimingOverJustModel,
+        "dataModelAndTimingOverJustModel2": dataModelAndTimingOverJustModel2,
+        "dataModelAndTimingOverJustTiming": dataModelAndTimingOverJustTiming,
+        "dataModelAndTimingOverJustTiming2": dataModelAndTimingOverJustTiming2,
+    }
+    return dataRateResults
 
-def runForPath(path,filterTime=FILTER_TIME,timingVar="adjusted_hit_time_30ps_gaussian",timingStart=-0.09,timingEnd=0.150,timingSigmaPs=30):
+def runForPath(path,filterTime=FILTER_TIME,timingSigmaPs=200):
     modelID = path[-10:]
     print(path)
     print(modelID)
@@ -145,6 +171,10 @@ def runForPath(path,filterTime=FILTER_TIME,timingVar="adjusted_hit_time_30ps_gau
         predVarDF.to_pickle(Path(pltDir).joinpath("predVarDF.pkl"))
         with open(Path(pltDir).joinpath("threshVal.pkl"), 'wb') as file:
             pickle.dump(threshVal, file)
+
+    timingVar=f"adjusted_hit_time_{timingSigmaPs}ps_gaussian"
+    timingStart=-3e-3*timingSigmaPs;#-0.09
+    timingEnd=5e-3*timingSigmaPs;#0.150
 
     if timingVar != "adjusted_hit_time_30ps_gaussian":
         # df['adjusted_hit_time_30ps_gaussian'] = df['adjusted_hit_time']+np.random.normal(loc=0,scale=30e-3,size=len(df['adjusted_hit_time']))
@@ -205,6 +235,7 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(9,16),bi
         (predVarDF.query("trueY == 0"), "All BIB"),
         (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
         (predVarDF.query(f"trueY == 0 and prediction > @cut and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by model, {extraLinebreak}"+ r"$[3\sigma, 5\sigma]$ timing selection"),
+        (predVarDF.query(f"trueY == 0 and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by {extraLinebreak}"+ r"$[3\sigma, 5\sigma]$ timing selection"),
     ]
     totalPlots = plotAll + plotBIB + plotSig
     plt.figure(figsize=figsize)

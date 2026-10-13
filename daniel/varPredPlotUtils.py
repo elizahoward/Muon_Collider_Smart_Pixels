@@ -252,7 +252,7 @@ def runModelPlots(filepath = "", modelType=2,
     # print(fpr_val)
     # print(fpr)
     # print(thresholds)
-    predVarDF = getPredVarDF(model,predictions,keys=['x_size', 'y_size', "nModule","x_local","y_local", 'z_global',"nPix","pt","cotAlpha","cotBeta"])
+    predVarDF = getPredVarDF(model,predictions,keys=['x_size', 'y_size', "nModule","x_local","y_local", 'z_global',"nPix","pt","cotAlpha","cotBeta","adjusted_hit_time"])
     # print(predVarDF.keys())
     # return
     if modifyPlotDir:
