@@ -19,6 +19,7 @@ import pickle
 import numpy as np
 import functools
 import matplotlib
+import json
 
 
 PLOT_DIR = "./evaluationPlots"
@@ -96,7 +97,7 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
         print(f"dataModelAndTimingOverJustModel2:   {dataModelAndTimingOverJustModel2}")
         print(f"dataModelAndTimingOverJustTiming:   {dataModelAndTimingOverJustTiming}")
         print(f"dataModelAndTimingOverJustTiming2:  {dataModelAndTimingOverJustTiming2}")
-    with open(pltDir + "/dataRates.txt","w") as f:
+    with open(pltDir + f"/dataRates_{timingVar}.txt","w") as f:
         print(f"dataBack:               {dataBack}", file=f)
         print(f"dataModel:              {dataModel}", file=f)
         print(f"dataModelAndTiming:     {dataModelAndTiming}", file=f)
@@ -149,9 +150,11 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
         "dataModelAndTimingOverJustTiming": dataModelAndTimingOverJustTiming,
         "dataModelAndTimingOverJustTiming2": dataModelAndTimingOverJustTiming2,
     }
+    with open(pltDir + f"/dataRates_{timingVar}.json","w") as f:
+        json.dump(dataRateResults,f)
     return dataRateResults
 
-def runForPath(path,filterTime=FILTER_TIME,timingSigmaPs=200):
+def runForPath(path,filterTime=FILTER_TIME,timingSigmaPs=500):
     modelID = path[-10:]
     print(path)
     print(modelID)
