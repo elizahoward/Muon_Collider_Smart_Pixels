@@ -85,12 +85,12 @@ class SmartpixPlotter():
         else:
             try:
                 self.truthDF = pd.read_pickle(Path(self.PLOT_DIR).joinpath("dfOfTruth.pkl"))
-                self.truthDF = trimParquetPairs(self.truthDF)
+                # self.truthDF = trimParquetPairs(self.truthDF)
             except:
                 raise Exception("You may have to first save pkls before you can read them\nHint: set savedPklFromParquet to False")
             if self.processRecon:
                 self.reconDF = pd.read_pickle(Path(self.PLOT_DIR).joinpath("dfOfRecon.pkl"))
-                self.truthDF, self.reconDF = trimParquetPairs(self.truthDF,self.reconDF)
+                # self.truthDF, self.reconDF = trimParquetPairs(self.truthDF,self.reconDF)
 
 
         self.fracBib, self.fracSig, self.fracMM, self.fracMP,self.numTotalSig,self.numTotalBib,self.truthSig,self.truthBib_mm,self.truthBib_mp,self.truthBib = countBibSig(self.truthDF,doPrint=True)
