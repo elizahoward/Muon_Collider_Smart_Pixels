@@ -30,6 +30,7 @@ plt.style.use(styleSheet)
 N_CPU = 4
 loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
 FILTER_TIME = True #add the -0.5 to 15 ns filter
+TIMING_SMEARING = 400; #ps
 
 matplotlib.rcParams["figure.dpi"] = 300
 plt.rcParams["patch.linewidth"] = 2
@@ -53,17 +54,29 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
     dataBack = np.sum(totalBack["nPix"])
     clusterBack = len(totalBack["nPix"])
     dataModel = np.sum(modelAccept["nPix"])
+    dataModelErr = np.sqrt(np.sum(modelAccept["nPix"])); #Double check logic, but sum of poissons is poisson so should work
     clusterModel = len(modelAccept["nPix"])
+    clusterModelErr = np.sqrt(len(modelAccept["nPix"]))
     dataModelAndTiming = np.sum(modelAndTimingAccept["nPix"])
+    dataModelAndTimingErr = np.sqrt(np.sum(modelAndTimingAccept["nPix"])); #Double check logic, but sum of poissons is poisson so should work
     clusterModelAndTiming = len(modelAndTimingAccept["nPix"])
+    clusterModelAndTimingErr = np.sqrt(len(modelAndTimingAccept["nPix"]))
     dataTiming = np.sum(justTimingAccept["nPix"])
+    dataTimingErr = np.sqrt(np.sum(justTimingAccept["nPix"])); #Double check logic, but sum of poissons is poisson so should work
     clusterTiming = len(justTimingAccept["nPix"])
+    clusterTimingErr = np.sqrt(len(justTimingAccept["nPix"]))
     dataRateModel = dataModel / dataBack
+    dataRateModelErr = dataModelErr / dataBack
     dataRateModelAndTiming = dataModelAndTiming / dataBack
+    dataRateModelAndTimingErr = dataModelAndTimingErr / dataBack
     dataRateTiming = dataTiming / dataBack
+    dataRateTimingErr = dataTimingErr / dataBack
     clusterRateModel = clusterModel / clusterBack
+    clusterRateModelErr = clusterModelErr / clusterBack
     clusterRateModelAndTiming = clusterModelAndTiming / clusterBack
+    clusterRateModelAndTimingErr = clusterModelAndTimingErr / clusterBack
     clusterRateTiming = clusterTiming / clusterBack
+    clusterRateTimingErr = clusterTimingErr / clusterBack
     #cluster rates are calculated by .evaluate, but for sanity also here.
 
     dataModelAndTimingOverJustModel = dataModelAndTiming / dataModel
@@ -76,10 +89,13 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
         print(f"dataModelAndTiming:     {dataModelAndTiming}")
         print(f"dataTiming:             {dataTiming}")
         print(f"dataRateModel:          {dataRateModel}")
+        print(f"dataRateModelErr:          {dataRateModelErr}")
         print(f"1-dataRateModel:          {1-dataRateModel}")
         print(f"dataRateModelAndTiming: {dataRateModelAndTiming}")
+        print(f"dataRateModelAndTimingErr: {dataRateModelAndTimingErr}")
         print(f"1-dataRateModelAndTiming: {1-dataRateModelAndTiming}")
         print(f"dataRateTiming:         {dataRateTiming}")
+        print(f"dataRateTimingErr:         {dataRateTimingErr}")
         print(f"1-dataRateTiming:         {1-dataRateTiming}")
         print("=============================================")
         print(f"clusterBack:               {clusterBack}")
@@ -87,10 +103,13 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
         print(f"clusterModelAndTiming:     {clusterModelAndTiming}")
         print(f"clusterTiming:             {clusterTiming}")
         print(f"clusterRateModel:          {clusterRateModel}")
+        print(f"clusterRateModelErr:          {clusterRateModelErr}")
         print(f"1-clusterRateModel:          {1-clusterRateModel}")
         print(f"clusterRateModelAndTiming: {clusterRateModelAndTiming}")
+        print(f"clusterRateModelAndTimingErr: {clusterRateModelAndTimingErr}")
         print(f"1-clusterRateModelAndTiming: {1-clusterRateModelAndTiming}")
         print(f"clusterRateTiming:         {clusterRateTiming}")
+        print(f"clusterRateTimingErr:         {clusterRateTimingErr}")
         print(f"1-clusterRateTiming:         {1-clusterRateTiming}")
         print("=============================================")
         print(f"dataModelAndTimingOverJustModel:    {dataModelAndTimingOverJustModel}")
@@ -103,10 +122,13 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
         print(f"dataModelAndTiming:     {dataModelAndTiming}", file=f)
         print(f"dataTiming:             {dataTiming}", file=f)
         print(f"dataRateModel:          {dataRateModel}", file=f)
+        print(f"dataRateModelErr:          {dataRateModelErr}", file=f)
         print(f"1-dataRateModel:          {1-dataRateModel}", file=f)
         print(f"dataRateModelAndTiming: {dataRateModelAndTiming}", file=f)
+        print(f"dataRateModelAndTimingErr: {dataRateModelAndTimingErr}", file=f)
         print(f"1-dataRateModelAndTiming: {1-dataRateModelAndTiming}", file=f)
         print(f"dataRateTiming:         {dataRateTiming}", file=f)
+        print(f"dataRateTimingErr:         {dataRateTimingErr}", file=f)
         print(f"1-dataRateTiming:         {1-dataRateTiming}", file=f)
         print("=============================================", file=f)
         print(f"clusterBack:               {clusterBack}",file=f)
@@ -114,10 +136,13 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
         print(f"clusterModelAndTiming:     {clusterModelAndTiming}",file=f)
         print(f"clusterTiming:             {clusterTiming}",file=f)
         print(f"clusterRateModel:          {clusterRateModel}",file=f)
+        print(f"clusterRateModelErr:          {clusterRateModelErr}",file=f)
         print(f"1-clusterRateModel:          {1-clusterRateModel}",file=f)
         print(f"clusterRateModelAndTiming: {clusterRateModelAndTiming}",file=f)
+        print(f"clusterRateModelAndTimingErr: {clusterRateModelAndTimingErr}",file=f)
         print(f"1-clusterRateModelAndTiming: {1-clusterRateModelAndTiming}",file=f)
         print(f"clusterRateTiming:         {clusterRateTiming}",file=f)
+        print(f"clusterRateTimingErr:         {clusterRateTimingErr}",file=f)
         print(f"1-clusterRateTiming:         {1-clusterRateTiming}",file=f)
         print("=============================================",file=f)
         print(f"dataModelAndTimingOverJustModel:    {dataModelAndTimingOverJustModel}", file=f)
@@ -130,31 +155,37 @@ def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_ti
         "dataModelAndTiming": dataModelAndTiming,
         "dataTiming": dataTiming,
         "dataRateModel": dataRateModel,
-        "1Min_dataRateModel": 1-dataRateModel,
+        "dataRateModelErr": dataRateModelErr,
+        "1-dataRateModel": 1-dataRateModel,
         "dataRateModelAndTiming": dataRateModelAndTiming,
-        "1Min_dataRateModelAndTiming": 1-dataRateModelAndTiming,
+        "dataRateModelAndTimingErr": dataRateModelAndTimingErr,
+        "1-dataRateModelAndTiming": 1-dataRateModelAndTiming,
         "dataRateTiming": dataRateTiming,
-        "1Min_dataRateTiming": 1-dataRateTiming,
+        "dataRateTimingErr": dataRateTimingErr,
+        "1-dataRateTiming": 1-dataRateTiming,
         "clusterBack": clusterBack,
         "clusterModel": clusterModel,
         "clusterModelAndTiming": clusterModelAndTiming,
         "clusterTiming": clusterTiming,
         "clusterRateModel": clusterRateModel,
-        "1Min_clusterRateModel": 1-clusterRateModel,
+        "clusterRateModelErr": clusterRateModelErr,
+        "1-clusterRateModel": 1-clusterRateModel,
         "clusterRateModelAndTiming": clusterRateModelAndTiming,
-        "1Min_clusterRateModelAndTiming": 1-clusterRateModelAndTiming,
+        "clusterRateModelAndTimingErr": clusterRateModelAndTimingErr,
+        "1-clusterRateModelAndTiming": 1-clusterRateModelAndTiming,
         "clusterRateTiming": clusterRateTiming,
-        "1Min_clusterRateTiming": 1-clusterRateTiming,
+        "clusterRateTimingErr": clusterRateTimingErr,
+        "1-clusterRateTiming": 1-clusterRateTiming,
         "dataModelAndTimingOverJustModel": dataModelAndTimingOverJustModel,
         "dataModelAndTimingOverJustModel2": dataModelAndTimingOverJustModel2,
         "dataModelAndTimingOverJustTiming": dataModelAndTimingOverJustTiming,
         "dataModelAndTimingOverJustTiming2": dataModelAndTimingOverJustTiming2,
     }
     with open(pltDir + f"/dataRates_{timingVar}.json","w") as f:
-        json.dump(dataRateResults,f)
+        json.dump(varPredPlotUtils.to_python(dataRateResults),f)
     return dataRateResults
 
-def runForPath(path,filterTime=FILTER_TIME,timingSigmaPs=500):
+def runForPath(path,filterTime=FILTER_TIME,timingSigmaPs=TIMING_SMEARING):
     modelID = path[-10:]
     print(path)
     print(modelID)
