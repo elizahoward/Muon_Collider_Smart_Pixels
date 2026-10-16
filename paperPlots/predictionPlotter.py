@@ -8,7 +8,7 @@ import sys
 sys.path.append("../daniel")
 sys.path.append("../daniel/validationPlots")
 import varPredPlotUtils
-from plotUtils import prepHistBins, closePlot,plotManyHisto
+from plotUtils import prepHistBins, closePlot,plotManyHisto,plot2dHistFromTruth
 import os
 import argparse
 from pathlib import Path
@@ -27,7 +27,7 @@ interactivePlots = False
 styleSheet = "seaborn-v0_8-colorblind"
 styleSheet = "seaborn-v0_8-poster"
 plt.style.use(styleSheet)
-N_CPU = 4
+N_CPU = 1
 loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
 FILTER_TIME = True #add the -0.5 to 15 ns filter
 TIMING_SMEARING = 400; #ps
@@ -41,9 +41,9 @@ plt.rcParams["patch.linewidth"] = 2
 
 paths = [
     "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_057.h5",
-    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model1_fin_results_model1_8bit_normalised_selected__model_trial_1046.h5",
-    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5",
-    "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5",
+    # "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model1_fin_results_model1_8bit_normalised_selected__model_trial_1046.h5",
+    # "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model2.5_fin_results_model2_5_10bit_normalised_selected__model_trial_087.h5",
+    # "/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/daniel/CrossParetoModels_selected/model3_10bit_normalised_selected_pareto_primary__model_trial_046.h5",
     ]
 
 def newDataRates(predVarDF, cut, pltDir, doPrint=True,timingVar="adjusted_hit_time_30ps_gaussian",timingStart=-0.09,timingEnd=0.150):
@@ -216,6 +216,7 @@ def runForPath(path,filterTime=FILTER_TIME,timingSigmaPs=TIMING_SMEARING):
 
     assert f"{timingSigmaPs}" in timingVar
 
+    plotSeveral2by2s(predVarDF, threshVal, pltDir)
     plotAll1dHists(predVarDF,threshVal,pltDir,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     plotNew2by2(predVarDF, threshVal, pltDir)
 
@@ -230,7 +231,7 @@ def plotAll1dHists(predVarDF,threshVal,pltDir,timingVar="adjusted_hit_time_30ps_
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(9,7),bins=60,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4],locLegend="upper center",extraLinebreak="",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(9,16),bins=100,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="pt",keyLabel=r"Transverse Momentum $p_T$ [GeV/c]",figsize=(9,16),bins=100,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
-    histoKarri(predVarDF,threshVal,pltDir,key="y-local",keyLabel="y-local [mm] aaaaah I can't find a good binnning",figsize=(9,16),bins=25,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
+    histoKarri(predVarDF,threshVal,pltDir,key="y-local",keyLabel="y-local [mm]",figsize=(9,16),bins=25,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="xSize",keyLabel=r'$x_{\mathrm{size}}$ [# pixels]',bins=np.arange(0,22,1),figsize=(9,16),locLegend="upper right",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="ySize",keyLabel="y-Size [# pixels]",bins=np.arange(0,14,1),figsize=(9,16),locLegend="upper right",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="nModule",keyLabel="Module Number (longitudinally counted)",bins=12,figsize=(9,16),timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
@@ -241,12 +242,40 @@ def plotAll1dHists(predVarDF,threshVal,pltDir,timingVar="adjusted_hit_time_30ps_
     histoKarri(predVarDF,threshVal,pltDir,key="cotBeta",keyLabel=r"cot($\beta$)",bins=12,figsize=(9,16),timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     print("finished 1d histograms")
 
-def plotNew2by2(predVarDF, threshVal, pltDir,interactivePlots = False,extendTitle = "",cmap="Blues",figsize=(10,8)):
-    plotter = functools.partial(varPredPlotUtils.plotZglobalXsizeJust1,cmap=cmap)
-    genTitle = "ZGlobalXSize"
-    genTitle = ""
+def plotNew2by2(predVarDF, threshVal, pltDir,interactivePlots = False,extendTitle = "",cmap="Blues",figsize=(10,8), plotter=None,genTitle=""):
+    if plotter is None:
+        plotter = functools.partial(varPredPlotUtils.plotZglobalXsizeJust1,cmap=cmap)
+    # genTitle = "ZGlobalXSize"
+    # genTitle = ""
     varPredPlotUtils.plot2by2PredBibSig(predVarDF,plot_func=plotter,genTitle=genTitle,extendTitle = extendTitle,cut=threshVal, PLOT_DIR=pltDir,interactivePlots=interactivePlots,figsize=figsize)
 
+def plotSeveral2by2s(predVarDF, threshVal, pltDir,interactivePlots = False,cmap="Blues",figsize=(10,8), plotter=None):
+    binsZGlobal = 30;binsXSize = np.arange(0,22,1);binsYlocal = 30;binsYSize = np.arange(0,14,1);
+    title=""# not sure if it should be
+    colorLabel=r"$n_{\mathrm{clusters}}$"
+    # def plot2dHistFromTruth(truthDF,  keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = True,colorLabel=r"$n_{\mathrm{clusters}}$"):
+    keyXs = ["z-global","xSize","ySize","y-local","nPix","pt"]
+    binsXs = [binsZGlobal,binsXSize,binsYSize,binsYlocal,np.arange(0,43,1),100]
+    xlabels=[r'$z_{\mathrm{global}}$ [mm]',r'$x_{\mathrm{size}}$ [# pixels]',r'$y_{\mathrm{size}}$ [# pixels]',r'$y_{\mathrm{local}}$ [mm]',r'Number of Pixels',r"Transverse Momentum $p_T$ [GeV/c]"]
+    nPlotsX=len(keyXs);
+    # extendTitles=[keyX+"vsyyyy" for keyX in keyXs]
+    # genTitles=[keyX+"vsyyyy" for keyX in keyXs]
+    keyYs=["cotAlpha","cotBeta"]
+    binsYs=[np.linspace(-10,10,50),np.linspace(-10,10,50)]
+    ylabels=[r"cot($\alpha$)",r"cot($\beta$)"]
+    allPlotterLists = []
+    for idy,keyY in enumerate(keyYs):
+        plottersList = []
+        for idx in range(nPlotsX):
+            plottersList.append(
+                functools.partial(plot2dHistFromTruth,  keyX=keyXs[idx],keyY=keyY, mask=None, binsX=binsXs[idx], binsY=binsYs[idy], cmap=cmap, xlabel=xlabels[idx],ylabel=ylabels[idy],logColor = True,colorLabel=colorLabel)
+            )
+        allPlotterLists.append(plottersList)
+    # plotters = [functools.partial(plot2dHistFromTruth,  keyX=keyXs[idx],keyY="xSize", mask=None, binsX=binsXs[idx], binsY=binsXSize, cmap=cmap, xlabel=xlabels[idx],ylabel=r'$x_{\mathrm{size}}$ [# pixels]',logColor = True,colorLabel=colorLabel) for idx in range(nPlots)]
+    for idy,plotters in enumerate(allPlotterLists):
+        for idx,plotter in enumerate(plotters):
+            print(plotter)
+            plotNew2by2(predVarDF,threshVal,pltDir,interactivePlots,"",cmap=None,figsize=figsize,plotter=plotter,genTitle=keyXs[idx]+"vs"+keyYs[idy])
 
 def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(9,16),bins="auto",yscale="log",locLegend = "best",
                plotAll = True, plotBIB = True, plotSig = True,extendSaveTitle="",allTitle="All vectors",bibTitle = "BIB",sigTitle="Signal",
@@ -263,13 +292,13 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(9,16),bi
         (predVarDF.query("trueY == 1"), "All Signal"),
         (predVarDF.query("trueY == 1 and prediction > @cut"), "Signal accepted by model"),
         (predVarDF.query("trueY == 1 and prediction < @cut"), "Signal rejected by model"),
-        (predVarDF.query(f"trueY == 1 and prediction > @cut and {timingVar} > @timingStart and {timingVar} < @timingEnd"), "Signal accepted by model,\n"+ r"$[3\sigma, 5\sigma]$ timing selection"),
+        (predVarDF.query(f"trueY == 1 and prediction > @cut and {timingVar} > @timingStart and {timingVar} < @timingEnd"), "Signal accepted by model,\n"+ r"$[3\sigma_t, 5\sigma_t]$ timing selection"),
     ]
     configsBib = [
         (predVarDF.query("trueY == 0"), "All BIB"),
         (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
-        (predVarDF.query(f"trueY == 0 and prediction > @cut and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by model, {extraLinebreak}"+ r"$[3\sigma, 5\sigma]$ timing selection"),
-        (predVarDF.query(f"trueY == 0 and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by {extraLinebreak}"+ r"$[3\sigma, 5\sigma]$ timing selection"),
+        (predVarDF.query(f"trueY == 0 and prediction > @cut and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by model, {extraLinebreak}"+ r"$[3\sigma_t, 5\sigma_t]$ timing selection"),
+        (predVarDF.query(f"trueY == 0 and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by {extraLinebreak}"+ r"$[3\sigma_t, 5\sigma_t]$ timing selection"),
     ]
     totalPlots = plotAll + plotBIB + plotSig
     plt.figure(figsize=figsize)

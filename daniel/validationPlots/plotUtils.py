@@ -567,6 +567,8 @@ def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,yl
     return counts, xedges, yedges, im
 
 def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = True,colorLabel=r"Number of eh pairs or $n_{\mathrm{clusters}}$"):
+    if mask is None:
+        mask = [True for _ in xArr]
     if logColor:
         counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],norm=colors.LogNorm(),bins=[binsX,binsY],cmap=cmap)
     else:
