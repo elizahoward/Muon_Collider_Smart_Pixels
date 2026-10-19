@@ -97,7 +97,7 @@ def reshapeCluster(recon2d__):
     return recon2d__.to_numpy().reshape(recon2d__.shape[0],13,21)
 
 def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",showNums=True,addPoisErr=False,
-              xlabel="",ylabel="",alpha=1,labelFontsize=plt.rcParams['axes.labelsize'],titleFontsize=plt.rcParams['axes.titlesize']):
+              xlabel="",ylabel="",alpha=1,labelFontsize=plt.rcParams['axes.labelsize'],titleFontsize=plt.rcParams['axes.titlesize'],lw=plt.rcParams["patch.linewidth"]):
     if pltStandalone:
         plt.figure(figsize=(4,1))
     if bins is None:
@@ -106,7 +106,7 @@ def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",
         hist, bin_edges = np.histogram(arr,bins=bins)
     else:
         hist, bin_edges = np.histogram(np.clip(arr,bins[0],bins[-1]),bins=bins)
-    plt.stairs(hist*postScale,bin_edges,label=pltLabel,alpha=alpha,fill=False,lw=3)#,linestyle=plt.rcParams.get("lines.linestyle", "-"))
+    plt.stairs(hist*postScale,bin_edges,label=pltLabel,alpha=alpha,fill=False,lw=lw)#,linestyle=plt.rcParams.get("lines.linestyle", "-"))
     if addPoisErr:
         bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
         errors = np.sqrt(hist) * postScale
@@ -174,7 +174,7 @@ def plotHistoBibSig(truthBib,truthSig,key,pltStandalone,bins=None,showNums=False
 
 
 def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,
-                  figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",
+                  figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",lw=plt.rcParams["patch.linewidth"],
                   PLOT_DIR=None,interactivePlots=None,saveTitle=None,alphas = None,legendLoc = "best",addPoisErr=False):
     assert len(arrs) == len(pltLabels)
     if alphas is None:
@@ -197,7 +197,7 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pl
 
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
     for i in range(len(arrs)):
-        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel,alpha=alphas[i],addPoisErr=addPoisErr)
+        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel,alpha=alphas[i],addPoisErr=addPoisErr,lw=lw)
     plt.legend(loc=legendLoc)
     plt.xlabel(xlabel)
     plt.yscale(yscale)

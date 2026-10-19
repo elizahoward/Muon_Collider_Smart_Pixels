@@ -30,7 +30,7 @@ plt.style.use(styleSheet)
 N_CPU = 1
 loadPredVarPkl = True #if true then load based on saved pkls, if false regenerate the predVarDF and save new pkls
 FILTER_TIME = True #add the -0.5 to 15 ns filter
-TIMING_SMEARING = 400; #ps
+TIMING_SMEARING = 30; #ps
 
 matplotlib.rcParams["figure.dpi"] = 300
 plt.rcParams["patch.linewidth"] = 2
@@ -216,19 +216,19 @@ def runForPath(path,filterTime=FILTER_TIME,timingSigmaPs=TIMING_SMEARING):
 
     assert f"{timingSigmaPs}" in timingVar
 
-    plotSeveral2by2s(predVarDF, threshVal, pltDir)
+    # plotSeveral2by2s(predVarDF, threshVal, pltDir)
     plotAll1dHists(predVarDF,threshVal,pltDir,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
-    plotNew2by2(predVarDF, threshVal, pltDir)
+    # plotNew2by2(predVarDF, threshVal, pltDir)
 
-    newDataRates(predVarDF,threshVal,pltDir,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
+    # newDataRates(predVarDF,threshVal,pltDir,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
 
 def plotAll1dHists(predVarDF,threshVal,pltDir,timingVar="adjusted_hit_time_30ps_gaussian",timingStart=-0.09,timingEnd=0.150):
     print(predVarDF)
     print(predVarDF.keys())
     if timingVar in predVarDF.keys():
         histoKarri(predVarDF,threshVal,pltDir,key=timingVar,keyLabel="Cluster Hit Arrival Time [ns]",figsize=(9,16),bins=100,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
-        histoKarri(predVarDF,threshVal,pltDir,key=timingVar,keyLabel=r"$t_{\mathrm{corr}}$ [ns]",figsize=(9,7),bins=np.arange(timingStart-.24*2,15,.24),plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4],timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd,)
-    histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(9,7),bins=60,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,4.5e4],locLegend="upper center",extraLinebreak="",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
+        histoKarri(predVarDF,threshVal,pltDir,key=timingVar,keyLabel=r"$t_{\mathrm{corr}}$ [ns]",figsize=(8,6.2),bins=np.arange(timingStart-.24*2,15,.24),plotAll=False,plotSig=False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,1.1e5],timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd,)
+    histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(8,6.2),bins=60,plotAll=False,plotSig = False,extendSaveTitle="paperVersion",bibTitle="",ylim=[1e1,1.1e5],locLegend="upper center",extraLinebreak="",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="z-global",keyLabel=r'$z_{\mathrm{global}}$ [mm]',figsize=(9,16),bins=100,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="pt",keyLabel=r"Transverse Momentum $p_T$ [GeV/c]",figsize=(9,16),bins=100,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="y-local",keyLabel="y-local [mm]",figsize=(9,16),bins=25,timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
@@ -236,8 +236,8 @@ def plotAll1dHists(predVarDF,threshVal,pltDir,timingVar="adjusted_hit_time_30ps_
     histoKarri(predVarDF,threshVal,pltDir,key="ySize",keyLabel="y-Size [# pixels]",bins=np.arange(0,14,1),figsize=(9,16),locLegend="upper right",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="nModule",keyLabel="Module Number (longitudinally counted)",bins=12,figsize=(9,16),timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(9,16),locLegend="upper right",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
-    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(7.5,6.1),locLegend="upper right",plotAll = False,plotSig=False,extendSaveTitle="paperVersionBib", bibTitle = "", sigTitle = "",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
-    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(7.5,6.1),locLegend="upper right",plotAll = False,plotBIB=False,extendSaveTitle="paperVersionSig", bibTitle = "", sigTitle = "",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
+    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(6.9,5.6),locLegend="upper right",plotAll = False,plotSig=False,extendSaveTitle="paperVersionBib", bibTitle = "", sigTitle = "",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd,ylim=[1e1,1.1e5])
+    histoKarri(predVarDF,threshVal,pltDir,key="nPix",keyLabel="Number of Pixels",bins=np.arange(0,np.max(predVarDF["nPix"]),1),figsize=(6.9,5.6),locLegend="upper right",plotAll = False,plotBIB=False,extendSaveTitle="paperVersionSig", bibTitle = "", sigTitle = "",timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd,ylim=[1e1,1.1e5])
     histoKarri(predVarDF,threshVal,pltDir,key="cotAlpha",keyLabel=r"cot($\alpha$)",bins=12,figsize=(9,16),timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     histoKarri(predVarDF,threshVal,pltDir,key="cotBeta",keyLabel=r"cot($\beta$)",bins=12,figsize=(9,16),timingVar=timingVar,timingStart=timingStart,timingEnd=timingEnd)
     print("finished 1d histograms")
@@ -254,9 +254,9 @@ def plotSeveral2by2s(predVarDF, threshVal, pltDir,interactivePlots = False,cmap=
     title=""# not sure if it should be
     colorLabel=r"$n_{\mathrm{clusters}}$"
     # def plot2dHistFromTruth(truthDF,  keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = True,colorLabel=r"$n_{\mathrm{clusters}}$"):
-    keyXs = ["z-global","xSize","ySize","y-local","nPix","pt"]
-    binsXs = [binsZGlobal,binsXSize,binsYSize,binsYlocal,np.arange(0,43,1),100]
-    xlabels=[r'$z_{\mathrm{global}}$ [mm]',r'$x_{\mathrm{size}}$ [# pixels]',r'$y_{\mathrm{size}}$ [# pixels]',r'$y_{\mathrm{local}}$ [mm]',r'Number of Pixels',r"Transverse Momentum $p_T$ [GeV/c]"]
+    keyXs = ["z-global","xSize","ySize","y-local","nPix","pt","cotAlpha","cotBeta"]
+    binsXs = [binsZGlobal,binsXSize,binsYSize,binsYlocal,np.arange(0,43,1),100,np.linspace(-10,10,50),np.linspace(-10,10,50)]
+    xlabels=[r'$z_{\mathrm{global}}$ [mm]',r'$x_{\mathrm{size}}$ [# pixels]',r'$y_{\mathrm{size}}$ [# pixels]',r'$y_{\mathrm{local}}$ [mm]',r'Number of Pixels',r"Transverse Momentum $p_T$ [GeV/c]",r"cot($\alpha$)",r"cot($\beta$)"]
     nPlotsX=len(keyXs);
     # extendTitles=[keyX+"vsyyyy" for keyX in keyXs]
     # genTitles=[keyX+"vsyyyy" for keyX in keyXs]
@@ -274,12 +274,12 @@ def plotSeveral2by2s(predVarDF, threshVal, pltDir,interactivePlots = False,cmap=
     # plotters = [functools.partial(plot2dHistFromTruth,  keyX=keyXs[idx],keyY="xSize", mask=None, binsX=binsXs[idx], binsY=binsXSize, cmap=cmap, xlabel=xlabels[idx],ylabel=r'$x_{\mathrm{size}}$ [# pixels]',logColor = True,colorLabel=colorLabel) for idx in range(nPlots)]
     for idy,plotters in enumerate(allPlotterLists):
         for idx,plotter in enumerate(plotters):
-            print(plotter)
+            # print(plotter)
             plotNew2by2(predVarDF,threshVal,pltDir,interactivePlots,"",cmap=None,figsize=figsize,plotter=plotter,genTitle=keyXs[idx]+"vs"+keyYs[idy])
 
 def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(9,16),bins="auto",yscale="log",locLegend = "best",
-               plotAll = True, plotBIB = True, plotSig = True,extendSaveTitle="",allTitle="All vectors",bibTitle = "BIB",sigTitle="Signal",
-               ylim=None,increaseFontSize=True,extraLinebreak="\n",timingVar = "adjusted_hit_time_30ps_gaussian",timingStart=-0.09,timingEnd=0.150):
+               plotAll = True, plotBIB = True, plotSig = True,extendSaveTitle="",allTitle="All vectors",bibTitle = "BIB",sigTitle="Signal",lw=4,#lw=plt.rcParams["patch.linewidth"]
+               ylim=None,increaseFontSize=True,extraLinebreak="\n",timingVar = "adjusted_hit_time_30ps_gaussian",timingStart=-0.09,timingEnd=0.150,):
     configsAll = [
         (predVarDF, "All vectors"),
         (predVarDF.query("trueY == 0"), "All BIB"),
@@ -291,14 +291,14 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(9,16),bi
     configsSig = [
         (predVarDF.query("trueY == 1"), "All Signal"),
         (predVarDF.query("trueY == 1 and prediction > @cut"), "Signal accepted by model"),
-        (predVarDF.query("trueY == 1 and prediction < @cut"), "Signal rejected by model"),
         (predVarDF.query(f"trueY == 1 and prediction > @cut and {timingVar} > @timingStart and {timingVar} < @timingEnd"), "Signal accepted by model,\n"+ r"$[3\sigma_t, 5\sigma_t]$ timing selection"),
+        # (predVarDF.query("trueY == 1 and prediction < @cut"), "Signal rejected by model"),
     ]
     configsBib = [
         (predVarDF.query("trueY == 0"), "All BIB"),
         (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
         (predVarDF.query(f"trueY == 0 and prediction > @cut and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by model, {extraLinebreak}"+ r"$[3\sigma_t, 5\sigma_t]$ timing selection"),
-        (predVarDF.query(f"trueY == 0 and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by {extraLinebreak}"+ r"$[3\sigma_t, 5\sigma_t]$ timing selection"),
+        # (predVarDF.query(f"trueY == 0 and {timingVar} > @timingStart and {timingVar} < @timingEnd"), f"BIB accepted by {extraLinebreak}"+ r"$[3\sigma_t, 5\sigma_t]$ timing selection"),
     ]
     totalPlots = plotAll + plotBIB + plotSig
     plt.figure(figsize=figsize)
@@ -310,7 +310,7 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(9,16),bi
         plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsAll],
                     bins=bins,title=allTitle,pltLabels =[title for (df_subset, title) in configsAll],
                     pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel=r"$n_{\mathrm{clusters}}$",legendLoc=locLegend,
-                    alphas = [0.6 for _ in configsAll]);
+                    alphas = [0.6 for _ in configsAll],lw=lw);
         if ylim is not None:
             plt.ylim(ylim)
         if increaseFontSize:
@@ -321,7 +321,7 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(9,16),bi
         plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsBib],
                     bins=bins,title=bibTitle,pltLabels =[title for (df_subset, title) in configsBib],
                     pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel=r"$n_{\mathrm{clusters}}$",legendLoc=locLegend,
-                    alphas = [0.6 for _ in configsBib]);
+                    alphas = [0.6 for _ in configsBib],lw=lw);
         if ylim is not None:
             plt.ylim(ylim)
         if increaseFontSize:
@@ -332,7 +332,7 @@ def histoKarri(predVarDF,cut,pltDir,key="z-global",keyLabel="",figsize=(9,16),bi
         plotManyHisto(arrs=[df_subset[key] for (df_subset, title) in configsSig],
                     bins=bins,title=sigTitle,pltLabels =[title for (df_subset, title) in configsSig],
                     pltStandalone=False,yscale=yscale,xlabel=keyLabel,ylabel=r"$n_{\mathrm{clusters}}$",legendLoc=locLegend,
-                    alphas = [0.6 for _ in configsSig]);
+                    alphas = [0.6 for _ in configsSig],lw=lw);
         if ylim is not None:
             plt.ylim(ylim)
         if increaseFontSize:
