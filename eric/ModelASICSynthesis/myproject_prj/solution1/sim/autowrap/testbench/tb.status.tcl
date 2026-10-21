@@ -1,1 +1,0 @@
-set ::AESL_AUTOSIM::gTopFileName /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/ModelASICSynthesis/myproject_prj/solution1/./sim/autowrap/testbench/myproject.cpp_pre.cpp.tb.cpp

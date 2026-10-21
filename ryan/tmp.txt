@@ -1,4 +1,5 @@
-eval  "$(ssh-agent -s)"
+
+eval "$(ssh-agent -s)" 
 ssh-add ~/.ssh/GithubKey
 #then check with 
 ssh git@github.com
@@ -9,4 +10,15 @@ python model1.py
 to get pareto: try running cded into erics repo
 python ericHLS/analyze_and_select_pareto_roc.py --input_dir /home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/all_unquantized_results     --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData --output_dir /home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_pareto --use_weighted
 
+python ericHLS/analyze_and_select_pareto_roc.py --input_dir /home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/quantization_sigmoid_results/quantized_3w0i_i5_sigmoid_results     --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData --output_dir /home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_3w0i_i5_pareto_sig --use_weighted
+
+
 hyperparameter_tuning_2
+
+
+pkill -9 -u ryanmichaud
+
+
+output = QActivation("quantized_sigmoid(8,0)", name="output_activation")(output_dense)
+
+

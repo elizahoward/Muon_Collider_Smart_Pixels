@@ -31,14 +31,14 @@ Examples:
   # Auto-detect features from model (default - recommended)
   python analyze_and_select_pareto_roc.py
       --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815
-      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
+      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized
       --output_dir ../model2_5_pareto_roc_selected
       --use_weighted
   
   # Manually specify features (if needed)
   python analyze_and_select_pareto_roc.py
       --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815
-      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
+      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized
       --output_dir ../model2_5_pareto_roc_selected
       --features "x_profile,nModule,x_local,y_profile,y_local"
 """
@@ -66,9 +66,11 @@ try:
     tf.config.run_functions_eagerly(True)
     from tensorflow.keras.models import load_model
     TF_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     TF_AVAILABLE = False
-    print("Error: TensorFlow not available")
+    import traceback
+    traceback.print_exc()
+    print(f"Error: TensorFlow not available ({e})")
     sys.exit(1)
 
 # Import QKeras
@@ -165,20 +167,20 @@ def _parse_tfrecord_fn(example, feature_description=None):
 def build_tfrecord_dataset(tfrecord_dir, feature_description=None):
     """
     Build TensorFlow dataset from TFRecord files.
-    
+
     Args:
         tfrecord_dir: Directory containing TFRecord files
         feature_description: Feature description dict (required)
-    
+
     Returns:
         TensorFlow dataset
     """
     if feature_description is None:
         raise ValueError("feature_description is required. Use _detect_model_input_features() to get it from a model.")
-    
+
     # Create parse function with feature description
     parse_fn = lambda ex: _parse_tfrecord_fn(ex, feature_description)
-    
+
     pattern = os.path.join(tfrecord_dir, "*.tfrecord")
     files = tf.data.Dataset.list_files(pattern, shuffle=False)
     ds = files.interleave(
@@ -429,7 +431,7 @@ def select_pareto_models(df):
 # PLOTTING FUNCTIONS
 # ============================================================================
 
-def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name):
+def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name,modelPltName):
     """Create Pareto front visualization."""
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -457,30 +459,7 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
         ax.plot(pareto_sorted_2['parameters'], pareto_sorted_2['primary_metric'],
                 'orange', linestyle=':', alpha=0.6, linewidth=2, zorder=2)
     
-    # Annotate primary Pareto points
-    for _, row in pareto_df.iterrows():
-        trial_id = row['trial_id']
-        label = trial_id if isinstance(trial_id, str) else f"{int(trial_id):03d}"
-        ax.annotate(label, 
-                   xy=(row['parameters'], row['primary_metric']),
-                   xytext=(8, 8), textcoords='offset points',
-                   fontsize=9, color='darkred', fontweight='bold',
-                   bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', 
-                            alpha=0.7, edgecolor='darkred', linewidth=1),
-                   zorder=4)
-    
-    # Annotate secondary Pareto points
-    if pareto_df_secondary is not None and not pareto_df_secondary.empty:
-        for _, row in pareto_df_secondary.iterrows():
-            trial_id = row['trial_id']
-            label = trial_id if isinstance(trial_id, str) else f"{int(trial_id):03d}"
-            ax.annotate(label, 
-                       xy=(row['parameters'], row['primary_metric']),
-                       xytext=(8, -12), textcoords='offset points',
-                       fontsize=8, color='darkorange', fontweight='bold',
-                       bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', 
-                                alpha=0.7, edgecolor='darkorange', linewidth=1),
-                       zorder=4)
+
     
     # Labels and title
     metric_display = {
@@ -492,7 +471,7 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
     
     ax.set_xlabel('Number of Parameters', fontsize=14, fontweight='bold')
     ax.set_ylabel(metric_display, fontsize=14, fontweight='bold')
-    ax.set_title('Model 2.5: Pareto Front', 
+    ax.set_title(f'Model {modelPltName}: Pareto Front', 
                 fontsize=16, fontweight='bold', pad=20)
     
     ax.grid(True, alpha=0.3, linestyle='--')
@@ -522,6 +501,36 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
     
     plt.tight_layout()
     
+    plot_path = os.path.join(output_dir, 'pareto_front_roc_based_nolabels.png')
+    plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+    print(f"  ✓ Saved: {plot_path}")
+
+        # Annotate primary Pareto points
+    for _, row in pareto_df.iterrows():
+        trial_id = row['trial_id']
+        label = trial_id if isinstance(trial_id, str) else f"{int(trial_id):03d}"
+        ax.annotate(label, 
+                   xy=(row['parameters'], row['primary_metric']),
+                   xytext=(8, 8), textcoords='offset points',
+                   fontsize=9, color='darkred', fontweight='bold',
+                   bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', 
+                            alpha=0.7, edgecolor='darkred', linewidth=1),
+                   zorder=4)
+    
+    # Annotate secondary Pareto points
+    if pareto_df_secondary is not None and not pareto_df_secondary.empty:
+        for _, row in pareto_df_secondary.iterrows():
+            trial_id = row['trial_id']
+            label = trial_id if isinstance(trial_id, str) else f"{int(trial_id):03d}"
+            ax.annotate(label, 
+                       xy=(row['parameters'], row['primary_metric']),
+                       xytext=(8, -12), textcoords='offset points',
+                       fontsize=8, color='darkorange', fontweight='bold',
+                       bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', 
+                                alpha=0.7, edgecolor='darkorange', linewidth=1),
+                       zorder=4)
+            
+
     plot_path = os.path.join(output_dir, 'pareto_front_roc_based.png')
     plt.savefig(plot_path, dpi=300, bbox_inches='tight')
     print(f"  ✓ Saved: {plot_path}")
@@ -532,41 +541,59 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
 # FILE OPERATIONS
 # ============================================================================
 
-def copy_model_files(pareto_df, pareto_df_secondary, output_dir):
-    """Copy H5 model files for selected Pareto models."""
+def copy_model_files(pareto_df, pareto_df_secondary, output_dir, separate_folders=False):
+    """Copy H5 model files for selected Pareto models.
+
+    If separate_folders=True, copies primary into output_dir/pareto_primary/
+    and secondary into output_dir/pareto_secondary/ instead of a flat layout.
+    """
     print("\n" + "=" * 80)
     print("COPYING MODEL FILES")
     print("=" * 80)
-    
+
     success_count = 0
-    
+
+    if separate_folders:
+        primary_dir = os.path.join(output_dir, 'pareto_primary')
+        secondary_dir = os.path.join(output_dir, 'pareto_secondary')
+        os.makedirs(primary_dir, exist_ok=True)
+        print(f"  Separate-folder mode: primary → {primary_dir}")
+    else:
+        primary_dir = output_dir
+
     # Copy primary Pareto models
     print(f"\nCopying {len(pareto_df)} primary Pareto models...")
     for _, row in pareto_df.iterrows():
         src_path = row['model_file']
-        dst_path = os.path.join(output_dir, os.path.basename(src_path))
-        
+        dst_path = os.path.join(primary_dir, os.path.basename(src_path))
+
         if os.path.exists(src_path):
             shutil.copy2(src_path, dst_path)
             print(f"  ✓ {os.path.basename(src_path)}")
             success_count += 1
         else:
             print(f"  ✗ File not found: {src_path}")
-    
+
     # Copy secondary Pareto models
     if pareto_df_secondary is not None and not pareto_df_secondary.empty:
-        print(f"\nCopying {len(pareto_df_secondary)} secondary Pareto models (redundancy)...")
+        if separate_folders:
+            os.makedirs(secondary_dir, exist_ok=True)
+            print(f"\nCopying {len(pareto_df_secondary)} secondary Pareto models → {secondary_dir}...")
+        else:
+            print(f"\nCopying {len(pareto_df_secondary)} secondary Pareto models (redundancy)...")
+
+        dest_dir = secondary_dir if separate_folders else output_dir
         for _, row in pareto_df_secondary.iterrows():
             src_path = row['model_file']
-            dst_path = os.path.join(output_dir, os.path.basename(src_path))
-            
+            dst_path = os.path.join(dest_dir, os.path.basename(src_path))
+
             if os.path.exists(src_path):
                 shutil.copy2(src_path, dst_path)
                 print(f"  ✓ {os.path.basename(src_path)}")
                 success_count += 1
             else:
                 print(f"  ✗ File not found: {src_path}")
-    
+
     print(f"\nTotal copied: {success_count} model files")
     return success_count
 
@@ -640,6 +667,110 @@ def save_results(df, pareto_df, pareto_df_secondary, output_dir, metric_name, bk
 
 
 # ============================================================================
+# MODEL ARCHITECTURE SAVING
+# ============================================================================
+
+def save_model_architectures(pareto_df, pareto_df_secondary, output_dir):
+    """
+    Load each selected Pareto model and save its layer structure to JSON.
+
+    Produces:
+      architectures/<model_name>_architecture.json  — per-model layer details
+      architectures/all_architectures_summary.json  — all selected models combined
+    """
+    arch_dir = os.path.join(output_dir, 'architectures')
+    os.makedirs(arch_dir, exist_ok=True)
+
+    all_dfs = []
+    if pareto_df is not None:
+        tmp = pareto_df.copy()
+        tmp['tier'] = 'primary'
+        all_dfs.append(tmp)
+    if pareto_df_secondary is not None and not pareto_df_secondary.empty:
+        tmp = pareto_df_secondary.copy()
+        tmp['tier'] = 'secondary'
+        all_dfs.append(tmp)
+
+    if not all_dfs:
+        return
+
+    combined = pd.concat(all_dfs, ignore_index=True)
+    custom_objects = get_custom_objects()
+    all_summary = {}
+
+    print("\n" + "=" * 80)
+    print("SAVING MODEL ARCHITECTURES")
+    print("=" * 80)
+
+    for _, row in combined.iterrows():
+        model_file = row['model_file']
+        model_name = Path(model_file).stem
+        tier = row['tier']
+
+        try:
+            model = load_model(model_file, custom_objects=custom_objects, compile=False)
+        except Exception as e:
+            print(f"  ✗ Could not load {model_name}: {e}")
+            continue
+
+        layers_info = []
+        for layer in model.layers:
+            layer_cfg = {
+                'name': layer.name,
+                'type': layer.__class__.__name__,
+                'trainable_params': int(
+                    np.sum([tf.keras.backend.count_params(w) for w in layer.trainable_weights])
+                ),
+                'non_trainable_params': int(
+                    np.sum([tf.keras.backend.count_params(w) for w in layer.non_trainable_weights])
+                ),
+            }
+            # Output shape (safe — some layers have no computed output shape)
+            try:
+                shape = layer.output_shape
+                layer_cfg['output_shape'] = str(shape)
+            except Exception:
+                layer_cfg['output_shape'] = 'unknown'
+
+            # Quantization config for QKeras layers
+            try:
+                qcfg = layer.get_config()
+                for key in ('kernel_quantizer', 'bias_quantizer', 'activation'):
+                    if key in qcfg:
+                        layer_cfg[key] = str(qcfg[key])
+            except Exception:
+                pass
+
+            layers_info.append(layer_cfg)
+
+        model_arch = {
+            'model_name': model_name,
+            'tier': tier,
+            'total_params': int(model.count_params()),
+            'num_layers': len(layers_info),
+            'layers': layers_info,
+        }
+
+        # Per-model JSON
+        out_path = os.path.join(arch_dir, f"{model_name}_architecture.json")
+        with open(out_path, 'w') as f:
+            json.dump(model_arch, f, indent=2)
+
+        all_summary[model_name] = model_arch
+        print(f"  ✓ {model_name} ({tier}): {len(layers_info)} layers, "
+              f"{model_arch['total_params']:,} params → {os.path.basename(out_path)}")
+
+        del model
+        tf.keras.backend.clear_session()
+
+    # Combined summary
+    combined_path = os.path.join(arch_dir, 'all_architectures_summary.json')
+    with open(combined_path, 'w') as f:
+        json.dump(all_summary, f, indent=2)
+    print(f"\n  ✓ Combined summary: {combined_path}")
+
+
+# ============================================================================
 # MAIN FUNCTION
 # ============================================================================
 
@@ -652,7 +783,7 @@ Examples:
   # Use weighted background rejection (default)
   python analyze_and_select_pareto_roc.py \\
       --input_dir ../model2.5_quantized_4w0i_hyperparameter_results_20260214_211815 \\
-      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData \\
+      --data_dir /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized \\
       --output_dir ../model2_5_pareto_roc_selected \\
       --use_weighted
         """
@@ -671,6 +802,12 @@ Examples:
         required=True,
         help='Directory containing TFRecords (with tfrecords_validation/ subdirectory)'
     )
+    parser.add_argument(
+        '--modelPltName',
+        type=str,
+        required=True,
+        help='Name of the model in plot title'
+    )
     
     parser.add_argument(
         '--output_dir',
@@ -682,15 +819,15 @@ Examples:
     parser.add_argument(
         '--use_weighted',
         action='store_true',
-        default=True,
-        help='Use weighted background rejection metric (default: True)'
+        default=False,
+        help='Use weighted background rejection metric (default: False)'
     )
     
     parser.add_argument(
         '--signal_efficiency',
         type=float,
-        default=0.95,
-        help='Signal efficiency for background rejection (if not using weighted, default: 0.95)'
+        default=0.99,
+        help='Signal efficiency for background rejection (if not using weighted, default: 0.99)'
     )
     
     parser.add_argument(
@@ -706,9 +843,24 @@ Examples:
         default=None,
         help='Comma-separated list of feature names to parse (default: auto-detect from first model)'
     )
-    
+
+    parser.add_argument(
+        '--no_secondary',
+        action='store_true',
+        default=False,
+        help='Disable the secondary (tier-2) Pareto front — only primary models are selected and saved'
+    )
+
+    parser.add_argument(
+        '--no_separate_folders',
+        action='store_true',
+        default=False,
+        help='Disable separate sub-folders and save all models flat into output_dir (overrides default separate-folder behavior)'
+    )
+
     args = parser.parse_args()
     
+    modelPltName = args.modelPltName
     # Parse background rejection weights
     bkg_rej_weights = {}
     if args.use_weighted:
@@ -832,21 +984,29 @@ Examples:
     print("=" * 80)
     
     pareto_df, pareto_df_secondary = select_pareto_models(df)
-    
+
+    # Suppress secondary tier if requested
+    if args.no_secondary:
+        print("\n  [--no_secondary] Secondary Pareto front disabled — skipping tier 2.")
+        pareto_df_secondary = None
+
     # Generate Pareto front plot
     print("\n" + "=" * 80)
     print("GENERATING PLOTS")
     print("=" * 80)
-    
+
     metric_name = df.iloc[0]['metric_name']
-    plot_pareto_front(df, pareto_df, pareto_df_secondary, args.output_dir, model_name, metric_name)
-    
+    plot_pareto_front(df, pareto_df, pareto_df_secondary, args.output_dir, model_name, metric_name, modelPltName)
+
     # Copy model files
-    copy_model_files(pareto_df, pareto_df_secondary, args.output_dir)
-    
+    copy_model_files(pareto_df, pareto_df_secondary, args.output_dir, separate_folders=not args.no_separate_folders)
+
     # Save results
     save_results(df, pareto_df, pareto_df_secondary, args.output_dir, metric_name, bkg_rej_weights)
-    
+
+    # Save layer structure for each selected model
+    save_model_architectures(pareto_df, pareto_df_secondary, args.output_dir)
+
     # Final summary
     print("\n" + "=" * 80)
     print("COMPLETE - PARETO SELECTION FINISHED!")
@@ -862,6 +1022,8 @@ Examples:
     print(f"  - CSV files with results")
     print(f"  - JSON summary")
     print(f"  - {len(pareto_df) + (len(pareto_df_secondary) if pareto_df_secondary is not None else 0)} H5 model files")
+    print(f"  - architectures/<model>_architecture.json  (per-model layer structure)")
+    print(f"  - architectures/all_architectures_summary.json")
     print("\n" + "=" * 80)
 
 

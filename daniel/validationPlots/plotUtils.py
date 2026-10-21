@@ -14,8 +14,12 @@ from matplotlib.ticker import MultipleLocator
 import matplotlib.ticker as ticker
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
-matplotlib.rcParams["figure.dpi"] = 150
+matplotlib.rcParams["figure.dpi"] = 300
+plt.rcParams["patch.linewidth"] = 2
 from particle import PDGID
+
+plt.rcParams['axes.labelsize'] = 24
+plt.rcParams['axes.titlesize'] = 24
 # import pickle
 
 
@@ -92,8 +96,8 @@ def reshapeCluster(recon2d__):
     # print("I might have broken this funciton, might need to be called on each dataframe subtype")
     return recon2d__.to_numpy().reshape(recon2d__.shape[0],13,21)
 
-def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",showNums=True,
-              xlabel="",ylabel="",alpha=1,):
+def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",showNums=True,addPoisErr=False,
+              xlabel="",ylabel="",alpha=1,labelFontsize=plt.rcParams['axes.labelsize'],titleFontsize=plt.rcParams['axes.titlesize'],lw=plt.rcParams["patch.linewidth"]):
     if pltStandalone:
         plt.figure(figsize=(4,1))
     if bins is None:
@@ -102,16 +106,28 @@ def plotHisto(arr,bins=None,postScale=1,title="",pltStandalone=True,pltLabel="",
         hist, bin_edges = np.histogram(arr,bins=bins)
     else:
         hist, bin_edges = np.histogram(np.clip(arr,bins[0],bins[-1]),bins=bins)
-    plt.stairs(hist*postScale,bin_edges,label=pltLabel,alpha=alpha)
-    plt.ylabel(ylabel)
-    plt.xlabel(xlabel)
+    plt.stairs(hist*postScale,bin_edges,label=pltLabel,alpha=alpha,fill=False,lw=lw)#,linestyle=plt.rcParams.get("lines.linestyle", "-"))
+    if addPoisErr:
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+        errors = np.sqrt(hist) * postScale
+        plt.errorbar(
+            bin_centers, 
+            hist*postScale, 
+            yerr=errors, 
+            fmt='none',          # 'none' ensures it only plots bars, not a line connecting dots
+            ecolor='black',      # Color of the error bars
+            capsize=3,           # Width of the horizontal caps on the error bars
+            alpha=alpha          # Match the transparency of your histogram
+        )
+    plt.ylabel(ylabel,fontsize=labelFontsize)
+    plt.xlabel(xlabel,fontsize=labelFontsize)
     if showNums:
         for i in range(len(hist)):
             # Calculate the x-coordinate for the center of the bar
             bin_center = (bin_edges[i] + bin_edges[i+1]) / 2
             # Place the text slightly above the top of the bar
             plt.text(bin_center, hist[i], int(hist[i]), ha='center', va='bottom')
-    plt.title(title)
+    plt.title(title,fontsize=titleFontsize)
     if pltStandalone:
         plt.show()
     return hist,bin_edges
@@ -158,8 +174,8 @@ def plotHistoBibSig(truthBib,truthSig,key,pltStandalone,bins=None,showNums=False
 
 
 def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pltStandalone=True,showNums=False,
-                  figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",
-                  PLOT_DIR=None,interactivePlots=None,saveTitle=None,alphas = None):
+                  figsize=(7,3),yscale="linear",xlabel="",ylabel="Tracks",lw=plt.rcParams["patch.linewidth"],
+                  PLOT_DIR=None,interactivePlots=None,saveTitle=None,alphas = None,legendLoc = "best",addPoisErr=False):
     assert len(arrs) == len(pltLabels)
     if alphas is None:
         alphas = [1 for i in range(len(arrs))]
@@ -181,8 +197,8 @@ def plotManyHisto(arrs,bins=None,postScale=1,title="",pltLabels=["1","2","3"],pl
 
     # plotHisto(arrs,bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels,showNums=showNums)
     for i in range(len(arrs)):
-        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel,alpha=alphas[i])
-    plt.legend()
+        plotHisto(arrs[i],bins=bins,postScale=postScale,title=title,pltStandalone=False,pltLabel=pltLabels[i],showNums=showNums,xlabel="",ylabel=ylabel,alpha=alphas[i],addPoisErr=addPoisErr,lw=lw)
+    plt.legend(loc=legendLoc)
     plt.xlabel(xlabel)
     plt.yscale(yscale)
     if pltStandalone:
@@ -456,7 +472,12 @@ skip_indices = list(range(1730 - 124+87, 1769))  # 1606+87 [hand-tuned the 87] t
 #common in every plotting code
 def closePlot(PLOT_DIR, interactivePlots, plotName,printOutputDir=True,transparent = False):
     plt.tight_layout()
-    plt.savefig(os.path.join(PLOT_DIR, plotName), dpi=300, bbox_inches='tight',transparent=transparent)
+    try:
+        plt.savefig(os.path.join(PLOT_DIR, plotName), dpi=300, bbox_inches='tight',transparent=transparent)
+    except Exception as e:
+        print("failed to save figure with name ",PLOT_DIR," ",plotName)
+        print(e)
+        return
     if interactivePlots:
         plt.show()
     else:
@@ -537,39 +558,42 @@ def getEricsMasks(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
 
 #This should not be called directly!
 #Only use this inside other functions that e.g. use this and deal with figsize/subplot outside
-def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False):
+def plot2dHistFromTruth(truthDF, keyX, keyY, mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = True,colorLabel=r"$n_{\mathrm{clusters}}$"):
     if not( keyX in truthDF.columns ):
         raise Exception(f"{keyX} not present in truthbib or truthsig dataframes")
     if not( keyY in truthDF.columns ):
         raise Exception(f"{keyY} not present in truthbib or truthsig dataframes")
-    counts, xedges, yedges, im = plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = logColor)
+    counts, xedges, yedges, im = plot2dHist(truthDF[keyX],truthDF[keyY], mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = logColor,colorLabel=colorLabel)
     return counts, xedges, yedges, im
 
-def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = False):
+def plot2dHist(xArr,yArr,  mask, binsX, binsY, cmap, xlabel,ylabel,title,logColor = True,colorLabel=r"Number of eh pairs or $n_{\mathrm{clusters}}$"):
+    if mask is None:
+        mask = [True for _ in xArr]
     if logColor:
         counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],norm=colors.LogNorm(),bins=[binsX,binsY],cmap=cmap)
     else:
         counts, xedges, yedges, im = plt.hist2d(xArr[mask], yArr[mask],bins=[binsX,binsY],cmap=cmap)
-    plt.colorbar(im,ax=plt.gca())
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    plt.colorbar(im,ax=plt.gca(),label=colorLabel)
+    plt.title(title, fontsize = 20)
+    plt.xlabel(xlabel, fontsize = 16)
+    plt.ylabel(ylabel, fontsize = 16)
     return counts, xedges, yedges, im
     # ax[0].tick_params(axis='both', which='major',)
 
 def plot1by2BibSig2dHisto(truthBib, truthSig,keyX, keyY,mask_bib,mask_sig,binsX,binsY,cmap,xlabel,ylabel,title,                          
                           PLOT_DIR="./plots",interactivePlots=False,
-                          yscale = 'linear',xscale = 'linear',logColor = False,closePlt = True):
+                          yscale = 'linear',xscale = 'linear',logColor = True,closePlt = True,
+                          colorLabel="Number of eh Pairs"):
     # fig, ax = plt.subplots(1, 2, figsize=(14, 6))
     # fig, ax = plt.subplots(1, 2, figsize=(10, 4))
     plt.figure(figsize = (10,4))
     plt.subplot(121)
-    countsBIB, xedgesBIB, yedgesBIB, im = plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB",logColor=logColor)
+    countsBIB, xedgesBIB, yedgesBIB, im = plot2dHistFromTruth(truthBib,keyX, keyY,mask_bib,binsX,binsY,cmap,xlabel,ylabel,"BIB",logColor=logColor,colorLabel=colorLabel)
     plt.xscale(xscale)
     plt.yscale(yscale)
 
     plt.subplot(122)
-    countsSig, xedgesSig, yedgesSig, im = plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal",logColor=logColor)
+    countsSig, xedgesSig, yedgesSig, im = plot2dHistFromTruth(truthSig,keyX, keyY,mask_sig,binsX,binsY,cmap,xlabel,ylabel,"Signal",logColor=logColor,colorLabel=colorLabel)
     plt.xscale(xscale)
     plt.yscale(yscale)
     if closePlt:
@@ -606,7 +630,9 @@ def plotZglobalXsize(truthbib, truthsig, xSizesSig, xSizesBib,mask_bib,mask_sig,
     pastel_red_cmap = create_pastel_red_cmap()
     pastel_red_cmap = 'Blues'
     
-    plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'xSize',mask_bib,mask_sig,30,np.arange(0,22,1),pastel_red_cmap,'z-global [mm]','x-size (# pixels)', "bib_signal_zglobal_vs_xsize_comparison",PLOT_DIR,interactivePlots)
+    plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'xSize',mask_bib,mask_sig,30,np.arange(0,22,1),pastel_red_cmap,
+                          r'$z_{\mathrm{global}}$ [mm]',r'$x_{\mathrm{size}}$ [# pixels]', "bib_signal_zglobal_vs_xsize_comparison",
+                          PLOT_DIR,interactivePlots,logColor=True,colorLabel=r"$n_{\mathrm{clusters}}$")
 
     printEricRangeThing(truthbib,truthsig,'z-global','xSize')
 
@@ -635,12 +661,14 @@ def plotZglobalYsize(truthbib, truthsig, ySizesSig, ySizesBib,mask_bib_y,mask_si
     pastel_red_cmap = 'Blues'
 
     plot1by2BibSig2dHisto(truthbib,truthsig,'z-global', 'ySize',mask_bib_y,mask_sig_y,30,np.arange(0,14,1),
-                          pastel_red_cmap,'z-global [mm]','y-size (# pixels)', "bib_signal_zglobal_vs_ysize_comparison",
+                          pastel_red_cmap,r'$z_{\mathrm{global}}$ [mm]',r'$y_{\mathrm{size}}$ [# pixels]', "bib_signal_zglobal_vs_ysize_comparison",
                           PLOT_DIR,interactivePlots)
 
 
 # --- Plot 3: 2x2 grid showing both x-size and y-size comparisons ---
-def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,PLOT_DIR="./plots",interactivePlots=False):
+def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib,mask_bib,mask_sig,
+                      binsZGlobal = 30,binsXSize = np.arange(0,22,1),binsYSize = np.arange(0,14,1),
+                      PLOT_DIR="./plots",interactivePlots=False):
     if not( 'z-global' in truthbib.columns and 'z-global' in truthsig.columns ):
         raise Exception("z-global not present in truthbib or truthsig dataframes")
     assert len(truthbib) == len(ySizesBib)
@@ -649,12 +677,9 @@ def plotZglobalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySize
     pastel_red_cmap = create_pastel_red_cmap()
     pastel_red_cmap = 'Blues'
 
-    binsZGlobal = 30
-    binsXSize = np.arange(0,22,1)
-    binsYSize = np.arange(0,14,1)
     plot2by2BibSig2dHisto(truthbib,truthsig,'z-global','xSize','z-global','ySize',mask_bib,mask_sig,
-                          binsZGlobal,binsXSize,binsZGlobal,binsYSize,pastel_red_cmap,'','x-size (# pixels)',
-                          'z-global [mm]','y-size (# pixels)',"bib_signal_zglobal_vs_xysize_grid_comparison",
+                          binsZGlobal,binsXSize,binsZGlobal,binsYSize,pastel_red_cmap,'',r'$x_{\mathrm{size}}$ [# pixels]',
+                          r'$z_{\mathrm{global}}$ [mm]',r'$y_{\mathrm{size}}$ [# pixels]',"bib_signal_zglobal_vs_xysize_grid_comparison",
                           PLOT_DIR,interactivePlots)
 
 
@@ -766,8 +791,8 @@ def plotEtaXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizesBib
     binsXSize = np.arange(0,22,1)
     binsYSize = np.arange(0,14,1)
     plot2by2BibSig2dHisto(truthbib,truthsig,'eta','xSize','eta','ySize',mask_bib,mask_sig,
-                          binsEta,binsXSize,binsEta,binsYSize,'Blues','','x-size (# pixels)',
-                          'η','y-size (# pixels)',"bib_signal_eta_vs_size_2d",PLOT_DIR,interactivePlots)
+                          binsEta,binsXSize,binsEta,binsYSize,'Blues','',r'$x_{\mathrm{size}}$ [# pixels]',
+                          'η',r'$y_{\mathrm{size}}$ [# pixels]',"bib_signal_eta_vs_size_2d",PLOT_DIR,interactivePlots)
 
 
 # --- Plot 3: 2D histograms of y-local vs x-size/y-size ---
@@ -777,8 +802,8 @@ def plotYlocalXYsize(truthbib, truthsig, xSizesSig, xSizesBib, ySizesSig, ySizes
     binsXSize = np.arange(0,22,1)
     binsYSize = np.arange(0,14,1)
     plot2by2BibSig2dHisto(truthbib,truthsig,'y-local','xSize','y-local','ySize',mask_bib,mask_sig,
-                          binsYlocal,binsXSize,binsYlocal,binsYSize,'Blues','','x-size (# pixels)',
-                          'y-local [μm]','y-size (# pixels)',"bib_signal_ylocal_vs_size_2d",PLOT_DIR,interactivePlots)
+                          binsYlocal,binsXSize,binsYlocal,binsYSize,'Blues','',r'$x_{\mathrm{size}}$ [# pixels]',
+                          r'$y_{\mathrm{local}}$ [mm]',r'$y_{\mathrm{size}}$ [# pixels]',"bib_signal_ylocal_vs_size_2d",PLOT_DIR,interactivePlots)
 
 
 # --- Plot 4: 2D histogram of number_eh_pairs vs pt ---
@@ -1086,7 +1111,7 @@ def plotPtTrackAndParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./pl
     binsSig = 30
     plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=binsBib, binsSig=binsSig,PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,xlabel="pT [GeV/c]")
 
-def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",interactivePlots=False):
+def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",interactivePlots=False,legendLoc = "best",addPoisErr=False):
     # z = 1./np.sqrt((1.+tracksDF["cotb"]*tracksDF["cotb"]+tracksDF["cota"]*tracksDF["cota"]))
     # x = z*tracksDF["cota"]
     # y = z*tracksDF["cotb"]
@@ -1099,13 +1124,13 @@ def plotPCalcTrackComparison(tracksDF,bibSigLabel="BIBORSIG",PLOT_DIR="./plots",
     fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
     plt.subplot(121)    
     plotManyHisto([p,tracksDF["p"]],pltStandalone=False,title=f"{bibSigLabel}",xlabel="Momentum [GeV/c]",yscale='log',alphas=[1,0.5],
-                  pltLabels=["p recalculated using \n cota, cotb, pt, in the tracklists","p directly as saved in tracklists"],)
+                  pltLabels=["p recalculated using \n cota, cotb, pt, in the tracklists","p directly as saved in tracklists"],legendLoc = legendLoc,addPoisErr=addPoisErr)
 
     plt.subplot(122)
     plt.hist(p - tracksDF["p"])
     plt.title(f"Difference between p saved in {bibSigLabel} tracklists and \n p recalculated from cota, cotb, pt saved in tracklists")
     plt.yscale('log')
-    plt.ylabel("N tracks")
+    plt.ylabel(r"$n_{\mathrm{clusters}}$")
     plt.xlabel('Momentum - momentum = "0" [GeV/c]')
 
     closePlot(PLOT_DIR, interactivePlots,  f"TrackPCalcComparison{bibSigLabel}.png")
@@ -1168,23 +1193,29 @@ def plotNxyzTrackParquet(tracksBib, tracksSig,truthBib, truthSig,PLOT_DIR="./plo
     closePlot(PLOT_DIR, interactivePlots, "TrackParquet_nxnynz.png")
 
 def plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,binsBib=30, binsSig=30, recalcStrTrack = "",recalcStrParq = "",
-                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = "",keyTruth=None):
+                        PLOT_DIR="./plots",interactivePlots=False,isSubplot=False,subplots=[],xlabel = "",keyTruth=None,keyLabelP=None,keyLabelT=None,legendLocs=["best","best"]):
     if keyTruth is None:
         keyTruth = key
+    if keyLabelP is None:
+        keyLabelP=keyTruth
+    if keyLabelT is None:
+        keyLabelT = key
     if isSubplot and len(subplots) ==0:
         raise ValueError("if using this method for subplots, need to have list of subplots")
     if not isSubplot:
         fig, ax=plt.subplots(ncols=2, nrows=1, figsize=(10,5))
         subplots = [121, 122]
+    assert len(legendLocs) == 2
     plt.subplot(subplots[0])
-    plotManyHisto([truthBib[keyTruth],tracksBib[key]],binsBib,title=f"BIB {key} comparison tracklists to parquets",
-                  pltLabels=[f"{keyTruth} from parquet {recalcStrParq}",f"{key} from track {recalcStrTrack}"],pltStandalone=False,yscale='log',
-                  xlabel=xlabel,ylabel="N tracks",alphas=[1,0.5])
+    pltLabels = [f"{keyLabelP} after PixelAV {recalcStrParq}",f"{keyLabelT} from GEANT4 {recalcStrTrack}"] if len(keyLabelP)>0 else [f"After PixelAV",f"From GEANT4"]
+    plotManyHisto([truthBib[keyTruth],tracksBib[key]],binsBib,title=f"BIB",
+                  pltLabels=pltLabels,pltStandalone=False,yscale='log',
+                  xlabel=xlabel,ylabel=r"$n_{\mathrm{clusters}}$",alphas=[1,0.5],legendLoc=legendLocs[0])
     
     plt.subplot(subplots[1])
-    plotManyHisto([truthSig[keyTruth],tracksSig[key]],binsSig,title=f"Signal {key} comparison tracklists to parquets",
-                  pltLabels=[f"{keyTruth} from parquet {recalcStrParq}",f"{key} from track {recalcStrTrack}"],pltStandalone=False,yscale='log',
-                  xlabel=xlabel,ylabel="N tracks",alphas=[1,0.5],)
+    plotManyHisto([truthSig[keyTruth],tracksSig[key]],binsSig,title=f"Signal",
+                  pltLabels=pltLabels,pltStandalone=False,yscale='log',
+                  xlabel=xlabel,ylabel=r"$n_{\mathrm{clusters}}$",alphas=[1,0.5],legendLoc=legendLocs[1])
 
     if not isSubplot:
         closePlot(PLOT_DIR, interactivePlots,  f"TrackParquet{key}.png")
@@ -1198,16 +1229,28 @@ parquetTrackKeys = ["cotAlpha","cotBeta","p_calc1","flpNO","y-local","z-global",
 #        'source', 'eta', 'R', 'q', 'm', 'scalePion', 'p_calc1', 'p_calc2',
 #        'p_calc3', 'xSize', 'ySize', 'nPix']
 recalcStrs = ["", "", "(recalculated)", "", "", "", "", "", ""]
+recalcStrs = ["", "", "", "", "", "", "", "", ""]
 def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,recalcStrs=recalcStrs,
-                     xlabels = ["cot(α)", "cot(β)", "p [GeV/c]", "NO", "y-local [μm]", "z-global [mm]", "pT [GeV/c]", "raw hit time [s]", "PID"],
-                     PLOT_DIR="./plots",interactivePlots=False):
+                     xlabels = ["cot(α)", "cot(β)", "Momentum [GeV/c]", "NO", r'$y_{\mathrm{local}}$ [mm]', r'$z_{\mathrm{global}}$ [mm]', r"$p_T$ [GeV/c]", "Raw Hit Time [ns]", "PDG ID"],
+                     keyLabels = ["cot(α)", "cot(β)", "p", "NO", r"$y_{\mathrm{local}}$", r'$z_{\mathrm{global}}$', r"$p_T$", "Hit Time", "PDG ID"],
+                     PLOT_DIR="./plots",interactivePlots=False, cutPID=True,figsize=(15,25)):
     assert len(trackHeader) == len(parquetTrackKeys)
     assert len(trackHeader) == len(xlabels)
     assert len(trackHeader) == len(recalcStrs)
+    assert len(trackHeader) == len(keyLabels)
     assert len(trackHeader) == 9
+    if cutPID:
+        trackHeader = trackHeader[:-1]
+        # parquetTrackKeys = parquetTrackKeys[:-1]
+        # xlabels = xlabels[:-1]
+        # recalcStrs = recalcStrs[:-1]
+        # keyLabels = keyLabels[:-1]
     binsBib = 30
     binsSig = 30
-    fig, ax = plt.subplots(ncols=2, nrows=8, figsize=(10,20))
+    if cutPID:
+        fig, ax = plt.subplots(ncols=2, nrows=7, figsize=figsize)
+    else:
+        fig, ax = plt.subplots(ncols=2, nrows=8, figsize=figsize)
     
     # subplotsList = [[921,922],[923,924],[925,926],[927,928],[929,ax[4,1]],[ax[5,0],ax[5,1]],[ax[6,0],ax[6,1]],
     #                 [ax[15],ax[16]],[ax[17],ax[18]]]
@@ -1215,9 +1258,12 @@ def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHe
     #                 [plt.GridSpec(9,2)[7,0],plt.GridSpec(9,2)[7,1]],[plt.GridSpec(9,2)[8,0],plt.GridSpec(9,2)[8,1]]]
     # subplotsList = [[821,822],[823,824],[825,826],[],[827,828],[829,plt.GridSpec(8,2)[4,1]],[plt.GridSpec(8,2)[5,0],plt.GridSpec(8,2)[5,1]],[plt.GridSpec(8,2)[6,0],plt.GridSpec(8,2)[6,1]],
     #                 [plt.GridSpec(8,2)[7,0],plt.GridSpec(8,2)[7,1]]]
-    subplotsList = [[821,822],[823,824],[825,826],[],[827,828],[829,ax[4,1].get_subplotspec()],[ax[5,0].get_subplotspec(),ax[5,1].get_subplotspec()],[ax[6,0].get_subplotspec(),ax[6,1].get_subplotspec()],
-                    [ax[7,0].get_subplotspec(),ax[7,1].get_subplotspec()]]
-    assert len(subplotsList) ==9
+    if cutPID:
+        subplotsList = [[721,722],[723,724],[725,726],[],[727,728],[729,ax[4,1].get_subplotspec()],[ax[5,0].get_subplotspec(),ax[5,1].get_subplotspec()],[ax[6,0].get_subplotspec(),ax[6,1].get_subplotspec()],]
+    else:
+        subplotsList = [[821,822],[823,824],[825,826],[],[827,828],[829,ax[4,1].get_subplotspec()],[ax[5,0].get_subplotspec(),ax[5,1].get_subplotspec()],[ax[6,0].get_subplotspec(),ax[6,1].get_subplotspec()],
+                        [ax[7,0].get_subplotspec(),ax[7,1].get_subplotspec()]]
+    assert len(subplotsList) ==len(trackHeader)
     for idx, key in enumerate(trackHeader):
         if key == "flp":
             continue
@@ -1226,13 +1272,50 @@ def plotAllTrackVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHe
             binsBib = np.linspace(-13,13,26)
         else:
             binsBib=30
-        plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,keyTruth=parquetTrackKeys[idx],binsBib=binsBib, binsSig=binsSig,recalcStrParq=recalcStrs[idx],PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=subplotsList[idx],xlabel = xlabels[idx])
+        plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,keyTruth=parquetTrackKeys[idx],binsBib=binsBib, binsSig=binsSig,recalcStrParq=recalcStrs[idx],PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=subplotsList[idx],xlabel = xlabels[idx],keyLabelP=keyLabels[idx],keyLabelT=keyLabels[idx])
     closePlot(PLOT_DIR, interactivePlots, "TrackParquet_allVars.png")
     # plt.hist(truthBib['PID'])
     # closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_parq.png")
     
     # plt.hist(tracksBib['hit_pdg'])
     # closePlot(PLOT_DIR, interactivePlots, "TrackParquet_PIDBib_track.png")
+
+def plotSomeTracParqVars(tracksBib, tracksSig,truthBib, truthSig,trackHeader=trackHeader,parquetTrackKeys=parquetTrackKeys,recalcStrs=recalcStrs,
+                     xlabels = ["cot(α)", "cot(β)", "Momentum [GeV/c]", "NO", r'$y_{\mathrm{local}}$ [mm]', r'$z_{\mathrm{global}}$ [mm]', r"$p_T$ [GeV/c]", "Raw Hit Time [ns]", "PDG ID"],
+                     keyLabels = ["cot(α)", "cot(β)", "p", "NO", r"$y_{\mathrm{local}}$", r'$z_{\mathrm{global}}$', r"$p_T$", "Hit Time", "PDG ID"],
+                     PLOT_DIR="./plots",interactivePlots=False,figsize=(15,25),saveTitle="TrackParquet_allVars.png",binsBibList=None,binsSigList=None,legendLocs=None):
+    assert len(trackHeader) == len(parquetTrackKeys)
+    assert len(trackHeader) == len(recalcStrs)
+    assert len(trackHeader) == len(xlabels)
+    assert len(trackHeader) == len(keyLabels)
+    numRows = len(trackHeader)
+    if binsBibList is None:
+        binsBibList = [30 for i in range(numRows)]    
+    if binsSigList is None:
+        binsSigList = [30 for i in range(numRows)]
+    assert len(binsBibList) == numRows
+    assert len(binsSigList) == numRows
+    if legendLocs is None:
+        legendLocs = [["best","best"] for i in range(numRows)]
+    assert len(legendLocs) == numRows
+    fig, ax = plt.subplots(ncols=2, nrows=numRows, figsize=figsize)
+    if numRows > 1:
+        subplotsList = [[ax[i,0].get_subplotspec(),ax[i,1].get_subplotspec()] for i in range(numRows)]
+    else:
+        subplotsList = [[ax[0].get_subplotspec(),ax[1].get_subplotspec()]]
+    assert len(subplotsList) == numRows
+    for idx, key in enumerate(trackHeader):
+        binsBib = binsBibList[idx]
+        binsSig = binsSigList[idx]
+        if binsBib is None:
+            binsBib = 30        
+        if binsSig is None:
+            binsSig = 30
+        if key == "hit_pdg":
+            binsBib = 'auto'
+            binsBib = np.linspace(-13,13,26)
+        plotKeyTrackParquet(tracksBib, tracksSig,truthBib, truthSig,key,keyTruth=parquetTrackKeys[idx],binsBib=binsBib, binsSig=binsSig,recalcStrParq=recalcStrs[idx],PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,isSubplot=True,subplots=subplotsList[idx],xlabel = xlabels[idx],keyLabelP=keyLabels[idx],keyLabelT=keyLabels[idx],legendLocs=legendLocs[idx])
+    closePlot(PLOT_DIR, interactivePlots, saveTitle)
 
 def calcAvgEHperMicron(truthDF, binsBetaGamma):
     avgEHperMicron = [0 for i in range(len(binsBetaGamma))]

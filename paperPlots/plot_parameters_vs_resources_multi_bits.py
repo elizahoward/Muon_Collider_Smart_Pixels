@@ -1,0 +1,491 @@
+#!/usr/bin/env python3
+"""
+Plot Model Parameters vs Hardware Resources (FF + LUT) for multiple bit-widths
+on the same graph.
+
+This script scans the New_hyperparameter_runs directory for bit-width specific
+subdirectories (e.g., eric_model_2_5_4bit, model2_5_6bit_new, model2_5_8_bit,
+model2_5_10bit), loads their resource and Pareto CSVs, fits a separate linear
+regression (OLS) for each bit-width, and overlays all scatters and regression
+lines on a single plot so that the slopes can be directly compared.
+
+Usage:
+    python plot_parameters_vs_resources_multi_bits.py \
+        --runs_dir ../New_hyperparameter_runs
+
+You can also explicitly specify which subdirectories (bit-widths) to include.
+
+Author: Eric (multi-bit overlay helper)
+Date: March 2026
+Updates July 2026 by Daniel for newer versions
+
+UPDATED VERSION IS IN paperPlots
+"""
+
+import os
+import sys
+import argparse
+from pathlib import Path
+
+import pandas as pd
+import numpy as np
+import matplotlib
+
+# try:
+import matplotlib.pyplot as plt
+from scipy import stats
+#     PLOTTING_AVAILABLE = True
+# except ImportError:
+#     PLOTTING_AVAILABLE = False
+#     print("Error: matplotlib and scipy are required")
+#     print("Install with: pip install matplotlib scipy")
+#     sys.exit(1)
+
+STYLESHEET = "seaborn-v0_8-poster"
+plt.style.use(STYLESHEET)
+matplotlib.rcParams["figure.dpi"] = 300
+
+CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
+CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed.csv")
+CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1vsynth.csv")
+CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1vsynth_10ns.csv")
+# CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1vsynth_20ns.csv")
+# HARDWARE_KEY = "luts_plus_ff"
+# HARDWARE_KEY = "luts_plus_0.5*_ff"
+# CROSS_PARETO_CSV = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/paperPlots/combined_all_models_pareto_newJune2026/combined_all_detailed_model1And2vsynth_20ns_model3csynth_20ns.csv")
+MODEL_NUM = '1' #'1', '25', or '3'
+FF_COEFFICIENT = 0.5
+RESOURCE_FILTER = 80000 #a number to filter ff+lut below this threshold or None
+RESOURCE_FILTER = None
+showTitle = False
+def infer_bit_width_from_name(name: str) -> str:
+    """
+    Try to infer the bit-width from a directory name.
+    
+    Examples:
+        'eric_model_2_5_4bit'  -> '4'
+        'model2_5_6bit_new'    -> '6'
+        'model2_5_8_bit'       -> '8'
+        'model2_5_10bit'       -> '10'
+    """
+    import re
+
+    # Look for patterns like '4bit', '10bit'
+    m = re.search(r'(\d+)\s*bit', name.replace("_", " "))
+    if m:
+        return m.group(1)
+
+    m = re.search(r'(\d+)bit', name)
+    if m:
+        return m.group(1)
+
+    return name
+
+
+def load_and_merge_data(resource_csv, pareto_csv,bits):
+    """
+    Load resource utilization and parameter data, then merge them.
+
+    This mirrors the logic from plot_parameters_vs_resources.py.
+    """
+    raise ValueError("Deprecated")
+    resource_df = pd.read_csv(resource_csv)
+    # resource_df["trial_id"] = resource_df["model_name"].str.extract(
+    #     r"model_trial_(\d+)"
+    # )[0]
+    # print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
+    resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
+    param_df = pd.read_csv(pareto_csv)
+
+    resource_df["trial_id"] = resource_df["trial_id"].astype(str).str.zfill(3)
+    param_df["trial_id"] = param_df["trial_id"].astype(str).str.zfill(3)
+    # print(param_df)
+    # print(resource_df)
+    merged_df = pd.merge(
+        resource_df,
+        param_df[["trial_id", "parameters"]],
+        on="trial_id",
+        how="inner",
+    )
+
+    # merged_df["total_resources"] = (
+    #     merged_df["luts_used"] + merged_df["registers_used"]
+    # )
+    merged_df["total_resources"] = merged_df[HARDWARE_KEY]
+    merged_df["parameters"] = merged_df["parameters_y"] 
+    # print(merged_df.keys())
+
+    # print(merged_df)
+    return merged_df
+
+def loadDataNew(resource_csv, bits,modelNum='25'):
+    resource_df = pd.read_csv(resource_csv)
+    # print("WARNING NEED TO FILTER TO JUST THE RIGHT MODEL TYPE AND BIT")
+    # resource_df = resource_df.query(f"run_name == 'model25_{bits}bit'")
+    if modelNum == '1':
+        resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}w{str(int(bits)+2)}i'") # works for model1
+    else:
+        resource_df = resource_df.query(f"run_name == 'model{modelNum}_{bits}bit'") #works for model 25 or 3
+    # resource_df["total_resources"] = resource_df[HARDWARE_KEY]
+    resource_df["total_resources"] = resource_df["luts"] + FF_COEFFICIENT * resource_df["registers"]
+    # print(resource_df)
+    return resource_df
+
+
+
+def fit_linear_regression(x, y):
+    """
+    Fit OLS linear regression and return statistics.
+    """
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+    y_pred = slope * x + intercept
+    residuals = y - y_pred
+    r_squared = r_value ** 2
+
+    return {
+        "slope": slope,
+        "intercept": intercept,
+        "r_value": r_value,
+        "r_squared": r_squared,
+        "p_value": p_value,
+        "std_err": std_err,
+        "y_pred": y_pred,
+        "residuals": residuals,
+    }
+
+
+def collect_bit_width_runs(runs_dir, subdirs=None):
+    """
+    Collect (bit_label, path) pairs for runs directories that contain the
+    expected CSV files.
+    """
+    runs_path = Path(runs_dir)
+    if not runs_path.is_dir():
+        raise FileNotFoundError(f"Runs directory does not exist: {runs_dir}")
+
+    candidates = []
+
+    if subdirs:
+        # Only use the user-specified subdirectories
+        for sd in subdirs:
+            p = runs_path / sd
+            if p.is_dir():
+                candidates.append(p)
+    else:
+        # Auto-discover: any subdir that has resource_utilization.csv and
+        # pareto_optimal_models_roc_combined.csv
+        for p in runs_path.iterdir():
+            if not p.is_dir():
+                continue
+            # res = p / "resource_utilization.csv"
+            res = CROSS_PARETO_CSV
+            par = p / "pareto_optimal_models_roc_combined.csv"
+            if res.is_file() and par.is_file():
+                candidates.append(p)
+
+    runs = []
+    for p in sorted(candidates):
+        # res = p / "resource_utilization.csv"
+        res = CROSS_PARETO_CSV
+        par = p / "pareto_optimal_models_roc_combined.csv"
+        if not res.is_file() or not par.is_file():
+            continue
+        bit_label = infer_bit_width_from_name(p.name)
+        # if bit_label != '10':
+        #     continue
+        runs.append(
+            {
+                "bit": bit_label,
+                "dir": p,
+                "resource_csv": res,
+                "pareto_csv": par,
+            }
+        )
+
+    return runs
+
+
+def plot_multi_bit(runs_info, output_path, slopes_csv_path=None,figsize=(8,6),showStats=False,alternateLegend=True):
+    """
+    Create a single plot with scatter + regression line for each bit-width.
+    Also optionally save a CSV summarizing slopes and fit metrics.
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    colors = plt.cm.viridis(np.linspace(0, 1, len(runs_info)))  # distinct colors
+    colors =  plt.rcParams['axes.prop_cycle'].by_key()['color']
+    if len(runs_info) == 5:
+        print(colors)
+        # colors[4] = []
+
+    slopes_summary = []
+
+    for color, info in zip(colors, runs_info):
+        bit = info["bit"]
+        df = info["df"]
+        stats_dict = info["regression"]
+
+        # Scatter
+        ax.scatter(
+            df["parameters"],
+            df["total_resources"],
+            alpha=0.6,
+            s=60,
+            color=color,
+            # edgecolors="black",
+            # linewidth=0.7,
+            label=f"{bit}-bit data",
+        )
+
+        # Regression line over the span of that bit-width's parameters
+        x_line = np.array([df["parameters"].min(), df["parameters"].max()])
+        y_line = stats_dict["slope"] * x_line + stats_dict["intercept"]
+        ax.plot(
+            x_line,
+            y_line,
+            linestyle="--",
+            linewidth=2.0,
+            color=color,
+            alpha=0.9,
+            label=f"{bit}-bit fit (slope={stats_dict['slope']:.2f})",
+        )
+
+        slopes_summary.append(
+            {
+                "bit_width": bit,
+                "slope": stats_dict["slope"],
+                "intercept": stats_dict["intercept"],
+                "r_squared": stats_dict["r_squared"],
+                "r_value": stats_dict["r_value"],
+                "p_value": stats_dict["p_value"],
+                "std_err": stats_dict["std_err"],
+                "n_models": len(df),
+            }
+        )
+
+    ax.set_xlabel("Number of Parameters")#, fontsize=14, fontweight="bold")
+    ax.set_ylabel(f"FPGA Resources (LUTs + {FF_COEFFICIENT} * FFs)")#, fontsize=14, fontweight="bold")
+    extendTitle = f"\n FILTER on y axis by {RESOURCE_FILTER}" if RESOURCE_FILTER else ""
+    if showTitle:
+        ax.set_title(
+            f"Model {MODEL_NUM[0]} Parameters vs Hardware Resources{extendTitle}",#\n"
+            # "Multi-bit Comparison with Linear Regression",
+            # fontsize=16,
+            # fontweight="bold",
+            # pad=20,
+        )
+
+    ax.grid(True, alpha=0.3, linestyle="--", zorder=1)
+
+    # Place legend outside to reduce clutter
+    # ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5), fontsize=10, framealpha=0.9)
+    if alternateLegend:
+        from matplotlib.lines import Line2D
+        bits = ["3-bit", "4-bit", "6-bit", "8-bit", "10-bit"]
+        # 2. Build the 5 rows of colored dots
+        bit_handles = [
+            Line2D([0], [0], 
+                marker="o", 
+                color="none", 
+                markerfacecolor=colors[i], 
+                markeredgecolor="dimgray", 
+                markersize=9, 
+                label=bits[i]
+            )
+            for i in range(5)
+        ]
+
+        # 3. Build the generic "Data" vs "Linear Fit" legend entries
+        style_handles = [
+            Line2D([0], [0], marker="o", color="none", markerfacecolor="gray", markeredgecolor="dimgray", markersize=9, label="Architectures"),
+            Line2D([0], [0], linestyle="--", color="gray", linewidth=2, label="Linear fit")
+        ]
+
+        # 4. Add the first legend (Colors) and anchor it manually
+        leg1 = ax.legend(handles=bit_handles, loc="lower right", frameon=True)
+        ax.add_artist(leg1)  # Prevents the second legend from overwriting the first
+
+        # 5. Add the second legend (Styles)
+        ax.legend(handles=style_handles, loc="lower left", bbox_to_anchor=(0.37, 0.0),frameon=True)
+    else:
+        ax.legend(framealpha=0.9)
+
+    # Small summary table of slopes vs bit-width inside the plot
+    slopes_df = pd.DataFrame(slopes_summary).sort_values("bit_width")
+    table_text = "Slopes by Bit-width\n"
+    table_text += "──────────────────\n"
+    for _, row in slopes_df.iterrows():
+        table_text += (
+            f"{row['bit_width']}-bit: slope={row['slope']:.2f}, "
+            f"R²={row['r_squared']:.3f}, n={int(row['n_models'])}\n"
+        )
+    if showStats:
+        ax.text(
+            0.02,
+            0.98,
+            table_text,
+            transform=ax.transAxes,
+            # fontsize=9,
+            verticalalignment="top",
+            bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.8),
+            family="monospace",
+        )
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    print(f"\n✓ Multi-bit plot saved to: {output_path}")
+    plt.close()
+
+    if slopes_csv_path is not None:
+        slopes_df.to_csv(slopes_csv_path, index=False)
+        print(f"✓ Slopes summary saved to: {slopes_csv_path}")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description=(
+            "Plot model parameters vs hardware resources (FF+LUT) for multiple "
+            "bit-width runs on a single graph."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Auto-discover all bit-width runs in the default directory
+  python plot_parameters_vs_resources_multi_bits.py \\
+      --runs_dir ../New_hyperparameter_runs
+
+  # Specify a subset of subdirectories (bit-widths)
+  python plot_parameters_vs_resources_multi_bits.py \\
+      --runs_dir ../New_hyperparameter_runs \\
+      --subdirs eric_model_2_5_4bit model2_5_6bit_new model2_5_8_bit model2_5_10bit
+        """,
+    )
+
+    default_runs_dir = (
+        # Path(__file__).resolve().parent.parent / "New_hyperparameter_runs"
+        # 
+    )
+    default_runs_dir = Path("/home/dabadjiev/smartpixels_ml_dsabadjiev/Muon_Collider_Smart_Pixels/eric/Results_June2026_99SigEff/model2.5_fin_results")
+
+    parser.add_argument(
+        "--runs_dir",
+        type=str,
+        default=str(default_runs_dir),
+        help=f"Directory containing bit-width run subdirectories "
+        f"(default: {default_runs_dir})",
+    )
+
+    parser.add_argument(
+        "--subdirs",
+        type=str,
+        nargs="*",
+        help="Optional list of subdirectory names to include (default: auto-discover)",
+    )
+
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help=(
+            "Output plot path "
+            "(default: parameters_vs_resources_multi_bits.png in runs_dir)"
+        ),
+    )
+
+    parser.add_argument(
+        "--slopes_csv",
+        type=str,
+        default=None,
+        help=(
+            "Optional output CSV path to store bit-width slopes and fit "
+            "metrics (default: parameters_vs_resources_multi_bits_slopes.csv "
+            "in runs_dir)"
+        ),
+    )
+
+    args = parser.parse_args()
+
+    runs_dir = args.runs_dir
+
+    print("=" * 80)
+    print("MULTI-BIT PARAMETERS VS HARDWARE RESOURCES ANALYSIS")
+    print("=" * 80)
+    print(f"\nRuns directory: {runs_dir}")
+    if args.subdirs:
+        print(f"Subdirectories (user-specified): {', '.join(args.subdirs)}")
+    else:
+        print("Subdirectories: auto-discovering based on CSV presence")
+    print("-" * 80)
+
+    # Determine output paths
+    if args.output:
+        output_path = args.output
+    else:
+        output_path = os.path.join(
+            # runs_dir, "parameters_vs_resources_multi_bits.png"
+            ".", f"parameters_vs_resources_multi_bits_M{MODEL_NUM}_FF{FF_COEFFICIENT}_R{RESOURCE_FILTER}.png"
+        )
+
+    if args.slopes_csv:
+        slopes_csv_path = args.slopes_csv
+    else:
+        slopes_csv_path = os.path.join(
+            ".", f"parameters_vs_resources_multi_bits_slopes_M{MODEL_NUM}_FF{FF_COEFFICIENT}_R{RESOURCE_FILTER}.csv"
+        )
+
+    # Collect runs
+    runs_info = collect_bit_width_runs(runs_dir, args.subdirs)
+    # runs_info = runs_info.query("bit == 10")
+    if not runs_info:
+        print("Error: No valid bit-width runs found with required CSV files.")
+        sys.exit(1)
+
+    print("\nFound the following runs:")
+    for info in runs_info:
+        print(
+            f"  - {info['bit']}-bit: {info['dir']} ",
+            # f"(resource_utilization.csv + pareto_optimal_models_roc_combined.csv)"
+            # info["resource_csv"],info["pareto_csv"]
+        )
+
+    # Load, merge, and fit regression for each run
+    for info in runs_info:
+        print(f"\nProcessing {info['bit']}-bit run in {info['dir']}...")
+        # df = load_and_merge_data(info["resource_csv"], info["pareto_csv"],info["bit"])
+        df = loadDataNew(info["resource_csv"],info["bit"],modelNum=MODEL_NUM) #either works
+        #filtering out points that look like outliers
+        if RESOURCE_FILTER:
+            df = df.query("total_resources < @RESOURCE_FILTER")
+        # df = df.query("total_resources <  97000")
+        # df = df.query("total_resources < 400000")
+        # df = df.query("total_resources < 4000000")
+        ##################
+        print(f"  ✓ Merged {len(df)} models")
+        regression_stats = fit_linear_regression(
+            df["parameters"].values, df["total_resources"].values
+        )
+        print(
+            f"  ✓ Fit slope={regression_stats['slope']:.4f}, "
+            f"R²={regression_stats['r_squared']:.4f}"
+        )
+        info["df"] = df
+        info["regression"] = regression_stats
+
+    # Plot and save summary
+    print("\nGenerating multi-bit plot...")
+    if len(runs_info)==5:
+        runs_info = [runs_info[1],runs_info[2],runs_info[3],runs_info[4],runs_info[0],]
+    plot_multi_bit(runs_info, output_path, slopes_csv_path=slopes_csv_path,figsize=(8,6))
+
+    print("\n" + "=" * 80)
+    print("MULTI-BIT ANALYSIS COMPLETE")
+    print("=" * 80)
+    print(f"\nOutputs:")
+    print(f"  - Plot:         {output_path}")
+    print(f"  - Slopes CSV:   {slopes_csv_path}")
+    print("=" * 80)
+
+
+if __name__ == "__main__":
+    main()
+

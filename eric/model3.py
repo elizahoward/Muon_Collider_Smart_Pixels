@@ -16,7 +16,7 @@ Date: 2024
 """
 
 import tensorflow as tf
-from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Conv2D, MaxPooling2D, Flatten, Reshape, Lambda
+from tensorflow.keras.layers import Input, Dense, Concatenate, Dropout, Conv2D, MaxPooling2D, Flatten, Reshape
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import PolynomialDecay
@@ -63,7 +63,7 @@ class Model3(SmartPixModel):
     """
     
     def __init__(self,
-                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+                 tfRecordFolder: str = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
                  nBits: list = None,
                  loadModel: bool = False,
                  modelPath: str = None,
@@ -216,8 +216,9 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate nModule, x_local, and y_local, then dense
-        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
+        # Scalar branch: concatenate nModule and x_local first, then concatenate with y_local
+        scalar_concat_1 = Concatenate(name="concat_scalars_1")([nmodule_input, x_local_input])
+        scalar_concat = Concatenate(name="concat_scalars_2")([scalar_concat_1, y_local_input])
         scalar_x = Dense(self.scalar_dense_units, activation="relu", name="dense_scalars")(scalar_concat)
         
         # Merge conv and scalar branches
@@ -229,8 +230,7 @@ class Model3(SmartPixModel):
         h = Dense(self.merged_dense_2, activation="relu", name="merged_dense2")(h)
         
         # Output layer with quantized_tanh
-        output_dense = Dense(1, name="output_dense")(h)
-        output = QActivation("quantized_tanh", name="output")(output_dense)
+        output = Dense(1, activation="sigmoid", name="output")(h)
         
         # Create and compile model
         self.models["Unquantized"] = Model(
@@ -275,8 +275,9 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate nModule, x_local, and y_local, then dense
-        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
+        # Scalar branch: concatenate nModule and x_local first, then concatenate with y_local
+        scalar_concat_1 = Concatenate(name="concat_scalars_1")([nmodule_input, x_local_input])
+        scalar_concat = Concatenate(name="concat_scalars_2")([scalar_concat_1, y_local_input])
         scalar_x = Dense(scalar_dense_units, activation="relu", name="dense_scalars")(scalar_concat)
         
         # Merge conv and scalar branches
@@ -288,8 +289,7 @@ class Model3(SmartPixModel):
         h = Dense(merged_dense_2, activation="relu", name="merged_dense2")(h)
         
         # Output layer with quantized_tanh
-        output_dense = Dense(1, name="output_dense")(h)
-        output = QActivation("quantized_tanh", name="output")(output_dense)
+        output = Dense(1, activation="sigmoid", name="output")(h)
         
         # Create model
         model = Model(
@@ -350,8 +350,9 @@ class Model3(SmartPixModel):
             conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
             conv_x = Flatten(name="flatten_vol")(conv_x)
             
-            # Scalar branch: concatenate nModule, x_local, and y_local, then dense with quantization
-            scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
+            # Scalar branch: concatenate nModule and x_local first, then concatenate with y_local
+            scalar_concat_1 = Concatenate(name="concat_scalars_1")([nmodule_input, x_local_input])
+            scalar_concat = Concatenate(name="concat_scalars_2")([scalar_concat_1, y_local_input])
             scalar_x = QDense(
                 self.scalar_dense_units, 
                 kernel_quantizer=weight_quantizer, 
@@ -388,7 +389,7 @@ class Model3(SmartPixModel):
                 bias_quantizer=bias_quantizer, 
                 name="output_dense"
             )(h)
-            output = QActivation("quantized_tanh", name="output")(output_dense)
+            output = QActivation("quantized_sigmoid(8,0)", name="output")(output_dense)
             
             # Create model
             model = Model(
@@ -437,14 +438,14 @@ class Model3(SmartPixModel):
         y_local_input = Input(shape=(1,), name="y_local")
         
         # Hyperparameter search space
-        conv_filters = hp.Int('conv_filters', min_value=16, max_value=48, step=8)
+        conv_filters = hp.Int('conv_filters', min_value=4, max_value=10, step=2)
         kernel_rows = hp.Choice('kernel_rows', values=[3, 3])
         kernel_cols = hp.Choice('kernel_cols', values=[3, 3])
-        scalar_dense_units = hp.Int('scalar_dense_units', min_value=16, max_value=64, step=16)
-        merged_dense_1 = hp.Int('merged_dense_1', min_value=20, max_value=150, step=15)
-        
-        # Multiplier for second layer (0.4 to 1.0 of previous layer)
-        merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.4, max_value=1.0, step=0.2)
+        scalar_dense_units = hp.Int('scalar_dense_units', min_value=8, max_value=32, step=8)
+        merged_dense_1 = hp.Int('merged_dense_1', min_value=16, max_value=128, step=16)
+
+        # Multiplier for second layer (0.4 to 0.8 of previous layer)
+        merged_multiplier_2 = hp.Float('merged_multiplier_2', min_value=0.4, max_value=0.8, step=0.2)
         
         # Calculate layer size with rounding
         merged_dense_2 = int(round(merged_dense_1 * merged_multiplier_2))
@@ -465,8 +466,9 @@ class Model3(SmartPixModel):
         conv_x = MaxPooling2D((2, 2), name="pool2d_1")(conv_x)
         conv_x = Flatten(name="flatten_vol")(conv_x)
         
-        # Scalar branch: concatenate nModule, x_local, and y_local, then dense with quantization
-        scalar_concat = Concatenate(name="concat_scalars")([nmodule_input, x_local_input, y_local_input])
+        # Scalar branch: concatenate nModule and x_local first, then concatenate with y_local
+        scalar_concat_1 = Concatenate(name="concat_scalars_1")([nmodule_input, x_local_input])
+        scalar_concat = Concatenate(name="concat_scalars_2")([scalar_concat_1, y_local_input])
         scalar_x = QDense(
             scalar_dense_units, 
             kernel_quantizer=weight_quantizer, 
@@ -503,7 +505,7 @@ class Model3(SmartPixModel):
             bias_quantizer=bias_quantizer, 
             name="output_dense"
         )(h)
-        output = QActivation("quantized_tanh", name="output")(output_dense)
+        output = QActivation("quantized_sigmoid(8,0)", name="output")(output_dense)
         
         # Create model
         model = Model(
@@ -605,7 +607,8 @@ class Model3(SmartPixModel):
         executions_per_trial=2,
         numEpochs=30,
         use_weighted_bkg_rej=False,
-        bkg_rej_weights=None
+        bkg_rej_weights=None,
+        hyperparameter_name_tag=None,
     ):
         """
         Run hyperparameter tuning for quantized Model3 with specified bit configurations.
@@ -682,19 +685,22 @@ class Model3(SmartPixModel):
             )
             objective_name = "val_weighted_bkg_rej" if use_weighted_bkg_rej else "val_binary_accuracy"
             
+            # Build tag suffix so qi runs don't clash with baseline runs
+            tag_suffix = f"_{hyperparameter_name_tag}" if hyperparameter_name_tag else ""
+
             # Create tuner with unique project name
             tuner = kt.RandomSearch(
                 model_builder,
                 objective=tuner_objective,
                 max_trials=max_trials,
                 executions_per_trial=executions_per_trial,
-                project_name=f"model3_quantized_{weight_bits}w{int_bits}i_hyperparameter_search",
+                project_name=f"model3_quantized_{weight_bits}w{int_bits}i_hyperparameter_search{tag_suffix}",
                 directory="./hyperparameter_tuning"
             )
-            
+
             # Create directory for this configuration's models (before tuning starts)
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            config_dir = f"{self.modelName.lower()}_{config_name}_hyperparameter_results_{timestamp}"
+            config_dir = f"{self.modelName.lower()}_{config_name}_hyperparameter_results{tag_suffix}_{timestamp}"
             os.makedirs(config_dir, exist_ok=True)
             print(f"\n✓ Created directory for {config_name} results: {config_dir}/")
             print(f"Models will be saved to this directory after each trial completes.\n")
@@ -743,6 +749,40 @@ class Model3(SmartPixModel):
                         # Don't fail training if saving fails
                         pass
 
+            class HistoryRecorderCallback(tf.keras.callbacks.Callback):
+                """Records per-epoch metrics for each trial during tuner.search()."""
+
+                def __init__(self, tuner):
+                    super().__init__()
+                    self.tuner = tuner
+                    self._histories = {}
+                    self._current_trial_id = None
+
+                def __deepcopy__(self, memo):
+                    # Prevent Keras Tuner from making a copy — we need one shared
+                    # instance so that histories accumulated during training are
+                    # visible when we read them back after tuner.search().
+                    memo[id(self)] = self
+                    return self
+
+                def on_train_begin(self, logs=None):
+                    try:
+                        for trial_id, trial in self.tuner.oracle.trials.items():
+                            if trial.status == 'RUNNING':
+                                self._current_trial_id = trial_id
+                                self._histories.setdefault(trial_id, {})
+                                break
+                    except Exception:
+                        self._current_trial_id = None
+
+                def on_epoch_end(self, epoch, logs=None):
+                    if logs and self._current_trial_id is not None:
+                        for k, v in logs.items():
+                            self._histories[self._current_trial_id].setdefault(k, []).append(float(v))
+
+                def get_history(self, trial_id):
+                    return self._histories.get(str(trial_id), {})
+
             class WeightedBackgroundRejectionCallback(tf.keras.callbacks.Callback):
                 """Compute weighted BR objective at each epoch and inject into Keras logs."""
 
@@ -786,13 +826,15 @@ class Model3(SmartPixModel):
             
             # Create callbacks
             save_callback = SaveModelAfterTrial(tuner, config_dir, config_name)
+            history_recorder = HistoryRecorderCallback(tuner)
             callbacks = [
                 EarlyStopping(
                     monitor='val_loss',
                     patience=10,
                     restore_best_weights=True
                 ),
-                save_callback
+                save_callback,
+                history_recorder,
             ]
             if use_weighted_bkg_rej:
                 callbacks.insert(0, WeightedBackgroundRejectionCallback(self.validation_generator, bkg_rej_weights))
@@ -823,34 +865,11 @@ class Model3(SmartPixModel):
             # Sort by objective score (best first, objective is maximized)
             completed_trials.sort(key=lambda t: t.score, reverse=True)
             
-            all_models = []
             all_hyperparameters = []
-            print(f"\nLoading models from {len(completed_trials)} completed trials (out of {num_trials} total)...")
-            
-            for idx, trial in enumerate(completed_trials):
-                try:
-                    # Load model for this specific trial
-                    model = tuner.load_model(trial)
-                    all_models.append(model)
-                    all_hyperparameters.append(trial.hyperparameters)
-                    if idx == 0:
-                        print(f"  ✓ Loaded best model (trial {trial.trial_id}, score={trial.score:.4f})")
-                    elif idx < 5:  # Print first 5 for visibility
-                        print(f"  ✓ Loaded model {idx+1} (trial {trial.trial_id}, score={trial.score:.4f})")
-                except Exception as e:
-                    print(f"  ⚠ Failed to load model for trial {trial.trial_id}: {str(e)}")
-                    # Continue with other trials
-            
-            if len(completed_trials) > 5:
-                print(f"  ... (loaded {len(all_models)} models total)")
-            else:
-                print(f"  ✓ Successfully loaded {len(all_models)} out of {len(completed_trials)} completed models")
-            
-            if len(all_models) == 0:
-                raise RuntimeError(f"Failed to load any models for {config_name}. All trials may have missing checkpoints.")
-            
-            # Note: Models have already been saved during training by the SaveModelAfterTrial callback
-            # This section now only creates the summary files
+            model_files = []
+            hyperparams_files = []
+            loaded_count = 0
+            print(f"\nProcessing {len(completed_trials)} completed trials (out of {num_trials} total)...")
 
             # Generate ROC artifacts for each saved trial model in this configuration.
             print(f"\nGenerating ROC artifacts for {config_name} models...")
@@ -863,11 +882,36 @@ class Model3(SmartPixModel):
             )
 
             roc_rows = []
-            for idx, model in enumerate(all_models):
-                trial = completed_trials[idx]
+            for idx, trial in enumerate(completed_trials):
                 trial_id = trial.trial_id
                 model_stem = f"model_trial_{trial_id}"
+                model_filename = os.path.join(config_dir, f"model_trial_{trial_id}.h5")
+                hyperparams_filename = os.path.join(config_dir, f"hyperparams_trial_{trial_id}.json")
 
+                try:
+                    model = tuner.load_model(trial)
+                    loaded_count += 1
+                    all_hyperparameters.append(trial.hyperparameters)
+                    if idx == 0:
+                        print(f"  ✓ Loaded best model (trial {trial_id}, score={trial.score:.4f})")
+                    elif idx < 5:
+                        print(f"  ✓ Loaded model {idx+1} (trial {trial_id}, score={trial.score:.4f})")
+                except Exception as e:
+                    print(f"  ⚠ Failed to load model for trial {trial_id}: {str(e)}")
+                    continue
+
+                # Fallback save if the callback didn't write the file during training.
+                if not os.path.exists(model_filename):
+                    print(f"⚠ Model for trial {trial_id} was not saved during training, saving now...")
+                    model.save(model_filename)
+                    hyperparams_dict = trial.hyperparameters.values
+                    with open(hyperparams_filename, 'w') as f:
+                        json.dump(hyperparams_dict, f, indent=4)
+
+                model_files.append(model_filename)
+                hyperparams_files.append(hyperparams_filename)
+
+                # ROC
                 try:
                     y_pred_all = model.predict(self.validation_generator, verbose=0).ravel()
 
@@ -912,6 +956,42 @@ class Model3(SmartPixModel):
                         bkg_rej_weights.get(0.99, 0.0) * br99
                     )
 
+                    # History plots
+                    history = history_recorder.get_history(trial_id)
+                    history_json_path = os.path.join(roc_dir, f"{model_stem}_history.json")
+                    with open(history_json_path, 'w') as f:
+                        json.dump(history, f, indent=4)
+
+                    val_acc_plot_path = os.path.join(roc_dir, f"{model_stem}_val_accuracy.png")
+                    if 'val_binary_accuracy' in history:
+                        fig, ax = plt.subplots(figsize=(8, 6))
+                        if 'binary_accuracy' in history:
+                            ax.plot(history['binary_accuracy'], label='Train accuracy')
+                        ax.plot(history['val_binary_accuracy'], label='Val accuracy')
+                        ax.set_xlabel('Epoch', fontsize=12)
+                        ax.set_ylabel('Accuracy', fontsize=12)
+                        ax.set_title(f'Accuracy: {model_stem}', fontsize=14, fontweight='bold')
+                        ax.legend(loc="lower right")
+                        ax.grid(True, alpha=0.3)
+                        plt.tight_layout()
+                        plt.savefig(val_acc_plot_path, dpi=300, bbox_inches='tight')
+                        plt.close(fig)
+
+                    val_loss_plot_path = os.path.join(roc_dir, f"{model_stem}_val_loss.png")
+                    if 'val_loss' in history:
+                        fig, ax = plt.subplots(figsize=(8, 6))
+                        if 'loss' in history:
+                            ax.plot(history['loss'], label='Train loss')
+                        ax.plot(history['val_loss'], label='Val loss')
+                        ax.set_xlabel('Epoch', fontsize=12)
+                        ax.set_ylabel('Loss', fontsize=12)
+                        ax.set_title(f'Loss: {model_stem}', fontsize=14, fontweight='bold')
+                        ax.legend(loc="upper right")
+                        ax.grid(True, alpha=0.3)
+                        plt.tight_layout()
+                        plt.savefig(val_loss_plot_path, dpi=300, bbox_inches='tight')
+                        plt.close(fig)
+
                     roc_rows.append({
                         'trial_id': trial_id,
                         'model_name': model_stem,
@@ -921,11 +1001,27 @@ class Model3(SmartPixModel):
                         'bkg_rej_99': float(br99),
                         'weighted_bkg_rej': float(weighted_br),
                         'roc_csv': os.path.join("roc_analysis", f"{model_stem}_roc_data.csv"),
-                        'roc_plot': os.path.join("roc_analysis", f"{model_stem}_roc.png")
+                        'roc_plot': os.path.join("roc_analysis", f"{model_stem}_roc.png"),
+                        'history_json': os.path.join("roc_analysis", f"{model_stem}_history.json"),
+                        'val_accuracy_plot': os.path.join("roc_analysis", f"{model_stem}_val_accuracy.png"),
+                        'val_loss_plot': os.path.join("roc_analysis", f"{model_stem}_val_loss.png"),
+                        'final_val_loss': history.get('val_loss', [None])[-1],
+                        'final_val_accuracy': history.get('val_binary_accuracy', [None])[-1],
+                        'num_epochs_trained': len(history.get('val_loss', [])),
                     })
-                    print(f"  ✓ ROC saved for trial {trial_id} (AUC={roc_auc:.4f})")
+                    print(f"  ✓ ROC + history saved for trial {trial_id} (AUC={roc_auc:.4f})")
                 except Exception as e:
-                    print(f"  ⚠ Failed ROC generation for trial {trial_id}: {str(e)}")
+                    print(f"  ⚠ Failed ROC/history generation for trial {trial_id}: {str(e)}")
+
+                del model
+
+            if len(completed_trials) > 5:
+                print(f"  ... (processed {loaded_count} models total)")
+            else:
+                print(f"  ✓ Successfully processed {loaded_count} out of {len(completed_trials)} completed models")
+
+            if loaded_count == 0:
+                raise RuntimeError(f"Failed to load any models for {config_name}. All trials may have missing checkpoints.")
 
             roc_summary_file = None
             if roc_rows:
@@ -961,29 +1057,10 @@ class Model3(SmartPixModel):
                 plt.close(fig)
                 print(f"✓ Saved combined ROC plot to: {combined_roc_path}")
             
-            # Collect list of model and hyperparameter files that were saved during training
-            model_files = []
-            hyperparams_files = []
-            
-            # Check which models were actually saved and create lists
-            for idx, (model, hyperparams) in enumerate(zip(all_models, all_hyperparameters)):
-                trial_id = completed_trials[idx].trial_id
-                model_filename = os.path.join(config_dir, f"model_trial_{trial_id}.h5")
-                hyperparams_filename = os.path.join(config_dir, f"hyperparams_trial_{trial_id}.json")
-                
-                # If model wasn't saved during training (callback failed), save it now as fallback
-                if not os.path.exists(model_filename):
-                    print(f"⚠ Model for trial {trial_id} was not saved during training, saving now...")
-                    model.save(model_filename)
-                    
-                    hyperparams_dict = hyperparams.values
-                    with open(hyperparams_filename, 'w') as f:
-                        json.dump(hyperparams_dict, f, indent=4)
-                
-                model_files.append(model_filename)
-                hyperparams_files.append(hyperparams_filename)
-            
-            print(f"✓ Verified {len(model_files)} models and hyperparameter files in {config_dir}/")
+            if model_files:
+                print(f"✓ Best model: {model_files[0]}")
+                print(f"  Best hyperparameters: {all_hyperparameters[0].values}")
+            print(f"✓ Total {len(model_files)} models saved to {config_dir}/")
             
             # Also save a summary JSON with all trials (enriched with metadata and ROC metrics)
             summary_filename = os.path.join(config_dir, "trials_summary.json")
@@ -1036,11 +1113,8 @@ class Model3(SmartPixModel):
             
             # Store results
             all_results[config_name] = {
-                'best_model': all_models[0],
                 'best_hyperparameters': all_hyperparameters[0].values,
-                'all_models': all_models,
                 'all_hyperparameters': [hp.values for hp in all_hyperparameters],
-                'tuner': tuner,
                 'config_dir': config_dir,
                 'model_files': model_files,
                 'hyperparams_files': hyperparams_files,
@@ -1131,7 +1205,7 @@ def main():
     
     # Initialize Model3
     model3 = Model3(
-        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData",
+        tfRecordFolder="/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V2_Apr/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
         conv_filters=32,
         kernel_rows=3,
         kernel_cols=5,
