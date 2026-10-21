@@ -215,6 +215,11 @@ HARDWARE_REFS = [
     (3456000,"FPGA: Xilinx Alveo U250 (xcu250-figd2104-2L-e)","goldenrod",0.05,0) #https://pcbsync.com/xilinx-alveo-u200/ says 1341000+2682000, but https://docs.amd.com/r/en-US/ds962-u200-u250/Summary says 3456000
 ]
 
+PERFORMANCE_REFS = [
+    # (0.408,"cut based study","teal",0.5,0),
+    # (0.6853,"xsize zglobal model","goldenrod",0.5,0),
+]
+
 SELECTED_MODELS = [
 # ("model3_10bit","110"),
 ("model3_10bit","046"),
@@ -505,20 +510,6 @@ def add_threshold_line(ax, x_val, label, color='gray', linestyle='--', linewidth
         ax.axvline(x=x_val, color=color, linestyle=linestyle, linewidth=linewidth, zorder=2,
                 label='_nolegend_',  # Keeps the script's legend logic from breaking
                 )
-        #doesn't work for too big x vals
-        # # 1. Grab current y-limits so the line spans the full height of the plot
-        # ymin, ymax = ax.get_ylim()
-        
-        # from matplotlib.lines import Line2D
-        # line = Line2D(
-        #     [x_val, x_val], [ymin, ymax],
-        #     color=color, 
-        #     linestyle=linestyle, 
-        #     linewidth=linewidth, 
-        #     zorder=2
-        # )
-        # ax.add_line(line) # Forces line onto plot without registering it to the legend subsystem
-
 
         # Transform: x is data coordinates, y is axis fraction (0 to 1)
         transform = ax.get_xaxis_transform()
@@ -536,6 +527,33 @@ def add_threshold_line(ax, x_val, label, color='gray', linestyle='--', linewidth
         )
     else:
         print(f"Not plotting vertical line for {label} because {x_val} is too big")
+
+# Added to make horizontal lines for reference points for cut based study, xsize/zglobal point
+#textOffset is a ratio
+def add_performance_line(ax, y_val, label, color='gray', linestyle='--', linewidth=1.5,
+                         labelXPos=0.5, textOffset=0):
+    """Adds a horizontal line with a text label just above it."""
+    if textOffset == 0:
+        textOffset = 0.05
+    assert 0 < y_val < 1
+
+    ax.axhline(y=y_val, color=color, linestyle=linestyle, linewidth=linewidth,
+               zorder=2, label='_nolegend_')
+
+    # x is axes fraction (0 to 1), y is data coordinates
+    transform = ax.get_yaxis_transform()
+    ax.text(
+        x=labelXPos,
+        y=y_val + y_val * textOffset,
+        s=label,
+        transform=transform,
+        color=color,
+        va='bottom',
+        ha='left',
+        fontsize=plt.rcParams["axes.labelsize"] - 1,
+        zorder=3,
+        clip_on=True,
+    )
 
 # ── Y-axis transform helpers ───────────────────────────────────────────────────
 def _y(v, complement):
@@ -718,10 +736,9 @@ def _finalize(ax, title, xscale="linear", complement=False):
     ax.grid(True, alpha=0.28, linestyle="--", which="both")
     for (ff_plus_lut, label,color,labelYHeight,textOffset) in HARDWARE_REFS:
         add_threshold_line(ax,ff_plus_lut,label,color=color,labelYHeight=labelYHeight,textOffset = textOffset)
-    # add_threshold_line(ax,34568,"Smartpixel Filtering Model (csynth) DOI 10.1088/2632-2153/ad6a00",color="teal",labelYHeight=0.9)
-    # add_threshold_line(ax,26376,"Smartpixel Filtering Model (vsynth) DOI 10.1088/2632-2153/ad6a00",color="teal",labelYHeight=0.9)
-    # add_threshold_line(ax,35216,"Smartpixel Filtering Model (csynth) but add an input quantization layer",color="teal",labelYHeight=0.95)
-    # add_threshold_line(ax,24853,"Smartpixel Filtering Model (vsynth) but add an input quantization layer",color="teal",labelYHeight=0.95)
+    
+    for (performance, label,color,labelXPos,textOffset) in PERFORMANCE_REFS:
+        add_performance_line(ax,performance,label,color=color,labelXPos=labelXPos,textOffset = textOffset)
     if xscale == "log":
         ax.set_xscale("log")
 
