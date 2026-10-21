@@ -5,6 +5,7 @@ sys.path.append('../ryan/')
 sys.path.append('../eric/')
 import argparse
 import os
+import tf2onnx
 
 from utils import buildFromConfig, load_config
 
@@ -15,6 +16,7 @@ def main():
     add_arg('--config', type=str, default=None, help='Path to model config')
     add_arg('--training_dir', type=str, default=None, help='Path to training directory')
     add_arg('--quantization', type=int, default=-1, help='Which version of quantization to use. -1 for no quantization')
+    add_arg('--onnx', action='store_true', default=False, help='Convert to ONNX')
 
     args = parser.parse_args()
 
@@ -31,6 +33,12 @@ def main():
 
     model = buildFromConfig(config['Model'])
     model.runEval(False)
+    
+    if args.onnx:
+        onnx_model_path = os.path.join(config['TrainingDirectory'], f"models/{config['Model']['class']}_{quantization_tag}.onnx")
+        spec = (tf2onnx.tf_loader.from_keras(model.models["Unquantized"]), model.models["Unquantized"].inputs, model.models["Unquantized"].outputs)
+        output_path = onnx_model_path
+        model_proto, _ = tf2onnx.convert.from_keras(model.models["Unquantized"], output_path=output_path)
 
 if __name__== "__main__":
     main()

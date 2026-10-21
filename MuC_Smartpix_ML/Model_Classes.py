@@ -13,6 +13,8 @@ import os
 import keras
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 import sys
 from qkeras import QDense, QActivation, quantized_bits, quantized_relu
 # sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here

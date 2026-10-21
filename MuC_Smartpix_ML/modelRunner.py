@@ -66,9 +66,9 @@ def main():
         
         config = load_config('model_configs/model2_5.yaml')
         config['Model']['args']['dense_units'] = args.dense_units
-        config['Model']['args']['z_global_units'] = args.dense_units // 4
-        config['Model']['args']['dense2_units'] = args.dense_units // 2
-        config['Model']['args']['dense3_units'] = args.dense_units // 4
+        config['Model']['args']['nmodule_xlocal_units'] = args.dense_units // 4
+        config['Model']['args']['dense2_units'] = args.dense_units 
+        config['Model']['args']['dense3_units'] = args.dense_units // 2
         config['ModelName'] = f'Model2_5_dense{args.dense_units}'
         model2 = buildFromConfig(config['Model'])  
                 
