@@ -114,7 +114,6 @@ Build and install (see the repo README Building section for details):
 cmake -S . -B build -DCMAKE_INSTALL_PREFIX=install
 cmake --build build -j4
 cmake --install build
-cd ../
 ```
 
 Make the plugins visible. **Run these from inside the `mucoll-benchmarks/MuonCVXDDigitiser` directory** (they use `$PWD`), and repeat in every new session:
