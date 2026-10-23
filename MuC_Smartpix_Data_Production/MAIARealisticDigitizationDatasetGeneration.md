@@ -71,6 +71,8 @@ Generate muons with a muon gun:
 python generation/pgun/pgun_edm4hep.py \
     -p 1 -e 10 --pdg 13 --pt 0 50 --theta 10 170 \
     -- gen_output.edm4hep.root
+
+ls
 ```
 
 The number of events is set to `-e 10`, but can also generate more events.
@@ -86,6 +88,8 @@ ddsim --steeringFile simulation/steer_baseline.py \
       --inputFiles gen_output.edm4hep.root \
       --outputFile sim_output.edm4hep.root \
       --numberOfEvents 10
+
+ls
 ```
 
 The number of events is set to `--numberOfEvents 10`, but can also simulate more events.
@@ -104,6 +108,7 @@ Clone MuonCVXDDigitiser inside `mucoll-benchmarks` and **switch to `brr_devel` b
 git clone https://github.com/rroberts194/MuonCVXDDigitiser.git
 cd MuonCVXDDigitiser
 git switch brr_devel
+pwd
 ```
 
 > The default `master` branch fails at configure time (`Could not find a package configuration file provided by "ILCUTIL"`). `brr_devel` which is a based on the gaudification branch of https://github.com/MuonColliderSoft/MuonCVXDDigitiser/tree/gaudification configures fine. However, it allegedly has a bug currently. 
@@ -114,6 +119,7 @@ Build and install (see the repo README Building section for details):
 cmake -S . -B build -DCMAKE_INSTALL_PREFIX=install
 cmake --build build -j4
 cmake --install build
+pwd
 ```
 
 Make the plugins visible. **Run these from inside the `mucoll-benchmarks/MuonCVXDDigitiser` directory** (they use `$PWD`), and repeat in every new session:
@@ -134,9 +140,15 @@ export GAUDI_PLUGIN_PATH=$PWD/install/lib:$GAUDI_PLUGIN_PATH
 cd build
 ctest -j4 --output-on-failure
 cd ..
+pwd
 ```
 
 One test is expected to fail for now: `check_MuonCVXDDigitiser` (reports `pixels stored although not requested`). The other 16 should pass (~3 min total).
+
+```bash
+cd ../
+pwd
+```
 
 ### Standalone run on signal only
 
@@ -152,6 +164,8 @@ k4run MuonCVXDDigitiser/MuonCVXDDigitiser/options/runMuonCVXDDigitiser.py \
 
 k4run MuonCVXDDigitiser/MuonCVXDDigitiser/options/runMuonCVXDRealDigitiser.py \
       --IOSvc.Input sim_output.edm4hep.root --IOSvc.Output digi_real.edm4hep.root
+
+ls
 ```
 
 Inspect with `podio-dump digi_real.edm4hep.root`. Collections of interest:
@@ -274,29 +288,64 @@ k4run "$MUCOLL_CONFIG/$MUCOLL_CONFIG_NAME/digi_steer.py" \
       --OverlayFullNumberBackground 5 \
       --OverlayFullPathToMuPlus  $BPATH/sim_mp \
       --OverlayFullPathToMuMinus $BPATH/sim_mm
+
+ls
 ```
 
-Alternative BIB location, with 10 background events:
+Alternative BIB location, which you need to add to binding when starting the container, can restart container and bind with 
+
+```bash
+exit
+
+apptainer run -B /ospool/uc-shared/project/futurecolliders/data/ \
+    -B /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/ \
+    /cvmfs/unpacked.cern.ch/ghcr.io/muoncollidersoft/mucoll-sim-ubuntu24:v3.1-amd64
+
+source /opt/setup_mucoll.sh
+pwd #make sure in mucoll-benchmarks
+source setup_config.sh . MAIA_v0
+
+cd MuonCVXDDigitiser
+export LD_LIBRARY_PATH=$PWD/install/lib:$LD_LIBRARY_PATH
+export PYTHONPATH=$PWD/install/python:$PYTHONPATH
+export GAUDI_PLUGIN_PATH=$PWD/install/lib:$GAUDI_PLUGIN_PATH
+cd ..
+```
+
+Overlay with 10 background events (faster than full BIB overlay):
 
 ```bash
 k4run "$MUCOLL_CONFIG/$MUCOLL_CONFIG_NAME/digi_steer.py" \
       --doOverlayFull \
       --OverlayFullNumberBackground 10 \
-      --OverlayFullPathToMuPlus  /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/bib_mp/ \
-      --OverlayFullPathToMuMinus /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/bib_mm/
+      --OverlayFullPathToMuPlus  /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/sim_mp/ \
+      --OverlayFullPathToMuMinus /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/sim_mm/
+
+ls
 ```
 
 Full realistic digitization of the vertex, inner and outer trackers with a large number of background events (using the magic number from the wiki):
 
 ```bash
+#k4run "$MUCOLL_CONFIG/$MUCOLL_CONFIG_NAME/digi_steer.py" \
+#      --doOverlayFull --doRealisticDigiVertex --doRealisticDigiInner --doRealisticDigiOuter \
+#      --OverlayFullNumberBackground 1666 \
+#      --OverlayFullPathToMuPlus  /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/sim_mp/ \
+#      --OverlayFullPathToMuMinus /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/sim_mm/
 k4run "$MUCOLL_CONFIG/$MUCOLL_CONFIG_NAME/digi_steer.py" \
-      --doOverlayFull --doRealisticDigiVertex --doRealisticDigiInner --doRealisticDigiOuter \
+      --doOverlayFull \
       --OverlayFullNumberBackground 1666 \
-      --OverlayFullPathToMuPlus  /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/bib_mp/ \
-      --OverlayFullPathToMuMinus /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/bib_mm/
+      --OverlayFullPathToMuPlus  /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/sim_mp/ \
+      --OverlayFullPathToMuMinus /ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/sim_mm/
+
+ls
 ```
 
-The default output is `digi_output.edm4hep.root`. It should contain sim hits (labelled as BIB or signal), reco hits (clusters), and individual pixel hits, with links sim hit ↔ reco hit and pixel ↔ reco hit.
+The default output is `digi_output.edm4hep.root` (set by digi_steer.py ). It should contain sim hits (labelled as BIB or signal), reco hits (clusters), and individual pixel hits, with links sim hit ↔ reco hit and pixel ↔ reco hit.
+
+The difference between the two BIB locations is that one of the works with condor jobs, the other does not.
+
+The options `--doRealisticDigiVertex --doRealisticDigiInner --doRealisticDigiOuter` are not available in the MAIAConfigs version that the tutorial branch is based on. They might work with a different branch of the MAIAConfig (https://github.com/MuonColliderSoft/MAIAConfig/tree/main) than the tutorial pulls, but we haven't successfully tested it.
 
 Then we can open that root file, and find out how to turn it into a parquet and then tensorflow record. 
 
