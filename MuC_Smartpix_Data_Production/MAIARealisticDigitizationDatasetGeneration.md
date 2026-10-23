@@ -325,6 +325,7 @@ ls
 ```
 
 Full realistic digitization of the vertex, inner and outer trackers with a large number of background events (using the magic number from the wiki):
+**Note: This takes a while (over an hour) to run for 10 events! Consider fewer events or a condor job.**
 
 ```bash
 #k4run "$MUCOLL_CONFIG/$MUCOLL_CONFIG_NAME/digi_steer.py" \
