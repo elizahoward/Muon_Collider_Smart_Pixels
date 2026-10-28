@@ -4,10 +4,11 @@ import tensorflow as tf
 ## WARNING: This code doesn't actually get used. It needs to be placed in qkeras/quantizers.py so that it can be properly registered by qkeras.
 class see_quantizer(quantized_bits):
 
-    def __init__(self, flip_tensor=None, random_flip_rate=0.0, **kwargs):
+    def __init__(self, flip_tensor=None, random_flip_rate=0.0, protect_msb=False, **kwargs):
       super(see_quantizer, self).__init__(**kwargs)
       self.flip_tensor = flip_tensor
       self.random_flip_rate = random_flip_rate
+      self.protect_msb = protect_msb
   
     def __call__(self, inputs):
       x_qua = super(see_quantizer, self).__call__(inputs)
@@ -15,11 +16,19 @@ class see_quantizer(quantized_bits):
         raise NotImplementedError("see_quantizer only supports simple cases for now.")
       integer_representation = tf.cast(tf.round(x_qua * (2 ** (self.bits - 1))), tf.int32)
       flip_tensor = self.flip_tensor
-      if not flip_tensor:
+      if flip_tensor is None:
         flip_tensor = tf.zeros_like(integer_representation)
       if self.random_flip_rate > 0.0:
         random_flip_map = tf.cast(tf.random.uniform(tf.concat([tf.shape(integer_representation), [self.bits]], axis=0), minval=0, maxval=1) < self.random_flip_rate, tf.int32)
         random_tensor = tf.reduce_sum(random_flip_map * tf.cast(2 ** tf.range(self.bits), tf.int32), axis=-1)
+
+        # Fix sign bit flipping. MSB flips with -2^N, not +2^N.
+        if self.protect_msb:
+          random_tensor = random_tensor - random_flip_map[..., self.bits - 1] * (2 ** (self.bits - 1))
+        else:
+          random_tensor = random_tensor - 2 * random_flip_map[..., self.bits - 1] * (2 ** (self.bits - 1))
+
         flip_tensor = flip_tensor ^ random_tensor
       integer_representation = integer_representation ^ flip_tensor
+      has_flip = tf.reduce_any(tf.not_equal(flip_tensor, 0))
       return tf.cast(integer_representation, tf.float32) / (2 ** (self.bits - 1))
