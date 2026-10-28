@@ -1,0 +1,18 @@
+ModelName: model2_5_default
+TrainingDirectory: ./training_runs/model2_5_default/
+Model:
+  module: model2_5
+  class: Model2_5
+  args:
+    dense_units: 32
+    nmodule_xlocal_units: 4
+    dense2_units: 32
+    dense3_units: 16
+    dropout_rate: 0.10
+    initial_lr: 0.01
+    end_lr: 0.0001
+    power: 2
+    bit_configs: [[16, 0], [8, 0], [6, 0], [4, 0], [3, 0], [2, 0]]
+    nmodule_xlocal_weight_bits: 8
+    nmodule_xlocal_int_bits: 0
+    tfRecordFolder: /local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026Feb/TF_Records/filtering_records16384_data_shuffled_single_bigData
