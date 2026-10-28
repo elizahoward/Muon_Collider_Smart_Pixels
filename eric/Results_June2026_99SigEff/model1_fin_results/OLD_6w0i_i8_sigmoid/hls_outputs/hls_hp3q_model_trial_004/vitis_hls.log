@@ -1,0 +1,687 @@
+
+****** Vitis HLS - High-Level Synthesis from C, C++ and OpenCL v2024.1 (64-bit)
+  **** SW Build 5069499 on May 21 2024
+  **** IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+  **** SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+  **** Start of session at: Fri May  8 00:18:55 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source /code/Xilinx_2024.1/Vitis_HLS/2024.1/scripts/vitis_hls/hls.tcl -notrace
+INFO: [HLS 200-10] For user 'youeric' on host 'kdplab01' (Linux_x86_64 version 5.14.0-611.49.1.el9_7.x86_64) on Fri May 08 00:18:57 CDT 2026
+INFO: [HLS 200-10] In directory '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004'
+WARNING: [HLS 200-2053] The vitis_hls executable is deprecated. Consider using vitis-run --mode hls --tcl
+Sourcing Tcl script 'build_prj.tcl'
+INFO: hls4ml requested max HLS threads: 4
+INFO: [HLS 200-1510] Running: open_project -reset myproject_prj 
+INFO: [HLS 200-10] Creating and opening project '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj'.
+INFO: [HLS 200-1510] Running: set_top myproject 
+INFO: [HLS 200-1510] Running: add_files firmware/myproject.cpp -cflags -std=c++0x 
+INFO: [HLS 200-10] Adding design file 'firmware/myproject.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb myproject_test.cpp -cflags -std=c++0x 
+INFO: [HLS 200-10] Adding test bench file 'myproject_test.cpp' to the project
+INFO: [HLS 200-1510] Running: add_files -tb firmware/weights 
+INFO: [HLS 200-10] Adding test bench file 'firmware/weights' to the project
+INFO: [HLS 200-1510] Running: add_files -tb tb_data 
+INFO: [HLS 200-10] Adding test bench file 'tb_data' to the project
+INFO: [HLS 200-1510] Running: open_solution -reset solution1 
+INFO: [HLS 200-10] Creating and opening solution '/home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1'.
+INFO: [HLS 200-10] Cleaning up the solution database.
+INFO: [HLS 200-1505] Using default flow_target 'vivado'
+Resolution: For help on HLS 200-1505 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1505.html
+INFO: [HLS 200-1510] Running: config_array_partition -maximum_size 4096 
+ERROR: [HLS 200-101] config_array_partition: Unknown option '-maximum_size'.
+ERROR: [HLS 200-101] config_array_partition: Unknown option '4096'.
+SYNTAX 
+  config_array_partition [OPTIONS]
+    -auto_partition_threshold <uint:*4*> *** DEPRECATED***
+    -auto_promotion_threshold <uint:*64*> *** DEPRECATED***
+    -complete_threshold <uint:*4*> 
+    -throughput_driven <off|auto|aggressive|*on*>
+
+SEE ALSO
+  INI: syn.array_partition.complete_threshold syn.array_partition.throughput_driven
+  docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1399-vitis-hls&resourceid=vyw1583260160301.html
+
+INFO: [HLS 200-1510] Running: config_compile -name_max_length 80 
+INFO: [XFORM 203-1161] The maximum of name length is set to 80.
+INFO: [HLS 200-1510] Running: set_part xc7z020clg400-1 
+INFO: [HLS 200-1611] Setting target device to 'xc7z020-clg400-1'
+INFO: [XFORM 203-1161] The maximum of name length is set to 80.
+INFO: [HLS 200-1510] Running: config_schedule -enable_dsp_full_reg=false 
+INFO: [HLS 200-1510] Running: create_clock -period 5 -name default 
+INFO: [SYN 201-201] Setting up clock 'default' with a period of 5ns.
+INFO: [HLS 200-1510] Running: set_clock_uncertainty 12.5% default 
+INFO: [SYN 201-201] Setting up clock 'default' with an uncertainty of 0.625ns.
+***** C/RTL SYNTHESIS *****
+INFO: [HLS 200-1510] Running: csynth_design 
+INFO: [HLS 200-111] Finished File checks and directory preparation: CPU user time: 0.07 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 334.715 MB.
+INFO: [HLS 200-10] Analyzing design file 'firmware/myproject.cpp' ... 
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body (firmware/myproject.cpp:72:72)
+Resolution: For help on HLS 214-113 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=214-113.html
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body (firmware/myproject.cpp:72:77)
+Resolution: For help on HLS 214-113 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=214-113.html
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body (firmware/myproject.cpp:80:72)
+Resolution: For help on HLS 214-113 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=214-113.html
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body (firmware/myproject.cpp:80:77)
+Resolution: For help on HLS 214-113 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=214-113.html
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body (firmware/myproject.cpp:88:72)
+Resolution: For help on HLS 214-113 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=214-113.html
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body (firmware/myproject.cpp:88:77)
+Resolution: For help on HLS 214-113 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=214-113.html
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body (firmware/myproject.cpp:96:72)
+Resolution: For help on HLS 214-113 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=214-113.html
+WARNING: [HLS 214-113] Either use an argument of the function or declare the variable inside the dataflow loop body (firmware/myproject.cpp:96:77)
+Resolution: For help on HLS 214-113 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=214-113.html
+WARNING: [HLS 200-471] Dataflow form checks found 8 issue(s) in file firmware/myproject.cpp
+Resolution: For help on HLS 200-471 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-471.html
+WARNING: [HLS 207-5292] unused parameter 'keep' (firmware/nnet_utils/nnet_helpers.h:285:99)
+WARNING: [HLS 207-5292] unused parameter 'data' (firmware/nnet_utils/nnet_code_gen.h:11:36)
+WARNING: [HLS 207-5292] unused parameter 'buffer' (firmware/nnet_utils/nnet_code_gen.h:12:36)
+WARNING: [HLS 207-5292] unused parameter 'partition' (firmware/nnet_utils/nnet_code_gen.h:13:44)
+WARNING: [HLS 207-5292] unused parameter 'data' (firmware/nnet_utils/nnet_code_gen.h:21:24)
+WARNING: [HLS 207-5292] unused parameter 'buffer' (firmware/nnet_utils/nnet_code_gen.h:22:24)
+WARNING: [HLS 207-5292] unused parameter 'partition' (firmware/nnet_utils/nnet_code_gen.h:23:32)
+INFO: [HLS 200-111] Finished Source Code Analysis and Preprocessing: CPU user time: 7.23 seconds. CPU system time: 0.82 seconds. Elapsed time: 8.09 seconds; current allocated memory: 341.004 MB.
+INFO: [HLS 200-777] Using interface defaults for 'Vivado' flow target.
+INFO: [HLS 200-1995] There were 8,057 instructions in the design after the 'Compile/Link' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 4,401 instructions in the design after the 'Unroll/Inline (step 1)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 2,330 instructions in the design after the 'Unroll/Inline (step 2)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 2,080 instructions in the design after the 'Unroll/Inline (step 3)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 1,973 instructions in the design after the 'Unroll/Inline (step 4)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 2,098 instructions in the design after the 'Array/Struct (step 1)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 1,982 instructions in the design after the 'Array/Struct (step 2)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 1,982 instructions in the design after the 'Array/Struct (step 3)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 1,984 instructions in the design after the 'Array/Struct (step 4)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 2,004 instructions in the design after the 'Array/Struct (step 5)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 2,004 instructions in the design after the 'Performance (step 1)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 1,976 instructions in the design after the 'Performance (step 2)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 1,976 instructions in the design after the 'Performance (step 3)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 1,976 instructions in the design after the 'Performance (step 4)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 2,020 instructions in the design after the 'HW Transforms (step 1)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 200-1995] There were 2,063 instructions in the design after the 'HW Transforms (step 2)' phase of compilation. See the Design Size Report for more details: /home/youeric/PixelML/SmartpixReal/Muon_Collider_Smart_Pixels/eric/model1_pareto_selected/6w0i_i8_sigmoid/hls_outputs/hls_hp3q_model_trial_004/myproject_prj/solution1/syn/report/csynth_design_size.rpt
+INFO: [HLS 214-415] Performing recursive inline in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>' (firmware/nnet_utils/nnet_dense_resource.h:237:9)
+INFO: [HLS 214-415] Performing recursive inline in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>' (firmware/nnet_utils/nnet_dense_resource.h:237:9)
+INFO: [HLS 214-415] Performing recursive inline in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>' (firmware/nnet_utils/nnet_dense_resource.h:237:9)
+INFO: [HLS 214-415] Performing recursive inline in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>' (firmware/nnet_utils/nnet_dense_resource.h:237:9)
+WARNING: [HLS 214-273] In function 'void nnet::dense<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config12::weight_t*, config12::bias_t*)', Pragma conflict happens on 'INLINE' and DATAFLOW pragmas: Inline into dataflow region may break the canonical form (firmware/nnet_utils/nnet_dense.h:38:0)
+WARNING: [HLS 214-273] In function 'void nnet::dense<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config15::weight_t*, config15::bias_t*)', Pragma conflict happens on 'INLINE' and DATAFLOW pragmas: Inline into dataflow region may break the canonical form (firmware/nnet_utils/nnet_dense.h:38:0)
+WARNING: [HLS 214-273] In function 'void nnet::dense<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config18::weight_t*, config18::bias_t*)', Pragma conflict happens on 'INLINE' and DATAFLOW pragmas: Inline into dataflow region may break the canonical form (firmware/nnet_utils/nnet_dense.h:38:0)
+WARNING: [HLS 214-273] In function 'void nnet::dense<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config21::weight_t*, config21::bias_t*)', Pragma conflict happens on 'INLINE' and DATAFLOW pragmas: Inline into dataflow region may break the canonical form (firmware/nnet_utils/nnet_dense.h:38:0)
+INFO: [HLS 214-131] Inlining function 'std::enable_if<!(std::is_same<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>(config12::accum_t) (.34)' into 'void nnet::dense_resource_rf_gt_nin_rem0<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config12::weight_t*, config12::bias_t*) (.33)' (firmware/nnet_utils/nnet_dense_resource.h:151:14)
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>) (.39)' into 'void nnet::dense_resource_rf_gt_nin_rem0<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config12::weight_t*, config12::bias_t*) (.33)' (firmware/nnet_utils/nnet_dense_resource.h:134:17)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense_resource_rf_gt_nin_rem0<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config12::weight_t*, config12::bias_t*) (.33)' into 'void nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config12::weight_t*, config12::bias_t*)' (firmware/nnet_utils/nnet_dense_resource.h:242:9)
+INFO: [HLS 214-131] Inlining function 'std::enable_if<!(std::is_same<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>(config15::accum_t) (.32)' into 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config15::weight_t*, config15::bias_t*) (.31)' (firmware/nnet_utils/nnet_dense_resource.h:76:14)
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>) (.20)' into 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config15::weight_t*, config15::bias_t*) (.31)' (firmware/nnet_utils/nnet_dense_resource.h:54:17)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config15::weight_t*, config15::bias_t*) (.31)' into 'void nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config15::weight_t*, config15::bias_t*)' (firmware/nnet_utils/nnet_dense_resource.h:240:9)
+INFO: [HLS 214-131] Inlining function 'std::enable_if<!(std::is_same<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>(config18::accum_t) (.30)' into 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config18::weight_t*, config18::bias_t*) (.29)' (firmware/nnet_utils/nnet_dense_resource.h:76:14)
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>) (.20)' into 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config18::weight_t*, config18::bias_t*) (.29)' (firmware/nnet_utils/nnet_dense_resource.h:54:17)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config18::weight_t*, config18::bias_t*) (.29)' into 'void nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config18::weight_t*, config18::bias_t*)' (firmware/nnet_utils/nnet_dense_resource.h:240:9)
+INFO: [HLS 214-131] Inlining function 'std::enable_if<!(std::is_same<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_uint<1> >::value), ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0> >::type nnet::cast<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>(config21::accum_t) (.2)' into 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config21::weight_t*, config21::bias_t*) (.1)' (firmware/nnet_utils/nnet_dense_resource.h:76:14)
+INFO: [HLS 214-131] Inlining function 'nnet::product::mult<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0> >::product(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<6, 1, (ap_q_mode)5, (ap_o_mode)3, 0>) (.20)' into 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config21::weight_t*, config21::bias_t*) (.1)' (firmware/nnet_utils/nnet_dense_resource.h:54:17)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense_resource_rf_leq_nin<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config21::weight_t*, config21::bias_t*) (.1)' into 'void nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config21::weight_t*, config21::bias_t*)' (firmware/nnet_utils/nnet_dense_resource.h:240:9)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config12::weight_t*, config12::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:72:2)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config15::weight_t*, config15::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:80:2)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config18::weight_t*, config18::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:88:2)
+INFO: [HLS 214-131] Inlining function 'void nnet::dense<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>(ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, config21::weight_t*, config21::bias_t*)' into 'myproject(ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>*, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>*)' (firmware/myproject.cpp:96:2)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_451_1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_activation.h:451:20)
+INFO: [HLS 214-291] Loop 'MultLoop' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_dense_resource.h:50:9)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_43_1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_activation.h:43:22)
+INFO: [HLS 214-291] Loop 'MultLoop' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_dense_resource.h:130:9)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_122_2' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_merge.h:122:23)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_119_1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_merge.h:119:20)
+INFO: [HLS 214-291] Loop 'VITIS_LOOP_31_1' is marked as complete unroll implied by the pipeline pragma (firmware/nnet_utils/nnet_activation.h:31:19)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_451_1' (firmware/nnet_utils/nnet_activation.h:451:20) in function 'nnet::hard_sigmoid<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, hard_sigmoid_config23>' completely with a factor of 1 (firmware/nnet_utils/nnet_activation.h:448:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_resource.h:74:5) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>' completely with a factor of 1 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'MultLoop' (firmware/nnet_utils/nnet_dense_resource.h:50:9) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>' completely with a factor of 1 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'InitAccum' (firmware/nnet_utils/nnet_dense_resource.h:36:5) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>' completely with a factor of 1 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_43_1' (firmware/nnet_utils/nnet_activation.h:43:22) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config20>' completely with a factor of 9 (firmware/nnet_utils/nnet_activation.h:39:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_resource.h:74:5) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>' completely with a factor of 9 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'MultLoop' (firmware/nnet_utils/nnet_dense_resource.h:50:9) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>' completely with a factor of 9 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'InitAccum' (firmware/nnet_utils/nnet_dense_resource.h:36:5) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>' completely with a factor of 9 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_43_1' (firmware/nnet_utils/nnet_activation.h:43:22) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config17>' completely with a factor of 9 (firmware/nnet_utils/nnet_activation.h:39:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_resource.h:74:5) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>' completely with a factor of 9 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'MultLoop' (firmware/nnet_utils/nnet_dense_resource.h:50:9) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>' completely with a factor of 9 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'InitAccum' (firmware/nnet_utils/nnet_dense_resource.h:36:5) in function 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>' completely with a factor of 9 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_43_1' (firmware/nnet_utils/nnet_activation.h:43:22) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config14>' completely with a factor of 9 (firmware/nnet_utils/nnet_activation.h:39:0)
+INFO: [HLS 214-186] Unrolling loop 'Result' (firmware/nnet_utils/nnet_dense_resource.h:149:5) in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>' completely with a factor of 9 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'MultLoop' (firmware/nnet_utils/nnet_dense_resource.h:130:9) in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>' completely with a factor of 3 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'InitAccum' (firmware/nnet_utils/nnet_dense_resource.h:104:5) in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>' completely with a factor of 9 (firmware/nnet_utils/nnet_dense_resource.h:235:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_122_2' (firmware/nnet_utils/nnet_merge.h:122:23) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>' completely with a factor of 1 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_119_1' (firmware/nnet_utils/nnet_merge.h:119:20) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>' completely with a factor of 3 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_31_1' (firmware/nnet_utils/nnet_activation.h:31:19) in function 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config10>' completely with a factor of 1 (firmware/nnet_utils/nnet_activation.h:28:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_122_2' (firmware/nnet_utils/nnet_merge.h:122:23) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' completely with a factor of 1 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_119_1' (firmware/nnet_utils/nnet_merge.h:119:20) in function 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>' completely with a factor of 2 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_31_1' (firmware/nnet_utils/nnet_activation.h:31:19) in function 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config7>' completely with a factor of 1 (firmware/nnet_utils/nnet_activation.h:28:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_122_2' (firmware/nnet_utils/nnet_merge.h:122:23) in function 'nnet::concatenate1d<ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config6>' completely with a factor of 1 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_119_1' (firmware/nnet_utils/nnet_merge.h:119:20) in function 'nnet::concatenate1d<ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config6>' completely with a factor of 1 (firmware/nnet_utils/nnet_merge.h:116:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_31_1' (firmware/nnet_utils/nnet_activation.h:31:19) in function 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config4>' completely with a factor of 1 (firmware/nnet_utils/nnet_activation.h:28:0)
+INFO: [HLS 214-186] Unrolling loop 'VITIS_LOOP_31_1' (firmware/nnet_utils/nnet_activation.h:31:19) in function 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config3>' completely with a factor of 1 (firmware/nnet_utils/nnet_activation.h:28:0)
+WARNING: [HLS 214-167] The program may have out of bound array access on variable 'w12' (firmware/nnet_utils/nnet_mult.h:70:36)
+WARNING: [HLS 214-167] The program may have out of bound array access on variable 'w15' (firmware/nnet_utils/nnet_mult.h:70:36)
+WARNING: [HLS 214-167] The program may have out of bound array access on variable 'w18' (firmware/nnet_utils/nnet_mult.h:70:36)
+INFO: [HLS 214-248] Applying array_partition to 'b21': Complete partitioning on dimension 1. (firmware/weights/b21.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'b18': Complete partitioning on dimension 1. (firmware/weights/b18.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'b15': Complete partitioning on dimension 1. (firmware/weights/b15.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'b12': Complete partitioning on dimension 1. (firmware/weights/b12.h:12:0)
+INFO: [HLS 214-248] Applying array_partition to 'acc.i': Complete partitioning on dimension 1. (firmware/nnet_utils/nnet_dense_resource.h:100:29)
+INFO: [HLS 214-248] Applying array_partition to 'layer3_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:42:11)
+INFO: [HLS 214-248] Applying array_partition to 'layer4_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:46:14)
+INFO: [HLS 214-248] Applying array_partition to 'layer6_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:50:14)
+INFO: [HLS 214-248] Applying array_partition to 'layer7_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:54:14)
+INFO: [HLS 214-248] Applying array_partition to 'layer9_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:58:14)
+INFO: [HLS 214-248] Applying array_partition to 'layer10_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:62:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer11_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:66:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer12_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:70:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer14_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:74:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer15_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:78:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer17_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:82:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer18_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:86:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer20_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:90:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer21_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:94:15)
+INFO: [HLS 214-248] Applying array_partition to 'layer23_out': Complete partitioning on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'z_global': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'x_size': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'y_size': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 214-248] Applying array_reshape to 'y_local': Complete reshaping on dimension 1. (firmware/myproject.cpp:9:0)
+INFO: [HLS 200-111] Finished Compiling Optimization and Transform: CPU user time: 4.44 seconds. CPU system time: 0.64 seconds. Elapsed time: 8.63 seconds; current allocated memory: 351.281 MB.
+INFO: [HLS 200-111] Finished Checking Pragmas: CPU user time: 0 seconds. CPU system time: 0 seconds. Elapsed time: 0 seconds; current allocated memory: 351.281 MB.
+INFO: [HLS 200-10] Starting code transformations ...
+INFO: [HLS 200-111] Finished Standard Transforms: CPU user time: 0.06 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 354.359 MB.
+INFO: [HLS 200-10] Checking synthesizability ...
+INFO: [HLS 200-111] Finished Checking Synthesizability: CPU user time: 0.08 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 359.691 MB.
+INFO: [XFORM 203-712] Applying dataflow to function 'myproject' (firmware/myproject.cpp:42:1), detected/extracted 15 process function(s): 
+	 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config3>'
+	 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config4>'
+	 'nnet::concatenate1d<ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config6>'
+	 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config7>'
+	 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config9>'
+	 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config10>'
+	 'nnet::concatenate1d<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config11>'
+	 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>'
+	 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config14>'
+	 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config15>'
+	 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config17>'
+	 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config18>'
+	 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config20>'
+	 'nnet::dense_resource<ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config21>'
+	 'nnet::hard_sigmoid<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, hard_sigmoid_config23>'.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:40:9) to (firmware/nnet_utils/nnet_activation.h:50:1) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config20>'... converting 37 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:40:9) to (firmware/nnet_utils/nnet_activation.h:50:1) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config17>'... converting 37 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:40:9) to (firmware/nnet_utils/nnet_activation.h:50:1) in function 'nnet::relu<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, relu_config14>'... converting 37 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:32:19) to (firmware/nnet_utils/nnet_activation.h:34:1) in function 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config7>'... converting 3 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:32:19) to (firmware/nnet_utils/nnet_activation.h:34:1) in function 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config4>'... converting 3 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:32:19) to (firmware/nnet_utils/nnet_activation.h:34:1) in function 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config3>'... converting 3 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:32:19) to (firmware/nnet_utils/nnet_activation.h:34:1) in function 'nnet::linear<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<8, 1, (ap_q_mode)4, (ap_o_mode)0, 0>, linear_config10>'... converting 3 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_activation.h:449:9) to (firmware/nnet_utils/nnet_activation.h:459:1) in function 'nnet::hard_sigmoid<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_ufixed<8, 0, (ap_q_mode)4, (ap_o_mode)0, 0>, hard_sigmoid_config23>'... converting 3 basic blocks.
+INFO: [XFORM 203-401] Performing if-conversion on hyperblock from (firmware/nnet_utils/nnet_dense_resource.h:125:9) to (firmware/nnet_utils/nnet_dense_resource.h:124:5) in function 'nnet::dense_resource<ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, ap_fixed<16, 6, (ap_q_mode)5, (ap_o_mode)3, 0>, config12>'... converting 22 basic blocks.
+INFO: [HLS 200-111] Finished Loop, function and other optimizations: CPU user time: 0.41 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.42 seconds; current allocated memory: 388.805 MB.
+INFO: [XFORM 203-531] Rewinding loop 'ReuseLoop' (firmware/nnet_utils/nnet_dense_resource.h:42) in function 'dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config21>'.
+INFO: [XFORM 203-531] Rewinding loop 'ReuseLoop' (firmware/nnet_utils/nnet_dense_resource.h:42) in function 'dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config18>'.
+INFO: [XFORM 203-531] Rewinding loop 'ReuseLoop' (firmware/nnet_utils/nnet_dense_resource.h:42) in function 'dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config15>'.
+INFO: [XFORM 203-531] Rewinding loop 'ReuseLoop' (firmware/nnet_utils/nnet_dense_resource.h:124) in function 'dense_resource<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>'.
+INFO: [HLS 200-111] Finished Architecture Synthesis: CPU user time: 0.25 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.28 seconds; current allocated memory: 528.215 MB.
+INFO: [HLS 200-10] Starting hardware synthesis ...
+INFO: [HLS 200-10] Synthesizing 'myproject' ...
+WARNING: [SYN 201-103] Legalizing function name 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config3>' to 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s'.
+WARNING: [SYN 201-103] Legalizing function name 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config4>' to 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s'.
+WARNING: [SYN 201-103] Legalizing function name 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config6>' to 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s'.
+WARNING: [SYN 201-103] Legalizing function name 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>' to 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s'.
+WARNING: [SYN 201-103] Legalizing function name 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config9>' to 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s'.
+WARNING: [SYN 201-103] Legalizing function name 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config10>' to 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s'.
+WARNING: [SYN 201-103] Legalizing function name 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config11>' to 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_resource<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>' to 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s'.
+WARNING: [SYN 201-103] Legalizing function name 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>' to 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config15>' to 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s'.
+WARNING: [SYN 201-103] Legalizing function name 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config17>' to 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config18>' to 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s'.
+WARNING: [SYN 201-103] Legalizing function name 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config20>' to 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s'.
+WARNING: [SYN 201-103] Legalizing function name 'dense_resource<ap_ufixed<8, 0, 4, 0, 0>, ap_fixed<16, 6, 5, 3, 0>, config21>' to 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s'.
+WARNING: [SYN 201-103] Legalizing function name 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config23>' to 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config23_s'.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config3>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config3>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.09 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.12 seconds; current allocated memory: 529.523 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.04 seconds; current allocated memory: 529.523 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config4>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config4>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 530.090 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 530.090 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config6>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config6>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 530.090 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 530.090 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 530.844 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 530.844 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config9>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config9>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 530.844 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 530.844 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config10>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config10>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 531.582 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.03 seconds; current allocated memory: 531.582 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config11>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 1, function 'concatenate1d<ap_fixed,ap_fixed,ap_fixed<16,6,5,3,0>,config11>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 531.582 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 531.582 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'ReuseLoop'
+WARNING: [HLS 200-871] Estimated clock period (9.316 ns) exceeds the target (target clock period: 5.000 ns, clock uncertainty: 0.625 ns, effective delay budget: 4.375 ns).
+Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
+WARNING: [HLS 200-1016] The critical path in module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' consists of the following:
+	'or' operation 1 bit ('or_ln133_2', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [74]  (0.000 ns)
+	'select' operation 16 bit ('acc', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [75]  (0.978 ns)
+	multiplexor before 'phi' operation 16 bit ('acc') with incoming values : ('acc', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [16]  (1.588 ns)
+	'phi' operation 16 bit ('acc') with incoming values : ('acc', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [16]  (0.000 ns)
+	'sparsemux' operation 16 bit ('tmp', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [53]  (1.588 ns)
+	'add' operation 17 bit ('add_ln133', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [56]  (2.077 ns)
+	'icmp' operation 1 bit ('icmp_ln133_3', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [59]  (2.107 ns)
+	'or' operation 1 bit ('or_ln133', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [60]  (0.000 ns)
+	'or' operation 1 bit ('or_ln133_1', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [61]  (0.000 ns)
+	'select' operation 16 bit ('acc', firmware/nnet_utils/nnet_dense_resource.h:133->firmware/nnet_utils/nnet_dense_resource.h:242) [62]  (0.978 ns)
+
+Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.11 seconds. CPU system time: 0 seconds. Elapsed time: 0.12 seconds; current allocated memory: 533.641 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 533.641 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.1 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.1 seconds; current allocated memory: 534.531 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 535.098 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'ReuseLoop'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.13 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.14 seconds; current allocated memory: 537.664 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 537.664 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config17>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config17>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.11 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.11 seconds; current allocated memory: 538.562 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.05 seconds; current allocated memory: 539.109 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'ReuseLoop'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.11 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.12 seconds; current allocated memory: 541.523 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 541.523 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config20>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, function 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config20>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.1 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.1 seconds; current allocated memory: 542.504 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.04 seconds; current allocated memory: 543.051 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining loop 'ReuseLoop'.
+INFO: [HLS 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 4, loop 'ReuseLoop'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.07 seconds. CPU system time: 0 seconds. Elapsed time: 0.07 seconds; current allocated memory: 544.238 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.03 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.03 seconds; current allocated memory: 544.238 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config23_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+INFO: [SCHED 204-61] Pipelining function 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config23>'.
+INFO: [HLS 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 4, function 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config23>'
+INFO: [SCHED 204-11] Finished scheduling.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.05 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 544.758 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.02 seconds. CPU system time: 0 seconds. Elapsed time: 0.02 seconds; current allocated memory: 544.758 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-42] -- Implementing module 'myproject' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SCHED 204-11] Starting scheduling ...
+WARNING: [HLS 200-871] Estimated clock period (6.750 ns) exceeds the target (target clock period: 5.000 ns, clock uncertainty: 0.625 ns, effective delay budget: 4.375 ns).
+Resolution: For help on HLS 200-871 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-871.html
+WARNING: [HLS 200-1016] The critical path in module 'myproject' consists of the following:
+	'call' operation 144 bit ('call_ret4', firmware/nnet_utils/nnet_dense.h:43->firmware/myproject.cpp:72) to 'dense_resource<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<16, 6, 5, 3, 0>, config12>' [39]  (6.750 ns)
+
+Resolution: For help on HLS 200-1016 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-1016.html
+INFO: [SCHED 204-11] Finished scheduling.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer7_out (from linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_U0 to concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_U0) to 3 to improve performance and/or avoid deadlocks.
+WARNING: [HLS 200-1020] Increasing the depth of FIFO layer10_out (from linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_U0 to concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_U0) to 4 to improve performance and/or avoid deadlocks.
+INFO: [HLS 200-111] Finished Scheduling: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 545.145 MB.
+INFO: [BIND 205-100] Starting micro-architecture generation ...
+INFO: [BIND 205-101] Performing variable lifetime analysis.
+INFO: [BIND 205-101] Exploring resource sharing.
+INFO: [BIND 205-101] Binding ...
+INFO: [BIND 205-100] Finished micro-architecture generation.
+INFO: [HLS 200-111] Finished Binding: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.04 seconds; current allocated memory: 545.145 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config3>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 545.559 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config4>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.07 seconds. CPU system time: 0 seconds. Elapsed time: 0.08 seconds; current allocated memory: 546.852 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 547.848 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.04 seconds. CPU system time: 0 seconds. Elapsed time: 0.06 seconds; current allocated memory: 548.492 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.07 seconds; current allocated memory: 549.508 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' pipeline 'linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config10>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.05 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.05 seconds; current allocated memory: 550.160 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-100] Finished creating RTL model for 'concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.06 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.06 seconds; current allocated memory: 551.242 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SYN 201-210] Renamed object name 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_ROM_AUTO_1R' to 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_RObkb' due to the length limit 80
+INFO: [SYN 201-210] Renamed object name 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_w12_ROM_AUTO_1R' to 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_w12_ROM_AUTcud' due to the length limit 80
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
+INFO: [RTGEN 206-100] Generating core module 'mul_11s_6s_17_2_1': 3 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'sparsemux_7_2_16_1_1': 3 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'sparsemux_9_2_11_1_1': 1 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s'.
+INFO: [RTMG 210-279] Implementing memory 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_outidx_i_RObkb' using auto ROMs.
+INFO: [RTMG 210-279] Implementing memory 'myproject_dense_resource_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_w12_ROM_AUTcud' using auto ROMs.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.09 seconds. CPU system time: 0 seconds. Elapsed time: 0.11 seconds; current allocated memory: 553.004 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config14>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.13 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.14 seconds; current allocated memory: 557.480 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SYN 201-210] Renamed object name 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_w15_ROM_AUTO_1R' to 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_w15_ROM_AUTdEe' due to the length limit 80
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
+INFO: [RTGEN 206-100] Generating core module 'mul_8ns_6s_14_1_1': 9 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'sparsemux_19_4_8_1_1': 1 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s'.
+INFO: [RTMG 210-279] Implementing memory 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_w15_ROM_AUTdEe' using auto ROMs.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.18 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.18 seconds; current allocated memory: 563.223 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config17>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.14 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.16 seconds; current allocated memory: 568.207 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SYN 201-210] Renamed object name 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s_w18_ROM_AUTO_1R' to 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s_w18_ROM_AUTeOg' due to the length limit 80
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
+INFO: [RTGEN 206-100] Generating core module 'mul_8ns_6s_14_1_1': 9 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'sparsemux_19_4_8_1_1': 1 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s'.
+INFO: [RTMG 210-279] Implementing memory 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s_w18_ROM_AUTeOg' using auto ROMs.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.17 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.19 seconds; current allocated memory: 573.961 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s' pipeline 'relu<ap_fixed<16, 6, 5, 3, 0>, ap_ufixed<8, 0, 4, 0, 0>, relu_config20>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config20_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.15 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.16 seconds; current allocated memory: 578.965 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [SYN 201-210] Renamed object name 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s_w21_ROM_AUTO_1R' to 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s_w21_ROM_AUTfYi' due to the length limit 80
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s' pipeline 'ReuseLoop' pipeline type 'rewind pipeline'
+INFO: [RTGEN 206-100] Generating core module 'mul_8ns_6s_14_1_1': 1 instance(s).
+INFO: [RTGEN 206-100] Generating core module 'sparsemux_19_4_8_1_1': 1 instance(s).
+INFO: [RTGEN 206-100] Finished creating RTL model for 'dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s'.
+INFO: [RTMG 210-279] Implementing memory 'myproject_dense_resource_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config21_s_w21_ROM_AUTfYi' using auto ROMs.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.17 seconds. CPU system time: 0.02 seconds. Elapsed time: 0.19 seconds; current allocated memory: 583.867 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config23_s' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-1030] Apply Unified Pipeline Control on module 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config23_s' pipeline 'hard_sigmoid<ap_fixed,ap_ufixed<8,0,4,0,0>,hard_sigmoid_config23>' pipeline type 'function pipeline'
+INFO: [RTGEN 206-100] Finished creating RTL model for 'hard_sigmoid_ap_fixed_ap_ufixed_8_0_4_0_0_hard_sigmoid_config23_s'.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.09 seconds. CPU system time: 0.01 seconds. Elapsed time: 0.09 seconds; current allocated memory: 587.188 MB.
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [HLS 200-10] -- Generating RTL for module 'myproject' 
+INFO: [HLS 200-10] ----------------------------------------------------------------
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/z_global' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/x_size' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/y_size' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/y_local' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on port 'myproject/layer23_out' to 'ap_vld'.
+INFO: [RTGEN 206-500] Setting interface mode on function 'myproject' to 'ap_ctrl_hs'.
+WARNING: [HLS 200-656] Deadlocks can occur since process linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config3> is instantiated in a dataflow region with ap_ctrl_none or without start propagation and contains an auto-rewind pipeline.
+Resolution: For help on HLS 200-656 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-656.html
+WARNING: [HLS 200-656] Deadlocks can occur since process linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config4> is instantiated in a dataflow region with ap_ctrl_none or without start propagation and contains an auto-rewind pipeline.
+Resolution: For help on HLS 200-656 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-656.html
+WARNING: [HLS 200-656] Deadlocks can occur since process linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config7> is instantiated in a dataflow region with ap_ctrl_none or without start propagation and contains an auto-rewind pipeline.
+Resolution: For help on HLS 200-656 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-656.html
+WARNING: [HLS 200-656] Deadlocks can occur since process linear<ap_fixed<16, 6, 5, 3, 0>, ap_fixed<8, 1, 4, 0, 0>, linear_config10> is instantiated in a dataflow region with ap_ctrl_none or without start propagation and contains an auto-rewind pipeline.
+Resolution: For help on HLS 200-656 see docs.xilinx.com/access/sources/dita/topic?Doc_Version=2024.1%20English&url=ug1448-hls-guidance&resourceid=200-656.html
+INFO: [RTGEN 206-100] Finished creating RTL model for 'myproject'.
+INFO: [RTMG 210-285] Implementing FIFO 'layer3_out_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer4_out_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer6_out_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer6_out_1_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer7_out_U(myproject_fifo_w8_d3_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer9_out_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer9_out_1_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer9_out_2_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer10_out_U(myproject_fifo_w8_d4_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer11_out_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer11_out_1_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer11_out_2_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer11_out_3_U(myproject_fifo_w11_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_1_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_2_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_3_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_4_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_5_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_6_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_7_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer12_out_8_U(myproject_fifo_w16_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_1_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_2_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_3_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_4_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_5_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_6_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_7_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer14_out_8_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_1_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_2_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_3_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_4_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_5_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_6_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_7_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer15_out_8_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_1_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_2_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_3_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_4_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_5_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_6_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_7_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer17_out_8_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_1_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_2_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_3_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_4_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_5_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_6_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_7_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer18_out_8_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_1_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_2_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_3_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_4_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_5_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_6_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_7_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer20_out_8_U(myproject_fifo_w8_d2_S)' using Shift Registers.
+INFO: [RTMG 210-285] Implementing FIFO 'layer21_out_U(myproject_fifo_w15_d2_S)' using Shift Registers.
+INFO: [HLS 200-111] Finished Creating RTL model: CPU user time: 0.37 seconds. CPU system time: 0.05 seconds. Elapsed time: 0.42 seconds; current allocated memory: 589.922 MB.
+INFO: [HLS 200-111] Finished Generating all RTL models: CPU user time: 0.37 seconds. CPU system time: 0.06 seconds. Elapsed time: 0.43 seconds; current allocated memory: 594.238 MB.
+INFO: [HLS 200-111] Finished Updating report files: CPU user time: 0.8 seconds. CPU system time: 0.04 seconds. Elapsed time: 0.84 seconds; current allocated memory: 612.332 MB.
+INFO: [VHDL 208-304] Generating VHDL RTL for myproject.
+INFO: [VLOG 209-307] Generating Verilog RTL for myproject.
+INFO: [HLS 200-790] **** Loop Constraint Status: All loop constraints were satisfied.
+INFO: [HLS 200-789] **** Estimated Fmax: 107.35 MHz
+INFO: [HLS 200-2161] Finished Command csynth_design Elapsed time: 00:00:22; Allocated memory: 278.336 MB.
+***** C/RTL SYNTHESIS COMPLETED IN 0h0m22s *****
+INFO: [HLS 200-112] Total CPU user time: 20.69 seconds. Total CPU system time: 2.31 seconds. Total elapsed time: 26.4 seconds; peak allocated memory: 613.051 MB.

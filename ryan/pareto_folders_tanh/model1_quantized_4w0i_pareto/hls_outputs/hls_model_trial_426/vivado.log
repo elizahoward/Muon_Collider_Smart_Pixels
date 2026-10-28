@@ -1,0 +1,303 @@
+#-----------------------------------------------------------
+# Vivado v2024.1 (64-bit)
+# SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
+# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+# Start of session at: Tue Apr 14 15:00:19 2026
+# Process ID: 998601
+# Current directory: /home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426
+# Command line: vivado -mode batch -source vivado_synth.tcl
+# Log file: /home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/vivado.log
+# Journal file: /home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/vivado.jou
+# Running On        :kdplab01
+# Platform          :unknown
+# Operating System  :unknown
+# Processor Detail  :Intel(R) Xeon(R) Silver 4314 CPU @ 2.40GHz
+# CPU Frequency     :3400.000 MHz
+# CPU Physical cores:32
+# CPU Logical cores :64
+# Host memory       :134212 MB
+# Swap memory       :73014 MB
+# Total Virtual     :207226 MB
+# Available Virtual :148229 MB
+#-----------------------------------------------------------
+source vivado_synth.tcl
+# set tcldir [file dirname [info script]]
+# source [file join $tcldir project.tcl]
+## variable project_name
+## set project_name "myproject"
+## variable backend
+## set backend "vivado"
+## variable part
+## set part "xc7z020clg400-1"
+## variable clock_period
+## set clock_period 5
+## variable clock_uncertainty
+## set clock_uncertainty 12.5%
+## variable version
+## set version "1.0.0"
+# add_files ${project_name}_prj/solution1/syn/vhdl
+add_files: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1673.051 ; gain = 40.836 ; free physical = 66689 ; free virtual = 140848
+# synth_design -top ${project_name} -part $part
+Command: synth_design -top myproject -part xc7z020clg400-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z020'
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 999004
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:03 ; elapsed = 00:00:04 . Memory (MB): peak = 2106.672 ; gain = 425.664 ; free physical = 64424 ; free virtual = 138584
+---------------------------------------------------------------------------------
+INFO: [Synth 8-638] synthesizing module 'myproject' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:32]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:11' bound to instance 'grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s_fu_129' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:504]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:25]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:11' bound to instance 'grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s_fu_135' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:516]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:25]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:11' bound to instance 'grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s_fu_141' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:528]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:25]
+INFO: [Synth 8-3491] module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:11' bound to instance 'grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s_fu_147' of component 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:540]
+INFO: [Synth 8-638] synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:25]
+INFO: [Synth 8-256] done synthesizing module 'myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:25]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:11' bound to instance 'call_ret1_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s_fu_153' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:552]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:22]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s.vhd:22]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:11' bound to instance 'call_ret2_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s_fu_159' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:561]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:24]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s.vhd:24]
+INFO: [Synth 8-3491] module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:11' bound to instance 'call_ret3_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s_fu_166' of component 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:572]
+INFO: [Synth 8-638] synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:26]
+INFO: [Synth 8-256] done synthesizing module 'myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s.vhd:26]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:11' bound to instance 'grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_fu_174' of component 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:585]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:33]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s.vhd:33]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s_fu_182' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:605]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:35]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s.vhd:35]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:11' bound to instance 'grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_fu_192' of component 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:627]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:34]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s.vhd:34]
+INFO: [Synth 8-3491] module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:11' bound to instance 'grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s_fu_202' of component 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:648]
+INFO: [Synth 8-638] synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:33]
+INFO: [Synth 8-256] done synthesizing module 'myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s.vhd:33]
+INFO: [Synth 8-3491] module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' declared at '/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:11' bound to instance 'grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s_fu_211' of component 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:668]
+INFO: [Synth 8-638] synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:29]
+INFO: [Synth 8-256] done synthesizing module 'myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s.vhd:29]
+INFO: [Synth 8-256] done synthesizing module 'myproject' (0#1) [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject.vhd:32]
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config11_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config9_s is either unconnected or has no load
+WARNING: [Synth 8-7129] Port ap_rst in module myproject_concatenate1d_ap_fixed_ap_fixed_ap_fixed_16_6_5_3_0_config6_s is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2195.641 ; gain = 514.633 ; free physical = 64191 ; free virtual = 138359
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2213.453 ; gain = 532.445 ; free physical = 64160 ; free virtual = 138328
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7z020clg400-1
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7z020clg400-1
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2221.457 ; gain = 540.449 ; free physical = 64160 ; free virtual = 138328
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-3936] Found unconnected internal register 'data_val_read_reg_299_reg' and it is trimmed from '16' to '12' bits. [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s.vhd:144]
+WARNING: [Synth 8-3936] Found unconnected internal register 'data_val_read_reg_299_reg' and it is trimmed from '16' to '12' bits. [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s.vhd:144]
+WARNING: [Synth 8-3936] Found unconnected internal register 'data_val_read_reg_299_reg' and it is trimmed from '16' to '12' bits. [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s.vhd:144]
+WARNING: [Synth 8-3936] Found unconnected internal register 'data_val_read_reg_299_reg' and it is trimmed from '16' to '12' bits. [/home/ryanmichaud/common_repo/Muon_Collider_Smart_Pixels/ryan/model1_quantized_4w0i_pareto/hls_outputs/hls_model_trial_426/myproject_prj/solution1/syn/vhdl/myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s.vhd:144]
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:07 ; elapsed = 00:00:06 . Memory (MB): peak = 2239.270 ; gain = 558.262 ; free physical = 64100 ; free virtual = 138273
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   3 Input   19 Bit       Adders := 4     
+	   2 Input   16 Bit       Adders := 3     
+	   3 Input   16 Bit       Adders := 6     
+	   2 Input   15 Bit       Adders := 3     
+	   2 Input   14 Bit       Adders := 5     
+	   2 Input   13 Bit       Adders := 5     
+	   3 Input   13 Bit       Adders := 2     
+	   2 Input   12 Bit       Adders := 9     
+	   3 Input   12 Bit       Adders := 9     
+	   3 Input   11 Bit       Adders := 6     
+	   2 Input   11 Bit       Adders := 4     
+	   3 Input   10 Bit       Adders := 1     
+	   2 Input   10 Bit       Adders := 1     
+	   2 Input    8 Bit       Adders := 16    
++---XORs : 
+	   2 Input      1 Bit         XORs := 49    
+	   3 Input      1 Bit         XORs := 1     
++---Registers : 
+	               16 Bit    Registers := 23    
+	               15 Bit    Registers := 3     
+	               14 Bit    Registers := 1     
+	               13 Bit    Registers := 6     
+	               12 Bit    Registers := 11    
+	               11 Bit    Registers := 10    
+	               10 Bit    Registers := 5     
+	                8 Bit    Registers := 31    
+	                1 Bit    Registers := 101   
++---Muxes : 
+	   2 Input   16 Bit        Muxes := 4     
+	   2 Input   14 Bit        Muxes := 1     
+	   3 Input   13 Bit        Muxes := 1     
+	   2 Input   12 Bit        Muxes := 1     
+	   3 Input    8 Bit        Muxes := 5     
+	   2 Input    8 Bit        Muxes := 44    
+	   2 Input    1 Bit        Muxes := 45    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+INFO: [Device 21-9227] Part: xc7z020clg400-1 does not have CEAM library.
+Part Resources:
+DSPs: 220 (col length:60)
+BRAMs: 280 (col length: RAMB18 60 RAMB36 30)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63031 ; free virtual = 137208
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63024 ; free virtual = 137202
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63016 ; free virtual = 137194
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63560 ; free virtual = 137739
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63561 ; free virtual = 137740
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63565 ; free virtual = 137744
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63566 ; free virtual = 137745
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63567 ; free virtual = 137746
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63567 ; free virtual = 137746
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+-------+------+
+|      |Cell   |Count |
++------+-------+------+
+|1     |BUFG   |     1|
+|2     |CARRY4 |   215|
+|3     |LUT1   |   131|
+|4     |LUT2   |   574|
+|5     |LUT3   |   191|
+|6     |LUT4   |   245|
+|7     |LUT5   |    76|
+|8     |LUT6   |   134|
+|9     |FDRE   |  1007|
+|10    |IBUF   |    71|
+|11    |OBUF   |    12|
++------+-------+------+
+
+Report Instance Areas: 
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+|      |Instance                                                                      |Module                                                                     |Cells |
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+|1     |top                                                                           |                                                                           |  2657|
+|2     |  grp_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s_fu_174 |myproject_dense_latency_ap_fixed_16_6_5_3_0_ap_fixed_16_6_5_3_0_config12_s |   477|
+|3     |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s_fu_192 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config15_s |   803|
+|4     |  grp_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s_fu_211 |myproject_dense_latency_ap_ufixed_8_0_4_0_0_ap_fixed_16_6_5_3_0_config18_s |   128|
+|5     |  grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s_fu_147  |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config10_s  |    49|
+|6     |  grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s_fu_129   |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config3_s   |    49|
+|7     |  grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s_fu_135   |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config4_s   |    49|
+|8     |  grp_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s_fu_141   |myproject_linear_ap_fixed_16_6_5_3_0_ap_fixed_8_1_4_0_0_linear_config7_s   |    49|
+|9     |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s_fu_182     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config14_s     |   286|
+|10    |  grp_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s_fu_202     |myproject_relu_ap_fixed_16_6_5_3_0_ap_ufixed_8_0_4_0_0_relu_config17_s     |   228|
++------+------------------------------------------------------------------------------+---------------------------------------------------------------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63568 ; free virtual = 137747
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 8 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.699 ; gain = 705.691 ; free physical = 63570 ; free virtual = 137749
+Synthesis Optimization Complete : Time (s): cpu = 00:00:16 ; elapsed = 00:00:16 . Memory (MB): peak = 2386.707 ; gain = 705.691 ; free physical = 63570 ; free virtual = 137749
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2389.668 ; gain = 0.000 ; free physical = 63826 ; free virtual = 138005
+INFO: [Netlist 29-17] Analyzing 215 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2522.414 ; gain = 0.000 ; free physical = 63582 ; free virtual = 137755
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Synth Design complete | Checksum: 8a41a73
+INFO: [Common 17-83] Releasing license: Synthesis
+51 Infos, 8 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:23 ; elapsed = 00:00:20 . Memory (MB): peak = 2522.414 ; gain = 849.363 ; free physical = 63583 ; free virtual = 137756
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 1597.346; main = 1395.997; forked = 335.118
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 4019.141; main = 2522.418; forked = 1656.461
+# report_utilization -file vivado_synth.rpt
+INFO: [Common 17-206] Exiting Vivado at Tue Apr 14 15:00:47 2026...

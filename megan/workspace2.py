@@ -93,8 +93,8 @@ def plotModule(module_array):
     # Draw grid on both
     # Unit conversiions: modules as 130 x 130 mm or 520 by 520 pixels.
 
-    ax.set_xlim(0,520)
-    ax.set_ylim(0,520)
+    ax.set_xlim(-0.5,519.5)
+    ax.set_ylim(-0.5,519.5)
     ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
     ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
     ax.xaxis.set_minor_locator(ticker.MultipleLocator(0.5))

@@ -13,6 +13,8 @@ import os
 import keras
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 import sys
 from qkeras import QDense, QActivation, quantized_bits, quantized_relu
 # sys.path.append("/local/d1/smartpixML/filtering_models/shuffling_data/") #TODO use the ODG from here
@@ -20,6 +22,8 @@ sys.path.append("../MuC_Smartpix_Data_Production/tfRecords")
 import OptimizedDataGenerator4_data_shuffled_bigData_NewFormat as ODG2
 import pandas as pd
 from datetime import datetime
+sys.path.append("../daniel")
+# import dataRateUtils #Have to do in function to avoid circular imports
 
 @keras.utils.register_keras_serializable(package='Custom', name='WarmupThenDecay')
 class WarmupThenDecay(tf.keras.optimizers.schedules.LearningRateSchedule):
@@ -163,6 +167,16 @@ class GradientMonitor(Callback):
             except Exception as e:
                 # Silently skip if gradient computation fails
                 pass
+
+#static function to load a quantized model, which should really be living in this file
+def loadQuantizedModel(filePath: str, compile = True):
+    # from Model_Classes import GradientMonitor, WarmupThenDecay
+    import qkeras
+    co = {"GradientMonitor": GradientMonitor, "WarmupThenDecay": WarmupThenDecay}
+    qkeras.utils._add_supported_quantized_objects(co)
+    return tf.keras.models.load_model(filePath,custom_objects=co,compile=compile)
+
+
 
 class SmartPixModel(ABC):
     def __init__(self,                 
@@ -443,11 +457,14 @@ class SmartPixModel(ABC):
         else:
             optimizer = Adam(learning_rate=learning_rate, clipnorm=clipnorm)
         
+        loss = getattr(self, "loss", "binary_crossentropy") #If you get an error from this line, slack Daniel
+        metrics = getattr(self, "metrics", ["binary_accuracy"]) #If you get an error from this line, slack Daniel
+
         # Compile model
-        self.models[config_name].compile(
+        self.models[config_name].compile( #If you get an error from this line, slack Daniel
             optimizer=optimizer,
-            loss="binary_crossentropy",
-            metrics=["binary_accuracy"],
+            loss=loss,
+            metrics=metrics,
             run_eagerly=run_eagerly
         )
         
@@ -519,10 +536,14 @@ class SmartPixModel(ABC):
         
         # Plot training history
         fig, axes = plt.subplots(1, 2, figsize=(15, 5))
+
+        metrics = getattr(self, "metrics", ["binary_accuracy"])
+        metric = metrics[0]
+        metricName = getattr(metric, "name", metric)
         
         # Plot accuracy
-        axes[0].plot(self.histories[config_name].history['binary_accuracy'], label='Training')
-        axes[0].plot(self.histories[config_name].history['val_binary_accuracy'], label='Validation')
+        axes[0].plot(self.histories[config_name].history[metricName], label='Training')
+        axes[0].plot(self.histories[config_name].history[f'val_{metricName}'], label='Validation')
         axes[0].set_title(f'{self.modelName} Accuracy')
         axes[0].set_xlabel('Epoch')
         axes[0].set_ylabel('Accuracy')
@@ -602,7 +623,8 @@ class SmartPixModel(ABC):
         
         return results
     
-    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99]):
+    def evaluate(self, test_generator=None, config_name="Unquantized", signal_efficiencies=[0.90, 0.98, 0.99],
+                verboseDataRate=False,predictionPlots=False,filterTime=False,timeStart=-0.5,timeEnd=15):
         """
         Evaluate the trained model with background rejection metrics.
         
@@ -610,6 +632,7 @@ class SmartPixModel(ABC):
             test_generator: Optional test data generator
             config_name: Name of the model configuration to evaluate
             signal_efficiencies: List of target signal efficiencies for background rejection
+            update July 23, 2026 (if something breaks, go to commit before this), added filterTime and timeStart and timeEnd defaults for that
         """
         if self.models[config_name] is None:
             raise ValueError("No model to evaluate. Train a model first.")
@@ -625,11 +648,39 @@ class SmartPixModel(ABC):
         
         # Get predictions
         predictions = self.models[config_name].predict(eval_generator, verbose=1)
+
+        #In case of ASIC model, need to do an argmax on top of it
+        if predictions.shape[1]>1: #If this throws an error, slack Daniel, and comment out these 2 lines
+            predictions = np.argmax(predictions,axis=1)
+        
         # Get true labels
         true_labels = np.concatenate([y for _, y in eval_generator])
+
+        #update July 23, 2026, hopefully doesn't break anything
+        filterTime = filterTime or getattr(self,"filteredTime",False)
+        if filterTime:
+            print(f"filtering based on time to {timeStart} ns to {timeEnd} ns")
+            self.filteredTime = filterTime;# same as setting it to True
+            if "adjusted_hit_time_30ps_gaussian" not in self.x_feature_description:
+                self.x_feature_description = self.x_feature_description + ["adjusted_hit_time_30ps_gaussian"]
+            self.loadTfRecords()
+            if test_generator:
+                raise ValueError("Not supported to do time filtering with inputted odg validation generator")
+            import tfLoaderUtils
+            xTest, _ = tfLoaderUtils.odgToVect(self.validation_generator)
+            assert "adjusted_hit_time_30ps_gaussian" in xTest.keys()
+            filterTimeMask = (xTest["adjusted_hit_time_30ps_gaussian"] > timeStart) & (xTest["adjusted_hit_time_30ps_gaussian"] < timeEnd)
+            preFilterLen = len(true_labels)
+            true_labels = true_labels[filterTimeMask]
+            postFilterLen = len(true_labels)
+            print(f"time filtering reduced length from {preFilterLen} to {postFilterLen}")
+            predictions = predictions.ravel()[filterTimeMask] #doesn't hurt to ravel multiple times since flattened flat is flat
+            assert len(true_labels)==len(predictions)
+            self.filterTimeMask = filterTimeMask
+
         
         # Calculate metrics
-        test_loss, test_accuracy = self.models[config_name].evaluate(eval_generator, verbose=0)
+        test_loss, test_accuracy, *_ = self.models[config_name].evaluate(eval_generator, verbose=0)
         
         # Calculate ROC AUC
         fpr, tpr, thresholds = roc_curve(true_labels, predictions.ravel())
@@ -639,7 +690,29 @@ class SmartPixModel(ABC):
         bkg_rejection_metrics = self.compute_background_rejection_at_signal_eff(
             fpr, tpr, signal_efficiencies
         )
-        
+
+        #Data rate calculation
+        sys.path.append("../daniel")
+        import dataRateUtils
+        numBackPixesPostFilter,numBackPixesTotal,numBackPixesRejRatio = [-99 for i in (signal_efficiencies)],[-99 for i in (signal_efficiencies)],[-99 for i in (signal_efficiencies)]
+        for idx, sig_eff in enumerate(signal_efficiencies):
+            fpr_val = bkg_rejection_metrics[f'fpr_at_{int(sig_eff*100)}pct']
+            threshVal = thresholds[fpr==fpr_val]
+            if len(threshVal)>1:
+                print("Warning! threshVal is more than one thing!")
+                print(threshVal)
+                if len(threshVal) == 2:
+                    print("Looks like all predictions are constant?")
+                    threshVal = [threshVal[0]]
+                elif len(threshVal) == 3:
+                    print("looks like all predictions are one of 2 things")
+                    threshVal = [threshVal[1]]
+            print(f"Data rate at fpr {fpr_val} and threshold {threshVal}")
+            if verboseDataRate:
+                numBackPixesPostFilter[idx],numBackPixesTotal[idx],numBackPixesRejRatio[idx] = dataRateUtils.genNpixAndGetDataRate(self,predictions.ravel(),cut=threshVal)
+            else:
+                numBackPixesPostFilter[idx],numBackPixesTotal[idx],numBackPixesRejRatio[idx] = dataRateUtils.genNpixAndGetDataRate(self,predictions.ravel(),cut=threshVal,doPrintExtra = False, doPrintData=False, doPlot = False)
+
         # Store results
         self.evaluation_results = {
             'test_loss': float(test_loss),
@@ -650,7 +723,10 @@ class SmartPixModel(ABC):
             'thresholds': np.array(thresholds),
             'predictions': np.array(predictions),
             'true_labels': np.array(true_labels),
-            **bkg_rejection_metrics  # Add background rejection metrics
+            **bkg_rejection_metrics,  # Add background rejection metrics
+            'numBackPixesPostFilter': numBackPixesPostFilter,
+            'numBackPixesTotal': numBackPixesTotal,
+            'numBackPixesRejRatio': numBackPixesRejRatio,
         }
         
         print(f"✓ {self.modelName} evaluation completed!")
@@ -660,7 +736,7 @@ class SmartPixModel(ABC):
         
         # Print background rejection metrics
         print(f"\n  Background Rejection Metrics (Bkg Rej = 1 - FPR):")
-        for sig_eff in signal_efficiencies:
+        for idx,sig_eff in enumerate(signal_efficiencies):
             key = f'bkg_rej_at_{int(sig_eff*100)}pct'
             fpr_key = f'fpr_at_{int(sig_eff*100)}pct'
             
@@ -670,11 +746,19 @@ class SmartPixModel(ABC):
             if bg_rej is None:
                 print(f"    @ {sig_eff:.0%} signal efficiency: NOT REACHED")
             else:
-                print(f"    @ {sig_eff:.0%} signal efficiency: Bkg Rej = {bg_rej:.4f} (FPR = {fpr_val:.6f})")
+                if numBackPixesRejRatio is None:
+                    print(f"    @ {sig_eff:.0%} signal efficiency: Bkg Rej = {bg_rej:.4f} (FPR = {fpr_val:.6f})")
+                else:
+                    print(f"    @ {sig_eff:.0%} signal efficiency: Bkg Rej = {bg_rej:.4f} (FPR = {fpr_val:.6f}), Back Data Accep = {numBackPixesRejRatio[idx]:.4f}")
+
+
+        if predictionPlots:
+            dataRateUtils.plotPredictVsAll(self,predictions)
         
+        self.predictions = predictions
         return self.evaluation_results
     
-    def runAllStuff(self,numEpochs = 6):
+    def runAllStuff(self,numEpochs = 6,runUnquantized=True):
         """
         Run the complete {self.modelName} pipeline: build, train, evaluate, and plot for both quantized and non-quantized models.
         """
@@ -704,38 +788,41 @@ class SmartPixModel(ABC):
         print("2a. Building Unquantized model...")
         self.buildModel("Unquantized")
         
-        print("2b. Training Unquantized model...")
-        self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
-        
-        print("2c. Evaluating Unquantized model...")
-        eval_results = self.evaluate()
-        
-        # Save non-quantized model
-        print("2d. Saving Unquantized model...")
-        model_save_path = os.path.join(models_dir, f"{self.modelName}_Unquantized.h5")
-        self.saveModel(file_path = model_save_path, config_name = "Unquantized")
-        print(f"Unquantized model saved to: {model_save_path}")
-        
-        # Store non-quantized results
-        results.append({
-            'model_type': 'non_quantized',
-            'weight_bits': 'N/A',
-            'integer_bits': 'N/A',
-            'test_accuracy': eval_results['test_accuracy'],
-            'test_loss': eval_results['test_loss'],
-            'roc_auc': eval_results['roc_auc'],
-            'bkg_rej_90pct': eval_results.get('bkg_rej_at_90pct'),
-            'bkg_rej_98pct': eval_results.get('bkg_rej_at_98pct'),
-            'bkg_rej_99pct': eval_results.get('bkg_rej_at_99pct'),
-            'model_path': model_save_path
-        })
-        
-        print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
-        
-        # Plot non-quantized results
-        print("2e. Plotting non-quantized results...")
-        plot_dir_unquant = os.path.join(plots_dir, "non_quantized")
-        self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
+        if runUnquantized:
+            print("2b. Training Unquantized model...")
+            self.trainModel(epochs=numEpochs, early_stopping_patience=15, save_best=False)
+            
+            print("2c. Evaluating Unquantized model...")
+            eval_results = self.evaluate()
+            
+            # Save non-quantized model
+            print("2d. Saving Unquantized model...")
+            model_save_path = os.path.join(models_dir, f"{self.modelName}_Unquantized.h5")
+            self.saveModel(file_path = model_save_path, config_name = "Unquantized")
+            print(f"Unquantized model saved to: {model_save_path}")
+            
+            # Store non-quantized results
+            results.append({
+                'model_type': 'non_quantized',
+                'weight_bits': 'N/A',
+                'integer_bits': 'N/A',
+                'test_accuracy': eval_results['test_accuracy'],
+                'test_loss': eval_results['test_loss'],
+                'roc_auc': eval_results['roc_auc'],
+                'bkg_rej_90pct': eval_results.get('bkg_rej_at_90pct'),
+                'bkg_rej_98pct': eval_results.get('bkg_rej_at_98pct'),
+                'bkg_rej_99pct': eval_results.get('bkg_rej_at_99pct'),
+                'model_path': model_save_path
+            })
+            
+            print(f"Non-quantized results: Acc={eval_results['test_accuracy']:.4f}, AUC={eval_results['roc_auc']:.4f}")
+            
+            # Plot non-quantized results
+            print("2e. Plotting non-quantized results...")
+            plot_dir_unquant = os.path.join(plots_dir, "non_quantized")
+            self.plotModel(save_plots=True, output_dir=plot_dir_unquant)
+        else:
+            print("runUnquantized set False, so skipping unquantized model")
         
         # Test quantized models
         

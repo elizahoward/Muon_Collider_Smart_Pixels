@@ -14,23 +14,24 @@ from model1 import Model1
 from model2 import Model2
 from model3 import Model3
 from utils import buildFromConfig, load_config
-from qkeras import QDense
+from qkeras import QDense, QActivation
 import qkeras
 import keras
 from qkeras.quantizers import see_quantizer
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 
-def build_see_config(config, random_flip_rate=0.0, flip_tensor=None):
+def build_see_config(config, random_flip_rate=0.0, flip_tensor=None, protect_msb=False):
     config['module'] = 'qkeras.quantizers'
     config['class_name'] = 'see_quantizer'
     config['registered_name'] = 'see_quantizer'
     config['config']['random_flip_rate'] = random_flip_rate
     config['config']['flip_tensor'] = flip_tensor
+    config['config']['protect_msb'] = protect_msb
     return config
 
 # ~70% ChatGPT. Just makes a copy of the model with modified quantizers.
-def clone_functional_model(old_model, random_flip_rate=0.0, flip_bits=[]):
+def clone_functional_model(old_model, random_flip_rate=0.0, flip_bits=[], protect_msb=False, protect_input_layer = False, activation_shift=0.0):
     """
     Deep-clone a Functional model, preserving:
     - Input names
@@ -39,6 +40,9 @@ def clone_functional_model(old_model, random_flip_rate=0.0, flip_bits=[]):
     Works for any multi-input, multi-output Functional model.
     """
     tensor_map = {}
+
+    # Identify the final layer for potential activation shift
+    final_layer_name = old_model.layers[-1].name
 
     for layer in old_model.layers:
 
@@ -58,7 +62,7 @@ def clone_functional_model(old_model, random_flip_rate=0.0, flip_bits=[]):
 
         # --- Other layers ---
         layer_config = layer.get_config()
-        if isinstance(layer, QDense):
+        if isinstance(layer, QDense) and (not protect_input_layer or layer.name != old_model.layers[0].name):
             kernel_flip_tensor = None
             bias_flip_tensor   = None
             if [bit for bit in flip_bits if bit['layer_name'] == layer.name]:
@@ -78,8 +82,16 @@ def clone_functional_model(old_model, random_flip_rate=0.0, flip_bits=[]):
                                 bias_flip_tensor[bit['indices']] ^= 1 << bit['bit_position']
                 kernel_flip_tensor = tf.constant(kernel_flip_tensor, dtype=tf.int32)
                 bias_flip_tensor   = tf.constant(bias_flip_tensor,   dtype=tf.int32)
-            layer_config['kernel_quantizer'] = build_see_config(layer_config['kernel_quantizer'], random_flip_rate=random_flip_rate, flip_tensor=kernel_flip_tensor)
-            layer_config['bias_quantizer']   = build_see_config(layer_config['bias_quantizer'],   random_flip_rate=random_flip_rate, flip_tensor=bias_flip_tensor)
+            layer_config['kernel_quantizer'] = build_see_config(layer_config['kernel_quantizer'], random_flip_rate=random_flip_rate, flip_tensor=kernel_flip_tensor, protect_msb=protect_msb)
+            layer_config['bias_quantizer']   = build_see_config(layer_config['bias_quantizer'],   random_flip_rate=random_flip_rate, flip_tensor=bias_flip_tensor, protect_msb=protect_msb)
+
+        # Handle activation shift for the final layer
+        is_final_shift = (activation_shift != 0.0 and layer.name == final_layer_name)
+        orig_activation_config = None
+        if is_final_shift and isinstance(layer, QDense):
+            orig_activation_config = layer_config.get('activation', 'linear')
+            layer_config['activation'] = 'linear'
+
         print(f"Cloning layer: {layer.name} ({layer.__class__.__name__})")
 
         new_layer = layer.__class__.from_config(layer_config)
@@ -88,6 +100,10 @@ def clone_functional_model(old_model, random_flip_rate=0.0, flip_bits=[]):
         # Map inbound tensors
         inbound = layer.input if isinstance(layer.input, list) else [layer.input]
         new_inputs = [tensor_map[t.ref()] for t in inbound]
+
+        # For final QActivation layer, shift inputs before activation
+        if is_final_shift and isinstance(layer, QActivation):
+            new_inputs = [inp + activation_shift for inp in new_inputs]
 
         # Call layer
         if len(new_inputs) == 1:
@@ -99,6 +115,16 @@ def clone_functional_model(old_model, random_flip_rate=0.0, flip_bits=[]):
         weights = layer.get_weights()
         if weights:
             new_layer.set_weights(weights)
+
+        # For final QDense layer, apply activation shift and reattach activation
+        if is_final_shift and isinstance(layer, QDense):
+            new_output = new_output + activation_shift
+            if isinstance(orig_activation_config, dict):
+                act_layer = qkeras.QActivation(orig_activation_config)
+                new_output = act_layer(new_output)
+            elif orig_activation_config not in (None, 'linear'):
+                act_layer = tf.keras.layers.Activation(orig_activation_config)
+                new_output = act_layer(new_output)
 
         # Map outputs
         if isinstance(new_output, list):
@@ -161,6 +187,8 @@ def main():
     add_arg('--training_dir', type=str, default=None, help='Path to training directory')
     add_arg('--quantization', type=int, default=-1, help='Which version of quantization to use. -1 for no quantization')
     add_arg('--random_flip_rate', type=float, default=0.0, help='Random bit flip rate to apply to cloned model')
+    add_arg('--protect_msb', action='store_true', help='Protect the most significant bit from random flips')
+    add_arg('--protect_input_layer', action='store_true', help='Protect the input layer from random flips')
     add_arg('--flip', type=str, nargs='*', help='Specific bits to flip in the format layer_name:type:indices:bit_position. Example: q_dense_5:kernel:8,0:2')
     add_arg('--skip_eval', action='store_true', help='Skip initial evaluation of original model')
     add_arg('--check_all_bits', type=str, default=None, help='Check all bits in the specified layer for sensitivity')
@@ -204,7 +232,7 @@ def main():
         print(bit)
 
     if args.check_all_bits is None and (args.random_flip_rate != 0.0 or flip_bits):
-        new_model = clone_functional_model(old_model, random_flip_rate=args.random_flip_rate, flip_bits=flip_bits)
+        new_model = clone_functional_model(old_model, random_flip_rate=args.random_flip_rate, flip_bits=flip_bits, protect_msb=args.protect_msb, protect_input_layer=args.protect_input_layer)
         new_model.compile(metrics=['accuracy'], loss='binary_crossentropy', optimizer='adam')
 
         print("Running evaluation on cloned model with modified kernels:")
@@ -278,7 +306,15 @@ def main():
                         layers[l.name][f'kernel'] = l.kernel.shape
                     if hasattr(l, 'bias'):
                         layers[l.name][f'bias'] = l.bias.shape
-
+        elif layer_to_check == '2MSB': # 2nd most significant bits of all quantized layers
+            layers = {}
+            for l in old_model.layers:
+                if isinstance(l, QDense):
+                    layers[l.name] = {}
+                    if hasattr(l, 'kernel'):
+                        layers[l.name][f'kernel'] = l.kernel.shape
+                    if hasattr(l, 'bias'):
+                        layers[l.name][f'bias'] = l.bias.shape
         else:
             print(f"Layer {layer_to_check} not found in model.")
             return
@@ -302,6 +338,8 @@ def main():
                     indices = np.unravel_index(index, shape)
                     for bit_position in range(args.quantization): 
                         if layer_to_check == 'MSB' and bit_position != args.quantization - 1:
+                            continue
+                        if layer_to_check == '2MSB' and bit_position != args.quantization - 2:
                             continue
                         flip_bits = [{
                             'layer_name': layer,
