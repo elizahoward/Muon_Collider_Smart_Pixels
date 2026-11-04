@@ -278,7 +278,11 @@ def VXDEndcap_cfg(args):
 In the checkout used here (tag `tutorial_20260817`) the file already imports `MuonCVXDRealDigitiser` and the algorithm sequence already contains `VXDBarrelRealDigitiser` with `StoreFiredPixels True`, so check the file before editing. There is no `vi` in the container; so edit tracking_vertex.py from outside it (the filesystem is shared) or use `sed`/`python`.
 
 ### 3b. Run the overlay
-Back in the MAIA tutorial's BIB-overlay section (https://mcd-wiki.web.cern.ch/software/tutorials/fermilab2026/digireco/#beam-induced-background). From `mucoll-benchmarks/`, with the container set up (see step 0), `setup_config.sh . MAIA_v0` sourced, and the digitizer exports in place:
+Back in the MAIA tutorial's BIB-overlay section (https://mcd-wiki.web.cern.ch/software/tutorials/fermilab2026/digireco/#beam-induced-background). 
+
+The input/output is controlled by  `mucoll-benchmarks/configs/MAIAConfig/MAIAConfig/digi_steer.py` so to set input and output files, edit the steering file with  `mucoll-benchmarks]$ vi configs/MAIAConfig/MAIAConfig/digi_steer.py`
+
+From `mucoll-benchmarks/`, with the container set up (see step 0), `setup_config.sh . MAIA_v0` sourced, and the digitizer exports in place:
 
 ```bash
 export BPATH=/ospool/uc-shared/project/futurecolliders/data/fmeloni/DataMuC_MAIA_v0/v9/BIB10TeV
