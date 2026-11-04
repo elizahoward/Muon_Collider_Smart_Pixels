@@ -16,44 +16,63 @@ def eventToDfs(event, ievt):
     Go through all the hits, links, etc. in the event and build them into lists of dictionaries and then pandas dataframes
     """
     collectionNames = event.getAvailableCollections()
+    eventDfDict = {}
+    # print(collectionNames)
     if "MCParticles" in collectionNames:
         truthParticles = event.get("MCParticles")
         truthParticlesRows = [mcParticleRow(hit,ievt) for hit in truthParticles]
-        truthParticlesDf = pd.DataFrame(truthParticlesRows)
+        eventDfDict["truthParticlesDf"] = pd.DataFrame(truthParticlesRows)
     else:
-        truthParticlesDf = pd.DataFrame()
+        eventDfDict["truthParticlesDf"] = pd.DataFrame()
     if "VertexBarrelCollection" in collectionNames:
         vtxBarrelSimHits = event.get("VertexBarrelCollection")
         # vtxBarrelSimHitsRows = [simHitRow(hit,ievt) for hit in vtxBarrelSimHits]
         vtxBarrelSimHitsRows = [simHitRowWithMc(hit,ievt) for hit in vtxBarrelSimHits]
-        vtxBarrelSimHitsDf = pd.DataFrame(vtxBarrelSimHitsRows)
+        eventDfDict["vtxBarrelSimHitsDf"] = pd.DataFrame(vtxBarrelSimHitsRows)
     else:
-        vtxBarrelSimHitsDf = pd.DataFrame()
+        eventDfDict["vtxBarrelSimHitsDf"] = pd.DataFrame()
     if "VXDBarrelRealHitsRelations" in collectionNames:
         vtxClusterToSimHit = event.get("VXDBarrelRealHitsRelations")
         vtxClusterToSimHitRows = [linkRow(hit,ievt) for hit in vtxClusterToSimHit]
-        vtxClusterToSimHitDf = pd.DataFrame(vtxClusterToSimHitRows)
+        eventDfDict["vtxClusterToSimHitDf"] = pd.DataFrame(vtxClusterToSimHitRows)
     else:
-        vtxClusterToSimHitDf = pd.DataFrame()
+        eventDfDict["vtxClusterToSimHitDf"] = pd.DataFrame()
     if "VXDBarrelRealHits" in collectionNames:
         vtxClusters = event.get("VXDBarrelRealHits")
         vtxClustersRows = [clusterRow(hit,ievt) for hit in vtxClusters]
-        vtxClustersDf = pd.DataFrame(vtxClustersRows)
+        eventDfDict["vtxClustersDf"] = pd.DataFrame(vtxClustersRows)
     else:
-        vtxClustersDf = pd.DataFrame()
+        eventDfDict["vtxClustersDf"] = pd.DataFrame()
     if "VXDBarrelRealRawHitRelations" in collectionNames:
         vtxPixelsToClusters = event.get("VXDBarrelRealRawHitRelations")
         vtxPixelsToClustersRows = [linkRow(hit,ievt) for hit in vtxPixelsToClusters]
-        vtxPixelsToClustersDf = pd.DataFrame(vtxPixelsToClustersRows)
+        eventDfDict["vtxPixelsToClustersDf"] = pd.DataFrame(vtxPixelsToClustersRows)
     else:
-        vtxPixelsToClustersDf = pd.DataFrame()
+        eventDfDict["vtxPixelsToClustersDf"] = pd.DataFrame()
     if "VXDBarrelRealPixels" in collectionNames:
         vtxPixels = event.get("VXDBarrelRealPixels")
         vtxPixelsRows = [simHitRow(hit,ievt) for hit in vtxPixels]
-        vtxPixelsDf = pd.DataFrame(vtxPixelsRows)
+        eventDfDict["vtxPixelsDf"] = pd.DataFrame(vtxPixelsRows)
     else:
-        vtxPixelsDf = pd.DataFrame()
-    return {"truthParticlesDf":truthParticlesDf,"vtxBarrelSimHitsDf":vtxBarrelSimHitsDf,"vtxClusterToSimHitDf":vtxClusterToSimHitDf,"vtxClustersDf":vtxClustersDf,"vtxPixelsToClustersDf":vtxPixelsToClustersDf,"vtxPixelsDf":vtxPixelsDf,}
+        eventDfDict["vtxPixelsDf"] = pd.DataFrame()
+
+    #added for overlay samples
+    if "NewMCParticles" in collectionNames:
+        truthParticles2 = event.get("NewMCParticles")
+        truthParticlesRows2 = [mcParticleRow(hit,ievt) for hit in truthParticles2]
+        eventDfDict["truthParticlesDf2"] = pd.DataFrame(truthParticlesRows2)
+    else:
+        eventDfDict["truthParticlesDf2"] = pd.DataFrame()
+    if "OverlayVertexBarrelCollection" in collectionNames:
+        vtxBarrelSimHits2 = event.get("OverlayVertexBarrelCollection")
+        # vtxBarrelSimHitsRows2 = [simHitRow(hit,ievt) for hit in vtxBarrelSimHits2]
+        vtxBarrelSimHitsRows2 = [simHitRowWithMc(hit,ievt) for hit in vtxBarrelSimHits2]#throws mc particle unset
+        eventDfDict["vtxBarrelSimHitsDf2"] = pd.DataFrame(vtxBarrelSimHitsRows2)
+    else:
+        eventDfDict["vtxBarrelSimHitsDf2"] = pd.DataFrame()
+
+    return eventDfDict
+    # return {"truthParticlesDf":truthParticlesDf,"vtxBarrelSimHitsDf":vtxBarrelSimHitsDf,"vtxClusterToSimHitDf":vtxClusterToSimHitDf,"vtxClustersDf":vtxClustersDf,"vtxPixelsToClustersDf":vtxPixelsToClustersDf,"vtxPixelsDf":vtxPixelsDf,"truthParticlesDf2":truthParticlesDf2,"vtxBarrelSimHitsDf2":vtxBarrelSimHitsDf2,}
 
 def idPair(obj):
     i = obj.id()
@@ -85,8 +104,10 @@ def simHitRowWithMc(h, ievt):
     if part.isAvailable():
         mc = mcParticleRow(part, ievt)
         row.update({f"MCParticles.{k}": v for k, v in mc.items() if k != "ievent"})
+        row["MCParticles.set"] = True
     else:
-        raise ValueError("Can't use this function if the mc particle is unset")
+        row.update({"MCParticles.PDG":0,"MCParticles.index":-1,"MCParticles.collectionID":-1,"MCParticles.set":False})
+        # raise ValueError("Can't use this function if the mc particle is unset")
     return row
 
 def _cov(m):

@@ -29,6 +29,7 @@ import edm4hepToDict
 import edm4hepTracksUtils
 
 file_list = ["./edmTestFiles/sim_output.edm4hep.root","./edmTestFiles/sim_output2.edm4hep.root","./edmTestFiles/sim_output3.edm4hep.root","./edmTestFiles/digi_real.edm4hep.root","./edmTestFiles/sim_output_mu2.edm4hep.root","./edmTestFiles/digi_output_mu2.edm4hep.root",]#"./edmTestFiles/gen_output.edm4hep.root",]
+file_list = ["./edmTestFiles/digi_output_mu2.edm4hep.root",]
 # file_list = ["./edmTestFiles/digi_real.edm4hep.root",]
 track_count=0
 break_loop=False
@@ -38,6 +39,14 @@ fileCountLimit = 1000
 filterSecondaries=True
 addMCParticle=True
 float_precision=5
+keyNamesToCollections ={"truthParticlesDf":"MCParticles",
+                        "vtxBarrelSimHitsDf":"VertexBarrelCollection",
+                        "vtxClusterToSimHitDf":"VXDBarrelRealHitsRelations",     
+                        "vtxClustersDf":"VXDBarrelRealHits",       
+                        "vtxPixelsToClustersDf":"VXDBarrelRealRawHitRelations",
+                        "vtxPixelsDf":"VXDBarrelRealPixels",       
+                        "truthParticlesDf2":"NewMCParticles",       
+                        "vtxBarrelSimHitsDf2":"OverlayVertexBarrelCollection",}
 for file_path in file_list:
     if break_loop:
             break
@@ -78,8 +87,8 @@ for file_path in file_list:
             concatEventDfs[key].to_csv(savePath,sep=" ",index=False,float_format=f"%.{float_precision}f");
         else:
             concatEventDfs[key].to_csv(savePath);
-        print(f"saved {len(concatEventDfs[key])} hits of {key} to {savePath}")
+        collectionName = keyNamesToCollections.get(key,"unknown")
+        print(f"saved {len(concatEventDfs[key])} hits of {key} from collection {collectionName} to {savePath}")
         
 
-        
-        
+
