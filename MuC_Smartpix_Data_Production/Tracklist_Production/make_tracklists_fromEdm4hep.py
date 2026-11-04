@@ -82,7 +82,12 @@ def collectionDfFromTree(f: uproot.reading.ReadOnlyDirectory,collectionBranch = 
     assert mcBranch in f["events"].keys()
     df1 = f["events"][collectionBranch].arrays(library="pd")
     df2 = f["events"][collectionBranchIndex].arrays(library="pd")
+    # print(df2.keys())
+    df2.rename(lambda a: a.replace("_particle.","_particle.particle_"),axis="columns",inplace=True)
+    # print(df2.keys())
+    assert len(df1)==len(df2)
     eventHitDf = df1.merge(df2,how='outer',left_index=True,right_index=True)
+    # print(eventHitDf.keys())
     for ievent in eventHitDf.index:#works for empty rows (e.g. neutrino gun, photon gun, etc.)
         row=eventHitDf.loc[ievent]
         numHits = [len(row[key]) for key in row.keys()]
@@ -119,7 +124,8 @@ def addMcToHitsPersonal(hitDf,eventMcDf):
     rows=[]
     for ihit,hitRow in hitDf.iterrows():
         ievent=int(hitRow["ievent"])
-        mcParticleIndex=int(hitRow["index"])
+        # mcParticleIndex=int(hitRow["index"])
+        mcParticleIndex=int(hitRow["particle_index"])
         mcParticleCols = [eventMcDf.iloc[ievent][key][mcParticleIndex] for key in eventMcDf.keys()]
         rows.append(mcParticleCols)
     out = hitDf.copy()
@@ -130,7 +136,8 @@ def addMcToHits(hitDf:pd.DataFrame, eventMcDf:pd.DataFrame):
     mcKeys = list(eventMcDf.columns)
     newCols = mcKeys
     rows = []
-    for e, i in zip(hitDf["ievent"], hitDf["index"]):
+    # for e, i in zip(hitDf["ievent"], hitDf["index"]):
+    for e, i in zip(hitDf["ievent"], hitDf["particle_index"]):
         e=int(e)
         i=int(i)
         n = len(eventMcDf[mcKeys[0]].iloc[e])          # particles in this event
@@ -172,7 +179,8 @@ def processEdmFileToTrack(file_path):
             print("this file empty of hits")
             return None,None
         if filterSecondaries:
-            hitDf.filter(cond=hitDf["index"]==0)
+            # hitDf.filter(cond=hitDf["index"]==0)
+            hitDf.filter(cond=hitDf["particle_index"]==0)
         if addMCParticle:
             hitDf = addMcToHits(hitDf,eventMcDf)
         tracklistDf = hitDftoTracklistDf(hitDf)

@@ -1,10 +1,10 @@
 """
-Author: Claude
+Author: Claude (then Daniel Abadjiev added stuff)
 Date: November 3, 2026
 Description: Utils library with Row builders for EDM4hep objects read with podio (one dict per object).
 
 Requires to be run inside the apptainer, e.g. 
-apptainer run /cvmfs/unpacked.cern.ch/ghcr.io/muoncollectionIDersoft/mucoll-sim-ubuntu24\:v3.1-amd64
+apptainer run /cvmfs/unpacked.cern.ch/ghcr.io/muoncollidersoft/mucoll-sim-ubuntu24\:v3.1-amd64
 source /opt/setup_mucoll.sh
 """
 import edm4hep
@@ -73,9 +73,10 @@ def simHitRow(h, ievt):
         "pathLength": h.getPathLength(), "quality": h.getQuality(),
         "position.x": pos.x, "position.y": pos.y, "position.z": pos.z,
         "momentum.x": mom.x, "momentum.y": mom.y, "momentum.z": mom.z,
-        "index": idx, "collectionID": coll, "ievent": ievt, 
-        "particle_collectionID": pc, "particle_index": pi,             #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
-        "secondary": h.isProducedBySecondary(), "overlay": h.isOverlay(), #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
+        # "index": idx, "collectionID": coll,       #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
+        "particle_index": pi, "particle_collectionID": pc,           #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
+         "ievent": ievt, 
+        # "secondary": h.isProducedBySecondary(), "overlay": h.isOverlay(), #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
     }
 
 def simHitRowWithMc(h, ievt):
