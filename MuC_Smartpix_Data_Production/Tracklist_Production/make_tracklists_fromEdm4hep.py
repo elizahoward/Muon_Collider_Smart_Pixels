@@ -21,7 +21,7 @@ import edm4hepTracksUtils
 
 def collectionDfFromTree(f: uproot.reading.ReadOnlyDirectory,collectionBranch = "VertexBarrelCollection",collectionBranchIndex="",mcBranch="MCParticles",getMcDf=True):
     assert isinstance(f,uproot.reading.ReadOnlyDirectory)
-    assert "events;1" in f.keys()
+    assert ("events;1" in f.keys()) or ("events;2" in f.keys()) or ("events;3" in f.keys())
     if collectionBranchIndex=="":
         collectionBranchIndex = "_"+collectionBranch+"_particle"
     assert collectionBranch in f["events"].keys()
@@ -102,6 +102,7 @@ def hitDftoTracklistDf(hitDf,flp=0):
 
 def processEdmFileToTrack(file_path):
     with uproot.open(file_path) as f:
+        # print( f.keys())
         vertexEventsDf,eventMcDf = collectionDfFromTree(f)
         # print(vertexEventsDf)
         _,hitDf = collectionDfToFlatHits(vertexEventsDf)
@@ -126,7 +127,7 @@ def processEdmFileToTrack(file_path):
         return hitDf,tracklistDf
 
 
-file_list = ["./edmTestFiles/sim_output.edm4hep.root","./edmTestFiles/sim_output2.edm4hep.root","./edmTestFiles/sim_output3.edm4hep.root","./edmTestFiles/digi_real.edm4hep.root",]#"./edmTestFiles/gen_output.edm4hep.root",]
+file_list = ["./edmTestFiles/sim_output.edm4hep.root","./edmTestFiles/sim_output2.edm4hep.root","./edmTestFiles/sim_output3.edm4hep.root","./edmTestFiles/digi_real.edm4hep.root","./edmTestFiles/sim_output_mu2.edm4hep.root","./edmTestFiles/digi_output_mu2.edm4hep.root",]#"./edmTestFiles/gen_output.edm4hep.root",]
 track_count=0
 break_loop=False
 count = 0

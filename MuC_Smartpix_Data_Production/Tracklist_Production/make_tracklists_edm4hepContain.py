@@ -28,7 +28,7 @@ import pandas as pd
 import edm4hepToDict
 import edm4hepTracksUtils
 
-file_list = ["./edmTestFiles/sim_output.edm4hep.root","./edmTestFiles/sim_output2.edm4hep.root","./edmTestFiles/sim_output3.edm4hep.root","./edmTestFiles/digi_real.edm4hep.root",]#"./edmTestFiles/gen_output.edm4hep.root",]
+file_list = ["./edmTestFiles/sim_output.edm4hep.root","./edmTestFiles/sim_output2.edm4hep.root","./edmTestFiles/sim_output3.edm4hep.root","./edmTestFiles/digi_real.edm4hep.root","./edmTestFiles/sim_output_mu2.edm4hep.root","./edmTestFiles/digi_output_mu2.edm4hep.root",]#"./edmTestFiles/gen_output.edm4hep.root",]
 # file_list = ["./edmTestFiles/digi_real.edm4hep.root",]
 track_count=0
 break_loop=False
