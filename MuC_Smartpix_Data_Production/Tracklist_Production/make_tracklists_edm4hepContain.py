@@ -26,6 +26,7 @@ import edm4hep
 import podio
 import pandas as pd
 import edm4hepToDict
+import edm4hepTracksUtils
 
 file_list = ["./edmTestFiles/sim_output.edm4hep.root","./edmTestFiles/sim_output2.edm4hep.root","./edmTestFiles/sim_output3.edm4hep.root","./edmTestFiles/digi_real.edm4hep.root",]#"./edmTestFiles/gen_output.edm4hep.root",]
 # file_list = ["./edmTestFiles/digi_real.edm4hep.root",]
@@ -65,6 +66,7 @@ for file_path in file_list:
         # Print all the collection names in the event
         # collection_names = event.getCollectionNames()
         eventDfDict = edm4hepToDict.eventToDfs(event,ievt)
+        eventDfDict["tracklistDf"] = edm4hepTracksUtils.hitDftoTracklistDf(eventDfDict["vtxBarrelSimHitsDf"])
         eventDfDicts.append(eventDfDict)
 
     concatEventDfs = {key: pd.concat([eventDf[key] for eventDf in eventDfDicts], ignore_index=True) for key in eventDfDicts[0]}
@@ -72,7 +74,10 @@ for file_path in file_list:
     # print(concatEventDfs)
     for key in concatEventDfs.keys():
         savePath = file_path+f".{key}.csv"
-        concatEventDfs[key].to_csv(savePath);
+        if key == "tracklistDf":
+            concatEventDfs[key].to_csv(savePath,sep=" ",index=False,float_format=f"%.{float_precision}f");
+        else:
+            concatEventDfs[key].to_csv(savePath);
         print(f"saved {len(concatEventDfs[key])} hits of {key} to {savePath}")
         
 

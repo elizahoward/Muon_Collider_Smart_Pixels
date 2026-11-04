@@ -73,10 +73,10 @@ def simHitRow(h, ievt):
         "pathLength": h.getPathLength(), "quality": h.getQuality(),
         "position.x": pos.x, "position.y": pos.y, "position.z": pos.z,
         "momentum.x": mom.x, "momentum.y": mom.y, "momentum.z": mom.z,
-        # "index": idx, "collectionID": coll,       #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
         "particle_index": pi, "particle_collectionID": pc,           #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
-         "ievent": ievt, 
-        # "secondary": h.isProducedBySecondary(), "overlay": h.isOverlay(), #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
+        "ievent": ievt, 
+        "index": idx, "collectionID": coll,       #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
+        "secondary": h.isProducedBySecondary(), "overlay": h.isOverlay(), #add back in, just comment out for comparison to make_tracklists_fromEdm4hep.py
     }
 
 def simHitRowWithMc(h, ievt):
