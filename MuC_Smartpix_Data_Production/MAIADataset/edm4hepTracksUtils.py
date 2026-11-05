@@ -83,3 +83,59 @@ def hitDftoTracklistDf(hitDf: pd.DataFrame,flp=0):
     hitDf["flp"] = flp  
     tracklistDf = hitDf[["cota", "cotb", "p", "flp", "ylocal", "zglobal", "pt", "t", "hit_pdg"]].copy()
     return tracklistDf
+
+
+
+
+"""
+Author: Claude
+cellid_decode.py -- decode a DD4hep cellID into system / side / layer / module / sensor (numpy, no DD4hep needed)
+
+The same job as the slcio snippet
+    decoder.setValue(cellID); layer = decoder['layer'].value()
+
+    from cellid_decode import makeDecoder, MAIA_V0_TRACKER_ENCODING
+    decode = makeDecoder(MAIA_V0_TRACKER_ENCODING)
+    f = decode(simHits["cellID"].to_numpy())          # dict of arrays: f["layer"], f["sensor"], ...
+    simHits["layer"] = f["layer"]
+    inner = simHits[simHits["layer"] == 0]            # see the note on the double layer below
+
+Encoding: MAIA_v0.xml (key4hep/k4geo, MuColl/MAIA/compact/MAIA_v0, commit 16658a9) defines
+    GlobalTrackerReadoutID = "system:5,side:-2,layer:6,module:11,sensor:8"
+and VertexBarrelCollection / VertexEndcapCollection use it, so layer = (cellID >> 7) & 0x3F.
+I only checked the vertex file; the inner and outer tracker presumably use the same string but check
+their <readout> entries. Another detector version can have another string: take it from its compact XML.
+
+Vertex barrel layers in MAIA_v0 (ids 3, 5, 7 exist only for the endcap):
+    layer 0 and 1 = a double layer at r ~ 30 / 32 mm,  layer 2 ~ 51 mm,  layer 4 ~ 74 mm,  layer 6 ~ 102 mm
+"""
+# import numpy as np
+
+MAIA_V0_TRACKER_ENCODING = "system:5,side:-2,layer:6,module:11,sensor:8"
+
+
+def makeDecoder(encoding=MAIA_V0_TRACKER_ENCODING):
+    """DD4hep BitFieldCoder for an id string. Fields are packed from bit 0 upwards; a negative width is a
+    signed field; 'name:offset:width' is also accepted."""
+    fields, pos = {}, 0
+    for part in encoding.split(","):
+        bits = part.strip().split(":")
+        name, nums = bits[0], [int(b) for b in bits[1:]]
+        if len(nums) == 2:
+            pos, width = nums
+        else:
+            width = nums[0]
+        fields[name] = (pos, abs(width), width < 0)
+        pos += abs(width)
+
+    def decode(cellID):
+        c = np.asarray(cellID, dtype=np.uint64)
+        out = {}
+        for name, (off, w, signed) in fields.items():
+            v = ((c >> np.uint64(off)) & np.uint64((1 << w) - 1)).astype(np.int64)
+            if signed:
+                v = np.where(v >= (1 << (w - 1)), v - (1 << w), v)
+            out[name] = v
+        return out
+    decode.fields = fields
+    return decode

@@ -1,0 +1,74 @@
+{
+  "fileStub": "./edmTestFiles/digi_output_mu2.edm4hep.root",
+  "rowNumber": "0-based position in the saved table (use .iloc); valid while the tables are not re-sorted or filtered",
+  "key": "(ievent, index): 'index' restarts at 0 in every event, it is NOT a row number",
+  "roles": {
+    "clusters": "vtxClustersDfLinked",
+    "simHits": "vtxBarrelSimHitsDf2Linked",
+    "clusterSimHitLinks": "vtxClusterSimHitLinksDf",
+    "pixels": "vtxPixelsDfLinked",
+    "pixelEdges": null
+  },
+  "tables": {
+    "vtxClustersDfLinked": {
+      "rows": 807826,
+      "what": "vtxClustersDf + n_sim_hits, n_signal_sim_hits, n_overlay_sim_hits, max_dist_to_sim_mm, n_pixels"
+    },
+    "vtxBarrelSimHitsDf2Linked": {
+      "rows": 1050847,
+      "what": "vtxBarrelSimHitsDf2 + n_clusters, linked, max_dist_to_cluster_mm"
+    },
+    "vtxClusterSimHitLinksDf": {
+      "rows": 865866,
+      "what": "one row per cluster <-> sim hit link (a cluster can have many sim hits, a sim hit can feed many clusters)"
+    },
+    "vtxPixelsDfLinked": {
+      "rows": 6895324,
+      "what": "vtxPixelsDf + cluster_row, cluster_index (every pixel belongs to exactly one cluster; -1 = none)"
+    }
+  },
+  "pointers": [
+    {
+      "table": "vtxClusterSimHitLinksDf",
+      "column": "cluster_row",
+      "points_to": "vtxClustersDfLinked",
+      "how": "row number"
+    },
+    {
+      "table": "vtxClusterSimHitLinksDf",
+      "column": "sim_row",
+      "points_to": "vtxBarrelSimHitsDf2Linked",
+      "how": "row number"
+    },
+    {
+      "table": "vtxClusterSimHitLinksDf",
+      "column": "(ievent, cluster_index)",
+      "points_to": "vtxClustersDfLinked",
+      "how": "key (ievent, index)"
+    },
+    {
+      "table": "vtxClusterSimHitLinksDf",
+      "column": "(ievent, sim_index)",
+      "points_to": "vtxBarrelSimHitsDf2Linked",
+      "how": "key (ievent, index)"
+    },
+    {
+      "table": "vtxPixelsDfLinked",
+      "column": "cluster_row",
+      "points_to": "vtxClustersDfLinked",
+      "how": "row number (-1 = no cluster)"
+    },
+    {
+      "table": "vtxPixelsDfLinked",
+      "column": "(ievent, cluster_index)",
+      "points_to": "vtxClustersDfLinked",
+      "how": "key (ievent, index)"
+    },
+    {
+      "table": "vtxBarrelSimHitsDf2Linked",
+      "column": "(ievent, particle_index)",
+      "points_to": "truthParticlesDf2 (input table, not re-saved)",
+      "how": "key (ievent, index); particle_index = -1 means no MC particle (all BIB hits)"
+    }
+  ]
+}
