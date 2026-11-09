@@ -205,6 +205,18 @@ def main():
     if args.quantization > 0:
         quantization_tag = f'quantized_{args.quantization}bit'
 
+    tag_parts = []
+    if args.protect_input_layer:
+        tag_parts.append('protectinput')
+    if args.protect_msb:
+        tag_parts.append('protectmsb')
+    if args.flip:
+        tag_parts.append(f'{len(args.flip)}flips')
+    if args.check_all_bits:
+        tag_parts.append(f'check{args.check_all_bits}')
+    other = '_'.join(tag_parts) if tag_parts else 'none'
+    base_name = f'{args.training_dir}/{args.quantization}bit{args.stub}_flip_rate{args.random_flip_rate}_other{other}'
+
     config['Model']['args']['loadModel'] = True
     config['Model']['args']['modelPath'] = os.path.join(config['TrainingDirectory'], f"models/{config['Model']['class'].replace('_', '.')}_{quantization_tag}.h5")
 
@@ -259,7 +271,7 @@ def main():
         print(f"AUC: {eval_results['roc_auc']:.4f} (Initial: {initial_eval_results['roc_auc'] if not args.skip_eval else 'N/A':.4f})")
         print(f"Test Accuracy: {eval_results['test_accuracy']:.4f} (Initial: {initial_eval_results['test_accuracy'] if not args.skip_eval else 'N/A':.4f})")
 
-        logfile = open(f'{args.training_dir}/{args.quantization}bit{args.stub}_see_evaluation.txt', 'w')
+        logfile = open(f'{base_name}_see_evaluation.txt', 'w')
         logfile.write("Metric,Initial,New\n")
         logfile.write(f"AUC,{initial_eval_results['roc_auc'] if not args.skip_eval else 'N/A'},{eval_results['roc_auc']}\n")
         logfile.write(f"Test Accuracy,{initial_eval_results['test_accuracy'] if not args.skip_eval else 'N/A'},{eval_results['test_accuracy']}\n")
@@ -273,13 +285,16 @@ def main():
             logfile.write(f"FPR_98,{fpr_i_98},{fpr_n_98}\n")
             logfile.close()
 
+
+            file_name = f'{base_name}_prediction_distributions.png'
+
             plt.figure()
             plt.hist([initial_eval_results['predictions'][initial_eval_results['true_labels'] == 0], eval_results['predictions'][eval_results['true_labels'] == 0], initial_eval_results['predictions'][initial_eval_results['true_labels'] == 1], eval_results['predictions'][eval_results['true_labels'] == 1]], range=(0,1), histtype='step', bins=50, label=['Background', 'Background with SEE', 'Signal', 'Signal with SEE'], density=True)
             plt.xlabel('Model Prediction')
             plt.ylabel('Normalized Entries')
             plt.legend()
             plt.title('Prediction Distributions Before and After Bit Flips')
-            plt.savefig(f'{args.training_dir}/{args.quantization}bit{args.stub}_prediction_distributions.png')
+            plt.savefig(file_name)
             plt.close()
 
     elif args.check_all_bits is not None:
@@ -328,7 +343,7 @@ def main():
         tpr_i_98 = 0
         fpr_i_98 = 0
 
-        logfile = open(f'{args.training_dir}/{args.quantization}bit{args.stub}_bit_sensitivity_{layer_to_check}.txt', 'w')
+        logfile = open(f'{base_name}_bit_sensitivity_{layer_to_check}.txt', 'w')
         logfile.write("bit_position,weight_name,indices,tpr_99,fpr_99,tpr_98,fpr_98\n")
 
         for layer, weight_shapes in layers.items():
@@ -366,7 +381,7 @@ def main():
                         fprs98.append(fpr_n_98)
                         logfile.write(f"{layer},{bit_position},{weight_name},{indices},{tpr_n_99},{fpr_n_99},{tpr_n_98},{fpr_n_98}\n")
         logfile.close()
-
+        
         # FPR vs TPR Scatter
         plt.figure()
         plt.scatter(tprs99, fprs99, label='TPR=0.99', alpha=0.6)
@@ -377,7 +392,7 @@ def main():
         plt.ylabel('False Positive Rate')
         plt.title(f'Bit Sensitivity for Layer {layer_to_check}')
         plt.legend()
-        plt.savefig(f'{args.training_dir}/{args.quantization}bit{args.stub}_bit_sensitivity_{layer_to_check}.png')
+        plt.savefig(f'{base_name}.png')
         plt.close()
 
         # FPR Histogram
@@ -386,7 +401,7 @@ def main():
         plt.ylabel('Bits Count')
         plt.title(f'FPR Distribution for Bit Flips in Layer {layer_to_check}')
         plt.legend()
-        plt.savefig(f'{args.training_dir}/{args.quantization}bit{args.stub}_bit_sensitivity_{layer_to_check}_fpr_hist.png')
+        plt.savefig(f'{base_name}_fpr_hist.png')
         plt.close()
 
         # TPR Histogram
@@ -395,7 +410,7 @@ def main():
         plt.ylabel('Bits Count')
         plt.title(f'TPR Distribution for Bit Flips in Layer {layer_to_check}')
         plt.legend()
-        plt.savefig(f'{args.training_dir}/{args.quantization}bit{args.stub}_bit_sensitivity_{layer_to_check}_tpr_hist.png')
+        plt.savefig(f'{base_name}_tpr_hist.png')
         plt.close()
 
 if __name__== "__main__":
