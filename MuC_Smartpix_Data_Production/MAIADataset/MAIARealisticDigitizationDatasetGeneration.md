@@ -367,6 +367,43 @@ Then we can open that root file, and find out how to turn it into a parquet and 
 | `vi: command not found` | Not installed in the container; edit files from outside it. |
 | `source setup_config.sh` says benchmark directory does not exist | You are not in the `mucoll-benchmarks` directory (or the environment is already over-long, see the first row). |
 
+## 4. Smartpix dataset generation  
+
+From here I copied the output edm4hep.root files over to the edmTestFiles in this github https://github.com/elizahoward/Muon_Collider_Smart_Pixels/edit/main/MuC_Smartpix_Data_Production/MAIADataset/ and made some scripts and notebooks to convert edm4hep files to a more readable format (pandas dataframe) that can then be used with the rest of the dataset generation pipeline. 
+
+### 4a. edm4hep to csv/pandas  
+
+There are two variations, one that should run anywhere in a "basic" python environment with uproot, pandas, and awkward arrays and converts edm4hep to csv and tracklists for later use with pixelav. The other variation processes the realistic digitization with the muon collider software container.
+
+#### basic variation   
+The basic make_tracklists_fromEdm4hep.py can be run very simply with `python make_tracklists_fromEdm4hep.py` in a python environment that has all the imports (numpy, uproot, pandas). Last time I ran it in a slightly different location, so you might need to comment out the import plothelper line but it should work. To change which files get run over, change line 130 file_list = [...]. This will spit out a couple of csvs with the MCparticles in each event and the sim hits for each events, which previously we called "tracklists". The sim hits are also saved in the old tracklist format (.tracklistDf.csv). If you delete the header row from this file, you can put in a folder in Data_Files/[NameOfDatasetYouChoose]/Track_Lists/signal_tracks_0.txt and then you can run pixelav from the MuC_Smartpix_Data_Production with 
+```
+python launchDataProduction.py -c 3 -bs [num of tracks] -t [num of tracks] -flp 1 -tl /path/to/Data_Files/[NameOfDatasetYouChoose]/Track_Lists -p -sig > log_[todaysDate].txt
+```
+You can read about the options in launchDataProduction, but the only thing I would change is -c (the number of cpu cores), -bs (the number of tracks in each file, named by signal_tracks_[idx].txt), and -t (the number of total tracks, and of course the path to the tracklists. The launchDataProduction.py assumes a directory structure of [dataset]/Track_Lists/signal_tracks_[idx].txt
+
+#### script running in container  
+The other version make_tracklists_edm4hepContain.py can be run from here (on a machine with access to cvmfs) with (see usage at top of script)
+```
+apptainer run /cvmfs/unpacked.cern.ch/ghcr.io/muoncollidersoft/mucoll-sim-ubuntu24\:v3.1-amd64
+source /opt/setup_mucoll.sh
+python make_tracklists_edm4hepContain.py
+```
+Like the other make_tracklists, there is a file_list which you can modify. Right now this spits out a bunch of csv files from the edm4hep files to further process. Then you can make linked hits/clusters with 
+```
+python linkEdmHits.py ./edmTestFiles/digi_output_mu2.edm4hep.root
+```
+where that filestub is whatever you had in the file_list (but it should have digitization hits).
+
+Then you can use linkClusters.py in a notebook, as is done in tracklistEdmExploration.ipynb to get pixels linked to clusters linked to simhits. 
+
+TODO: convert these linked clusters to something like the output of pixelav. 
+
+### 4b visualization of things
+
+some prelimnary plots in tracklistEdmExploration.ipynb
+
+
 ## Known issues / not yet verified
 
 - **BIB overlay run has not completed successfully yet.** The overlay run using `/ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/...` reported
