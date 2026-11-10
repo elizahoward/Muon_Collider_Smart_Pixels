@@ -376,11 +376,13 @@ From here I copied the output edm4hep.root files over to the edmTestFiles in thi
 There are two variations, one that should run anywhere in a "basic" python environment with uproot, pandas, and awkward arrays and converts edm4hep to csv and tracklists for later use with pixelav. The other variation processes the realistic digitization with the muon collider software container.
 
 #### basic variation   
-The basic make_tracklists_fromEdm4hep.py can be run very simply with `python make_tracklists_fromEdm4hep.py` in a python environment that has all the imports (numpy, uproot, pandas). Last time I ran it in a slightly different location, so you might need to comment out the import plothelper line but it should work. To change which files get run over, change line 130 file_list = [...]. This will spit out a couple of csvs with the MCparticles in each event and the sim hits for each events, which previously we called "tracklists". The sim hits are also saved in the old tracklist format (.tracklistDf.csv). If you delete the header row from this file, you can put in a folder in Data_Files/[NameOfDatasetYouChoose]/Track_Lists/signal_tracks_0.txt and then you can run pixelav from the MuC_Smartpix_Data_Production with 
+The basic make_tracklists_fromEdm4hep.py can be run very simply with `python make_tracklists_fromEdm4hep.py` in a python environment that has all the imports (numpy, uproot, pandas, awkward-array). Last time I ran it in a slightly different location, so you might need to comment out the import plothelper line but it should work. To change which files get run over, change line 130 file_list = [...]. This will spit out a couple of csvs with the MCParticles in each event and the sim hits for each events, which previously we called "tracklists". The sim hits are also saved in the old tracklist format (.tracklistDf.csv). If you delete the header row from this file, you can put in a folder in Data_Files/[NameOfDatasetYouChoose]/Track_Lists/signal_tracks_0.txt and then you can run pixelav from the MuC_Smartpix_Data_Production with 
 ```
 python launchDataProduction.py -c 3 -bs [num of tracks] -t [num of tracks] -flp 1 -tl /path/to/Data_Files/[NameOfDatasetYouChoose]/Track_Lists -p -sig > log_[todaysDate].txt
 ```
 You can read about the options in launchDataProduction, but the only thing I would change is -c (the number of cpu cores), -bs (the number of tracks in each file, named by signal_tracks_[idx].txt), and -t (the number of total tracks, and of course the path to the tracklists. The launchDataProduction.py assumes a directory structure of [dataset]/Track_Lists/signal_tracks_[idx].txt
+
+Currently this version doesn't support reading the digitized pixels from edm4hep because tracking those links to sim hits and clusters/reco hits is easier to do within the muon collider software container.
 
 #### script running in container  
 The other version make_tracklists_edm4hepContain.py can be run from here (on a machine with access to cvmfs) with (see usage at top of script)
@@ -406,9 +408,7 @@ some prelimnary plots in tracklistEdmExploration.ipynb
 
 ## Known issues / not yet verified
 
-- **BIB overlay run has not completed successfully yet.** The overlay run using `/ospool/uc-shared/public/futurecolliders/gregorypenn/BIB_v9/...` reported
-  `directory iterator cannot open directory: No such file or directory` for both paths, then segfaulted on event 0. Most likely the `public/` area is not visible inside the container, because the `apptainer run -B` only binds `.../project/futurecolliders/data/`. Try adding a bind such as `-B /ospool/uc-shared/public/futurecolliders/`, or use the `$BPATH` location under `project/.../data/`. (This is a hypothesis, not confirmed; the segfault may simply follow from the empty background list.)
-- The `$BPATH` (`fmeloni`) command has not been run successfully possibly because of some copy/paste problems above.
-- The `1666`-background-event command with all `--doRealisticDigi*` flags is untested.
-- The contents of `digi_output.edm4hep.root` (`podio-dump`) have not been checked yet. After a successful run, confirm that the pixel and link collections listed above are present and that sim hits are labelled BIB vs. signal.
+- Weirdly some of the sim hits don't link to any reco hit. Under investigation, there are ideas for why.
+- The `1666`-background-event command with all `--doRealisticDigi*` flags doesn't work with the 3.1 version of the muon collider software. The uncommented command works
+- The contents of `digi_output.edm4hep.root` (`podio-dump`) have not been checked yet. After a successful run, confirm that the pixel and link collections listed above are present and that sim hits are labelled BIB vs. signal. (in process)
 - `ctest` failure `check_MuonCVXDDigitiser` is known and accepted for now.
