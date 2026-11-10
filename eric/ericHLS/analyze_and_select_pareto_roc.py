@@ -431,7 +431,7 @@ def select_pareto_models(df):
 # PLOTTING FUNCTIONS
 # ============================================================================
 
-def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name):
+def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name, metric_name,modelPltName):
     """Create Pareto front visualization."""
     fig, ax = plt.subplots(figsize=(12, 8))
     
@@ -459,30 +459,7 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
         ax.plot(pareto_sorted_2['parameters'], pareto_sorted_2['primary_metric'],
                 'orange', linestyle=':', alpha=0.6, linewidth=2, zorder=2)
     
-    # Annotate primary Pareto points
-    for _, row in pareto_df.iterrows():
-        trial_id = row['trial_id']
-        label = trial_id if isinstance(trial_id, str) else f"{int(trial_id):03d}"
-        ax.annotate(label, 
-                   xy=(row['parameters'], row['primary_metric']),
-                   xytext=(8, 8), textcoords='offset points',
-                   fontsize=9, color='darkred', fontweight='bold',
-                   bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', 
-                            alpha=0.7, edgecolor='darkred', linewidth=1),
-                   zorder=4)
-    
-    # Annotate secondary Pareto points
-    if pareto_df_secondary is not None and not pareto_df_secondary.empty:
-        for _, row in pareto_df_secondary.iterrows():
-            trial_id = row['trial_id']
-            label = trial_id if isinstance(trial_id, str) else f"{int(trial_id):03d}"
-            ax.annotate(label, 
-                       xy=(row['parameters'], row['primary_metric']),
-                       xytext=(8, -12), textcoords='offset points',
-                       fontsize=8, color='darkorange', fontweight='bold',
-                       bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', 
-                                alpha=0.7, edgecolor='darkorange', linewidth=1),
-                       zorder=4)
+
     
     # Labels and title
     metric_display = {
@@ -494,7 +471,7 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
     
     ax.set_xlabel('Number of Parameters', fontsize=14, fontweight='bold')
     ax.set_ylabel(metric_display, fontsize=14, fontweight='bold')
-    ax.set_title('Model 2.5: Pareto Front', 
+    ax.set_title(f'Model {modelPltName}: Pareto Front', 
                 fontsize=16, fontweight='bold', pad=20)
     
     ax.grid(True, alpha=0.3, linestyle='--')
@@ -524,6 +501,36 @@ def plot_pareto_front(df, pareto_df, pareto_df_secondary, output_dir, model_name
     
     plt.tight_layout()
     
+    plot_path = os.path.join(output_dir, 'pareto_front_roc_based_nolabels.png')
+    plt.savefig(plot_path, dpi=300, bbox_inches='tight')
+    print(f"  ✓ Saved: {plot_path}")
+
+        # Annotate primary Pareto points
+    for _, row in pareto_df.iterrows():
+        trial_id = row['trial_id']
+        label = trial_id if isinstance(trial_id, str) else f"{int(trial_id):03d}"
+        ax.annotate(label, 
+                   xy=(row['parameters'], row['primary_metric']),
+                   xytext=(8, 8), textcoords='offset points',
+                   fontsize=9, color='darkred', fontweight='bold',
+                   bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', 
+                            alpha=0.7, edgecolor='darkred', linewidth=1),
+                   zorder=4)
+    
+    # Annotate secondary Pareto points
+    if pareto_df_secondary is not None and not pareto_df_secondary.empty:
+        for _, row in pareto_df_secondary.iterrows():
+            trial_id = row['trial_id']
+            label = trial_id if isinstance(trial_id, str) else f"{int(trial_id):03d}"
+            ax.annotate(label, 
+                       xy=(row['parameters'], row['primary_metric']),
+                       xytext=(8, -12), textcoords='offset points',
+                       fontsize=8, color='darkorange', fontweight='bold',
+                       bbox=dict(boxstyle='round,pad=0.3', facecolor='lightyellow', 
+                                alpha=0.7, edgecolor='darkorange', linewidth=1),
+                       zorder=4)
+            
+
     plot_path = os.path.join(output_dir, 'pareto_front_roc_based.png')
     plt.savefig(plot_path, dpi=300, bbox_inches='tight')
     print(f"  ✓ Saved: {plot_path}")
@@ -795,6 +802,12 @@ Examples:
         required=True,
         help='Directory containing TFRecords (with tfrecords_validation/ subdirectory)'
     )
+    parser.add_argument(
+        '--modelPltName',
+        type=str,
+        required=True,
+        help='Name of the model in plot title'
+    )
     
     parser.add_argument(
         '--output_dir',
@@ -806,15 +819,15 @@ Examples:
     parser.add_argument(
         '--use_weighted',
         action='store_true',
-        default=True,
-        help='Use weighted background rejection metric (default: True)'
+        default=False,
+        help='Use weighted background rejection metric (default: False)'
     )
     
     parser.add_argument(
         '--signal_efficiency',
         type=float,
-        default=0.95,
-        help='Signal efficiency for background rejection (if not using weighted, default: 0.95)'
+        default=0.99,
+        help='Signal efficiency for background rejection (if not using weighted, default: 0.99)'
     )
     
     parser.add_argument(
@@ -847,6 +860,7 @@ Examples:
 
     args = parser.parse_args()
     
+    modelPltName = args.modelPltName
     # Parse background rejection weights
     bkg_rej_weights = {}
     if args.use_weighted:
@@ -982,7 +996,7 @@ Examples:
     print("=" * 80)
 
     metric_name = df.iloc[0]['metric_name']
-    plot_pareto_front(df, pareto_df, pareto_df_secondary, args.output_dir, model_name, metric_name)
+    plot_pareto_front(df, pareto_df, pareto_df_secondary, args.output_dir, model_name, metric_name, modelPltName)
 
     # Copy model files
     copy_model_files(pareto_df, pareto_df_secondary, args.output_dir, separate_folders=not args.no_separate_folders)

@@ -103,7 +103,8 @@ class hlsVerifier():
         test_loss, test_accuracy = self.model.evaluate(self.xTest, self.yTest)
         print(test_loss,"that was loss, val accuracy  is",test_accuracy)
 
-    def fixLayerActivation(self):
+    # no longer works for some reason
+    def fixLayerActivationRegular(self):
         for layer in self.quantizedModel.layers:
             if hasattr(layer, 'activation'):
                 act = layer.activation
@@ -128,6 +129,163 @@ class hlsVerifier():
                         setattr(layer.activation, '__name__', name)
                     except AttributeError:
                         pass 
+
+    #Update to work for Fermilab model qmodel_file = "/local/d1/smartpixLab/fermiModels/ds8l6_padded_noscaling_qkeras_foldbatchnorm_d58w4a8model.h5"
+    def fixLayerActivationASIC(self):
+        from qkeras.quantizers import quantized_bits, quantized_relu
+        from qkeras.qlayers import QActivation
+        import tensorflow as tf
+        
+        # 1. Create true instantiated qkeras quantizer objects
+        qk_bits_8_0 = quantized_bits(bits=8, integer=0)
+        qk_relu_8_0 = quantized_relu(bits=8, integer=0)
+        
+        # Inject dynamic __name__ strings directly to satisfy the hls4ml profiling trace.
+        qk_bits_8_0.__name__ = "quantized_bits"
+        qk_relu_8_0.__name__ = "quantized_relu"
+        
+        for layer in self.quantizedModel.layers:
+            if hasattr(layer, 'activation'):
+                act = layer.activation
+                layer_type = layer.__class__.__name__
+                
+                # Skip if it's already an active keras tuner structured layout dict
+                if isinstance(act, dict) and 'class_name' in act and act['class_name'] != 'linear':
+                    continue
+                    
+                # Extract basic string name
+                if not isinstance(act, str):
+                    name = getattr(act, '__name__', act.__class__.__name__)
+                else:
+                    name = act
+                    
+                if '(' in name:
+                    name = name.split('(')
+                    
+                if 'function linear' in name or 'builtins' in name or 'linear' in name:
+                    name = 'linear'
+                    
+                # TRANSFORM STEP: Convert vanilla Activation layers into native QActivation layers
+                if layer_type == 'Activation':
+                    layer.__class__ = QActivation
+                    layer_type = 'QActivation'
+                    
+                # 2. Route layers directly to fully-instantiated qkeras object classes
+                if 'quantized_bits' in name:
+                    layer.activation = qk_bits_8_0
+                    if layer_type == 'QActivation':
+                        layer.quantizer = qk_bits_8_0  # Fixes execution loop initialization
+
+                elif 'quantized_relu' in name:
+                    layer.activation = qk_relu_8_0
+                    if layer_type == 'QActivation':
+                        layer.quantizer = qk_relu_8_0  # Fixes execution loop initialization
+
+                elif name == 'linear':
+                    if layer_type == 'QActivation':
+                        layer.activation = qk_bits_8_0
+                        layer.quantizer = qk_bits_8_0  # Fixes execution loop initialization
+                    else:
+                        # Inline properties on QDense / QDenseBatchnorm drop back safely to a Keras linear function
+                        layer.activation = tf.keras.activations.linear
+                else:
+                    # Catch-all fallback for standard activations (relu, sigmoid, etc.)
+                    layer.activation = name
+
+    def fixLayerActivationRegularNOTTHIS(self):
+        from qkeras.quantizers import quantized_bits, quantized_relu, quantized_sigmoid
+        from qkeras.qlayers import QActivation
+        import tensorflow as tf
+        import types
+        
+        # 1. Create true instantiated qkeras quantizer objects
+        qk_bits_8_0 = quantized_bits(bits=8, integer=0)
+        qk_relu_8_0 = quantized_relu(bits=8, integer=0)
+        qk_sigmoid_8_0 = quantized_sigmoid(bits=8, integer=0)
+        
+        # Inject dynamic __name__ strings directly to satisfy the hls4ml profiling trace.
+        qk_bits_8_0.__name__ = "quantized_bits"
+        qk_relu_8_0.__name__ = "quantized_relu"
+        qk_sigmoid_8_0.__name__ = "quantized_sigmoid"
+        
+        for layer in self.quantizedModel.layers:
+            if hasattr(layer, 'activation'):
+                act = layer.activation
+                layer_type = layer.__class__.__name__
+                
+                # Skip if it's already an active keras tuner structured layout dict
+                if isinstance(act, dict) and 'class_name' in act and act['class_name'] != 'linear':
+                    continue
+                    
+                # Extract basic string name
+                if not isinstance(act, str):
+                    if isinstance(act, (list, tuple)) or act.__class__.__name__ == 'ListWrapper':
+                        name = str(act)
+                    else:
+                        name = getattr(act, '__name__', act.__class__.__name__)
+                else:
+                    name = act
+                    
+                if '(' in name:
+                    name = name.split('(')[0]
+                    
+                if 'function linear' in name or 'builtins' in name or 'linear' in name:
+                    name = 'linear'
+                    
+                # TRANSFORM STEP: Convert vanilla Activation layers into native QActivation layers
+                if layer_type == 'Activation':
+                    layer.__class__ = QActivation
+                    layer_type = 'QActivation'
+                    
+                # 2. Route layers directly to fully-instantiated qkeras object classes
+                target_quantizer = None
+                if 'quantized_bits' in name:
+                    target_quantizer = qk_bits_8_0
+                elif 'quantized_relu' in name:
+                    target_quantizer = qk_relu_8_0
+                elif 'quantized_sigmoid' in name:
+                    target_quantizer = qk_sigmoid_8_0
+                elif name == 'linear' and layer_type == 'QActivation':
+                    target_quantizer = qk_bits_8_0
+
+                # 3. Apply the routing parameters and force serialization overrides
+                if target_quantizer is not None:
+                    layer.activation = target_quantizer
+                    if layer_type == 'QActivation':
+                        layer.quantizer = target_quantizer
+                        
+                        # PURE ADDITION: Override get_config dynamically to force clean 
+                        # dictionary serialization and bypass Keras ListWrapper bugs.
+                        def make_forced_get_config(l, q):
+                            original_get_config = l.get_config
+                            def forced_get_config():
+                                config = original_get_config()
+                                # Build the native dictionary layout hls4ml expects
+                                config['activation'] = {
+                                    'class_name': q.__class__.__name__,
+                                    'config': q.get_config()
+                                }
+                                return config
+                            return forced_get_config
+                            
+                        layer.get_config = make_forced_get_config(layer, target_quantizer)
+                else:
+                    if name == 'linear':
+                        # Inline properties on QDense / QConv2D drop back safely to a Keras linear function
+                        layer.activation = tf.keras.activations.linear
+                    else:
+                        # Catch-all fallback for standard activations (relu, sigmoid, etc.)
+                        layer.activation = name
+
+
+
+    def fixLayerActivation(self):
+        if self.modelType in [0, "ASIC"]:
+            self.fixLayerActivationASIC()
+        else:
+            self.fixLayerActivationRegular()
+
+
     def assignModel(self):
         if self.customModel:
             self.makeCustomModel()
@@ -135,9 +293,11 @@ class hlsVerifier():
             self.plotCustomModel()
             self.quantizedModel = self.model
         else:
-            co = {}       
-            qkeras.utils._add_supported_quantized_objects(co)
-            self.quantizedModel = tf.keras.models.load_model(self.filepath,custom_objects=co,compile=True)
+            from Model_Classes import loadQuantizedModel
+            # co = {}       
+            # qkeras.utils._add_supported_quantized_objects(co)
+            # self.quantizedModel = tf.keras.models.load_model(self.filepath,custom_objects=co,compile=True)
+            self.quantizedModel = loadQuantizedModel(self.filepath,compile=True)
             self.fixLayerActivation()
 
     def printModelSummary(self):
@@ -159,7 +319,7 @@ class hlsVerifier():
             # [yTest, xTestList] = pickle.load(open(f"./testVectors.pkl",'rb'))
             # xTest = pickle.load(open(f"./tfTestVectors.pkl",'rb'))
         else:
-            self.xTest, self.yTest, self.xTestList, self.xTrain, self.yTrain = flattenTfData(self.modelType)
+            self.xTest, self.yTest, self.xTestList, self.xTrain, self.yTrain = flattenTfData(self.modelType,tfRecordFolder=self.tfRecordFolder)
             if self.saveTestVectors:
                 pickle.dump([self.yTest, self.xTestList],open(f"./testVectors{self.modelType}.pkl","wb"))
                 pickle.dump(self.xTest,open(f"./tfTestVectors{self.modelType}.pkl","wb"))
@@ -174,6 +334,13 @@ class hlsVerifier():
             print(self.xTest['y_size'][(np.random.randint(0,len(self.xTest["y_local"])))])
             print(self.xTest['x_size'][(np.random.randint(0,len(self.xTest["y_local"])))])
             print(self.xTest['z_global'][(np.random.randint(0,len(self.xTest["y_local"])))])
+        if self.modelType in [0,"ASIC"]:
+            print(self.xTest['x_size'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['y_profile'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['z_global'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['nModule'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['x_local'][(np.random.randint(0,len(self.xTest["y_local"])))])
+            print(self.xTest['inVectAsic'][(np.random.randint(0,len(self.xTest["y_local"])))])
 
         print(self.xTest['y_local'][(np.random.randint(0,len(self.xTest["y_local"])))])
 
@@ -192,6 +359,15 @@ class hlsVerifier():
         print(len(self.xTestList[0]))
         if self.customModel:
             self.xTestList = self.xTestList[3]
+        if self.modelType in [0,"ASIC"]:
+            self.xTestList = self.xTestList[-1]   
+        # if self.modelType in [1, "1"]:
+        #     #Not sure why this hasn't been fixed already?? but need to get rid of nModule and xLocal
+        #     if len(self.xTestList) == 6:
+        #         print("getting rid of last 2 list elements since assuming they are nModule and xlocal")
+        #         self.xTestList = self.xTestList[0:4]     
+        print(len(self.xTestList))
+        print(len(self.xTestList[0]))
 
     def __init__(self,
                 doingCatapult: bool = True, #If using catapult, use the ccs_env python environment
@@ -201,11 +377,15 @@ class hlsVerifier():
                 buildModel: bool = False,
                 customModel: bool = False,
                 fullRunOnInit: bool = True,
-                modelType = 2.5, #so far using 1 and 2.5, but in future will use the specification in hlsUtils
+                modelType = 2.5, #so far using 1 and 2.5, but in future will use the specification in hlsUtils -> Update June 10, 2026, seems okay now? and follows tfLoaderUtils, there is no hlsUtils
                 filepath = "",
                 baseSaveDir = "./hlsVerification",
-                interactivePlots = True,
+                interactivePlots: bool = True,
                 PLOT_DIR = "",
+                tfRecordFolder = "", #this is the default used by tfLoaderUtils, which if unchanged will pass to the default directories of tfLoaderUtils
+                doTrace: bool = True,
+                noDSP: bool = False,
+                programWeights: bool = True,
                  ) -> None:
         
         self.doingCatapult = doingCatapult 
@@ -216,11 +396,18 @@ class hlsVerifier():
         self.customModel = customModel 
         self.modelType = modelType 
         self.fullRunOnInit = fullRunOnInit
+        self.tfRecordFolder = tfRecordFolder
+        self.doTrace = doTrace
+        self.noDSP = noDSP
+        self.programWeights = programWeights
 
         #process input flags
         if self.doingCatapult:
-            sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.1-1267132/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
+            # sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.1-1267132/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
+            sys.path.append("/code/Siemens_EDA/Catapult_Synthesis_2026.2-1292347/Mgc_home/shared/pkgs/ccs_hls4ml/hls4ml/")
             self.catapult_ai_nn = import_module("catapult_ai_nn")
+            if self.doTrace:
+                print("SO FAR CATAPULT DOES NOT FULLY SUPPORT THE TRACE STUFF!!!!\n\n")
         self.hls4ml = import_module("hls4ml")
         
 
@@ -253,8 +440,8 @@ class hlsVerifier():
 
         pathlib.Path(baseSaveDir).mkdir(parents=True,exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.output_dir_catapult = os.path.join(baseSaveDir,"hlsCatapultModel2_"+timestamp)
-        self.output_dir_vitis = os.path.join(baseSaveDir,"hlsVitisModel2_"+timestamp)
+        self.output_dir_catapult = os.path.join(baseSaveDir,"hlsCatapultModel_"+timestamp)
+        self.output_dir_vitis = os.path.join(baseSaveDir,"hlsVitisModel_"+timestamp)
         self.output_dir = self.output_dir_catapult if doingCatapult else self.output_dir_vitis
 
         if PLOT_DIR == "":
@@ -280,13 +467,14 @@ class hlsVerifier():
         self.predictFirstVector()
         print("starting to predict all vectors")
         self.predictAllVectors()
-        print("starting to trace all vectors (this may take a bit)")
-        self.traceAllVectors()
-        print("Done tracing all vectors")
-        self.printHLSTrace()
-        self.plotHLSTrace()
+        if self.doTrace:
+            print("starting to trace all vectors (this may take a bit)")
+            self.traceAllVectors()
+            print("Done tracing all vectors")
+            self.printHLSTrace()
+            self.plotHLSTrace()
+            self.writeTrace()
         self.plotHLSVerification()
-        self.writeTrace()
         if self.buildModel:
             self.finishBuilding()
     
@@ -317,6 +505,9 @@ class hlsVerifier():
             # config_ccs['HLSConfig']['LayerName']['input1']['Precision'] = 'ac_fixed<8,1,true>' ##TODO
             # Performance strategy is set to latency mode
             config_ccs['HLSConfig']['Model']['Strategy'] = 'Latency'
+            if self.programWeights:
+                print("\n\n\nProgrammable weights!\n\n\n\n")
+                config_ccs['HLSConfig']["Model"]["BramFactor"] = 0  
             hls_model_ccs = self.catapult_ai_nn.generate_dataflow(model=self.quantizedModel,config_ccs=config_ccs)
             hls_model_ccs.compile()
             self.hls_model_ccs = hls_model_ccs
@@ -324,18 +515,76 @@ class hlsVerifier():
             #Actually need to import the other hls4ml for this
             config = self.hls4ml.utils.config_from_keras_model(self.quantizedModel, granularity='name',default_precision = "fixed<16,7>",)
             # config = self.hls4ml.utils.config_from_keras_model(quantizedModel, granularity='name',default_precision="ap_fixed<16,6,true>")
-
+            # if True:
+            #     for layer_name in config.get('LayerName', {}):
+            #         config['LayerName'][layer_name]['Strategy'] = 'Resource'
+            if self.programWeights:
+                config["Model"]["BramFactor"] = 0 
             for layer in config['LayerName'].keys():
                 print('Enable tracing for layer:', layer)
                 config['LayerName'][layer]['Trace'] = True
 
-            # Convert to an hls model
-
-            hls_model = self.hls4ml.converters.convert_from_keras_model(self.quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=self.output_dir_vitis,backend="Vitis")
+            #added to get more latency tracing
+            # Add this line to force Co-simulation tracking
+            # config['TraceLevel'] = 'port' # Options: 'all', 'port', or 'none'
+            hls_model = self.hls4ml.converters.convert_from_keras_model(self.quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=self.output_dir_vitis,backend="Vitis",clock_period=10)
             # hls_model = self.hls4ml.converters.convert_from_keras_model(quantizedModel, hls_config=config, part = 'xc7z020clg400-1', output_dir=output_dir,backend="Catapult")
             ##Part number input in above line as part='xcu
             # part='xcu250-figd2104-2L-e',
             hls_model.compile()
+            if self.noDSP:
+                print("TURNING OFF DSPS")
+                # Force the Vitis HLS 2024.1 backend to map all operations to standard fabric logic
+                tcl_path = os.path.join(self.output_dir_vitis, "build_prj.tcl")
+                if os.path.exists(tcl_path):
+                    with open(tcl_path, "r") as f:
+                        tcl_content = f.read()
+                    
+                    # 1. Clean up the deprecated array partition warning/error line
+                    tcl_content = tcl_content.replace(
+                        "config_array_partition -maximum_size 4096", 
+                        "# config_array_partition -maximum_size 4096"
+                    )
+                    
+                    # 2. Inject valid Vitis HLS 2024.1 global operator fabric overrides
+                    if "csynth_design" in tcl_content:
+                        patch_directives = (
+                            "config_op mul -impl fabric\n"  # Maps all inferred multiplications to LUTs
+                            "config_op add -impl fabric\n"  # Maps all inferred additions to LUTs
+                            "csynth_design"
+                        )
+                        tcl_content = tcl_content.replace("csynth_design", patch_directives)
+                        
+                        with open(tcl_path, "w") as f:
+                            f.write(tcl_content)
+                        print(f"[{self.output_dir_vitis}] Patched build_prj.tcl to force Vitis 2024.1 operator fabric mapping.")
+                    # if "csynth_design" in tcl_content:
+                    #     patch_directives = (
+                    #         # 1. Globally configure the RTL generation tool to enforce 0 DSP architectures
+                    #         "config_rtl -max_dsp 0\n"
+                            
+                    #         # 2. Prevent memory array and multiplier multi-pumping optimizations
+                    #         "config_bind -force_array_dsp off\n"
+                            
+                    #         # 3. Explicitly tell the global operator framework to bind math functions to LUT fabric
+                    #         "config_op mul -impl fabric\n"
+                    #         "config_op mac -impl fabric\n"
+                            
+                    #         # 4. Enforce strict budget limits on standard structural sub-cores
+                    #         "alloc_use_core mul_dsp 0\n"
+                    #         "alloc_use_core mac_dsp 0\n"
+                            
+                    #         "csynth_design"
+                    #     )
+                    #     tcl_content = tcl_content.replace("csynth_design", patch_directives)
+                    #     tcl_content = tcl_content.replace("csynth_design", patch_directives)
+                        
+                    #     with open(tcl_path, "w") as f:
+                    #         f.write(tcl_content)
+                    #     print(f"[{self.output_dir_vitis}] Applied structural core block to wipe out Instance DSPs.")
+
+
+
             self.hls_model = hls_model
     def printInputHLSVars(self):
         if self.doingCatapult:
@@ -354,7 +603,7 @@ class hlsVerifier():
         print(self.xTest.keys())
         # print(hls_model_ccs.get_input_variables())
         firstInput = [self.xTestList[i][1:2] for i in range(len(self.xTestList))]
-        if self.customModel:
+        if self.customModel or (self.modelType in [0,"ASIC"]):
             firstInput = self.xTestList[1:2]
         print(firstInput)
         # firstInputFlat = np.concatenate([firstInput[0][0],firstInput[1],firstInput[2],firstInput[3][0],firstInput[4]])
@@ -382,6 +631,15 @@ class hlsVerifier():
         else:    
             self.hls_model_predictions = self.hls_model_ccs.predict(self.multiInput)
         self.q_predictions = self.quantizedModel.predict(self.multiInput)
+        if self.q_predictions.shape[1]>1: #In case of ASIC model
+            print("applying argmax")
+            assert self.modelType in [0,"ASIC"]
+            self.q_predictions = np.argmax(self.q_predictions,axis=1)
+            self.hls_model_predictions = np.argmax(self.hls_model_predictions,axis=1)
+            #reshape to be consistent with other cases
+            self.hls_model_predictions = self.hls_model_predictions.reshape(-1, 1)
+            self.q_predictions = self.q_predictions.reshape(-1, 1)        
+        print(self.hls_model_predictions.shape,self.q_predictions.shape,self.yTest.shape)
 
     def traceAllVectors(self):
         if self.doingVitis:
@@ -459,6 +717,7 @@ class hlsVerifier():
 
     def plotHLSVerification(self):
         import matplotlib.colors as colors
+        print(self.hls_model_predictions.shape,self.q_predictions.shape,self.yTest.shape)
         predictionsTogether = np.array([self.hls_model_predictions,self.q_predictions,self.yTest]).transpose()
         print(predictionsTogether[0][370])
         # plt.scatter(self.hls_model_predictions,self.q_predictions,c = self.yTest,marker=",")

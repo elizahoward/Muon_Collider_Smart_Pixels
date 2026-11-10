@@ -15,6 +15,7 @@ import functools
 from validationPlots.plotUtils import * #double check this import will work if call from another folder
 import pandas as pd
 from pathlib import Path
+import json
 
 
 
@@ -41,7 +42,8 @@ def loadQModel(filepath = "", modelType=2,co = {} ):
 
 def getModelAndPredict(quantizedModel,
                         tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
-                        configName = "justThisOne"
+                        configName = "justThisOne",
+                        filterTime = False
                        ):
     if "1" in quantizedModel.name[3:7]:
         modelType = 1
@@ -58,8 +60,10 @@ def getModelAndPredict(quantizedModel,
     else:
         raise ValueError("Error processing model type")
     model.models[configName] = quantizedModel
-    model.evaluate(config_name=configName,predictionPlots=False)
-    predictions = model.models[configName].predict(model.validation_generator, verbose=1)
+    # model.x_feature_description += ["cotAlpha", "cotBeta"]
+    model.evaluate(config_name=configName,predictionPlots=False,signal_efficiencies=[0.95, 0.98, 0.99],filterTime = filterTime)
+    # predictions = model.models[configName].predict(model.validation_generator, verbose=1)
+    predictions = model.predictions #will respect filterTime. Ultimately want to remove this return and just have it wrapped in model.predictions
     return model, predictions, modelType
 
 #########################################################################################################
@@ -116,23 +120,62 @@ def plot3by3PredBibSig(
         plot_func(df_subset, title=title, *args, **kwargs)
     plt.suptitle(genTitle + "\n" + extendTitle)
     closePlot(PLOT_DIR,interactivePlots,plotName = f"predStratPlot_{genTitle}.png")
+def plot2by2PredBibSig(
+    predVarDF: pd.DataFrame, 
+    # plot_func: Callable[[pd.DataFrame, str, ...], Any], #not allowed 
+    plot_func: PlottingFunction, 
+    cut: float = 0.51171875,
+    genTitle = "",
+    extendTitle = "",
+    PLOT_DIR = "./ratePlots",
+    interactivePlots = True,
+    isHist2d = True, #means that plot_func should return counts, xedges, yedges, im
+    figsize=(10,8),
+    *args: Any,
+    **kwargs: Any
+) -> None:
+    """
+    Plots a 3x3 grid of subsets of the data using an arbitrary plotting function.
+    """
+    plt.figure(figsize=figsize)
+    
+    configs = [
+        # (predVarDF, "all vectors"),
+        # (predVarDF.query("trueY == 0"), "all bib"),
+        # (predVarDF.query("trueY == 1"), "all sig"),
+        
+        # (predVarDF.query("prediction > @cut"), "all vectors passing cut"),
+        (predVarDF.query("trueY == 0 and prediction > @cut"), "BIB accepted by model"),
+        (predVarDF.query("trueY == 1 and prediction > @cut"), "Signal accepted by model"),
+        
+        # (predVarDF.query("prediction < @cut"), "all vectors rejected by cut"),
+        (predVarDF.query("trueY == 0 and prediction < @cut"), "BIB rejected by model"),
+        (predVarDF.query("trueY == 1 and prediction < @cut"), "Signal rejected by model")
+    ]
+
+    for i, (df_subset, title) in enumerate(configs, 1):
+        plt.subplot(2, 2, i)
+        # Pass the subset and title, then any extra args/kwargs
+        plot_func(df_subset, title=title, *args, **kwargs)
+    plt.suptitle(genTitle + "\n" + extendTitle)
+    closePlot(PLOT_DIR,interactivePlots,plotName = f"predStratPlot_{genTitle}.png")
 
 # a couple of declarations of plotters more explicitly
-def plotZglobalXsizeJust1(truthDF, title="",binsZGlobal = 30,binsXSize = np.arange(0,22,1),cmap="Blues"):
+def plotZglobalXsizeJust1(truthDF, title="",binsZGlobal = 30,binsXSize = np.arange(0,22,1),cmap="Blues",colorLabel=r"$n_{\mathrm{clusters}}$"):
     mask = [True for i in range(len(truthDF))]
-    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","xSize", mask, binsZGlobal, binsXSize, cmap, 'z-global [mm]','x-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","xSize", mask, binsZGlobal, binsXSize, cmap, r'$z_{\mathrm{global}}$ [mm]',r'$x_{\mathrm{size}}$ [# pixels]',title,logColor = True,colorLabel=colorLabel)
     return counts, xedges, yedges, im
-def plotZglobalYsizeJust1(truthDF, title="",binsZGlobal = 30,binsYSize = np.arange(0,14,1),cmap="Blues"):
+def plotZglobalYsizeJust1(truthDF, title="",binsZGlobal = 30,binsYSize = np.arange(0,14,1),cmap="Blues",colorLabel=r"$n_{\mathrm{clusters}}$"):
     mask = [True for i in range(len(truthDF))]
-    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","ySize", mask, binsZGlobal, binsYSize, cmap, 'z-global [mm]','y-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "z-global","ySize", mask, binsZGlobal, binsYSize, cmap, r'$z_{\mathrm{global}}$ [mm]','y-size (# pixels)',title,logColor = True,colorLabel=colorLabel)
     return counts, xedges, yedges, im
-def plotYlocalXsizeJust1(truthDF, title="",binsYlocal = 30,binsXSize = np.arange(0,22,1),cmap="Blues"):
+def plotYlocalXsizeJust1(truthDF, title="",binsYlocal = 30,binsXSize = np.arange(0,22,1),cmap="Blues",colorLabel=r"$n_{\mathrm{clusters}}$"):
     mask = [True for i in range(len(truthDF))]
-    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","xSize", mask, binsYlocal, binsXSize, cmap, 'y-local [μm]','x-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","xSize", mask, binsYlocal, binsXSize, cmap, 'y-local [μm]','x-size (# pixels)',title,logColor = True,colorLabel=colorLabel)
     return counts, xedges, yedges, im
-def plotYlocalYsizeJust1(truthDF, title="",binsYlocal = 30,binsYSize = np.arange(0,14,1),cmap="Blues",):
+def plotYlocalYsizeJust1(truthDF, title="",binsYlocal = 30,binsYSize = np.arange(0,14,1),cmap="Blues",colorLabel=r"$n_{\mathrm{clusters}}$",):
     mask = [True for i in range(len(truthDF))]
-    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","ySize", mask, binsYlocal, binsYSize, cmap, 'y-local [μm]','y-size (# pixels)',title,logColor = True)
+    counts, xedges, yedges, im = plot2dHistFromTruth(truthDF,  "y-local","ySize", mask, binsYlocal, binsYSize, cmap, 'y-local [μm]','y-size (# pixels)',title,logColor = True,colorLabel=colorLabel)
     return counts, xedges, yedges, im
 
 # Now to actually use the code
@@ -142,34 +185,49 @@ def runPredVarDFPlots(predVarDF,
     varPredCallables = {"plotter": [functools.partial(plotVarPrediction,varKey = "pt", varLabel = "pT (MeV)",cmap=cmap),
                                     functools.partial(plotVarPrediction,varKey = "xSize", varLabel = "x-size (# pixels)",varBins=np.arange(0,22,1),cmap=cmap),
                                     functools.partial(plotVarPrediction,varKey = "ySize", varLabel = "y-size (# pixels)",varBins=np.arange(0,14,1),cmap=cmap),
-                                    functools.partial(plotVarPrediction,varKey = "z-global", varLabel = "z-global [mm]",varBins = 20,cmap=cmap),
+                                    functools.partial(plotVarPrediction,varKey = "z-global", varLabel = r'$z_{\mathrm{global}}$ [mm]',varBins = 20,cmap=cmap),
                                     functools.partial(plotVarPrediction,varKey = "y-local", varLabel = "y-local [μm]",varBins = 20,cmap=cmap),
                                     functools.partial(plotVarPrediction,varKey = "nPix", varLabel = "nPix [# pixels]",varBins = 20,cmap=cmap),
+                                    functools.partial(plotVarPrediction,varKey = "cotAlpha", varLabel = r"cot($\alpha$)",varBins = 20,cmap=cmap),
+                                    functools.partial(plotVarPrediction,varKey = "cotBeta", varLabel = r"cot($\beta$)",varBins = 20,cmap=cmap),
                                     functools.partial(plotZglobalXsizeJust1,cmap=cmap),
                                     functools.partial(plotZglobalYsizeJust1,cmap=cmap),
                                     functools.partial(plotYlocalXsizeJust1,cmap=cmap),
                                     functools.partial(plotYlocalYsizeJust1,cmap=cmap),
                                     ],
                         "genTitle":["PtVsPrediction","XSizeVsPrediction","YSizeVsPrediction","ZGlobalVsPrediction","YLocalVsPrediction",
-                                    "nPixVsPrediction",
+                                    "nPixVsPrediction","cotAlphaVsPrediction","cotBetaVsPrediction",
                                     "ZGlobalXSize",
                                     "ZglobalYsize",
                                     "YlocalXsize",
                                     "YlocalYsize",]}
     # varPredCallables[0](predVarDF,title="ptVsprediction")
+    assert len(varPredCallables["plotter"]) == len(varPredCallables["genTitle"])
     for i in range(len(varPredCallables["plotter"])):
         plot3by3PredBibSig(predVarDF,plot_func=varPredCallables["plotter"][i],genTitle=varPredCallables["genTitle"][i],extendTitle = extendTitle,cut=cut, PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots)
 
     plt.close()
+# import numpy as np
 
+def to_python(obj):
+    if isinstance(obj, np.generic):
+        return obj.item()
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, dict):
+        return {k: to_python(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [to_python(x) for x in obj]
+    return obj
 def runModelPlots(filepath = "", modelType=2,
-                  tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
+                #   tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V3_May/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized",
+                  tfRecordFolder = "/local/d1/smartpixML/2026Datasets/Data_Files/Data_Set_2026V5_Oct/TF_Records/filtering_records16384_data_shuffled_single_bigData_normalized", #adds cotAlpha, cotBeta
                   #to pass through to later plotting functions:
                   sig_eff = 0.99,PLOT_DIR = "./ratePlots",interactivePlots = True,extendTitle = "",
-                  modifyPlotDir = True,
+                  modifyPlotDir = True,filterTime = False
                   ):
     quantizedModel = loadQModel(filepath,modelType)
-    model, predictions,modelType = getModelAndPredict(quantizedModel,tfRecordFolder)
+    model, predictions,modelType = getModelAndPredict(quantizedModel,tfRecordFolder,filterTime=filterTime)
     if modelType == 1:
         cmap = "Purples"
     elif modelType == 2:
@@ -194,13 +252,17 @@ def runModelPlots(filepath = "", modelType=2,
     # print(fpr_val)
     # print(fpr)
     # print(thresholds)
-    predVarDF = getPredVarDF(model,predictions)
+    predVarDF = getPredVarDF(model,predictions,keys=['x_size', 'y_size', "nModule","x_local","y_local", 'z_global',"nPix","pt","cotAlpha","cotBeta","adjusted_hit_time"])
+    # print(predVarDF.keys())
+    # return
     if modifyPlotDir:
         PLOT_DIR = PLOT_DIR[:-14]+f"b{bg_rej:.4f}"+PLOT_DIR[-14:]
     Path(PLOT_DIR).mkdir(parents=True, exist_ok=True)
     runPredVarDFPlots(predVarDF,cut=threshVal, PLOT_DIR=PLOT_DIR,interactivePlots=interactivePlots,extendTitle=extendTitle,cmap=cmap)
 
-
+    with open(os.path.join(PLOT_DIR,"evaluation_results.json"), "w") as file:
+        json.dump(to_python(model.evaluation_results), file)
+    return predVarDF, model, predictions, threshVal
 
 
 ################end of usefulness

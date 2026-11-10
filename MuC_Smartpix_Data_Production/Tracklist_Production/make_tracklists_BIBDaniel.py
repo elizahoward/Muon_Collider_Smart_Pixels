@@ -14,6 +14,7 @@ import tracemalloc
 plt = PlotHelper()
 
 sensorAngles = np.arange(-np.pi-np.pi/8,np.pi+2*np.pi/8,np.pi/8)
+moduleIDs = np.concatenate((np.arange(8,17,1), np.arange(1,11,1)))
 
 def getYlocalAndGamma(x,y):
     # Get exact angle gamma of the hit position
@@ -60,19 +61,20 @@ def getYlocalAndGamma(x,y):
     # at some point, add limits to possible ROIs
 
     gamma=sensorAngles[index]
+    moduleID=moduleIDs[index]
     # Shift range of gamma to 0 to 2 pi
     if gamma<0:
         gamma+=2*np.pi
     
-    return ylocal, gamma
+    return ylocal, gamma, moduleID
 
 # user options
 parser = argparse.ArgumentParser(usage=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-i", "--input_file", help="Input file", type=str)
 parser.add_argument("-odir", "--output_folder", help="Output folder", type=str)
 parser.add_argument("-f", "--float_precision", help="Floating point precision", default=5, type=int)
-parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=100, type=int)
-parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=1, type=int) 
+parser.add_argument("-t", "--track_total", help="Total number of tracks to simulate (for BIB and signal individually)", default=250000, type=int)
+parser.add_argument("-b", "--bin_size", help="Number of tracks per tracklist", default=500, type=int) 
 parser.add_argument("-p", "--plot", help="Include if you want to make plots at this stage", action='store_true')
 parser.add_argument("-flp", "--flp", help="Direction of sensor (1 for FE side out, 0 for FE side down)", default=0, type=int)
 parser.add_argument("-sig", "--signal", help="Are you generating signal?", action='store_true')
@@ -91,10 +93,12 @@ if ops.signal:
     output_file_form="signal_tracks_*.txt"
 elif ops.bib_mm or ops.bib_mp:
     if ops.bib_mp:
-        directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mp_pruned/" 
+        #directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mp_pruned/"
+        directory_path = "/local/d1/berobert/bib/" 
         output_file_form="bib_mp_tracks_*.txt"
     else:
-        directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mm_pruned/" 
+        directory_path = "/local/d1/berobert/bib/"
+        #directory_path = "/cvmfs/public-uc.osgstorage.org/ospool/uc-shared/public/futurecolliders/BIB10TeV/sim_mm_pruned/" 
         output_file_form="bib_mm_tracks_*.txt"
     file_list=os.listdir(directory_path)
     file_list = [os.path.join(directory_path, file) for file in file_list]
@@ -247,12 +251,13 @@ def slcioToTracks(file_list,track_total):
                 p = hit_tlv.P()
                 pt = hit_tlv.Pt()
                 
-                ylocal, gamma0 = getYlocalAndGamma(x,y)
+                ylocal, gamma0, moduleID = getYlocalAndGamma(x,y)
                 zglobal = round(hit_z/25e-3)*25e-3 # round to nearest pixel
                 
                 # Alternative cota and cotb calculation
                 cota = hit_p[2]/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))
                 cotb = (hit_p[0]*sin(gamma0)-hit_p[1]*cos(gamma0))/(hit_p[0]*cos(gamma0)+hit_p[1]*sin(gamma0))
+
 
                 # If we are unflipped, we must adjust alpha and beta, and flip y-local
                 if ops.flp == 0:
@@ -271,7 +276,7 @@ def slcioToTracks(file_list,track_total):
                     continue; #added because pixelav can't handle these.
                 else:
                 
-                    track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg]
+                    track = [cota, cotb, p, ops.flp, ylocal, zglobal, pt, t, hit_pdg, moduleID]
                     tracks.append(track)
                     track_count+=1
     return tracks
@@ -280,6 +285,7 @@ float_precision = ops.float_precision
 def writeTracklists(tracks, numFiles, binsize, fileStart = 0):
 
     print(f"Writing {len(tracks)} tracks to {numFiles} files with {binsize} tracks per file\n")
+    print(f"Total number of tracks: {len(tracks)}")
 
     for fileNum in range(numFiles):
         # fileNum = fileNum + fileStart
@@ -292,6 +298,7 @@ def writeTracklists(tracks, numFiles, binsize, fileStart = 0):
                 formatted_sublist = [f"{element:.{float_precision}f}" if isinstance(element, float) else element for element in track]
                 line = ' '.join(map(str, formatted_sublist)) + '\n'
                 file.write(line)
+
 if ops.track_total > 250000:
     mid = len(file_list) // 2
     file_list1 = file_list[:mid]
@@ -300,12 +307,12 @@ else:
     file_list1 = file_list
 print("tracklist file list size")
 print(file_list1)
-print(file_list2)
+#print(file_list2)
 tracemalloc.start()
 snapshot1 = tracemalloc.take_snapshot()
 # tracks1 = slcioToTracks(file_list1,ops.track_total)
-tracks = slcioToTracks(file_list2,ops.track_total)
-print("finished tracks 2")
+tracks = slcioToTracks(file_list,ops.track_total)
+print("finished tracks")
 # if len(tracks1) < ops.track_total:
 #     numFilesToSaveEarly = 800
 #     tracksToSaveEarly = numFilesToSaveEarly*binsize
@@ -342,9 +349,11 @@ print("finished tracks 2")
 numFiles = int(np.ceil(len(tracks)/binsize))
 
 if ops.bib_mm:
-    fileStart=888
+    #fileStart=888
+    fileStart = 0
 elif ops.bib_mp:
-    fileStart=857
+    #fileStart=857
+    fileStart = 0
 else:
     raise RuntimeError("Delete this code before using for signal")
 writeTracklists(tracks,numFiles,binsize,fileStart)

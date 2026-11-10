@@ -32,6 +32,7 @@ def flattenTfData(modelType, doTrain=True, tfRecordFolder="",includenPix=False):
         raise TypeError("Not supported model type")
     if modelType in ["1", 1]:
         model = Model1(tfRecordFolder = tfRecordFolder)
+        model.x_feature_description: list = ['z_global','x_size', 'y_size', 'y_local'] #remove nModule and x_local
     elif modelType in ["2",2]:
         model = Model2(tfRecordFolder = tfRecordFolder)    
     elif modelType in ["2.5", 2.5]:
@@ -47,6 +48,7 @@ def flattenTfData(modelType, doTrain=True, tfRecordFolder="",includenPix=False):
     model.loadTfRecords()
     odgTrain = model.training_generator
     odgTest = model.validation_generator
+    print("Warning! Not accounting for possible filteredTime")
     xTest, yTest = odgToVect(odgTest)
     xTestList = [xTest[key].numpy() for key in xTest.keys()]
     if doTrain:
@@ -77,6 +79,16 @@ def getPredVarDF(model,predictions,keys=['x_size', 'y_size', "nModule","x_local"
             model.x_feature_description = model.x_feature_description + [key]
     model.loadTfRecords()
     xTest, yTest = odgToVect(model.validation_generator)
+    filteredTime = getattr(model, 'filteredTime', False)
+    if filteredTime:
+        #should have the filteredTimeMask
+        xTest = {key:xTest[key][model.filterTimeMask] for key in xTest.keys()} #shouldn't error if filteredTime is True
+        yTest = yTest[model.filterTimeMask]
+        if len(predictions) != len(yTest):
+            predictions = predictions[model.filterTimeMask]
+        assert len(predictions)==len(yTest)
+        assert len(predictions)==len(xTest[keys[0]])
+        keys = keys + ['adjusted_hit_time_30ps_gaussian']
     predVarDF = pd.DataFrame.from_dict({key:xTest[key].numpy() for key in keys})
     predVarDF["prediction"] = predictions.ravel()
     predVarDF["trueY"] = yTest.numpy()

@@ -1,0 +1,143 @@
+{
+  "model_name": "model_trial_626",
+  "tier": "secondary",
+  "total_params": 79,
+  "num_layers": 17,
+  "layers": [
+    {
+      "name": "z_global",
+      "type": "InputLayer",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "[(None, 1)]"
+    },
+    {
+      "name": "x_size",
+      "type": "InputLayer",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "[(None, 1)]"
+    },
+    {
+      "name": "q_input_1",
+      "type": "QActivation",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 1)",
+      "activation": "quantized_bits(6,0,0)"
+    },
+    {
+      "name": "q_input_2",
+      "type": "QActivation",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 1)",
+      "activation": "quantized_bits(6,0,0)"
+    },
+    {
+      "name": "y_size",
+      "type": "InputLayer",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "[(None, 1)]"
+    },
+    {
+      "name": "concatenate_3",
+      "type": "Concatenate",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 2)"
+    },
+    {
+      "name": "q_input_3",
+      "type": "QActivation",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 1)",
+      "activation": "quantized_bits(6,0,0)"
+    },
+    {
+      "name": "y_local",
+      "type": "InputLayer",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "[(None, 1)]"
+    },
+    {
+      "name": "concatenate_4",
+      "type": "Concatenate",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 3)"
+    },
+    {
+      "name": "q_input_4",
+      "type": "QActivation",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 1)",
+      "activation": "quantized_bits(6,0,0)"
+    },
+    {
+      "name": "concatenate_5",
+      "type": "Concatenate",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 4)"
+    },
+    {
+      "name": "q_dense_3",
+      "type": "QDense",
+      "trainable_params": 30,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 6)",
+      "kernel_quantizer": "{'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}",
+      "bias_quantizer": "{'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}",
+      "activation": "linear"
+    },
+    {
+      "name": "q_relu1",
+      "type": "QActivation",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 6)",
+      "activation": "quantized_relu(8,0)"
+    },
+    {
+      "name": "q_dense_4",
+      "type": "QDense",
+      "trainable_params": 42,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 6)",
+      "kernel_quantizer": "{'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}",
+      "bias_quantizer": "{'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}",
+      "activation": "linear"
+    },
+    {
+      "name": "q_relu2",
+      "type": "QActivation",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 6)",
+      "activation": "quantized_relu(8,0)"
+    },
+    {
+      "name": "q_dense_5",
+      "type": "QDense",
+      "trainable_params": 7,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 1)",
+      "kernel_quantizer": "{'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}",
+      "bias_quantizer": "{'module': 'qkeras.quantizers', 'class_name': 'quantized_bits', 'config': {'bits': 4, 'integer': 0, 'symmetric': 0, 'alpha': 1, 'keep_negative': True, 'use_stochastic_rounding': False, 'qnoise_factor': 1.0}, 'registered_name': 'quantized_bits'}",
+      "activation": "linear"
+    },
+    {
+      "name": "output_activation",
+      "type": "QActivation",
+      "trainable_params": 0,
+      "non_trainable_params": 0,
+      "output_shape": "(None, 1)",
+      "activation": "quantized_sigmoid(8,0)"
+    }
+  ]
+}
