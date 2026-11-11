@@ -100,7 +100,10 @@ def save_occupancy(clusters: pd.DataFrame, signal: np.ndarray, output: Path) -> 
                    s=75, marker="o", label=f"signal-linked clusters ({len(sig)})", zorder=4)
         ax.set(xlabel=xlabel, ylabel=ylabel, title=title)
         ax.legend(loc="upper right", framealpha=0.95, fontsize=8)
-        fig.colorbar(image, ax=ax, label="BIB-only clusters per bin")
+        bin_width = xedges[1] - xedges[0]
+        fig.colorbar(image, ax=ax, label=f"Overlay-only clusters / {bin_width:g} × {yedges[1] - yedges[0]:g} mm bin")
+    axes[1].set_aspect("equal", adjustable="box")
+    fig.suptitle("Vertex barrel reconstructed clusters · two overlaid events", fontsize=11)
     fig.savefig(output, dpi=180)
     plt.close(fig)
 
@@ -109,24 +112,41 @@ def save_features(clusters: pd.DataFrame, signal: np.ndarray, pixel_counts: np.n
     same_sensor = clusters["cellID"].isin(clusters.loc[signal, "cellID"])
     bib = ~signal
     fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.8), constrained_layout=True)
-    features = [
-        (clusters["eDep"].to_numpy(float), "Cluster eDep (GeV)", "Deposited energy"),
-        (pixel_counts.astype(float), "Pixel links per cluster", "Cluster size"),
-    ]
     colors = {"all": "#67798a", "matched": "#2877a8", "signal": "#dc513f"}
-    for ax, (values, xlabel, title) in zip(axes, features):
-        positive = values[values > 0]
-        bins = np.geomspace(max(positive.min() * 0.9, 1e-9), positive.max() * 1.05, 90)
-        ax.hist(values[bib], bins=bins, histtype="step", linewidth=1.4,
-                color=colors["all"], label=f"all BIB-only ({bib.sum():,})")
-        ax.hist(values[bib & same_sensor], bins=bins, histtype="step", linewidth=1.5,
-                color=colors["matched"], label=f"BIB-only in signal sensors ({(bib & same_sensor).sum():,})")
-        ax.plot(values[signal], np.full(signal.sum(), 0.7), "|", markersize=12,
-                markeredgewidth=1.5, color=colors["signal"], label=f"signal-linked ({signal.sum()})")
-        ax.set(xscale="log", yscale="log", ylim=(0.5, None), xlabel=xlabel,
-               ylabel="Clusters per bin", title=title)
-        ax.legend(fontsize=8)
-    fig.suptitle("Two events; signal marks are examples, not a statistical distribution", fontsize=11)
+    energy = clusters["eDep"].to_numpy(float)
+    positive = energy[energy > 0]
+    bins = np.geomspace(max(positive.min() * 0.9, 1e-9), positive.max() * 1.05, 90)
+    ax = axes[0]
+    ax.hist(energy[bib], bins=bins, histtype="step", linewidth=1.4,
+            color=colors["all"], label=f"overlay-only ({bib.sum():,})")
+    ax.hist(energy[bib & same_sensor], bins=bins, histtype="step", linewidth=1.5,
+            color=colors["matched"], label=f"overlay-only, same sensors ({(bib & same_sensor).sum():,})")
+    ax.plot(energy[signal], np.full(signal.sum(), 0.7), "|", markersize=12,
+            markeredgewidth=1.5, color=colors["signal"], label=f"signal-linked ({signal.sum()})")
+    ax.set(xscale="log", yscale="log", ylim=(0.5, None), xlabel="Cluster eDep (GeV)",
+           ylabel="Clusters per log-spaced bin", title="Reconstructed cluster energy")
+    ax.legend(fontsize=8)
+
+    # Pixel counts are integers. The final category keeps every cluster while
+    # avoiding the artificial spikes caused by logarithmic bins over integers.
+    ax = axes[1]
+    x = np.arange(1, 22)
+    all_counts = np.bincount(np.minimum(pixel_counts[bib], 21), minlength=22)[1:]
+    sensor_counts = np.bincount(np.minimum(pixel_counts[bib & same_sensor], 21), minlength=22)[1:]
+    ax.bar(x, all_counts, width=0.82, color=colors["all"], alpha=0.7,
+           label=f"overlay-only ({bib.sum():,})")
+    ax.bar(x, sensor_counts, width=0.44, color=colors["matched"],
+           label=f"overlay-only, same sensors ({(bib & same_sensor).sum():,})")
+    ax.plot(pixel_counts[signal], np.full(signal.sum(), 0.7), "|", markersize=12,
+            markeredgewidth=1.5, color=colors["signal"], label=f"signal-linked ({signal.sum()})")
+    ax.axvline(20.5, color="0.5", linewidth=0.8)
+    ax.set(yscale="log", ylim=(0.5, None), xlim=(0.5, 21.5),
+           xlabel="Pixel links per cluster (21+ is an overflow bin)",
+           ylabel="Clusters per count", title="Pixel links per reconstructed cluster")
+    ax.set_xticks([1, 2, 3, 4, 5, 7, 10, 15, 20, 21],
+                  ["1", "2", "3", "4", "5", "7", "10", "15", "20", "21+"])
+    ax.legend(fontsize=8)
+    fig.suptitle("Two overlaid events · signal marks show individual clusters", fontsize=11)
     fig.savefig(output, dpi=180)
     plt.close(fig)
 
@@ -148,14 +168,14 @@ def save_link_quality(link_path: Path, output: Path) -> dict:
                  markersize=12, color="#dc513f", label="signal sim-hit links")
     axes[0].axvline(10, color="black", linestyle="--", linewidth=1, label="10 mm review threshold")
     axes[0].set(xscale="log", yscale="log", ylim=(0.5, None), xlabel="Cluster–sim hit distance (mm)",
-                ylabel="Links per bin", title="Link distances")
+                ylabel="Links per log-spaced bin", title="Link distances")
     axes[0].legend(fontsize=8)
 
     valid = all_hist >= 30
     axes[1].plot(centres[valid], mismatch_hist[valid] / all_hist[valid], ".-", color="#2877a8")
     axes[1].axvline(10, color="black", linestyle="--", linewidth=1)
     axes[1].set(xscale="log", ylim=(0, 1), xlabel="Cluster–sim hit distance (mm)",
-                ylabel="Fraction with different cellID", title="Sensor-ID mismatch by distance")
+                ylabel="Fraction with different cellID", title="Cell ID mismatch (≥30 links per bin)")
     fig.savefig(output, dpi=180)
     plt.close(fig)
     return {"links": len(links), "links_over_10_mm": int((dist > 10).sum()),
@@ -173,17 +193,23 @@ def save_pixel_examples(stub: Path, output: Path) -> dict:
     )
     if len(joined) != len(links) or joined["eDep"].isna().any():
         raise ValueError("some signal-only pixels could not be linked to a cluster")
-    sizes = joined.groupby(["ievent", "from_index"]).size().sort_values(ascending=False)
+    sizes = joined.groupby(["ievent", "from_collectionID", "from_index"]).size().sort_values(ascending=False)
     selected = list(sizes.head(4).index)
-    selected_rows = [joined[(joined["ievent"] == event) & (joined["from_index"] == index)]
-                     for event, index in selected]
+    selected_rows = [joined[(joined["ievent"] == event) &
+                            (joined["from_collectionID"] == collection_id) &
+                            (joined["from_index"] == index)]
+                     for event, collection_id, index in selected]
     charges = np.concatenate([group["eDep"].to_numpy(float) for group in selected_rows])
+    if not np.isfinite(charges).all() or (charges <= 0).any():
+        raise ValueError("pixel eDep must be finite and positive for a logarithmic colour scale")
     cmap = plt.get_cmap("viridis").copy()
     cmap.set_bad("#eceff1")
-    norm = LogNorm(vmin=max(charges[charges > 0].min(), 1), vmax=charges.max())
+    norm = LogNorm(vmin=charges.min(), vmax=charges.max())
     fig, axes = plt.subplots(2, 2, figsize=(9, 8), constrained_layout=True)
     image = None
-    for ax, (event, index), group in zip(axes.flat, selected, selected_rows):
+    for ax, (event, _collection_id, index), group in zip(axes.flat, selected, selected_rows):
+        if (group[["position.x", "position.y"]].to_numpy(float) % 1 != 0).any():
+            raise ValueError("pixel positions are not integer sensor coordinates")
         x = group["position.x"].to_numpy(int)
         y = group["position.y"].to_numpy(int)
         x0, x1, y0, y1 = x.min(), x.max(), y.min(), y.max()
@@ -199,7 +225,7 @@ def save_pixel_examples(stub: Path, output: Path) -> dict:
                title=f"event {event}, cluster {index} · {len(group)} pixels")
         ax.grid(color="white", alpha=0.3)
     fig.colorbar(image, ax=list(axes.flat), label="Pixel eDep (stored units)", shrink=0.8)
-    fig.suptitle("Signal-only realistic digitization; no BIB overlay", fontsize=12)
+    fig.suptitle("Four clusters with the most linked pixels · separate signal-only sample", fontsize=12)
     fig.savefig(output, dpi=180)
     plt.close(fig)
     return {"pixel_rows": len(pixels), "pixel_links": len(links), "example_clusters": len(selected)}
