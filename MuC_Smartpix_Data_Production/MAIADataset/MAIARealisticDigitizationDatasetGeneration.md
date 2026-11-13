@@ -391,13 +391,26 @@ apptainer run /cvmfs/unpacked.cern.ch/ghcr.io/muoncollidersoft/mucoll-sim-ubuntu
 source /opt/setup_mucoll.sh
 python make_tracklists_edm4hepContain.py
 ```
-Like the other make_tracklists, there is a file_list which you can modify. Right now this spits out a bunch of csv files from the edm4hep files to further process. Then you can make linked hits/clusters with 
+Like the other make_tracklists, there is a file_list which you can modify. Right now this spits out a bunch of csv files from the edm4hep files to further process. 
+Convert to parquets you can upload to github with 
+```
+python maiaCsvToParquet.py
+```
+and you can modify it's fileList if you want.
+Then you can make linked hits/clusters with 
 ```
 python linkEdmHits.py ./edmTestFiles/digi_output_mu2.edm4hep.root
 ```
 where that filestub is whatever you had in the file_list (but it should have digitization hits).
 
 Then you can use linkClusters.py in a notebook, as is done in tracklistEdmExploration.ipynb to get pixels linked to clusters linked to simhits. 
+```
+#in a python notebook/commandline/script
+from linkClusters import LinkedClusters
+import edm4hepTracksUtils
+fileStub = "./edmTestFiles/digi_output_mu2.edm4hep.root"
+cl = LinkedClusters.fromFiles(fileStub)
+```
 
 TODO: convert these linked clusters to something like the output of pixelav. 
 
