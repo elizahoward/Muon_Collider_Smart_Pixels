@@ -405,6 +405,9 @@ TODO: convert these linked clusters to something like the output of pixelav.
 
 some prelimnary plots in tracklistEdmExploration.ipynb
 
+For a reproducible first pass using the committed BIB tables and the small
+signal-only pixel sample, see [MAIAVisualization.md](MAIAVisualization.md).
+
 
 ## Known issues / not yet verified
 
