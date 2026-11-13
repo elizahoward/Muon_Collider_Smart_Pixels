@@ -19,7 +19,7 @@ from math import *
 import argparse
 import os
 import random
-from plothelper import *
+# from plothelper import *
 from datetime import datetime
 # import pandas as pd
 import edm4hep
@@ -30,7 +30,9 @@ import edm4hepTracksUtils
 import pickle
 
 file_list = ["./edmTestFiles/sim_output.edm4hep.root","./edmTestFiles/sim_output2.edm4hep.root","./edmTestFiles/sim_output3.edm4hep.root","./edmTestFiles/digi_real.edm4hep.root","./edmTestFiles/sim_output_mu2.edm4hep.root","./edmTestFiles/digi_output_mu2.edm4hep.root",]#"./edmTestFiles/gen_output.edm4hep.root",]
-file_list = ["./edmTestFiles/digi_output_mu2.edm4hep.root",]
+file_list = ["./edmTestFiles/sim_output_mu1.edm4hep.root","./edmTestFiles/sim_output_nu1.edm4hep.root","./edmTestFiles/sim_output_H1.edm4hep.root",]
+file_list = ["./edmTestFiles/digi_output_mu2.edm4hep.root",] + ["./edmTestFiles/sim_output_mu1.edm4hep.root","./edmTestFiles/sim_output_nu1.edm4hep.root","./edmTestFiles/sim_output_H1.edm4hep.root",]
+# file_list = ["./edmTestFiles/digi_output_mu2.edm4hep.root",]
 # file_list = ["./edmTestFiles/digi_real.edm4hep.root",]
 track_count=0
 break_loop=False
@@ -49,19 +51,7 @@ keyNamesToCollections ={"truthParticlesDf":"MCParticles",
                         "vtxPixelsDf":"VXDBarrelRealPixels",       
                         "truthParticlesDf2":"NewMCParticles",       
                         "vtxBarrelSimHitsDf2":"OverlayVertexBarrelCollection",}
-for file_path in file_list:
-    if break_loop:
-            break
-    count +=1
-    if count<fileCountStart:
-        continue
-    print("count", count, " ", datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    if count>fileCountLimit:
-        print("count>fileCountLimit, so breaking")
-        break
-    # Get the full path to the file
-    if not file_path.endswith("edm4hep.root"):
-        continue
+def processFile(file_path):
     print("Processing file: ", file_path)
 
 
@@ -77,11 +67,16 @@ for file_path in file_list:
         # Print all the collection names in the event
         # collection_names = event.getCollectionNames()
         eventDfDict = edm4hepToDict.eventToDfs(event,ievt)
+        for key in eventDfDict.keys():
+            edm4hepTracksUtils.addDecodedCellId(eventDfDict[key])
+
         eventDfDict["tracklistDf"] = edm4hepTracksUtils.hitDftoTracklistDf(eventDfDict["vtxBarrelSimHitsDf"])
         eventDfDicts.append(eventDfDict)
 
     concatEventDfs = {key: pd.concat([eventDf[key] for eventDf in eventDfDicts], ignore_index=True) for key in eventDfDicts[0]}
+    saveConcatEventDfs(file_path,concatEventDfs)
 
+def saveConcatEventDfs(file_path,concatEventDfs):
     # print(concatEventDfs)
     for key in concatEventDfs.keys():
         savePath = file_path+f".{key}.csv"
@@ -93,6 +88,21 @@ for file_path in file_list:
                 concatEventDfs[key].to_pickle(savePath.replace("csv","pkl"));
         collectionName = keyNamesToCollections.get(key,"unknown")
         print(f"saved {len(concatEventDfs[key])} hits of {key} from collection {collectionName} to {savePath}")
+
+for file_path in file_list:
+    if break_loop:
+            break
+    count +=1
+    if count<fileCountStart:
+        continue
+    print("count", count, " ", datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    if count>fileCountLimit:
+        print("count>fileCountLimit, so breaking")
+        break
+    # Get the full path to the file
+    if not file_path.endswith("edm4hep.root"):
+        continue
+    processFile(file_path)
         
 
 

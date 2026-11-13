@@ -85,6 +85,26 @@ def hitDftoTracklistDf(hitDf: pd.DataFrame,flp=0):
     return tracklistDf
 
 
+def addDecodedCellId(df: pd.DataFrame):
+    """
+    Takes the cellID and adds the corresponding system/side/layer/module/sensor using the decoder below
+    """
+    if df.empty:
+        print("this df empty of hits")
+        return 
+    if "cellID" not in df.keys():
+        return
+    assert "cellID" in df.keys()
+    decoded = makeDecoder()(df["cellID"])
+    # print(df.keys())
+    # print(decoded)
+    keyNames = list(map(lambda str: "cellID."+str,list(decoded.keys())))
+    # df.assign(**decoded)
+    # decoded=pd.DataFrame
+    df[keyNames] = pd.DataFrame(decoded)
+    # print(df.keys())
+    return df #modifies also in place
+
 
 
 """
